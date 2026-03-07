@@ -50,11 +50,17 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             .toList();
         _isLoading = false;
       });
-    } on Exception {
+    } on Exception catch (e) {
       if (!mounted) {
         return;
       }
       setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: context.colors.error,
+        ),
+      );
     }
   }
 

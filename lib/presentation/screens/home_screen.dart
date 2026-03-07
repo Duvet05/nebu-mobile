@@ -212,36 +212,27 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildActiveToysList(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final connectedDevices = ref.watch(connectedDevicesProvider);
 
-    try {
-      final connectedDevices = ref.watch(connectedDevicesProvider);
+    return connectedDevices.when(
+      data: (devices) {
+        if (devices.isEmpty) {
+          return _buildNoToysPlaceholder(context, theme);
+        }
 
-      return connectedDevices.when(
-        data: (devices) {
-          if (devices.isEmpty) {
-            return _buildNoToysPlaceholder(context, theme);
-          }
-
-          return Column(
-            children: devices
-                .map((device) => _DeviceBatteryCard(device: device))
-                .toList(),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => _buildErrorBanner(
-          context,
-          theme,
-          'home.devices_error'.tr(),
-        ),
-      );
-    } on Exception {
-      return _buildErrorBanner(
+        return Column(
+          children: devices
+              .map((device) => _DeviceBatteryCard(device: device))
+              .toList(),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (_, _) => _buildErrorBanner(
         context,
         theme,
         'home.devices_error'.tr(),
-      );
-    }
+      ),
+    );
   }
 
   Widget _buildErrorBanner(

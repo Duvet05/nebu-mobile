@@ -92,17 +92,18 @@ class ChildProfileScreen extends ConsumerWidget {
                   radius: 50,
                   backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
                   child: Text(
-                    childName[0].toUpperCase(),
-                    style: TextStyle(fontSize: 40, color: colorScheme.primary),
+                    childName.isNotEmpty ? childName[0].toUpperCase() : '?',
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          color: colorScheme.primary,
+                        ),
                   ),
                 ),
                 SizedBox(height: context.spacing.paragraphBottomMarginSm),
                 Text(
                   childName,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 if (childAge != null)
                   Text(
