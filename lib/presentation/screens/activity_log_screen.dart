@@ -303,7 +303,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       ActivityType.connection => 'activity_log.connection'.tr(),
       ActivityType.interaction => 'activity_log.interaction'.tr(),
       ActivityType.update => 'activity_log.update'.tr(),
-      ActivityType.error => 'Error',
+      ActivityType.error => 'activity_log.error_type'.tr(),
       ActivityType.play => 'activity_log.play'.tr(),
       ActivityType.sleep => 'activity_log.sleep'.tr(),
       ActivityType.wake => 'activity_log.wake'.tr(),
