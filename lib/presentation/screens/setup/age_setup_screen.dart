@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../widgets/setup_widgets.dart';
 
 class AgeSetupScreen extends StatefulWidget {
   const AgeSetupScreen({super.key});
@@ -32,19 +33,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              child: Row(
-                children: [
-                  _buildBackButton(colorScheme),
-                  const Spacer(),
-                  _buildStepIndicator(4, 7),
-                  const Spacer(),
-                  const SizedBox(width: 44),
-                ],
-              ),
-            ),
+            const SetupHeader(currentStep: 4, totalSteps: 7),
 
             // Content
             Expanded(
@@ -161,8 +150,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                       ),
                     ),
 
-                    // Primary button
-                    _buildPrimaryButton(
+                    SetupPrimaryButton(
                       text: 'common.next'.tr(),
                       isEnabled: canProceed,
                       onPressed: () =>
@@ -171,18 +159,8 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    GestureDetector(
+                    SetupSkipButton(
                       onTap: () => context.go(AppRoutes.home.path),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'setup.connection.skip_setup'.tr(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
                     ),
 
                     SizedBox(height: context.spacing.panelPadding),
@@ -195,88 +173,4 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
       ),
     );
   }
-
-  Widget _buildBackButton(ColorScheme colorScheme) => GestureDetector(
-        onTap: () => context.pop(),
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: context.radius.tile,
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
-
-  Widget _buildStepIndicator(int current, int total) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(total, (index) {
-          final isActive = index < current;
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 20 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colors.primary
-                  : context.colors.primary.withValues(alpha: 0.2),
-              borderRadius: context.radius.checkbox,
-            ),
-          );
-        }),
-      );
-
-  Widget _buildPrimaryButton({
-    required String text,
-    required bool isEnabled,
-    required VoidCallback onPressed,
-  }) =>
-      GestureDetector(
-        onTap: isEnabled ? onPressed : null,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: isEnabled
-                ? LinearGradient(
-                    colors: [
-                      context.colors.primary100,
-                      context.colors.primary,
-                    ],
-                  )
-                : null,
-            color: isEnabled
-                ? null
-                : Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHighest
-                    .withValues(alpha: 0.5),
-            borderRadius: context.radius.panel,
-            boxShadow: isEnabled
-                ? [
-                    BoxShadow(
-                      color: context.colors.primary.withValues(alpha: 0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: isEnabled
-                        ? context.colors.textOnFilled
-                        : Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-          ),
-        ),
-      );
 }

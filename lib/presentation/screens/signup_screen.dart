@@ -6,6 +6,7 @@ import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/google_signin_provider.dart';
+import '../widgets/auth_widgets.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -81,9 +82,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final authState = ref.watch(authProvider);
     final textTheme = Theme.of(context).textTheme;
 
-    // Note: Navigation is handled automatically by the router's redirect logic
-    // We only need to show error messages here
-
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,
       body: SafeArea(
@@ -98,7 +96,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      _BackButton(onPressed: () {
+                      AuthBackButton(onPressed: () {
                         if (context.canPop()) {
                           context.pop();
                         } else {
@@ -126,7 +124,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // Error message
                       if (authState.hasError && !authState.isLoading) ...[
-                        _ErrorBanner(
+                        AuthErrorBanner(
                           message: authState.error
                               .toString()
                               .replaceFirst('Exception: ', ''),
@@ -135,7 +133,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       ],
 
                       // First name
-                      _CustomTextField(
+                      AuthTextField(
                         controller: _firstNameController,
                         label: 'auth.first_name'.tr(),
                         prefixIcon: Icons.person_outline_rounded,
@@ -151,7 +149,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.titleBottomMargin),
 
                       // Last name
-                      _CustomTextField(
+                      AuthTextField(
                         controller: _lastNameController,
                         label: 'auth.last_name'.tr(),
                         prefixIcon: Icons.person_outline_rounded,
@@ -167,7 +165,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.titleBottomMargin),
 
                       // Email field
-                      _CustomTextField(
+                      AuthTextField(
                         controller: _emailController,
                         label: 'auth.email'.tr(),
                         keyboardType: TextInputType.emailAddress,
@@ -186,7 +184,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.titleBottomMargin),
 
                       // Password field
-                      _CustomTextField(
+                      AuthTextField(
                         controller: _passwordController,
                         label: 'auth.password'.tr(),
                         obscureText: _obscurePassword,
@@ -211,7 +209,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.titleBottomMargin),
 
                       // Confirm Password field
-                      _CustomTextField(
+                      AuthTextField(
                         controller: _confirmPasswordController,
                         label: 'auth.confirm_password'.tr(),
                         obscureText: _obscureConfirmPassword,
@@ -244,7 +242,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.panelPadding),
 
                       // Sign up button
-                      _PrimaryButton(
+                      AuthPrimaryButton(
                         text: 'auth.create_account'.tr(),
                         isLoading: authState.isLoading,
                         onPressed: _handleEmailSignUp,
@@ -253,12 +251,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.panelPadding),
 
                       // Divider
-                      _OrDivider(),
+                      const AuthOrDivider(),
 
                       SizedBox(height: context.spacing.panelPadding),
 
                       // Google button
-                      _GoogleButton(
+                      AuthGoogleButton(
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
                         onPressed: _handleGoogleSignUp,
@@ -303,277 +301,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ============ Reusable Components ============
-
-class _BackButton extends StatelessWidget {
-  const _BackButton({required this.onPressed});
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 20,
-          color: context.colors.textNormal,
-        ),
-      );
-}
-
-class _CustomTextField extends StatelessWidget {
-  const _CustomTextField({
-    required this.controller,
-    required this.label,
-    required this.prefixIcon,
-    this.keyboardType,
-    this.obscureText = false,
-    this.suffixIcon,
-    this.onSuffixTap,
-    this.validator,
-    this.textCapitalization = TextCapitalization.none,
-  });
-  final TextEditingController controller;
-  final String label;
-  final TextInputType? keyboardType;
-  final bool obscureText;
-  final IconData prefixIcon;
-  final IconData? suffixIcon;
-  final VoidCallback? onSuffixTap;
-  final String? Function(String?)? validator;
-  final TextCapitalization textCapitalization;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      validator: validator,
-      textCapitalization: textCapitalization,
-      style: textTheme.bodyLarge?.copyWith(color: context.colors.textNormal),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
-        floatingLabelStyle: textTheme.bodySmall?.copyWith(
-          color: context.colors.primary,
-          fontWeight: FontWeight.w500,
-        ),
-        prefixIcon: Icon(
-          prefixIcon,
-          color: context.colors.grey500,
-          size: 22,
-        ),
-        suffixIcon: suffixIcon != null
-            ? GestureDetector(
-                onTap: onSuffixTap,
-                child: Icon(
-                  suffixIcon,
-                  color: context.colors.grey500,
-                  size: 22,
-                ),
-              )
-            : null,
-        filled: true,
-        fillColor: context.colors.grey900,
-        border: OutlineInputBorder(
-          borderRadius: context.radius.panel,
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: context.radius.panel,
-          borderSide: BorderSide(color: context.colors.grey800),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: context.radius.panel,
-          borderSide: BorderSide(color: context.colors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: context.radius.panel,
-          borderSide: BorderSide(color: context.colors.error),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: context.radius.panel,
-          borderSide: BorderSide(color: context.colors.error, width: 1.5),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      ),
-    );
-  }
-}
-
-class _PrimaryButton extends StatelessWidget {
-  const _PrimaryButton({
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  });
-  final String text;
-  final bool isLoading;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: context.radius.panel,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [context.colors.primary100, context.colors.primary],
-            ),
-            borderRadius: context.radius.panel,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(context.colors.textOnFilled),
-                    ),
-                  )
-                : Text(
-                    text,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: context.colors.textOnFilled,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GoogleButton extends StatelessWidget {
-  const _GoogleButton({
-    required this.text,
-    required this.onPressed,
-    this.isLoading = false,
-  });
-  final String text;
-  final bool isLoading;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: context.radius.panel,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            color: context.colors.bgPrimary,
-            borderRadius: context.radius.panel,
-            border: Border.all(color: context.colors.grey800, width: 1.5),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/images/google_logo.png',
-                height: 22,
-                width: 22,
-                errorBuilder: (context, error, stackTrace) => Icon(
-                  Icons.g_mobiledata,
-                  size: 28,
-                  color: context.colors.grey300,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                text,
-                style: textTheme.titleMedium?.copyWith(
-                  color: context.colors.grey200,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _OrDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Row(
-      children: [
-        Expanded(child: Divider(color: context.colors.grey700, thickness: 1)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'auth.or'.tr(),
-            style: textTheme.bodySmall?.copyWith(
-              color: context.colors.grey400,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        Expanded(child: Divider(color: context.colors.grey700, thickness: 1)),
-      ],
-    );
-  }
-}
-
-class _ErrorBanner extends StatelessWidget {
-  const _ErrorBanner({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Container(
-      padding: EdgeInsets.all(context.spacing.alertPadding),
-      decoration: BoxDecoration(
-        color: context.colors.errorBg,
-        borderRadius: context.radius.tile,
-        border: Border.all(color: context.colors.error.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline_rounded, color: context.colors.error, size: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              message,
-              style: textTheme.bodyMedium?.copyWith(
-                color: context.colors.error,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

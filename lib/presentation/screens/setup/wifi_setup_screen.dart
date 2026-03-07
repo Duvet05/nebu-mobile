@@ -15,6 +15,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/services/esp32_wifi_config_service.dart';
 import '../../../data/services/wifi_service.dart';
 import '../../providers/api_provider.dart';
+import '../../widgets/setup_widgets.dart';
 
 class WifiSetupScreen extends ConsumerStatefulWidget {
   const WifiSetupScreen({super.key});
@@ -495,19 +496,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                child: Row(
-                  children: [
-                    _buildBackButton(theme.colorScheme),
-                    const Spacer(),
-                    _buildStepIndicator(2, 7),
-                    const Spacer(),
-                    const SizedBox(width: 44),
-                  ],
-                ),
-              ),
+              const SetupHeader(currentStep: 2, totalSteps: 7),
 
               // Content
               Expanded(
@@ -557,7 +546,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                         const SizedBox(height: 16),
 
                         // Connect button
-                        _buildPrimaryButton(
+                        SetupPrimaryButton(
                           text: 'setup.wifi.connect_button'.tr(),
                           isLoading: _isConnecting,
                           onPressed: _connectToWifi,
@@ -607,8 +596,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       Expanded(
         child: Text(
           'setup.wifi.hotspot_hint'.tr(),
-          style: TextStyle(
-            fontSize: 12,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
           ),
         ),
@@ -638,23 +626,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       ),
     ],
   );
-
-  Widget _buildBackButton(ColorScheme colorScheme) => GestureDetector(
-        onTap: () => context.pop(),
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: context.radius.tile,
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
 
   Widget _buildSsidInput(ThemeData theme) => TextFormField(
     controller: _ssidController,
@@ -719,7 +690,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     Widget? suffixIcon,
   }) => InputDecoration(
     hintText: hintText,
-    hintStyle: TextStyle(
+    hintStyle: theme.textTheme.bodyMedium?.copyWith(
       color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
     ),
     filled: true,
@@ -740,54 +711,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     suffixIcon: suffixIcon,
   );
 
-  Widget _buildPrimaryButton({
-    required String text,
-    required VoidCallback onPressed,
-    bool isLoading = false,
-  }) =>
-      GestureDetector(
-        onTap: isLoading ? null : onPressed,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                context.colors.primary100,
-                context.colors.primary,
-              ],
-            ),
-            borderRadius: context.radius.panel,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.colors.textOnFilled,
-                      ),
-                    ),
-                  )
-                : Text(
-                    text,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: context.colors.textOnFilled,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-          ),
-        ),
-      );
-
   void _cancelConnection() {
     _log('🛑 [WIFI_SCREEN] User cancelled WiFi connection');
     _timeoutTimer?.cancel();
@@ -807,23 +730,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     context.push(AppRoutes.toyNameSetup.path);
   }
 
-  Widget _buildStepIndicator(int current, int total) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(total, (index) {
-          final isActive = index < current;
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 20 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colors.primary
-                  : context.colors.primary.withValues(alpha: 0.2),
-              borderRadius: context.radius.checkbox,
-            ),
-          );
-        }),
-      );
 }
 
 class _QuickActionButton extends StatelessWidget {

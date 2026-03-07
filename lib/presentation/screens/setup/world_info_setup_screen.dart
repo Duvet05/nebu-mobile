@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
 import '../../providers/toy_provider.dart';
+import '../../widgets/setup_widgets.dart';
 
 class WorldInfoSetupScreen extends ConsumerWidget {
   const WorldInfoSetupScreen({super.key});
@@ -56,19 +57,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-              child: Row(
-                children: [
-                  _buildBackButton(context, colorScheme),
-                  const Spacer(),
-                  _buildStepIndicator(context, 7, 7),
-                  const Spacer(),
-                  const SizedBox(width: 44),
-                ],
-              ),
-            ),
+            const SetupHeader(currentStep: 7, totalSteps: 7),
 
             // Content
             Expanded(
@@ -144,8 +133,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
                     const Spacer(),
 
                     // Finish button
-                    _buildPrimaryButton(
-                      context,
+                    SetupPrimaryButton(
                       text: 'setup.world_info.start_using'.tr(),
                       onPressed: () => _finishSetup(context, ref),
                     ),
@@ -160,92 +148,6 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       ),
     );
   }
-
-  Widget _buildBackButton(BuildContext context, ColorScheme colorScheme) =>
-      GestureDetector(
-        onTap: () => context.pop(),
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: context.radius.tile,
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
-
-  Widget _buildStepIndicator(
-          BuildContext context, int current, int total) =>
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(total, (index) {
-          final isActive = index < current;
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 20 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colors.primary
-                  : context.colors.primary.withValues(alpha: 0.2),
-              borderRadius: context.radius.checkbox,
-            ),
-          );
-        }),
-      );
-
-  Widget _buildPrimaryButton(
-    BuildContext context, {
-    required String text,
-    required VoidCallback onPressed,
-  }) =>
-      GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                context.colors.primary100,
-                context.colors.primary,
-              ],
-            ),
-            borderRadius: context.radius.panel,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  text,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: context.colors.textOnFilled,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward,
-                  color: context.colors.textOnFilled,
-                  size: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
 
   Widget _buildFeatureSummary(
           BuildContext context, ThemeData theme, IconData icon, String text) =>
