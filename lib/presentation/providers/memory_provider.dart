@@ -10,13 +10,6 @@ final memoryServiceProvider = Provider<MemoryService>((ref) {
   return MemoryService(apiService: apiService, logger: logger);
 });
 
-/// Conversations for a specific session
-final sessionConversationsProvider =
-    FutureProvider.family<List<Conversation>, String>((ref, sessionId) async {
-  final service = ref.watch(memoryServiceProvider);
-  return service.getSessionConversations(sessionId);
-});
-
 /// Memories for a specific toy
 final toyMemoriesProvider =
     FutureProvider.family<List<MemoryEntry>, String>((ref, toyId) async {
@@ -29,13 +22,6 @@ final toyInsightsProvider =
     FutureProvider.family<List<ConversationInsight>, String>((ref, toyId) async {
   final service = ref.watch(memoryServiceProvider);
   return service.getToyInsights(toyId: toyId);
-});
-
-/// Session metrics
-final sessionMetricsProvider =
-    FutureProvider<Map<String, dynamic>?>((ref) async {
-  final service = ref.watch(memoryServiceProvider);
-  return service.getSessionMetrics();
 });
 
 /// Memory search

@@ -1,45 +1,23 @@
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logger/logger.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../data/services/api_service.dart';
 import '../../data/services/health_service.dart';
+import '../providers/api_provider.dart';
 
 /// Screen for testing backend connectivity
-class HealthCheckScreen extends StatefulWidget {
+class HealthCheckScreen extends ConsumerStatefulWidget {
   const HealthCheckScreen({super.key});
 
   @override
-  State<HealthCheckScreen> createState() => _HealthCheckScreenState();
+  ConsumerState<HealthCheckScreen> createState() => _HealthCheckScreenState();
 }
 
-class _HealthCheckScreenState extends State<HealthCheckScreen> {
-  late final HealthService _healthService;
+class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   HealthStatus? _healthStatus;
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize health service with dependencies
-    // Note: In a real app, these would be injected via dependency injection
-    final logger = Logger();
-    final apiService = ApiService(
-      dio: getDio(),
-      secureStorage: getSecureStorage(),
-      logger: logger,
-    );
-    _healthService = HealthService(apiService: apiService, logger: logger);
-  }
-
-  // Helper methods - replace with actual dependency injection
-  Dio getDio() => Dio();
-
-  FlutterSecureStorage getSecureStorage() => const FlutterSecureStorage();
 
   Future<void> _checkHealth() async {
     setState(() {
@@ -49,7 +27,8 @@ class _HealthCheckScreenState extends State<HealthCheckScreen> {
     });
 
     try {
-      final status = await _healthService.getDetailedHealthStatus();
+      final healthService = ref.read(healthServiceProvider);
+      final status = await healthService.getDetailedHealthStatus();
       setState(() {
         _healthStatus = status;
         _isLoading = false;
@@ -66,7 +45,6 @@ class _HealthCheckScreenState extends State<HealthCheckScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       title: Text('health_check.title'.tr()),
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
     ),
     body: Padding(
       padding: EdgeInsets.all(context.spacing.alertPadding),

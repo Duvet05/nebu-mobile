@@ -138,6 +138,19 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
+                      icon: Icons.monitor_heart_outlined,
+                      iconColor: context.colors.info,
+                      title: 'health_check.title'.tr(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: context.colors.grey400,
+                      ),
+                      onTap: () =>
+                          context.push(AppRoutes.healthCheck.path),
+                    ),
+
+                    _SettingsTile(
+                      theme: theme,
                       icon: Icons.info_outline,
                       iconColor: context.colors.warning,
                       title: 'profile.about'.tr(),

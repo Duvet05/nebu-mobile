@@ -202,24 +202,6 @@ class LiveKitService {
     return base64Encode(utf8.encode(jsonEncode(tokenData)));
   }
 
-  /// Obtener salas activas de LiveKit desde el backend
-  Future<List<Map<String, dynamic>>> getRooms() async {
-    try {
-      _logger.d('Fetching active LiveKit rooms');
-      final response = await _dio.get<dynamic>(
-        '${Config.apiBaseUrl}/livekit/rooms',
-      );
-
-      if (response.data is List) {
-        return (response.data as List).cast<Map<String, dynamic>>();
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error fetching rooms: ${e.message}');
-      return [];
-    }
-  }
-
   /// Mutear/desmutear un participante remoto en una sala
   Future<bool> muteParticipant({
     required String roomName,

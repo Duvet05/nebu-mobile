@@ -13,6 +13,7 @@ import '../../data/services/device_service.dart';
 import '../../data/services/device_token_service.dart';
 import '../../data/services/esp32_wifi_config_service.dart';
 import '../../data/services/firebase_push_service.dart';
+import '../../data/services/health_service.dart';
 import '../../data/services/iot_service.dart';
 import '../../data/services/livekit_service.dart';
 import '../../data/services/local_child_data_service.dart';
@@ -160,6 +161,12 @@ final localChildDataServiceProvider = FutureProvider<LocalChildDataService>((
 ) async {
   final prefs = await ref.watch(sharedPreferencesProvider.future);
   return LocalChildDataService(prefs);
+});
+
+final healthServiceProvider = Provider<HealthService>((ref) {
+  final apiService = ref.watch(apiServiceProvider);
+  final logger = ref.watch(loggerProvider);
+  return HealthService(apiService: apiService, logger: logger);
 });
 
 final firebasePushServiceProvider = Provider<FirebasePushService>((ref) {

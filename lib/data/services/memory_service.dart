@@ -12,61 +12,6 @@ class MemoryService {
   final ApiService _apiService;
   final Logger _logger;
 
-  // ─── Conversations ───
-
-  /// Get conversations for a specific voice session
-  Future<List<Conversation>> getSessionConversations(String sessionId) async {
-    try {
-      _logger.d('Fetching conversations for session: $sessionId');
-      final response = await _apiService.get<dynamic>(
-        '/voice/sessions/$sessionId/conversations',
-      );
-
-      if (response is List) {
-        return response
-            .cast<Map<String, dynamic>>()
-            .map(Conversation.fromJson)
-            .toList();
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error fetching conversations: ${e.message}');
-      return [];
-    }
-  }
-
-  /// Get all conversations for a toy (across sessions)
-  Future<List<Conversation>> getToyConversations({
-    required String toyId,
-    int page = 1,
-    int limit = 50,
-  }) async {
-    try {
-      _logger.d('Fetching conversations for toy: $toyId');
-      final response = await _apiService.get<dynamic>(
-        '/voice/sessions',
-        queryParameters: {'toyId': toyId, 'page': '$page', 'limit': '$limit'},
-      );
-
-      // Backend returns sessions, we need to aggregate conversations
-      if (response is List) {
-        final conversations = <Conversation>[];
-        for (final session in response.cast<Map<String, dynamic>>()) {
-          final sessionId = session['id'] as String?;
-          if (sessionId != null) {
-            final sessionConvos = await getSessionConversations(sessionId);
-            conversations.addAll(sessionConvos);
-          }
-        }
-        return conversations;
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error fetching toy conversations: ${e.message}');
-      return [];
-    }
-  }
-
   // ─── Memory (Vector Store) ───
 
   /// Search memory for relevant context
@@ -194,15 +139,4 @@ class MemoryService {
     }
   }
 
-  /// Get voice session metrics
-  Future<Map<String, dynamic>?> getSessionMetrics() async {
-    try {
-      _logger.d('Fetching session metrics');
-      return await _apiService
-          .get<Map<String, dynamic>>('/voice/sessions/metrics');
-    } on DioException catch (e) {
-      _logger.e('Error fetching metrics: ${e.message}');
-      return null;
-    }
-  }
 }

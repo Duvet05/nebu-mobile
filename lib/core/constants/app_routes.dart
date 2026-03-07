@@ -32,6 +32,7 @@ enum AppRoutes {
   toyMemory('/toy-memory'),
   personalities('/personalities'),
   playground('/playground'),
+  healthCheck('/health-check'),
   settings('/settings');
 
   const AppRoutes(this.path);

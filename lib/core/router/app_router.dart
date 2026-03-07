@@ -11,6 +11,7 @@ import '../../presentation/screens/all_devices_screen.dart';
 import '../../presentation/screens/child_profile_screen.dart';
 import '../../presentation/screens/device_management_screen.dart';
 import '../../presentation/screens/edit_profile_screen.dart';
+import '../../presentation/screens/health_check_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/iot_devices_screen.dart';
 import '../../presentation/screens/login_screen.dart';
@@ -258,6 +259,10 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.personalities.path,
       builder: (_, _) => const PersonalitiesScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.healthCheck.path,
+      builder: (_, _) => const HealthCheckScreen(),
     ),
     GoRoute(
       path: AppRoutes.playground.path,
