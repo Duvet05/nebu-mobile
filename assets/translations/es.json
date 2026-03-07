@@ -686,7 +686,9 @@
     "delete_permanently": "Eliminar Permanentemente",
     "confirm_deletion": "Confirmar Eliminación",
     "type_delete_to_confirm": "Escribe DELETE para confirmar:",
-    "incorrect_confirmation": "Texto incorrecto. Debes escribir DELETE exactamente"
+    "incorrect_confirmation": "Texto incorrecto. Debes escribir DELETE exactamente",
+    "enter_password": "Ingresa tu contraseña",
+    "password_required": "La contraseña es obligatoria"
   },
   "privacy_policy": {
     "title": "Política de Privacidad",

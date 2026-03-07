@@ -303,7 +303,8 @@
     "play": "Play",
     "sleep": "Sleep",
     "wake": "Wake",
-    "chat": "Chat"
+    "chat": "Chat",
+    "error_type": "Error"
   },
   "notifications": {
     "title": "Notifications",
@@ -689,7 +690,9 @@
     "delete_permanently": "Delete Permanently",
     "confirm_deletion": "Confirm Deletion",
     "type_delete_to_confirm": "Type DELETE to confirm:",
-    "incorrect_confirmation": "Incorrect text. You must type DELETE exactly"
+    "incorrect_confirmation": "Incorrect text. You must type DELETE exactly",
+    "enter_password": "Enter your password",
+    "password_required": "Password is required"
   },
   "privacy_policy": {
     "title": "Privacy Policy",
