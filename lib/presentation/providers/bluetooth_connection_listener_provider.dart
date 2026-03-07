@@ -42,9 +42,6 @@ final bluetoothConnectionListenerProvider = Provider<void>((ref) {
             name: device.platformName.isNotEmpty
                 ? device.platformName
                 : 'Unknown Device',
-            userId: '', // Se obtendrá en el tracker
-            model: 'BLE Device',
-            manufacturer: 'Unknown',
             status: ToyStatus.active,
             createdAt: DateTime.now(),
             updatedAt: DateTime.now(),
