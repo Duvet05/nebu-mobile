@@ -303,7 +303,8 @@
     "play": "Jugar",
     "sleep": "Dormir",
     "wake": "Despertar",
-    "chat": "Chat"
+    "chat": "Chat",
+    "error_type": "Error"
   },
   "notifications": {
     "title": "Notificaciones",
