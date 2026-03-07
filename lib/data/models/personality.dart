@@ -1,0 +1,37 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'personality.freezed.dart';
+part 'personality.g.dart';
+
+@freezed
+abstract class PersonalitySettings with _$PersonalitySettings {
+  const factory PersonalitySettings({
+    String? voice,
+    double? speed,
+    String? language,
+    String? style,
+  }) = _PersonalitySettings;
+
+  factory PersonalitySettings.fromJson(Map<String, dynamic> json) =>
+      _$PersonalitySettingsFromJson(json);
+}
+
+@freezed
+abstract class Personality with _$Personality {
+  const factory Personality({
+    required String id,
+    required String name,
+    required String description,
+    String? prompt,
+    String? greeting,
+    String? category,
+    PersonalitySettings? settings,
+    String? imageUrl,
+    @Default(true) bool isActive,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) = _Personality;
+
+  factory Personality.fromJson(Map<String, dynamic> json) =>
+      _$PersonalityFromJson(json);
+}
