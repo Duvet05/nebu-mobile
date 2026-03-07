@@ -192,6 +192,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
       ),
       child: personalitiesAsync.when(
         data: (personalities) => DropdownButtonFormField<String>(
+          key: ValueKey(_selectedPersonality?.id),
           initialValue: _selectedPersonality?.id,
           decoration: InputDecoration(
             labelText: 'playground.select_personality'.tr(),

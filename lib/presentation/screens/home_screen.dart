@@ -122,6 +122,18 @@ class HomeScreen extends ConsumerWidget {
                     color: context.colors.warning,
                     onTap: () => context.go(AppRoutes.activityLog.path),
                   ),
+                  _QuickActionCard(
+                    icon: Icons.psychology,
+                    title: 'home.personalities'.tr(),
+                    color: context.colors.primary,
+                    onTap: () => context.push(AppRoutes.personalities.path),
+                  ),
+                  _QuickActionCard(
+                    icon: Icons.smart_toy,
+                    title: 'home.playground'.tr(),
+                    color: context.colors.secondary,
+                    onTap: () => context.push(AppRoutes.playground.path),
+                  ),
                 ],
               ),
             ],

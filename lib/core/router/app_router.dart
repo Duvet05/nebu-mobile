@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../data/models/personality.dart';
 import '../../data/models/toy.dart';
 import '../../data/models/user.dart';
 import '../../presentation/providers/auth_provider.dart';
@@ -36,6 +37,8 @@ import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
+import '../../presentation/screens/personalities_screen.dart';
+import '../../presentation/screens/playground_screen.dart';
 import '../constants/app_routes.dart';
 
 /// Notifier that bridges Riverpod auth state changes to GoRouter's refreshListenable
@@ -237,6 +240,17 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.childProfile.path,
       builder: (_, _) => const ChildProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.personalities.path,
+      builder: (_, _) => const PersonalitiesScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.playground.path,
+      builder: (context, state) {
+        final personality = state.extra as Personality?;
+        return PlaygroundScreen(initialPersonality: personality);
+      },
     ),
 
     // Setup flow

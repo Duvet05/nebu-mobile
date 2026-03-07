@@ -244,7 +244,9 @@
     "toys_connected": "{0} juguetes conectados",
     "all_good": "¡Todo se ve genial!",
     "no_toys_hero": "Aún no hay juguetes",
-    "no_toys_hero_hint": "Conecta tu primer juguete Nebu para comenzar"
+    "no_toys_hero_hint": "Conecta tu primer juguete Nebu para comenzar",
+    "personalities": "Personalidades",
+    "playground": "Playground"
   },
   "profile": {
     "title": "Perfil",
@@ -628,6 +630,46 @@
     "yes": "Sí",
     "no": "No",
     "error_generic": "Algo salió mal. Intenta de nuevo."
+  },
+  "personalities": {
+    "title": "Personalidades",
+    "error_loading": "No se pudieron cargar las personalidades. Intenta de nuevo.",
+    "empty": "No se encontraron personalidades en esta categoria",
+    "select": "Seleccionar",
+    "try_playground": "Probar en Playground",
+    "settings": "Configuracion",
+    "voice": "Voz",
+    "speed": "Velocidad",
+    "language": "Idioma",
+    "style": "Estilo",
+    "no_toys": "Necesitas al menos un juguete para asignar una personalidad",
+    "select_toy": "Selecciona un Juguete",
+    "assigned_success": "{0} asignado a {1} exitosamente!",
+    "category_all": "Todos",
+    "category_educativo": "Educativo",
+    "category_entretenimiento": "Entretenimiento",
+    "category_companero": "Companero",
+    "category_creativo": "Creativo",
+    "category_aventura": "Aventura",
+    "category_bienestar": "Bienestar"
+  },
+  "playground": {
+    "title": "Playground",
+    "select_personality": "Selecciona una personalidad",
+    "select_first": "Selecciona una personalidad primero",
+    "message_hint": "Escribe un mensaje...",
+    "clear_chat": "Limpiar chat",
+    "local_mode_banner": "Modo local - Las respuestas son simuladas",
+    "empty_title": "Prueba una Personalidad",
+    "empty_message": "Selecciona una personalidad arriba y empieza a chatear para ver como responde!",
+    "default_greeting": "Hola! Soy {0}. Vamos a charlar!",
+    "response_educativo": "Esa es una gran pregunta sobre \"{0}\"! Dejame explicarte...",
+    "response_entretenimiento": "Oh, \"{0}\"! Eso suena divertido! Dejame pensar algo entretenido...",
+    "response_companero": "Te escucho sobre \"{0}\". Estoy aqui para ti, hablemos de eso!",
+    "response_creativo": "Wow, \"{0}\" me da muchas ideas creativas! Y si...",
+    "response_aventura": "Una aventura sobre \"{0}\"? Vamos a explorar juntos!",
+    "response_bienestar": "Tomemos un momento para reflexionar sobre \"{0}\". Respira profundo...",
+    "response_default": "Gracias por compartir! Soy {0} y me encanta charlar contigo!"
   },
   "privacy": {
     "title": "Privacidad y Seguridad",

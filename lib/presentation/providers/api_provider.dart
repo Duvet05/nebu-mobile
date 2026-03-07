@@ -20,6 +20,7 @@ import '../../data/services/order_service.dart';
 import '../../data/services/toy_service.dart';
 import '../../data/services/user_service.dart';
 import '../../data/services/user_setup_service.dart';
+import '../../data/services/firebase_push_service.dart';
 import '../../data/services/voice_session_service.dart';
 
 // Low-level dependency providers
@@ -159,6 +160,12 @@ final localChildDataServiceProvider = FutureProvider<LocalChildDataService>((
 ) async {
   final prefs = await ref.watch(sharedPreferencesProvider.future);
   return LocalChildDataService(prefs);
+});
+
+final firebasePushServiceProvider = Provider<FirebasePushService>((ref) {
+  final logger = ref.watch(loggerProvider);
+  final apiService = ref.watch(apiServiceProvider);
+  return FirebasePushService(logger: logger, apiService: apiService);
 });
 
 final packageInfoProvider = FutureProvider<PackageInfo>(

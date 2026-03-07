@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/personality.dart';
+import '../../data/models/toy.dart';
 import '../providers/personality_provider.dart';
 import '../providers/toy_provider.dart';
 
@@ -373,7 +374,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     Personality personality,
   ) async {
     final toysAsync = ref.read(toyProvider);
-    final toys = toysAsync.hasValue ? toysAsync.value! : [];
+    final toys = toysAsync.hasValue ? toysAsync.value! : <Toy>[];
 
     if (toys.isEmpty) {
       Navigator.pop(ctx);
@@ -436,7 +437,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     );
 
     if (selectedToy == null) return;
-    Navigator.pop(ctx);
+    if (ctx.mounted) Navigator.pop(ctx);
 
     try {
       await ref.read(personalityServiceProvider).assignPersonalityToToy(
