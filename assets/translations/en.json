@@ -552,7 +552,16 @@
     "retry": "Retry",
     "mic_permission_required": "We need microphone access so you can talk to your toy!",
     "no_iot_device": "This toy doesn't have a connected device yet",
-    "toy_not_connected": "Your toy isn't online right now. Make sure it's turned on and connected to Wi-Fi!"
+    "toy_not_connected": "Your toy isn't online right now. Make sure it's turned on and connected to Wi-Fi!",
+    "mute_toy": "Mute Toy",
+    "unmute_toy": "Unmute Toy",
+    "active_rooms": "Active Rooms",
+    "no_active_rooms": "No active voice rooms",
+    "room_name": "Room: {0}",
+    "participants": "{0} participants",
+    "mute_success": "Participant muted",
+    "unmute_success": "Participant unmuted",
+    "mute_error": "Could not change mute status"
   },
   "auth": {
     "welcome_back": "Welcome back",

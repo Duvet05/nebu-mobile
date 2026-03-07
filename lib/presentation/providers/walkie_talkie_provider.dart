@@ -17,6 +17,7 @@ class WalkieTalkieState {
     this.phase = WalkieTalkiePhase.idle,
     this.isTalking = false,
     this.isRemoteConnected = false,
+    this.isRemoteMuted = false,
     this.remoteParticipantName,
     this.sessionId,
     this.roomName,
@@ -26,6 +27,7 @@ class WalkieTalkieState {
   final WalkieTalkiePhase phase;
   final bool isTalking;
   final bool isRemoteConnected;
+  final bool isRemoteMuted;
   final String? remoteParticipantName;
   final String? sessionId;
   final String? roomName;
@@ -35,6 +37,7 @@ class WalkieTalkieState {
     WalkieTalkiePhase? phase,
     bool? isTalking,
     bool? isRemoteConnected,
+    bool? isRemoteMuted,
     String? remoteParticipantName,
     String? sessionId,
     String? roomName,
@@ -43,6 +46,7 @@ class WalkieTalkieState {
     phase: phase ?? this.phase,
     isTalking: isTalking ?? this.isTalking,
     isRemoteConnected: isRemoteConnected ?? this.isRemoteConnected,
+    isRemoteMuted: isRemoteMuted ?? this.isRemoteMuted,
     remoteParticipantName: remoteParticipantName ?? this.remoteParticipantName,
     sessionId: sessionId ?? this.sessionId,
     roomName: roomName ?? this.roomName,
@@ -175,6 +179,25 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   Future<void> stopTalking() async {
     state = state.copyWith(isTalking: false);
     await _liveKitService.setMicrophoneEnabled(enabled: false);
+  }
+
+  Future<void> toggleRemoteMute() async {
+    if (state.phase != WalkieTalkiePhase.connected ||
+        state.roomName == null ||
+        state.remoteParticipantName == null) {
+      return;
+    }
+
+    final newMuted = !state.isRemoteMuted;
+    final success = await _liveKitService.muteParticipant(
+      roomName: state.roomName!,
+      identity: state.remoteParticipantName!,
+      mute: newMuted,
+    );
+
+    if (success) {
+      state = state.copyWith(isRemoteMuted: newMuted);
+    }
   }
 
   Future<void> endSession() async {

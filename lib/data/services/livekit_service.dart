@@ -202,6 +202,44 @@ class LiveKitService {
     return base64Encode(utf8.encode(jsonEncode(tokenData)));
   }
 
+  /// Obtener salas activas de LiveKit desde el backend
+  Future<List<Map<String, dynamic>>> getRooms() async {
+    try {
+      _logger.d('Fetching active LiveKit rooms');
+      final response = await _dio.get<dynamic>(
+        '${Config.apiBaseUrl}/livekit/rooms',
+      );
+
+      if (response.data is List) {
+        return (response.data as List).cast<Map<String, dynamic>>();
+      }
+      return [];
+    } on DioException catch (e) {
+      _logger.e('Error fetching rooms: ${e.message}');
+      return [];
+    }
+  }
+
+  /// Mutear/desmutear un participante remoto en una sala
+  Future<bool> muteParticipant({
+    required String roomName,
+    required String identity,
+    bool mute = true,
+  }) async {
+    try {
+      _logger.d('${mute ? "Muting" : "Unmuting"} participant $identity in room $roomName');
+      await _dio.post<dynamic>(
+        '${Config.apiBaseUrl}/livekit/rooms/$roomName/participants/$identity/mute',
+        data: {'mute': mute},
+      );
+      _logger.i('Participant $identity ${mute ? "muted" : "unmuted"} successfully');
+      return true;
+    } on DioException catch (e) {
+      _logger.e('Error muting participant: ${e.message}');
+      return false;
+    }
+  }
+
   /// Enviar datos de dispositivo IoT
   Future<void> sendDeviceData(IoTDeviceData deviceData) async {
     if (_room == null || _status != LiveKitConnectionStatus.connected) {

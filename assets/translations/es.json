@@ -545,7 +545,16 @@
     "retry": "Reintentar",
     "mic_permission_required": "Necesitamos acceso al micrófono para que puedas hablar con tu juguete!",
     "no_iot_device": "Este juguete aún no tiene un dispositivo conectado",
-    "toy_not_connected": "Tu juguete no está conectado. ¡Asegúrate de que esté encendido y conectado al Wi-Fi!"
+    "toy_not_connected": "Tu juguete no está conectado. ¡Asegúrate de que esté encendido y conectado al Wi-Fi!",
+    "mute_toy": "Silenciar Juguete",
+    "unmute_toy": "Activar Sonido",
+    "active_rooms": "Salas Activas",
+    "no_active_rooms": "No hay salas de voz activas",
+    "room_name": "Sala: {0}",
+    "participants": "{0} participantes",
+    "mute_success": "Participante silenciado",
+    "unmute_success": "Participante activado",
+    "mute_error": "No se pudo cambiar el estado de silencio"
   },
   "auth": {
     "welcome_back": "Bienvenido de nuevo",

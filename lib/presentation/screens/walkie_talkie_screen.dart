@@ -100,7 +100,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                   const CircularProgressIndicator()
                 else if (state.phase == WalkieTalkiePhase.error)
                   _buildErrorState(state)
-                else if (state.phase == WalkieTalkiePhase.connected)
+                else if (state.phase == WalkieTalkiePhase.connected) ...[
                   PushToTalkButton(
                     onTalkStart: () =>
                         ref.read(walkieTalkieProvider.notifier).startTalking(),
@@ -109,6 +109,11 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                     isTalking: state.isTalking,
                     isEnabled: state.phase == WalkieTalkiePhase.connected,
                   ),
+                  if (state.isRemoteConnected) ...[
+                    SizedBox(height: context.spacing.panelPadding),
+                    _buildRemoteMuteButton(state),
+                  ],
+                ],
 
                 const Spacer(),
 
@@ -141,6 +146,34 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
       ),
     );
   }
+
+  Widget _buildRemoteMuteButton(WalkieTalkieState state) => OutlinedButton.icon(
+        onPressed: () =>
+            ref.read(walkieTalkieProvider.notifier).toggleRemoteMute(),
+        icon: Icon(
+          state.isRemoteMuted ? Icons.volume_off : Icons.volume_up,
+          color: state.isRemoteMuted
+              ? context.colors.error
+              : context.colors.success,
+        ),
+        label: Text(
+          state.isRemoteMuted
+              ? 'walkie_talkie.unmute_toy'.tr()
+              : 'walkie_talkie.mute_toy'.tr(),
+          style: TextStyle(
+            color: state.isRemoteMuted
+                ? context.colors.error
+                : context.colors.success,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: state.isRemoteMuted
+                ? context.colors.error
+                : context.colors.success,
+          ),
+        ),
+      );
 
   Widget _buildErrorState(WalkieTalkieState state) {
     final errorKey = state.error ?? 'connection_failed';
