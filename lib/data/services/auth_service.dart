@@ -264,6 +264,17 @@ class AuthService {
   }
 
   Future<void> logout() async {
+    try {
+      final token = await _secureStorage.read(key: StorageKeys.accessToken);
+      if (token != null && token.isNotEmpty) {
+        await _dio.post<void>(
+          '/auth/logout',
+          options: Options(headers: {'Authorization': 'Bearer $token'}),
+        );
+      }
+    } on Exception catch (e) {
+      _logger.w('Backend logout failed (clearing locally anyway): $e');
+    }
     await _secureStorage.delete(key: StorageKeys.accessToken);
     await _secureStorage.delete(key: StorageKeys.refreshToken);
     await _prefs.remove(StorageKeys.user);
