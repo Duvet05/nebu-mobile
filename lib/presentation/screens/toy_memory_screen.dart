@@ -197,7 +197,7 @@ class _MemoryCard extends ConsumerWidget {
                           ),
                           decoration: BoxDecoration(
                             color: catColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: context.radius.tile,
                           ),
                           child: Text(
                             memory.category,
@@ -450,7 +450,7 @@ class _InsightCard extends StatelessWidget {
                         context.colors.primary.withValues(alpha: 0.1),
                     color: _emotionColor(context, e.key),
                     minHeight: 6,
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: context.radius.checkbox,
                   ),
                 ),
               ],

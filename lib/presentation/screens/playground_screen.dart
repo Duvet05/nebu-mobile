@@ -133,7 +133,10 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
           // Local mode banner
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.alertPadding,
+              vertical: context.spacing.buttonBottomMargin,
+            ),
             color: context.colors.warning.withValues(alpha: 0.1),
             child: Row(
               children: [
@@ -158,7 +161,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
                 ? _buildEmptyState(theme)
                 : ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(context.spacing.alertPadding),
                     itemCount: _messages.length + (_isSending ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index >= _messages.length) {
@@ -183,7 +186,10 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
     final personalitiesAsync = ref.watch(personalitiesProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.alertPadding,
+        vertical: context.spacing.buttonBottomMargin,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: Border(
@@ -219,7 +225,9 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
         loading: () => const LinearProgressIndicator(),
         error: (_, _) => Text(
           'personalities.error_loading'.tr(),
-          style: TextStyle(color: theme.colorScheme.error),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: context.colors.error,
+          ),
         ),
       ),
     );
@@ -273,10 +281,10 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
               ? context.colors.primary
               : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isUser ? 16 : 4),
-            bottomRight: Radius.circular(isUser ? 4 : 16),
+            topLeft: const Radius.circular(AppRadius.panel),
+            topRight: const Radius.circular(AppRadius.panel),
+            bottomLeft: Radius.circular(isUser ? AppRadius.panel : AppRadius.checkbox),
+            bottomRight: Radius.circular(isUser ? AppRadius.checkbox : AppRadius.panel),
           ),
         ),
         child: Column(
@@ -297,7 +305,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
               message.text,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: isUser
-                    ? Colors.white
+                    ? context.colors.textOnFilled
                     : theme.colorScheme.onSurface,
               ),
             ),
@@ -315,10 +323,10 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-              bottomRight: Radius.circular(16),
-              bottomLeft: Radius.circular(4),
+              topLeft: Radius.circular(AppRadius.panel),
+              topRight: Radius.circular(AppRadius.panel),
+              bottomRight: Radius.circular(AppRadius.panel),
+              bottomLeft: Radius.circular(AppRadius.checkbox),
             ),
           ),
           child: Row(
@@ -355,7 +363,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
                         ? 'playground.message_hint'.tr()
                         : 'playground.select_first'.tr(),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: context.radius.bottomSheet,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,

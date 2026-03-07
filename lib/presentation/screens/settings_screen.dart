@@ -256,18 +256,29 @@ void _showHelpDialog(BuildContext context) {
   );
 }
 
-Widget _buildHelpOption(IconData icon, String title, String subtitle) => Row(
-      children: [
-        Icon(icon, size: 20),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+Widget _buildHelpOption(IconData icon, String title, String subtitle) =>
+    Builder(
+      builder: (context) {
+        final theme = Theme.of(context);
+        return Row(
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text(subtitle, style: const TextStyle(fontSize: 12)),
+            Icon(icon, size: 20),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(subtitle, style: theme.textTheme.bodySmall),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
 
 void _showAboutAppDialog(BuildContext context, String appVersion) {

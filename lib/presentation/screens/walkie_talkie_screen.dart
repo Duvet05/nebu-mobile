@@ -186,7 +186,9 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
         SizedBox(height: context.spacing.paragraphBottomMarginSm),
         Text(
           translationKey.tr(),
-          style: TextStyle(color: context.colors.error, fontSize: 16),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: context.colors.error,
+              ),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),

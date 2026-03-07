@@ -159,8 +159,8 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: context.radius.bottomSheetTop,
       ),
       builder: (ctx) => DraggableScrollableSheet(
         initialChildSize: 0.7,
@@ -181,7 +181,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: context.radius.checkbox,
                   ),
                 ),
               ),
@@ -218,7 +218,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             ),
                             decoration: BoxDecoration(
                               color: catColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: context.radius.tile,
                             ),
                             child: Text(
                               'personalities.category_${personality.category}'.tr(),
@@ -251,7 +251,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: catColor.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: context.radius.tile,
                     border: Border.all(color: catColor.withValues(alpha: 0.2)),
                   ),
                   child: Row(
@@ -548,7 +548,7 @@ class _PersonalityCard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: catColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: context.radius.tile,
                 ),
                 child: Text(
                   'personalities.category_${personality.category}'.tr(),
