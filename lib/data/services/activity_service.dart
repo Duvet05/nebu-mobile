@@ -71,7 +71,7 @@ class ActivityService {
           'type': type.name,
           'description': description,
           if (metadata != null) 'metadata': metadata,
-          if (timestamp != null) 'timestamp': timestamp.toIso8601String(),
+          'timestamp': (timestamp ?? DateTime.now()).toIso8601String(),
         },
       );
 

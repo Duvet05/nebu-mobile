@@ -149,16 +149,16 @@ class ToyService {
 
   /// Actualizar el estado de conexión del juguete
   Future<Toy> updateToyConnectionStatus({
-    required String macAddress,
+    required String deviceId,
     required ToyStatus status,
     String? batteryLevel,
     String? signalStrength,
   }) async {
     try {
-      _logger.d('Updating toy connection status: $macAddress');
+      _logger.d('Updating toy connection status: $deviceId');
 
       final response = await _apiService.patch<Map<String, dynamic>>(
-        '/toys/connection/$macAddress',
+        '/toys/connection/$deviceId',
         data: {
           'status': status.name,
           if (batteryLevel != null) 'batteryLevel': batteryLevel,

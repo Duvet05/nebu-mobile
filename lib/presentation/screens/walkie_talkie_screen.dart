@@ -156,17 +156,17 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
           style: TextStyle(color: context.colors.error, fontSize: 16),
           textAlign: TextAlign.center,
         ),
-      SizedBox(height: context.spacing.sectionTitleBottomMargin),
-      ElevatedButton.icon(
-        onPressed: () =>
-            ref.read(walkieTalkieProvider.notifier).startSession(widget.toy),
-        icon: const Icon(Icons.refresh),
-        label: Text('walkie_talkie.retry'.tr()),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: context.colors.primary,
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        ElevatedButton.icon(
+          onPressed: () =>
+              ref.read(walkieTalkieProvider.notifier).startSession(widget.toy),
+          icon: const Icon(Icons.refresh),
+          label: Text('walkie_talkie.retry'.tr()),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: context.colors.primary,
+          ),
         ),
-      ),
-    ],
-  );
+      ],
+    );
   }
 }

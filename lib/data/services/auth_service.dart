@@ -291,7 +291,7 @@ class AuthService {
     try {
       await _dio.post<void>(
         '/auth/reset-password',
-        data: {'token': token, 'password': newPassword},
+        data: {'token': token, 'newPassword': newPassword},
       );
       return true;
     } on Exception {

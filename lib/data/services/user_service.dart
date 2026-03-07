@@ -143,13 +143,16 @@ class UserService {
 
   /// Eliminar cuenta propia (hard delete)
   /// Elimina permanentemente la cuenta y todos los datos asociados
-  Future<String> deleteOwnAccount({String? reason}) async {
+  Future<String> deleteOwnAccount({required String password, String? reason}) async {
     try {
       _logger.d('Deleting own account');
 
       final response = await _apiService.delete<Map<String, dynamic>>(
         '/users/me',
-        data: reason != null ? {'reason': reason} : null,
+        data: {
+          'password': password,
+          if (reason != null) 'reason': reason,
+        },
       );
 
       _logger.d('Account deleted successfully');
@@ -165,13 +168,13 @@ class UserService {
 
   /// Eliminar datos personales (anonymize)
   /// Anonimiza los datos del usuario pero mantiene la cuenta activa
-  Future<String> deleteOwnData({String? reason}) async {
+  Future<String> deleteOwnData({required String password}) async {
     try {
       _logger.d('Deleting own data');
 
       final response = await _apiService.delete<Map<String, dynamic>>(
         '/users/me/data',
-        data: reason != null ? {'reason': reason} : null,
+        data: {'password': password},
       );
 
       _logger.d('Personal data deleted successfully');

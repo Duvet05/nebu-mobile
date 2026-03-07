@@ -101,14 +101,14 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
   /// Update toy connection status
   Future<void> updateToyConnectionStatus({
-    required String macAddress,
+    required String deviceId,
     required ToyStatus status,
     String? batteryLevel,
     String? signalStrength,
   }) async {
     try {
       final updatedToy = await _toyService.updateToyConnectionStatus(
-        macAddress: macAddress,
+        deviceId: deviceId,
         status: status,
         batteryLevel: batteryLevel,
         signalStrength: signalStrength,

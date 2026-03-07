@@ -39,7 +39,7 @@ abstract final class Config {
   /// URL del API - Valores por defecto seguros para producción y desarrollo
   static String get apiBaseUrl => isProduction
       ? 'https://api.flow-telligence.com/api/v1' // URL de producción
-      : 'http://localhost:3000'; // URL de desarrollo local
+      : 'http://localhost:3001/api/v1'; // URL de desarrollo local
 
   static String get apiKey => '';
   static String get wsUrl => '';
@@ -47,7 +47,7 @@ abstract final class Config {
   /// URL del WebSocket en producción
   static String get wsBaseUrl => isProduction
         ? 'wss://api.flow-telligence.com/api/v1'
-        : 'ws://localhost:3000';
+        : 'ws://localhost:3001/api/v1';
 
   // ============================================
   // LiveKit

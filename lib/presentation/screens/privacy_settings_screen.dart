@@ -377,9 +377,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              final confirmed = await _confirmDeleteAccount();
-              if ((confirmed ?? false) && mounted) {
-                await _performAccountDeletion();
+              final password = await _confirmDeleteAccount();
+              if (password != null && mounted) {
+                await _performAccountDeletion(password);
               }
             },
             style: ElevatedButton.styleFrom(
@@ -393,10 +393,10 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     ));
   }
 
-  Future<void> _performAccountDeletion() async {
+  Future<void> _performAccountDeletion(String password) async {
     try {
       final userService = ref.read(userServiceProvider);
-      await userService.deleteOwnAccount();
+      await userService.deleteOwnAccount(password: password);
       await ref.read(authProvider.notifier).logout();
       if (!mounted) {
         return;
@@ -420,9 +420,10 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     }
   }
 
-  Future<bool?> _confirmDeleteAccount() {
-    final controller = TextEditingController();
-    return showDialog<bool>(
+  Future<String?> _confirmDeleteAccount() {
+    final confirmController = TextEditingController();
+    final passwordController = TextEditingController();
+    return showDialog<String?>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('privacy.confirm_deletion'.tr()),
@@ -432,31 +433,49 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             Text('privacy.type_delete_to_confirm'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
             TextField(
-              controller: controller,
+              controller: confirmController,
               decoration: const InputDecoration(
                 hintText: 'DELETE',
                 border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: context.spacing.sectionTitleBottomMargin),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'privacy.enter_password'.tr(),
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () {
-              if (controller.text.toUpperCase() == 'DELETE') {
-                Navigator.pop(context, true);
-              } else {
+              if (confirmController.text.toUpperCase() != 'DELETE') {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('privacy.incorrect_confirmation'.tr()),
                     backgroundColor: context.colors.error,
                   ),
                 );
+                return;
               }
+              if (passwordController.text.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('privacy.password_required'.tr()),
+                    backgroundColor: context.colors.error,
+                  ),
+                );
+                return;
+              }
+              Navigator.pop(context, passwordController.text);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: context.colors.error,

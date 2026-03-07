@@ -35,7 +35,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   void _log(String message) {
     if (kDebugMode) {
-      _log(message);
+      debugPrint(message);
     }
   }
 
@@ -320,6 +320,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     }
 
     final messenger = ScaffoldMessenger.of(context);
+    final colors = context.colors;
 
     _log('📡 [WIFI_SCREEN] Starting WiFi connection process');
     _log('📡 [WIFI_SCREEN] SSID: "${_ssidController.text.trim()}"');
@@ -350,7 +351,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text('setup.wifi.credentials_sent'.tr()),
-            backgroundColor: context.colors.success,
+            backgroundColor: colors.success,
           ),
         );
 
@@ -383,7 +384,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text('setup.wifi.error_ble_disconnected'.tr()),
-            backgroundColor: context.colors.error,
+            backgroundColor: colors.error,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -393,7 +394,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text('setup.wifi.error_ble_timeout'.tr()),
-            backgroundColor: context.colors.warning,
+            backgroundColor: colors.warning,
             duration: const Duration(seconds: 5),
           ),
         );
@@ -402,7 +403,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         messenger.showSnackBar(
           SnackBar(
             content: Text('setup.wifi.error_send_credentials'.tr()),
-            backgroundColor: context.colors.error,
+            backgroundColor: colors.error,
           ),
         );
       }
