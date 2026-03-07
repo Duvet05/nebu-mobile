@@ -29,6 +29,8 @@ enum AppRoutes {
   worldInfoSetup('/setup/world-info'),
   childProfile('/child-profile'),
   walkieTalkie('/walkie-talkie'),
+  personalities('/personalities'),
+  playground('/playground'),
   settings('/settings');
 
   const AppRoutes(this.path);
