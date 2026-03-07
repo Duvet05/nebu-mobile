@@ -36,8 +36,6 @@ class _ToyMemoryScreenState extends ConsumerState<ToyMemoryScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('memory.title'.tr()),
@@ -494,7 +492,8 @@ class _SearchTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final searchResults = ref.watch(memorySearchProvider);
+    final AsyncValue<List<MemoryEntry>> searchResults =
+        ref.watch(memorySearchProvider);
 
     return Column(
       children: [
@@ -529,7 +528,7 @@ class _SearchTab extends ConsumerWidget {
 
         Expanded(
           child: searchResults.when(
-            data: (results) {
+            data: (List<MemoryEntry> results) {
               if (results.isEmpty && searchController.text.isEmpty) {
                 return _buildEmptyState(
                   context,
@@ -556,8 +555,10 @@ class _SearchTab extends ConsumerWidget {
                   horizontal: context.spacing.alertPadding,
                 ),
                 itemCount: results.length,
-                itemBuilder: (context, index) =>
-                    _MemoryCard(memory: results[index]),
+                itemBuilder: (context, index) {
+                  final MemoryEntry memory = results[index];
+                  return _MemoryCard(memory: memory);
+                },
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),

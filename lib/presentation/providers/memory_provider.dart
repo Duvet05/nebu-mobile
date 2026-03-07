@@ -32,21 +32,22 @@ final toyInsightsProvider =
 });
 
 /// Session metrics
-final sessionMetricsProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
+final sessionMetricsProvider =
+    FutureProvider<Map<String, dynamic>?>((ref) async {
   final service = ref.watch(memoryServiceProvider);
   return service.getSessionMetrics();
 });
 
-/// Memory search state
-class MemorySearchNotifier extends StateNotifier<AsyncValue<List<MemoryEntry>>> {
-  MemorySearchNotifier(this._service) : super(const AsyncValue.data([]));
-
-  final MemoryService _service;
+/// Memory search
+class MemorySearchNotifier extends Notifier<AsyncValue<List<MemoryEntry>>> {
+  @override
+  AsyncValue<List<MemoryEntry>> build() => const AsyncValue.data([]);
 
   Future<void> search({required String query, String? toyId}) async {
-    state = const AsyncValue.loading();
+    state = const AsyncValue<List<MemoryEntry>>.loading();
+    final service = ref.read(memoryServiceProvider);
     state = await AsyncValue.guard(
-      () => _service.searchMemory(query: query, toyId: toyId),
+      () => service.searchMemory(query: query, toyId: toyId),
     );
   }
 
@@ -56,6 +57,6 @@ class MemorySearchNotifier extends StateNotifier<AsyncValue<List<MemoryEntry>>> 
 }
 
 final memorySearchProvider =
-    StateNotifierProvider<MemorySearchNotifier, AsyncValue<List<MemoryEntry>>>(
-  (ref) => MemorySearchNotifier(ref.watch(memoryServiceProvider)),
+    NotifierProvider<MemorySearchNotifier, AsyncValue<List<MemoryEntry>>>(
+  MemorySearchNotifier.new,
 );
