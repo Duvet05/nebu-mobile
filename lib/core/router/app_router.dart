@@ -18,6 +18,8 @@ import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
 import '../../presentation/screens/notifications_screen.dart';
 import '../../presentation/screens/orders_screen.dart';
+import '../../presentation/screens/personalities_screen.dart';
+import '../../presentation/screens/playground_screen.dart';
 import '../../presentation/screens/privacy_policy_screen.dart';
 import '../../presentation/screens/privacy_settings_screen.dart';
 import '../../presentation/screens/profile_screen.dart';
@@ -37,8 +39,6 @@ import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
-import '../../presentation/screens/personalities_screen.dart';
-import '../../presentation/screens/playground_screen.dart';
 import '../constants/app_routes.dart';
 
 /// Notifier that bridges Riverpod auth state changes to GoRouter's refreshListenable

@@ -12,6 +12,7 @@ import '../../data/services/bluetooth_service.dart';
 import '../../data/services/device_service.dart';
 import '../../data/services/device_token_service.dart';
 import '../../data/services/esp32_wifi_config_service.dart';
+import '../../data/services/firebase_push_service.dart';
 import '../../data/services/iot_service.dart';
 import '../../data/services/livekit_service.dart';
 import '../../data/services/local_child_data_service.dart';
@@ -20,7 +21,6 @@ import '../../data/services/order_service.dart';
 import '../../data/services/toy_service.dart';
 import '../../data/services/user_service.dart';
 import '../../data/services/user_setup_service.dart';
-import '../../data/services/firebase_push_service.dart';
 import '../../data/services/voice_session_service.dart';
 
 // Low-level dependency providers
