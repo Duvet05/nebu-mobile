@@ -392,7 +392,8 @@
     "pending": "Pending",
     "pending_hint": "This toy needs device connection to sync",
     "talk_to_toy": "Talk to Toy",
-    "configure_toy": "Configure"
+    "configure_toy": "Configure",
+    "memory": "Memory"
   },
   "device_management": {
     "title": "My Devices",
@@ -646,6 +647,29 @@
     "yes": "Yes",
     "no": "No",
     "error_generic": "Something went wrong. Please try again."
+  },
+  "memory": {
+    "title": "Toy Memory",
+    "tab_memories": "Memories",
+    "tab_insights": "Insights",
+    "tab_search": "Search",
+    "empty_memories_title": "No Memories Yet",
+    "empty_memories_message": "As your child chats with the toy, it will remember important things here!",
+    "empty_insights_title": "No Insights Yet",
+    "empty_insights_message": "Conversation insights will appear after a few sessions.",
+    "error_loading": "Could not load data. Please try again.",
+    "search_hint": "Search memories... (e.g. \"favorite color\")",
+    "search_empty_title": "Search Memories",
+    "search_empty_message": "Search what your toy remembers about your child",
+    "no_results": "No memories found",
+    "search_error": "Error searching. Please try again.",
+    "delete_memory_title": "Delete Memory",
+    "delete_memory_confirm": "Are you sure you want to delete this memory? The toy will forget this information.",
+    "minutes_ago": "{0}m ago",
+    "hours_ago": "{0}h ago",
+    "days_ago": "{0}d ago",
+    "messages_count": "{0} messages",
+    "emotions": "Emotions"
   },
   "personalities": {
     "title": "Personalities",

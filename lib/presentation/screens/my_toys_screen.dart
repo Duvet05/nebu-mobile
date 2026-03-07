@@ -641,6 +641,18 @@ class _ToyCard extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _QuickActionButton(
+                          icon: Icons.psychology,
+                          label: 'toys.memory'.tr(),
+                          color: context.colors.warning,
+                          onTap: () => context.push(
+                            AppRoutes.toyMemory.path,
+                            extra: toy,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _QuickActionButton(
                           icon: Icons.settings,
                           label: 'toys.configure_toy'.tr(),
                           color: context.colors.secondary,

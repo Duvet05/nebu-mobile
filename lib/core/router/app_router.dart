@@ -36,6 +36,7 @@ import '../../presentation/screens/setup/world_info_setup_screen.dart';
 import '../../presentation/screens/signup_screen.dart';
 import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/terms_of_service_screen.dart';
+import '../../presentation/screens/toy_memory_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
@@ -222,6 +223,19 @@ class AppRouter {
           );
         }
         return ToySettingsScreen(toy: toy);
+      },
+    ),
+    GoRoute(
+      path: AppRoutes.toyMemory.path,
+      builder: (context, state) {
+        final toy = state.extra as Toy?;
+        if (toy == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Error')),
+            body: const Center(child: Text('Toy data is missing or invalid.')),
+          );
+        }
+        return ToyMemoryScreen(toy: toy);
       },
     ),
     GoRoute(

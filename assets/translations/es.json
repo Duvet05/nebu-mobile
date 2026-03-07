@@ -392,7 +392,8 @@
     "pending": "Pendiente",
     "pending_hint": "Este juguete necesita conexión al dispositivo para sincronizar",
     "talk_to_toy": "Hablar con Juguete",
-    "configure_toy": "Configurar"
+    "configure_toy": "Configurar",
+    "memory": "Memoria"
   },
   "device_management": {
     "title": "Mis Dispositivos",
@@ -639,6 +640,29 @@
     "yes": "Sí",
     "no": "No",
     "error_generic": "Algo salió mal. Intenta de nuevo."
+  },
+  "memory": {
+    "title": "Memoria del Juguete",
+    "tab_memories": "Recuerdos",
+    "tab_insights": "Insights",
+    "tab_search": "Buscar",
+    "empty_memories_title": "Sin Recuerdos Aun",
+    "empty_memories_message": "A medida que tu hijo chatee con el juguete, recordara cosas importantes aqui!",
+    "empty_insights_title": "Sin Insights Aun",
+    "empty_insights_message": "Los insights de conversacion apareceran despues de algunas sesiones.",
+    "error_loading": "No se pudieron cargar los datos. Intenta de nuevo.",
+    "search_hint": "Buscar recuerdos... (ej. \"color favorito\")",
+    "search_empty_title": "Buscar Recuerdos",
+    "search_empty_message": "Busca lo que tu juguete recuerda sobre tu hijo",
+    "no_results": "No se encontraron recuerdos",
+    "search_error": "Error al buscar. Intenta de nuevo.",
+    "delete_memory_title": "Eliminar Recuerdo",
+    "delete_memory_confirm": "Estas seguro de que quieres eliminar este recuerdo? El juguete olvidara esta informacion.",
+    "minutes_ago": "Hace {0}m",
+    "hours_ago": "Hace {0}h",
+    "days_ago": "Hace {0}d",
+    "messages_count": "{0} mensajes",
+    "emotions": "Emociones"
   },
   "personalities": {
     "title": "Personalidades",

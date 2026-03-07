@@ -29,6 +29,7 @@ enum AppRoutes {
   worldInfoSetup('/setup/world-info'),
   childProfile('/child-profile'),
   walkieTalkie('/walkie-talkie'),
+  toyMemory('/toy-memory'),
   personalities('/personalities'),
   playground('/playground'),
   settings('/settings');
