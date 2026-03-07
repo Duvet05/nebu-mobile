@@ -35,8 +35,7 @@ class _ToyMemoryScreenState extends ConsumerState<ToyMemoryScreen>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         title: Text('memory.title'.tr()),
         bottom: TabBar(
@@ -66,7 +65,6 @@ class _ToyMemoryScreenState extends ConsumerState<ToyMemoryScreen>
         ],
       ),
     );
-  }
 }
 
 // ─── Memories Tab ───
@@ -167,7 +165,7 @@ class _MemoryCard extends ConsumerWidget {
           ),
         );
 
-        if (confirmed == true) {
+        if (confirmed ?? false) {
           final service = ref.read(memoryServiceProvider);
           return service.deleteMemory(memory.id);
         }
@@ -528,7 +526,7 @@ class _SearchTab extends ConsumerWidget {
 
         Expanded(
           child: searchResults.when(
-            data: (List<MemoryEntry> results) {
+            data: (results) {
               if (results.isEmpty && searchController.text.isEmpty) {
                 return _buildEmptyState(
                   context,
