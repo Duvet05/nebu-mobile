@@ -32,12 +32,12 @@ class MainScreen extends ConsumerWidget {
       label: 'nav.home'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.history),
-      label: 'nav.activity'.tr(),
-    ),
-    BottomNavigationBarItem(
       icon: const Icon(Icons.dashboard),
       label: 'nav.my_toys'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.history),
+      label: 'nav.activity'.tr(),
     ),
     BottomNavigationBarItem(
       icon: const Icon(Icons.person),
@@ -51,12 +51,12 @@ class MainScreen extends ConsumerWidget {
       label: 'nav.home'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.history),
-      label: 'nav.activity'.tr(),
-    ),
-    BottomNavigationBarItem(
       icon: const Icon(Icons.dashboard),
       label: 'nav.my_toys'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.history),
+      label: 'nav.activity'.tr(),
     ),
     BottomNavigationBarItem(
       icon: const Icon(Icons.settings),
@@ -70,21 +70,18 @@ class MainScreen extends ConsumerWidget {
     if (location.startsWith(AppRoutes.home.path)) {
       return 0;
     }
-    if (location.startsWith(AppRoutes.activityLog.path)) {
+    if (location.startsWith(AppRoutes.myToys.path)) {
       return 1;
+    }
+    if (location.startsWith(AppRoutes.activityLog.path)) {
+      return 2;
     }
 
     if (isLoggedIn) {
-      if (location.startsWith(AppRoutes.myToys.path)) {
-        return 2;
-      }
       if (location.startsWith(AppRoutes.profile.path)) {
         return 3;
       }
     } else {
-      if (location.startsWith(AppRoutes.myToys.path)) {
-        return 2;
-      }
       if (location.startsWith(AppRoutes.settings.path)) {
         return 3;
       }
@@ -98,9 +95,9 @@ class MainScreen extends ConsumerWidget {
       case 0:
         context.go(AppRoutes.home.path);
       case 1:
-        context.go(AppRoutes.activityLog.path);
-      case 2:
         context.go(AppRoutes.myToys.path);
+      case 2:
+        context.go(AppRoutes.activityLog.path);
       case 3:
         if (isLoggedIn) {
           context.go(AppRoutes.profile.path);

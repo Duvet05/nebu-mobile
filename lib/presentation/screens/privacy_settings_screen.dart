@@ -22,7 +22,6 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
-  bool _profileVisible = true;
   bool _shareActivityData = false;
   bool _analyticsEnabled = true;
 
@@ -35,24 +34,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       body: ListView(
         padding: EdgeInsets.all(context.spacing.alertPadding),
         children: [
-          // Profile Visibility Section
-          _buildSectionHeader('privacy.profile_visibility'.tr(), theme),
-          _buildCard(
-            theme,
-            children: [
-              SwitchListTile(
-                title: Text('privacy.public_profile'.tr()),
-                subtitle: Text('privacy.public_profile_desc'.tr()),
-                value: _profileVisible,
-                onChanged: (value) {
-                  setState(() => _profileVisible = value);
-                },
-              ),
-            ],
-          ),
-
-          SizedBox(height: context.spacing.panelPadding),
-
           // Data Sharing Section
           _buildSectionHeader('privacy.data_sharing'.tr(), theme),
           _buildCard(
