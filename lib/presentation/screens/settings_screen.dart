@@ -1,4 +1,3 @@
-import 'package:country_flags/country_flags.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -88,12 +87,9 @@ class SettingsScreen extends ConsumerWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CountryFlag.fromLanguageCode(
-                                  'en',
-                                  theme: const ImageTheme(
-                                    height: 24,
-                                    width: 32,
-                                  ),
+                                Text(
+                                  String.fromCharCodes([0x1F1FA, 0x1F1F8]),
+                                  style: theme.textTheme.titleLarge,
                                 ),
                                 SizedBox(width: context.spacing.gapMd),
                                 const Text('English'),
@@ -105,12 +101,9 @@ class SettingsScreen extends ConsumerWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CountryFlag.fromLanguageCode(
-                                  'es',
-                                  theme: const ImageTheme(
-                                    height: 24,
-                                    width: 32,
-                                  ),
+                                Text(
+                                  String.fromCharCodes([0x1F1EA, 0x1F1F8]),
+                                  style: theme.textTheme.titleLarge,
                                 ),
                                 SizedBox(width: context.spacing.gapMd),
                                 const Text('Español'),
