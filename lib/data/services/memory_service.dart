@@ -88,7 +88,7 @@ class MemoryService {
   }
 
   /// Parses memory entries from various backend response shapes.
-  List<MemoryEntry> _parseMemoryList(response) {
+  List<MemoryEntry> _parseMemoryList(Object? response) {
     if (response is List) {
       return response
           .cast<Map<String, dynamic>>()

@@ -177,7 +177,7 @@ class ApiService {
     };
   }
 
-  static String? _extractBackendMessage(data) {
+  static String? _extractBackendMessage(Object? data) {
     if (data is Map<String, dynamic>) {
       final message = data['message'];
       if (message is String) return message;
