@@ -161,213 +161,216 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
         return SafeArea(
           top: false,
           child: StatefulBuilder(
-          builder: (ctx, setModalState) => DraggableScrollableSheet(
-            initialChildSize: 0.7,
-            maxChildSize: 0.9,
-            minChildSize: 0.5,
-            expand: false,
-            builder: (ctx, scrollController) => SingleChildScrollView(
-              controller: scrollController,
-              padding: EdgeInsets.all(context.spacing.panelPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Handle bar
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: EdgeInsets.only(
-                        bottom: context.spacing.alertPadding,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.3,
+            builder: (ctx, setModalState) => DraggableScrollableSheet(
+              initialChildSize: 0.7,
+              maxChildSize: 0.9,
+              minChildSize: 0.5,
+              expand: false,
+              builder: (ctx, scrollController) => SingleChildScrollView(
+                controller: scrollController,
+                padding: EdgeInsets.all(context.spacing.panelPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Handle bar
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: EdgeInsets.only(
+                          bottom: context.spacing.alertPadding,
                         ),
-                        borderRadius: context.radius.checkbox,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.onSurfaceVariant.withValues(
+                            alpha: 0.3,
+                          ),
+                          borderRadius: context.radius.checkbox,
+                        ),
                       ),
                     ),
-                  ),
 
-                  // Icon + name
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: catColor.withValues(alpha: 0.15),
-                        child: Icon(
-                          _getCategoryIcon(personality.category ?? ''),
-                          color: catColor,
-                          size: 28,
+                    // Icon + name
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: catColor.withValues(alpha: 0.15),
+                          child: Icon(
+                            _getCategoryIcon(personality.category ?? ''),
+                            color: catColor,
+                            size: 28,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: context.spacing.alertPadding),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              personality.name,
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
+                        SizedBox(width: context.spacing.alertPadding),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                personality.name,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            if (personality.category != null)
-                              Container(
-                                margin: EdgeInsets.only(
-                                  top: context.spacing.gapXs,
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: context.spacing.gapMd,
-                                  vertical: context.spacing.gapXxs,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: catColor.withValues(alpha: 0.15),
-                                  borderRadius: context.radius.tile,
-                                ),
-                                child: Text(
-                                  'personalities.category_${personality.category}'
-                                      .tr(),
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color: catColor,
-                                    fontWeight: FontWeight.w600,
+                              if (personality.category != null)
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: context.spacing.gapXs,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: context.spacing.gapMd,
+                                    vertical: context.spacing.gapXxs,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: catColor.withValues(alpha: 0.15),
+                                    borderRadius: context.radius.tile,
+                                  ),
+                                  child: Text(
+                                    'personalities.category_${personality.category}'
+                                        .tr(),
+                                    style: theme.textTheme.labelSmall?.copyWith(
+                                      color: catColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: context.spacing.panelPadding),
+
+                    // Description
+                    Text(
+                      personality.description,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+
+                    // Greeting
+                    if (personality.greeting != null) ...[
+                      SizedBox(height: context.spacing.panelPadding),
+                      Container(
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
+                        decoration: BoxDecoration(
+                          color: catColor.withValues(alpha: 0.08),
+                          borderRadius: context.radius.tile,
+                          border: Border.all(
+                            color: catColor.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline,
+                              color: catColor,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: context.spacing.paragraphBottomMarginSm,
+                            ),
+                            Expanded(
+                              child: Text(
+                                personality.greeting!,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  fontStyle: FontStyle.italic,
+                                ),
                               ),
+                            ),
                           ],
                         ),
                       ),
                     ],
-                  ),
 
-                  SizedBox(height: context.spacing.panelPadding),
-
-                  // Description
-                  Text(
-                    personality.description,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-
-                  // Greeting
-                  if (personality.greeting != null) ...[
-                    SizedBox(height: context.spacing.panelPadding),
-                    Container(
-                      padding: EdgeInsets.all(context.spacing.alertPadding),
-                      decoration: BoxDecoration(
-                        color: catColor.withValues(alpha: 0.08),
-                        borderRadius: context.radius.tile,
-                        border: Border.all(
-                          color: catColor.withValues(alpha: 0.2),
+                    // Settings
+                    if (personality.settings != null) ...[
+                      SizedBox(height: context.spacing.panelPadding),
+                      Text(
+                        'personalities.settings'.tr(),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.chat_bubble_outline,
-                            color: catColor,
-                            size: 20,
-                          ),
-                          SizedBox(
-                            width: context.spacing.paragraphBottomMarginSm,
-                          ),
-                          Expanded(
-                            child: Text(
-                              personality.greeting!,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
-                        ],
+                      SizedBox(height: context.spacing.paragraphBottomMarginSm),
+                      _buildSettingRow(
+                        theme,
+                        Icons.record_voice_over,
+                        'personalities.voice'.tr(),
+                        personality.settings!.voice ?? '-',
                       ),
-                    ),
-                  ],
-
-                  // Settings
-                  if (personality.settings != null) ...[
-                    SizedBox(height: context.spacing.panelPadding),
-                    Text(
-                      'personalities.settings'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                      _buildSettingRow(
+                        theme,
+                        Icons.speed,
+                        'personalities.speed'.tr(),
+                        personality.settings!.speed?.toString() ?? '-',
                       ),
-                    ),
-                    SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                    _buildSettingRow(
-                      theme,
-                      Icons.record_voice_over,
-                      'personalities.voice'.tr(),
-                      personality.settings!.voice ?? '-',
-                    ),
-                    _buildSettingRow(
-                      theme,
-                      Icons.speed,
-                      'personalities.speed'.tr(),
-                      personality.settings!.speed?.toString() ?? '-',
-                    ),
-                    _buildSettingRow(
-                      theme,
-                      Icons.language,
-                      'personalities.language'.tr(),
-                      personality.settings!.language ?? '-',
-                    ),
-                    _buildSettingRow(
-                      theme,
-                      Icons.style,
-                      'personalities.style'.tr(),
-                      personality.settings!.style ?? '-',
-                    ),
-                  ],
-
-                  SizedBox(height: context.spacing.panelPadding),
-
-                  // Action buttons
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomButton(
-                          text: 'personalities.try_playground'.tr(),
-                          onPressed: isAssigning
-                              ? null
-                              : () {
-                                  Navigator.pop(ctx);
-                                  context.push(
-                                    AppRoutes.playground.path,
-                                    extra: personality,
-                                  );
-                                },
-                          icon: Icons.play_circle_outline,
-                          variant: ButtonVariant.outline,
-                        ),
+                      _buildSettingRow(
+                        theme,
+                        Icons.language,
+                        'personalities.language'.tr(),
+                        personality.settings!.language ?? '-',
                       ),
-                      SizedBox(width: context.spacing.paragraphBottomMarginSm),
-                      Expanded(
-                        child: CustomButton(
-                          text: 'personalities.select'.tr(),
-                          isLoading: isAssigning,
-                          onPressed: isAssigning
-                              ? null
-                              : () => _selectPersonalityFromModal(
-                                  ctx,
-                                  personality,
-                                  setModalState,
-                                  ({required value}) => isAssigning = value,
-                                ),
-                          icon: Icons.check_circle_outline,
-                        ),
+                      _buildSettingRow(
+                        theme,
+                        Icons.style,
+                        'personalities.style'.tr(),
+                        personality.settings!.style ?? '-',
                       ),
                     ],
-                  ),
 
-                  SizedBox(height: context.spacing.alertPadding),
-                ],
+                    SizedBox(height: context.spacing.panelPadding),
+
+                    // Action buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: 'personalities.try_playground'.tr(),
+                            onPressed: isAssigning
+                                ? null
+                                : () {
+                                    Navigator.pop(ctx);
+                                    context.push(
+                                      AppRoutes.playground.path,
+                                      extra: personality,
+                                    );
+                                  },
+                            icon: Icons.play_circle_outline,
+                            variant: ButtonVariant.outline,
+                          ),
+                        ),
+                        SizedBox(
+                          width: context.spacing.paragraphBottomMarginSm,
+                        ),
+                        Expanded(
+                          child: CustomButton(
+                            text: 'personalities.select'.tr(),
+                            isLoading: isAssigning,
+                            onPressed: isAssigning
+                                ? null
+                                : () => _selectPersonalityFromModal(
+                                    ctx,
+                                    personality,
+                                    setModalState,
+                                    ({required value}) => isAssigning = value,
+                                  ),
+                            icon: Icons.check_circle_outline,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: context.spacing.alertPadding),
+                  ],
+                ),
               ),
             ),
           ),
-        ));
+        );
       },
     );
   }

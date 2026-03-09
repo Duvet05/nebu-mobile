@@ -92,7 +92,9 @@ class MemoryService {
             .toList();
       }
     }
-    _logger.w('searchKnowledge: unexpected response shape: ${response.runtimeType}');
+    _logger.w(
+      'searchKnowledge: unexpected response shape: ${response.runtimeType}',
+    );
     return [];
   }
 
@@ -115,7 +117,9 @@ class MemoryService {
             .toList();
       }
     }
-    _logger.w('_parseMemoryList: unexpected response shape: ${response.runtimeType}');
+    _logger.w(
+      '_parseMemoryList: unexpected response shape: ${response.runtimeType}',
+    );
     return [];
   }
 }

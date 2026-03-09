@@ -98,11 +98,7 @@ class ToyService {
     _logger.d('Assigning toy with MAC: $macAddress');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/toys/assign',
-      data: {
-        'macAddress': macAddress,
-        'userId': userId,
-        'toyName': ?toyName,
-      },
+      data: {'macAddress': macAddress, 'userId': userId, 'toyName': ?toyName},
     );
     _logger.d('Toy assigned successfully');
     return AssignToyResponse.fromJson(response);

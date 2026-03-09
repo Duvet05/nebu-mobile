@@ -325,107 +325,108 @@ class _OrderDetailsSheet extends StatelessWidget {
     return SafeArea(
       top: false,
       child: DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      maxChildSize: 0.95,
-      minChildSize: 0.5,
-      expand: false,
-      builder: (context, scrollController) => Padding(
-        padding: EdgeInsets.all(context.spacing.pageMargin),
-        child: ListView(
-          controller: scrollController,
-          children: [
-            // Handle bar
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.grey700,
-                  borderRadius: context.radius.checkbox,
+        initialChildSize: 0.7,
+        maxChildSize: 0.95,
+        minChildSize: 0.5,
+        expand: false,
+        builder: (context, scrollController) => Padding(
+          padding: EdgeInsets.all(context.spacing.pageMargin),
+          child: ListView(
+            controller: scrollController,
+            children: [
+              // Handle bar
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: context.colors.grey700,
+                    borderRadius: context.radius.checkbox,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: context.spacing.panelPadding),
+              SizedBox(height: context.spacing.panelPadding),
 
-            // Title
-            Text(
-              'orders.order_details'.tr(),
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+              // Title
+              Text(
+                'orders.order_details'.tr(),
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: context.spacing.titleBottomMarginSm),
-            Text(
-              order.orderNumber,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.primary,
+              SizedBox(height: context.spacing.titleBottomMarginSm),
+              Text(
+                order.orderNumber,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
               ),
-            ),
-            SizedBox(height: context.spacing.panelPadding),
+              SizedBox(height: context.spacing.panelPadding),
 
-            // Status timeline
-            _buildStatusTimeline(context),
-            SizedBox(height: context.spacing.panelPadding),
+              // Status timeline
+              _buildStatusTimeline(context),
+              SizedBox(height: context.spacing.panelPadding),
 
-            // Items
-            Text(
-              'orders.items'.tr(),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+              // Items
+              Text(
+                'orders.items'.tr(),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(height: context.spacing.paragraphBottomMarginSm),
-            ...order.items.map((item) => _buildItemRow(context, item, theme)),
-            const Divider(height: 32),
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
+              ...order.items.map((item) => _buildItemRow(context, item, theme)),
+              const Divider(height: 32),
 
-            // Summary
-            _buildSummaryRow(context, 'orders.subtotal'.tr(), total, theme),
-            _buildSummaryRow(context, 'orders.shipping'.tr(), 0, theme),
-            _buildSummaryRow(context, 'orders.tax'.tr(), total * 0.1, theme),
-            const Divider(height: 32),
-            _buildSummaryRow(
-              context,
-              'orders.total'.tr(),
-              total + (total * 0.1),
-              theme,
-              bold: true,
-            ),
+              // Summary
+              _buildSummaryRow(context, 'orders.subtotal'.tr(), total, theme),
+              _buildSummaryRow(context, 'orders.shipping'.tr(), 0, theme),
+              _buildSummaryRow(context, 'orders.tax'.tr(), total * 0.1, theme),
+              const Divider(height: 32),
+              _buildSummaryRow(
+                context,
+                'orders.total'.tr(),
+                total + (total * 0.1),
+                theme,
+                bold: true,
+              ),
 
-            SizedBox(height: context.spacing.panelPadding),
+              SizedBox(height: context.spacing.panelPadding),
 
-            // Actions
-            if (order.status.toUpperCase() != 'CANCELLED' &&
-                order.status.toUpperCase() != 'DELIVERED')
+              // Actions
+              if (order.status.toUpperCase() != 'CANCELLED' &&
+                  order.status.toUpperCase() != 'DELIVERED')
+                CustomButton(
+                  text: 'orders.track_order'.tr(),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('orders.track_order_coming_soon'.tr()),
+                      ),
+                    );
+                  },
+                  isFullWidth: true,
+                  height: 50,
+                ),
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
               CustomButton(
-                text: 'orders.track_order'.tr(),
+                text: 'orders.contact_support'.tr(),
                 onPressed: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('orders.track_order_coming_soon'.tr()),
-                    ),
+                    SnackBar(content: Text('orders.support_coming_soon'.tr())),
                   );
                 },
+                variant: ButtonVariant.outline,
                 isFullWidth: true,
                 height: 50,
               ),
-            SizedBox(height: context.spacing.paragraphBottomMarginSm),
-            CustomButton(
-              text: 'orders.contact_support'.tr(),
-              onPressed: () {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('orders.support_coming_soon'.tr())),
-                );
-              },
-              variant: ButtonVariant.outline,
-              isFullWidth: true,
-              height: 50,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   Widget _buildStatusTimeline(BuildContext context) {

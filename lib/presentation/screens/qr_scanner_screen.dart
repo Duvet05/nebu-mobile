@@ -20,9 +20,7 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     final notifier = ref.read(qrScannerProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('qr_scanner.title'.tr()),
-      ),
+      appBar: AppBar(title: Text('qr_scanner.title'.tr())),
       body: Stack(
         children: [
           QRCodeDartScanView(

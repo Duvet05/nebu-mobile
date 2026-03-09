@@ -40,13 +40,14 @@ class NebuApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Escuchamos el tema, pero usamos un valor inicial para evitar el "loading flicker"
-    final themeMode = ref.watch(themeProvider).value?.themeMode ?? ThemeMode.system;
+    final themeMode =
+        ref.watch(themeProvider).value?.themeMode ?? ThemeMode.system;
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: Config.appName,
       debugShowCheckedModeBanner: false,
-      
+
       // Localización
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

@@ -136,9 +136,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         validator: (v) =>
                             (v == null ||
-                                    v.length < ValidationRules.passwordMinLength)
-                                ? 'auth.password_short'.tr()
-                                : null,
+                                v.length < ValidationRules.passwordMinLength)
+                            ? 'auth.password_short'.tr()
+                            : null,
                       ),
                       Align(
                         alignment: Alignment.centerRight,

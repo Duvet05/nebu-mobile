@@ -271,82 +271,85 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         return SafeArea(
           top: false,
           child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+            ),
+            padding: EdgeInsets.all(context.spacing.pageMargin),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: context.colors.grey700,
+                    borderRadius: context.radius.checkbox,
+                  ),
+                ),
+                SizedBox(height: context.spacing.panelPadding),
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary.withValues(alpha: 0.1),
+                    borderRadius: context.radius.bottomSheet,
+                  ),
+                  child: Icon(
+                    Icons.settings_rounded,
+                    color: context.colors.primary,
+                    size: 32,
+                  ),
+                ),
+                SizedBox(height: context.spacing.titleBottomMargin),
+                Text(
+                  'setup.connection.setup_options'.tr(),
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textNormal,
+                  ),
+                ),
+                SizedBox(height: context.spacing.titleBottomMarginSm),
+                Text(
+                  'setup.connection.setup_options_desc'.tr(),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: context.colors.grey400,
+                  ),
+                ),
+                SizedBox(height: context.spacing.titleBottomMargin),
+
+                // Option 1: Configure Locally
+                _OptionCard(
+                  icon: Icons.phone_android_rounded,
+                  title: 'setup.connection.configure_locally'.tr(),
+                  description: 'setup.connection.configure_locally_desc'.tr(),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push(AppRoutes.toyNameSetup.path);
+                  },
+                ),
+
+                SizedBox(height: context.spacing.paragraphBottomMarginSm),
+
+                // Option 2: Skip
+                _OptionCard(
+                  icon: Icons.arrow_forward_rounded,
+                  title: 'setup.connection.skip_setup'.tr(),
+                  description: 'setup.connection.skip_setup_desc'.tr(),
+                  isSecondary: true,
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.go(AppRoutes.home.path);
+                  },
+                ),
+
+                SizedBox(height: context.spacing.sectionTitleBottomMargin),
+              ],
+            ),
           ),
-          padding: EdgeInsets.all(context.spacing.pageMargin),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.grey700,
-                  borderRadius: context.radius.checkbox,
-                ),
-              ),
-              SizedBox(height: context.spacing.panelPadding),
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: context.colors.primary.withValues(alpha: 0.1),
-                  borderRadius: context.radius.bottomSheet,
-                ),
-                child: Icon(
-                  Icons.settings_rounded,
-                  color: context.colors.primary,
-                  size: 32,
-                ),
-              ),
-              SizedBox(height: context.spacing.titleBottomMargin),
-              Text(
-                'setup.connection.setup_options'.tr(),
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: context.colors.textNormal,
-                ),
-              ),
-              SizedBox(height: context.spacing.titleBottomMarginSm),
-              Text(
-                'setup.connection.setup_options_desc'.tr(),
-                style: textTheme.bodyMedium?.copyWith(
-                  color: context.colors.grey400,
-                ),
-              ),
-              SizedBox(height: context.spacing.titleBottomMargin),
-
-              // Option 1: Configure Locally
-              _OptionCard(
-                icon: Icons.phone_android_rounded,
-                title: 'setup.connection.configure_locally'.tr(),
-                description: 'setup.connection.configure_locally_desc'.tr(),
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push(AppRoutes.toyNameSetup.path);
-                },
-              ),
-
-              SizedBox(height: context.spacing.paragraphBottomMarginSm),
-
-              // Option 2: Skip
-              _OptionCard(
-                icon: Icons.arrow_forward_rounded,
-                title: 'setup.connection.skip_setup'.tr(),
-                description: 'setup.connection.skip_setup_desc'.tr(),
-                isSecondary: true,
-                onTap: () {
-                  Navigator.pop(context);
-                  context.go(AppRoutes.home.path);
-                },
-              ),
-
-              SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            ],
-          ),
-        ));
+        );
       },
     );
   }

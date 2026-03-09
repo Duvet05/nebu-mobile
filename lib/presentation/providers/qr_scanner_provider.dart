@@ -7,28 +7,21 @@ import 'api_provider.dart';
 import 'auth_provider.dart';
 
 class QRScannerState {
-  QRScannerState({
-    required this.scannedCode,
-    required this.isProcessing,
-  });
+  QRScannerState({required this.scannedCode, required this.isProcessing});
   final String scannedCode;
   final bool isProcessing;
 
-  QRScannerState copyWith({
-    String? scannedCode,
-    bool? isProcessing,
-  }) => QRScannerState(
-    scannedCode: scannedCode ?? this.scannedCode,
-    isProcessing: isProcessing ?? this.isProcessing,
-  );
+  QRScannerState copyWith({String? scannedCode, bool? isProcessing}) =>
+      QRScannerState(
+        scannedCode: scannedCode ?? this.scannedCode,
+        isProcessing: isProcessing ?? this.isProcessing,
+      );
 }
 
 class QRScannerNotifier extends Notifier<QRScannerState> {
   @override
-  QRScannerState build() => QRScannerState(
-      scannedCode: '',
-      isProcessing: false,
-    );
+  QRScannerState build() =>
+      QRScannerState(scannedCode: '', isProcessing: false);
 
   void handleQRCode(String? code, BuildContext context) {
     if (code == null || code.isEmpty || state.isProcessing) {
