@@ -59,7 +59,9 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    return Container(
+    return SafeArea(
+      top: false,
+      child: Container(
       padding: EdgeInsets.symmetric(
         horizontal: context.spacing.gapXxl,
         vertical: context.spacing.gapXxl,
@@ -160,6 +162,6 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
           ),
         ],
       ),
-    );
+    ));
   }
 }

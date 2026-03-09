@@ -322,7 +322,9 @@ class _OrderDetailsSheet extends StatelessWidget {
     final theme = context.theme;
     final total = order.totalPrice;
 
-    return DraggableScrollableSheet(
+    return SafeArea(
+      top: false,
+      child: DraggableScrollableSheet(
       initialChildSize: 0.7,
       maxChildSize: 0.95,
       minChildSize: 0.5,
@@ -423,7 +425,7 @@ class _OrderDetailsSheet extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildStatusTimeline(BuildContext context) {

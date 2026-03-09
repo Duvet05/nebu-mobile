@@ -158,7 +158,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
       builder: (ctx) {
         var isAssigning = false;
 
-        return StatefulBuilder(
+        return SafeArea(
+          top: false,
+          child: StatefulBuilder(
           builder: (ctx, setModalState) => DraggableScrollableSheet(
             initialChildSize: 0.7,
             maxChildSize: 0.9,
@@ -365,7 +367,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               ),
             ),
           ),
-        );
+        ));
       },
     );
   }

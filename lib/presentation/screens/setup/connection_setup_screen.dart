@@ -268,7 +268,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       builder: (context) {
         final textTheme = context.theme.textTheme;
 
-        return Container(
+        return SafeArea(
+          top: false,
+          child: Container(
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
@@ -344,7 +346,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               SizedBox(height: context.spacing.sectionTitleBottomMargin),
             ],
           ),
-        );
+        ));
       },
     );
   }
@@ -906,85 +908,88 @@ class _BottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.all(context.spacing.gapXxl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: context.colors.grey700,
-              borderRadius: context.radius.checkbox,
-            ),
-          ),
-          SizedBox(height: context.spacing.gapXxl),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: context.radius.bottomSheet,
-            ),
-            child: Icon(icon, color: iconColor, size: 32),
-          ),
-          SizedBox(height: context.spacing.gapXxl),
-          Text(
-            title,
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              color: context.colors.textNormal,
-            ),
-          ),
-          SizedBox(height: context.spacing.gapMd),
-          Text(
-            description,
-            textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(
-              color: context.colors.grey400,
-              height: 1.4,
-            ),
-          ),
-          SizedBox(height: context.spacing.gapXxl),
-          GestureDetector(
-            onTap: primaryOnPressed,
-            child: Container(
-              height: 52,
+    return SafeArea(
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(context.spacing.gapXxl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
-                color: iconColor,
-                borderRadius: context.radius.panel,
+                color: context.colors.grey700,
+                borderRadius: context.radius.checkbox,
               ),
-              child: Center(
-                child: Text(
-                  primaryText,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: context.colors.textOnFilled,
-                    fontWeight: FontWeight.w600,
+            ),
+            SizedBox(height: context.spacing.gapXxl),
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: context.radius.bottomSheet,
+              ),
+              child: Icon(icon, color: iconColor, size: 32),
+            ),
+            SizedBox(height: context.spacing.gapXxl),
+            Text(
+              title,
+              style: textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: context.colors.textNormal,
+              ),
+            ),
+            SizedBox(height: context.spacing.gapMd),
+            Text(
+              description,
+              textAlign: TextAlign.center,
+              style: textTheme.bodyMedium?.copyWith(
+                color: context.colors.grey400,
+                height: 1.4,
+              ),
+            ),
+            SizedBox(height: context.spacing.gapXxl),
+            GestureDetector(
+              onTap: primaryOnPressed,
+              child: Container(
+                height: 52,
+                decoration: BoxDecoration(
+                  color: iconColor,
+                  borderRadius: context.radius.panel,
+                ),
+                child: Center(
+                  child: Text(
+                    primaryText,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: context.colors.textOnFilled,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(height: context.spacing.gapLg),
-          GestureDetector(
-            onTap: secondaryOnPressed,
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: context.spacing.gapLg),
-              child: Text(
-                secondaryText,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: context.colors.grey400,
-                  fontWeight: FontWeight.w500,
+            SizedBox(height: context.spacing.gapLg),
+            GestureDetector(
+              onTap: secondaryOnPressed,
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: context.spacing.gapLg),
+                child: Text(
+                  secondaryText,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: context.colors.grey400,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
