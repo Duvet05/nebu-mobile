@@ -54,9 +54,9 @@ abstract class Toy with _$Toy {
 @freezed
 abstract class CreateToyRequest with _$CreateToyRequest {
   const factory CreateToyRequest({
+    required String name,
     String? deviceId,
     String? macAddress,
-    required String name,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -76,9 +76,9 @@ abstract class CreateToyRequest with _$CreateToyRequest {
 @freezed
 abstract class AssignToyRequest with _$AssignToyRequest {
   const factory AssignToyRequest({
+    required String userId,
     String? macAddress,
     String? deviceId,
-    required String userId,
     String? toyName,
   }) = _AssignToyRequest;
 

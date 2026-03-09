@@ -27,7 +27,9 @@ class _KnowledgeSearchScreenState extends ConsumerState<KnowledgeSearchScreen> {
 
   void _performSearch() {
     final query = _searchController.text.trim();
-    if (query.isEmpty) return;
+    if (query.isEmpty) {
+      return;
+    }
     ref
         .read(knowledgeSearchProvider.notifier)
         .search(query: query, language: context.locale.languageCode);
@@ -91,7 +93,7 @@ class _KnowledgeSearchScreenState extends ConsumerState<KnowledgeSearchScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => Center(
+              error: (_, _) => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

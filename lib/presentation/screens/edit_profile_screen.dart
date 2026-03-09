@@ -50,7 +50,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
       );
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       await ref.read(authProvider.notifier).updateUser(updatedUser);
 

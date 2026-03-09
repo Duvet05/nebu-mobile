@@ -17,7 +17,9 @@ final userVoiceSessionsProvider = FutureProvider<List<VoiceSession>>((
   final service = ref.watch(voiceSessionServiceProvider);
   final authState = ref.watch(authProvider);
   final user = authState.value;
-  if (user == null) return [];
+  if (user == null) {
+    return [];
+  }
   return service.getUserSessions(user.id);
 });
 

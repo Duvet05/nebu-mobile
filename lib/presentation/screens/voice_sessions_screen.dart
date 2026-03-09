@@ -20,8 +20,9 @@ class VoiceSessionsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text('voice_history.title'.tr())),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(voiceMetricsProvider);
-          ref.invalidate(userVoiceSessionsProvider);
+          ref
+            ..invalidate(voiceMetricsProvider)
+            ..invalidate(userVoiceSessionsProvider);
         },
         child: CustomScrollView(
           slivers: [
@@ -33,7 +34,7 @@ class VoiceSessionsScreen extends ConsumerWidget {
                   padding: EdgeInsets.all(context.spacing.alertPadding),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
             ),
 
@@ -75,7 +76,7 @@ class VoiceSessionsScreen extends ConsumerWidget {
               loading: () => const SliverFillRemaining(
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (_, __) => SliverFillRemaining(
+              error: (_, _) => SliverFillRemaining(
                 child: _buildErrorState(context, theme, ref),
               ),
             ),
@@ -134,8 +135,9 @@ class VoiceSessionsScreen extends ConsumerWidget {
           text: 'common.retry'.tr(),
           icon: Icons.refresh,
           onPressed: () {
-            ref.invalidate(voiceMetricsProvider);
-            ref.invalidate(userVoiceSessionsProvider);
+            ref
+              ..invalidate(voiceMetricsProvider)
+              ..invalidate(userVoiceSessionsProvider);
           },
         ),
       ],
@@ -203,9 +205,13 @@ class _MetricsSummary extends StatelessWidget {
   }
 
   String _formatDuration(int seconds) {
-    if (seconds < 60) return '${seconds}s';
+    if (seconds < 60) {
+      return '${seconds}s';
+    }
     final minutes = seconds ~/ 60;
-    if (minutes < 60) return '${minutes}m';
+    if (minutes < 60) {
+      return '${minutes}m';
+    }
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
     return '${hours}h ${remainingMinutes}m';
@@ -343,9 +349,13 @@ class _SessionCard extends ConsumerWidget {
   }
 
   String _formatSessionDuration(int seconds) {
-    if (seconds < 60) return '${seconds}s';
+    if (seconds < 60) {
+      return '${seconds}s';
+    }
     final minutes = seconds ~/ 60;
-    if (minutes < 60) return '${minutes}m';
+    if (minutes < 60) {
+      return '${minutes}m';
+    }
     final hours = minutes ~/ 60;
     final remainingMinutes = minutes % 60;
     return '${hours}h ${remainingMinutes}m';
@@ -411,15 +421,17 @@ class _SessionDetail extends ConsumerWidget {
             Wrap(
               spacing: 6,
               runSpacing: 4,
-              children: session.topics!.map((topic) {
-                return Chip(
-                  label: Text(topic, style: theme.textTheme.labelSmall),
-                  backgroundColor: context.colors.primary.withValues(
-                    alpha: 0.08,
-                  ),
-                  visualDensity: VisualDensity.compact,
-                );
-              }).toList(),
+              children: session.topics!
+                  .map(
+                    (topic) => Chip(
+                      label: Text(topic, style: theme.textTheme.labelSmall),
+                      backgroundColor: context.colors.primary.withValues(
+                        alpha: 0.08,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  )
+                  .toList(),
             ),
           ],
 
@@ -454,7 +466,7 @@ class _SessionDetail extends ConsumerWidget {
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Center(child: CircularProgressIndicator()),
             ),
-            error: (_, __) => Text(
+            error: (_, _) => Text(
               'voice_history.error_conversations'.tr(),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,

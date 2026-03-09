@@ -42,7 +42,9 @@ class _PersonalitySetupScreenState
   }
 
   Future<void> _saveAndContinue() async {
-    if (_selectedId == null) return;
+    if (_selectedId == null) {
+      return;
+    }
 
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
@@ -160,9 +162,9 @@ class _PersonalitySetupScreenState
                             itemCount: personalities.length,
                             itemBuilder: (context, index) =>
                                 _buildPersonalityCard(
-                              context,
-                              personalities[index],
-                            ),
+                                  context,
+                                  personalities[index],
+                                ),
                           );
                         },
                       ),
@@ -191,10 +193,7 @@ class _PersonalitySetupScreenState
     );
   }
 
-  Widget _buildPersonalityCard(
-    BuildContext context,
-    Personality personality,
-  ) {
+  Widget _buildPersonalityCard(BuildContext context, Personality personality) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final isSelected = _selectedId == personality.id;
@@ -282,10 +281,10 @@ class _PersonalitySetupScreenState
   }
 
   IconData _iconForPersonality(String id) => switch (id) {
-        'mexican' => Icons.celebration_rounded,
-        'peruvian' => Icons.terrain_rounded,
-        'kpop' => Icons.music_note_rounded,
-        'roblox' => Icons.sports_esports_rounded,
-        _ => Icons.smart_toy_rounded,
-      };
+    'mexican' => Icons.celebration_rounded,
+    'peruvian' => Icons.terrain_rounded,
+    'kpop' => Icons.music_note_rounded,
+    'roblox' => Icons.sports_esports_rounded,
+    _ => Icons.smart_toy_rounded,
+  };
 }

@@ -61,43 +61,43 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline,
-                        size: 64,
-                        color: theme.colorScheme.error,
-                      ),
-                      SizedBox(height: context.spacing.panelPadding),
-                      Text(
-                        _error!,
-                        style: theme.textTheme.bodyLarge,
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: context.spacing.panelPadding),
-                      CustomButton(
-                        text: 'common.retry'.tr(),
-                        onPressed: _loadOrders,
-                        icon: Icons.refresh,
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: theme.colorScheme.error,
                   ),
-                )
-              : _orders.isEmpty
-                  ? _buildEmptyState(theme)
-                  : RefreshIndicator(
-                  onRefresh: _loadOrders,
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(context.spacing.alertPadding),
-                    itemCount: _orders.length,
-                    itemBuilder: (context, index) {
-                      final order = _orders[index];
-                      return _OrderCard(order: order);
-                    },
+                  SizedBox(height: context.spacing.panelPadding),
+                  Text(
+                    _error!,
+                    style: theme.textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
                   ),
-                ),
+                  SizedBox(height: context.spacing.panelPadding),
+                  CustomButton(
+                    text: 'common.retry'.tr(),
+                    onPressed: _loadOrders,
+                    icon: Icons.refresh,
+                  ),
+                ],
+              ),
+            )
+          : _orders.isEmpty
+          ? _buildEmptyState(theme)
+          : RefreshIndicator(
+              onRefresh: _loadOrders,
+              child: ListView.builder(
+                padding: EdgeInsets.all(context.spacing.alertPadding),
+                itemCount: _orders.length,
+                itemBuilder: (context, index) {
+                  final order = _orders[index];
+                  return _OrderCard(order: order);
+                },
+              ),
+            ),
     );
   }
 
@@ -299,14 +299,16 @@ class _OrderCard extends StatelessWidget {
   }
 
   void _showOrderDetails(BuildContext context, _Order order) {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) => _OrderDetailsSheet(order: order),
       ),
-      builder: (context) => _OrderDetailsSheet(order: order),
-    ));
+    );
   }
 }
 
@@ -375,11 +377,12 @@ class _OrderDetailsSheet extends StatelessWidget {
             const Divider(height: 32),
 
             // Summary
-            _buildSummaryRow('orders.subtotal'.tr(), total, theme),
-            _buildSummaryRow('orders.shipping'.tr(), 0, theme),
-            _buildSummaryRow('orders.tax'.tr(), total * 0.1, theme),
+            _buildSummaryRow(context, 'orders.subtotal'.tr(), total, theme),
+            _buildSummaryRow(context, 'orders.shipping'.tr(), 0, theme),
+            _buildSummaryRow(context, 'orders.tax'.tr(), total * 0.1, theme),
             const Divider(height: 32),
             _buildSummaryRow(
+              context,
               'orders.total'.tr(),
               total + (total * 0.1),
               theme,
@@ -473,49 +476,53 @@ class _OrderDetailsSheet extends StatelessWidget {
   }) {
     final theme = context.theme;
     return Row(
-    children: [
-      Column(
-        children: [
-          if (!isFirst)
-            Container(
-              width: 2,
-              height: 20,
+      children: [
+        Column(
+          children: [
+            if (!isFirst)
+              Container(
+                width: 2,
+                height: 20,
+                color: completed
+                    ? theme.colorScheme.primary
+                    : context.colors.grey400.withValues(alpha: 0.3),
+              ),
+            Icon(
+              completed ? Icons.check_circle : Icons.circle_outlined,
               color: completed
                   ? theme.colorScheme.primary
-                  : context.colors.grey400.withValues(alpha: 0.3),
+                  : context.colors.grey400.withValues(alpha: 0.5),
+              size: 24,
             ),
-          Icon(
-            completed ? Icons.check_circle : Icons.circle_outlined,
-            color: completed
-                ? theme.colorScheme.primary
-                : context.colors.grey400.withValues(alpha: 0.5),
-            size: 24,
-          ),
-          if (!isLast)
-            Container(
-              width: 2,
-              height: 20,
-              color: completed
-                  ? theme.colorScheme.primary
-                  : context.colors.grey400.withValues(alpha: 0.3),
-            ),
-        ],
-      ),
-      SizedBox(width: context.spacing.gapXl),
-      Text(
-        label,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: completed
-              ? theme.colorScheme.onSurface
-              : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-          fontWeight: completed ? FontWeight.w600 : FontWeight.normal,
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 20,
+                color: completed
+                    ? theme.colorScheme.primary
+                    : context.colors.grey400.withValues(alpha: 0.3),
+              ),
+          ],
         ),
-      ),
-    ],
-  );
+        SizedBox(width: context.spacing.gapXl),
+        Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: completed
+                ? theme.colorScheme.onSurface
+                : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            fontWeight: completed ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ],
+    );
   }
 
-  Widget _buildItemRow(BuildContext context, _OrderItem item, ThemeData theme) => Padding(
+  Widget _buildItemRow(
+    BuildContext context,
+    _OrderItem item,
+    ThemeData theme,
+  ) => Padding(
     padding: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -545,6 +552,7 @@ class _OrderDetailsSheet extends StatelessWidget {
   );
 
   Widget _buildSummaryRow(
+    BuildContext context,
     String label,
     double amount,
     ThemeData theme, {
@@ -585,11 +593,14 @@ class _Order {
     final itemsList = json['items'] as List<dynamic>? ?? [];
     return _Order(
       id: json['id'] as String? ?? '',
-      orderNumber: json['orderNumber'] as String? ?? json['id'] as String? ?? '',
-      date: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      orderNumber:
+          json['orderNumber'] as String? ?? json['id'] as String? ?? '',
+      date:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
       status: json['status'] as String? ?? 'PENDING',
-      totalPrice: (json['totalPrice'] as num?)?.toDouble() ??
+      totalPrice:
+          (json['totalPrice'] as num?)?.toDouble() ??
           (json['totalAmount'] as num?)?.toDouble() ??
           0,
       items: itemsList
@@ -618,7 +629,8 @@ class _OrderItem {
     final quantity = json['quantity'] as int? ?? 1;
     final unitPrice = (json['unitPrice'] as num?)?.toDouble() ?? 0;
     return _OrderItem(
-      name: json['productName'] as String? ??
+      name:
+          json['productName'] as String? ??
           (json['product'] as Map<String, dynamic>?)?['name'] as String? ??
           'Item',
       quantity: quantity,

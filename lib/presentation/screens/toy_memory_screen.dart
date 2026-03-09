@@ -275,7 +275,9 @@ class _MemoryCard extends StatelessWidget {
 
   String _formatTimestamp(String iso) {
     final date = DateTime.tryParse(iso);
-    if (date == null) return iso;
+    if (date == null) {
+      return iso;
+    }
 
     final now = DateTime.now();
     final diff = now.difference(date);
@@ -368,7 +370,7 @@ class _SearchTab extends ConsumerWidget {
               );
             },
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => Center(
+            error: (_, _) => Center(
               child: Text(
                 'memory.search_error'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(

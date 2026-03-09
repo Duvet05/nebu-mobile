@@ -46,7 +46,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
   Future<void> _refreshToyStatus() async {
     // Local toys don't exist on backend — skip API refresh
-    if (_currentToy.id.startsWith('local_')) return;
+    if (_currentToy.id.startsWith('local_')) {
+      return;
+    }
     try {
       final updated = await ref
           .read(toyProvider.notifier)
@@ -138,7 +140,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
   Future<void> _showPersonalityPicker() async {
     final personalities = ref.read(personalitiesProvider).value;
-    if (personalities == null || personalities.isEmpty) return;
+    if (personalities == null || personalities.isEmpty) {
+      return;
+    }
 
     final selected = await showModalBottomSheet<String>(
       context: context,
@@ -198,8 +202,12 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       },
     );
 
-    if (selected == null || !mounted) return;
-    if (selected == _currentToy.personalityProfile) return;
+    if (selected == null || !mounted) {
+      return;
+    }
+    if (selected == _currentToy.personalityProfile) {
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -521,7 +529,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     final personalities = ref.read(personalitiesProvider).value;
     if (personalities != null) {
       for (final p in personalities) {
-        if (p.id == profileId) return p.name;
+        if (p.id == profileId) {
+          return p.name;
+        }
       }
     }
 
