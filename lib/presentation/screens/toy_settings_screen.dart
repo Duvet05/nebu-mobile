@@ -12,6 +12,7 @@ import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/personality_provider.dart';
 import '../providers/toy_provider.dart';
+import '../widgets/custom_input.dart';
 import '../widgets/esp32_audio_controls.dart';
 
 class ToySettingsScreen extends ConsumerStatefulWidget {
@@ -46,8 +47,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     // Local toys don't exist on backend — skip API refresh
     if (_currentToy.id.startsWith('local_')) return;
     try {
-      final updated =
-          await ref.read(toyProvider.notifier).getToyById(_currentToy.id);
+      final updated = await ref
+          .read(toyProvider.notifier)
+          .getToyById(_currentToy.id);
       if (mounted) {
         setState(() {
           _currentToy = updated;
@@ -75,10 +77,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     });
 
     try {
-      final updated = await ref.read(toyProvider.notifier).updateToy(
-            id: _currentToy.id,
-            name: _nameController.text.trim(),
-          );
+      final updated = await ref
+          .read(toyProvider.notifier)
+          .updateToy(id: _currentToy.id, name: _nameController.text.trim());
 
       if (mounted) {
         setState(() {
@@ -184,8 +185,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     ),
                   ),
                   trailing: p.id == _currentToy.personalityProfile
-                      ? Icon(Icons.check_circle,
-                          color: context.colors.primary)
+                      ? Icon(Icons.check_circle, color: context.colors.primary)
                       : null,
                   onTap: () => Navigator.pop(ctx, p.id),
                 ),
@@ -205,18 +205,15 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     });
 
     try {
-      final updated = await ref.read(toyProvider.notifier).updateToy(
-            id: _currentToy.id,
-            personalityProfile: selected,
-          );
+      final updated = await ref
+          .read(toyProvider.notifier)
+          .updateToy(id: _currentToy.id, personalityProfile: selected);
 
       if (mounted) {
         setState(() {
           _currentToy = updated;
         });
-        context.showSuccessSnackBar(
-          'toy_settings.personality_updated'.tr(),
-        );
+        context.showSuccessSnackBar('toy_settings.personality_updated'.tr());
       }
     } on Exception {
       if (mounted) {
@@ -232,12 +229,12 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
   }
 
   IconData _iconForPersonality(String id) => switch (id) {
-        'mexican' => Icons.celebration_rounded,
-        'peruvian' => Icons.terrain_rounded,
-        'kpop' => Icons.music_note_rounded,
-        'roblox' => Icons.sports_esports_rounded,
-        _ => Icons.smart_toy_rounded,
-      };
+    'mexican' => Icons.celebration_rounded,
+    'peruvian' => Icons.terrain_rounded,
+    'kpop' => Icons.music_note_rounded,
+    'roblox' => Icons.sports_esports_rounded,
+    _ => Icons.smart_toy_rounded,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -265,8 +262,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     // Toy Info Card
                     Card(
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(context.spacing.alertPadding),
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
                         child: Column(
                           children: [
                             CircleAvatar(
@@ -280,8 +276,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                               ),
                             ),
                             SizedBox(
-                              height:
-                                  context.spacing.sectionTitleBottomMargin,
+                              height: context.spacing.sectionTitleBottomMargin,
                             ),
                             Text(
                               _currentToy.model ??
@@ -290,8 +285,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                             ),
                             if (_currentToy.iotDeviceId != null) ...[
                               SizedBox(
-                                height:
-                                    context.spacing.titleBottomMarginSm,
+                                height: context.spacing.titleBottomMarginSm,
                               ),
                               Text(
                                 'ID: ${_currentToy.iotDeviceId}',
@@ -308,22 +302,11 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     SizedBox(height: context.spacing.panelPadding),
 
                     // Name Setting
-                    Text(
-                      'toy_settings.toy_name'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: context.spacing.titleBottomMarginSm),
-                    TextFormField(
+                    CustomInput(
+                      label: 'toy_settings.toy_name'.tr(),
                       controller: _nameController,
-                      decoration: InputDecoration(
-                        hintText: 'toy_settings.toy_name_hint'.tr(),
-                        prefixIcon: const Icon(Icons.label),
-                        border: OutlineInputBorder(
-                          borderRadius: context.radius.tile,
-                        ),
-                      ),
+                      hint: 'toy_settings.toy_name_hint'.tr(),
+                      prefixIcon: const Icon(Icons.label),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'toy_settings.toy_name_required'.tr();
@@ -356,34 +339,29 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     SizedBox(height: context.spacing.titleBottomMarginSm),
                     Card(
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(context.spacing.alertPadding),
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
                         child: Column(
                           children: [
                             _buildStatusRow(
                               'toy_settings.status'.tr(),
                               _currentToy.status.label(),
                               theme,
-                              statusColor:
-                                  _currentToy.status.color(context),
+                              statusColor: _currentToy.status.color(context),
                             ),
                             const Divider(),
-                            if (_currentToy.iotDeviceStatus !=
-                                null) ...[
+                            if (_currentToy.iotDeviceStatus != null) ...[
                               _buildStatusRow(
                                 'toy_settings.device_connection'.tr(),
                                 _currentToy.iotDeviceStatus!,
                                 theme,
                                 statusColor:
-                                    _currentToy.iotDeviceStatus ==
-                                            'online'
-                                        ? context.colors.success
-                                        : context.colors.error,
+                                    _currentToy.iotDeviceStatus == 'online'
+                                    ? context.colors.success
+                                    : context.colors.error,
                               ),
                               const Divider(),
                             ],
-                            if (_currentToy.batteryLevel !=
-                                null) ...[
+                            if (_currentToy.batteryLevel != null) ...[
                               _buildStatusRow(
                                 'toy_settings.battery'.tr(),
                                 _currentToy.batteryLevel!,
@@ -393,8 +371,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                             ],
                             _buildStatusRow(
                               'toy_settings.model'.tr(),
-                              _currentToy.model ??
-                                  'toy_settings.unknown'.tr(),
+                              _currentToy.model ?? 'toy_settings.unknown'.tr(),
                               theme,
                             ),
                           ],
@@ -424,12 +401,13 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                       ),
                     ),
                     SizedBox(height: context.spacing.titleBottomMarginSm),
+                    // TODO(design-system): migrate to CustomButton when it supports custom colors
                     ElevatedButton.icon(
                       onPressed: _currentToy.iotDeviceId != null
                           ? () => context.push(
-                                AppRoutes.walkieTalkie.path,
-                                extra: _currentToy,
-                              )
+                              AppRoutes.walkieTalkie.path,
+                              extra: _currentToy,
+                            )
                           : null,
                       icon: const Icon(Icons.record_voice_over),
                       label: Text('walkie_talkie.open_button'.tr()),
@@ -451,9 +429,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                         ),
                       ),
 
-                    SizedBox(
-                        height: context.spacing.paragraphBottomMargin),
+                    SizedBox(height: context.spacing.paragraphBottomMargin),
 
+                    // TODO(design-system): migrate to CustomButton when it supports custom colors
                     // Save Button
                     ElevatedButton(
                       onPressed: _updateToySettings,
@@ -464,14 +442,13 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                       child: Text('toy_settings.save_changes'.tr()),
                     ),
 
-                    SizedBox(
-                        height: context.spacing.sectionTitleBottomMargin),
+                    SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
+                    // TODO(design-system): migrate to CustomButton when it supports custom colors
                     // Remove Toy Button
                     OutlinedButton.icon(
                       onPressed: _showDeleteConfirmation,
-                      icon:
-                          Icon(Icons.delete, color: context.colors.error),
+                      icon: Icon(Icons.delete, color: context.colors.error),
                       label: Text(
                         'toy_settings.remove_title'.tr(),
                         style: theme.textTheme.labelLarge?.copyWith(
@@ -490,10 +467,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     );
   }
 
-  Widget _buildPersonalityCard(
-    ThemeData theme,
-    ColorScheme colorScheme,
-  ) {
+  Widget _buildPersonalityCard(ThemeData theme, ColorScheme colorScheme) {
     final profileId = _currentToy.personalityProfile;
     final isLocal = _currentToy.id.startsWith('local_');
 
@@ -574,39 +548,36 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     String value,
     ThemeData theme, {
     Color? statusColor,
-  }) =>
+  }) => Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(
+        label,
+        style: theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
+      ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.min,
         children: [
+          if (statusColor != null) ...[
+            Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                color: statusColor,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
           Text(
-            label,
+            value,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.disabledColor,
+              fontWeight: FontWeight.bold,
+              color: statusColor,
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (statusColor != null) ...[
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: statusColor,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 6),
-              ],
-              Text(
-                value,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: statusColor,
-                ),
-              ),
-            ],
-          ),
         ],
-      );
+      ),
+    ],
+  );
 }

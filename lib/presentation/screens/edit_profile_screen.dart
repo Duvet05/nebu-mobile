@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/custom_input.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -49,6 +50,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
       );
+      if (!mounted) return;
 
       await ref.read(authProvider.notifier).updateUser(updatedUser);
 
@@ -125,21 +127,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     required IconData icon,
     required ColorScheme colorScheme,
     bool enabled = true,
-  }) => TextField(
+  }) => CustomInput(
     controller: controller,
+    label: label,
+    prefixIcon: Icon(icon, color: colorScheme.primary),
     enabled: enabled,
-    decoration: InputDecoration(
-      labelText: label,
-      prefixIcon: Icon(icon, color: colorScheme.primary),
-      border: OutlineInputBorder(borderRadius: context.radius.input),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: context.radius.input,
-        borderSide: BorderSide(color: colorScheme.primary, width: 2),
-      ),
-      filled: true,
-      fillColor: enabled
-          ? colorScheme.surface
-          : colorScheme.surface.withValues(alpha: 0.5),
-    ),
   );
 }

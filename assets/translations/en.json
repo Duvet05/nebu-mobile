@@ -160,7 +160,11 @@
     "no_toys_hero": "No toys yet",
     "no_toys_hero_hint": "Connect your first Nebu toy to get started",
     "unknown_device": "Unknown Device",
-    "connected": "Connected"
+    "connected": "Connected",
+    "quick_actions": "Explore",
+    "voice_history": "Sessions",
+    "knowledge": "Knowledge",
+    "personalities": "Personalities"
   },
   "profile": {
     "title": "Profile",

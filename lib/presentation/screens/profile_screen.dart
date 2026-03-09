@@ -255,6 +255,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+                // TODO(design-system): migrate to CustomButton when it supports custom colors
                 child: SizedBox(
                   width: double.infinity,
                   height: 54,

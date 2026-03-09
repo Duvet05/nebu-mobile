@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../providers/api_provider.dart';
+import '../widgets/custom_button.dart';
 
 class ChildProfileScreen extends ConsumerWidget {
   const ChildProfileScreen({super.key});
@@ -50,22 +51,18 @@ class ChildProfileScreen extends ConsumerWidget {
         SizedBox(height: context.spacing.titleBottomMargin),
         Text(
           'child_profile.no_data_title'.tr(),
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: context.textTheme.headlineSmall,
         ),
         const SizedBox(height: 10),
         Text(
           'child_profile.no_data_subtitle'.tr(),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 16, color: context.colors.grey500),
+          style: context.textTheme.bodyLarge?.copyWith(color: context.colors.grey500),
         ),
         const SizedBox(height: 30),
-        ElevatedButton(
+        CustomButton(
+          text: 'child_profile.setup_profile'.tr(),
           onPressed: () => context.push(AppRoutes.toyNameSetup.path),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: colorScheme.primary,
-            foregroundColor: colorScheme.onPrimary,
-          ),
-          child: Text('child_profile.setup_profile'.tr()),
         ),
       ],
     ),
@@ -109,7 +106,7 @@ class ChildProfileScreen extends ConsumerWidget {
                 if (childAge != null)
                   Text(
                     'child_profile.age'.tr(args: [childAge]),
-                    style: TextStyle(fontSize: 16, color: context.colors.grey500),
+                    style: context.textTheme.bodyLarge?.copyWith(color: context.colors.grey500),
                   ),
               ],
             ),
@@ -128,21 +125,17 @@ class ChildProfileScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              TextButton.icon(
+              CustomButton(
+                text: 'profile.edit_profile'.tr(),
                 onPressed: () => context.push(AppRoutes.toyNameSetup.path),
-                icon: Icon(Icons.edit, color: context.colors.grey500),
-                label: Text(
-                  'profile.edit_profile'.tr(),
-                  style: TextStyle(color: context.colors.grey500),
-                ),
+                variant: ButtonVariant.text,
+                icon: Icons.edit,
               ),
-              TextButton.icon(
+              CustomButton(
+                text: 'child_profile.delete_profile'.tr(),
                 onPressed: () => _confirmDelete(context, service, colorScheme),
-                icon: Icon(Icons.delete, color: colorScheme.error),
-                label: Text(
-                  'child_profile.delete_profile'.tr(),
-                  style: TextStyle(color: colorScheme.error),
-                ),
+                variant: ButtonVariant.text,
+                icon: Icons.delete,
               ),
             ],
           ),
@@ -155,8 +148,7 @@ class ChildProfileScreen extends ConsumerWidget {
     padding: const EdgeInsets.symmetric(vertical: 16),
     child: Text(
       title,
-      style: TextStyle(
-        fontSize: 18,
+      style: context.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.bold,
         color: context.colors.textNormal,
       ),

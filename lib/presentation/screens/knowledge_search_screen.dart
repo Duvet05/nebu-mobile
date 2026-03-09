@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/voice_session.dart';
 import '../providers/memory_provider.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_input.dart';
 
 class KnowledgeSearchScreen extends ConsumerStatefulWidget {
   const KnowledgeSearchScreen({super.key});
@@ -14,8 +16,7 @@ class KnowledgeSearchScreen extends ConsumerStatefulWidget {
       _KnowledgeSearchScreenState();
 }
 
-class _KnowledgeSearchScreenState
-    extends ConsumerState<KnowledgeSearchScreen> {
+class _KnowledgeSearchScreenState extends ConsumerState<KnowledgeSearchScreen> {
   final _searchController = TextEditingController();
 
   @override
@@ -27,10 +28,9 @@ class _KnowledgeSearchScreenState
   void _performSearch() {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
-    ref.read(knowledgeSearchProvider.notifier).search(
-          query: query,
-          language: context.locale.languageCode,
-        );
+    ref
+        .read(knowledgeSearchProvider.notifier)
+        .search(query: query, language: context.locale.languageCode);
   }
 
   @override
@@ -46,28 +46,21 @@ class _KnowledgeSearchScreenState
           // Search bar
           Padding(
             padding: EdgeInsets.all(context.spacing.alertPadding),
-            child: TextField(
+            child: CustomInput(
               controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'knowledge.search_hint'.tr(),
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          ref
-                              .read(knowledgeSearchProvider.notifier)
-                              .clear();
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: context.radius.input,
-                ),
-              ),
+              hint: 'knowledge.search_hint'.tr(),
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        ref.read(knowledgeSearchProvider.notifier).clear();
+                      },
+                    )
+                  : null,
               textInputAction: TextInputAction.search,
-              onSubmitted: (_) => _performSearch(),
+              onEditingComplete: _performSearch,
             ),
           ),
 
@@ -97,8 +90,7 @@ class _KnowledgeSearchScreenState
                       _KnowledgeCard(entry: entries[index]),
                 );
               },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -111,10 +103,11 @@ class _KnowledgeSearchScreenState
                     SizedBox(height: context.spacing.panelPadding),
                     Text('knowledge.error'.tr()),
                     SizedBox(height: context.spacing.panelPadding),
-                    ElevatedButton.icon(
+                    CustomButton(
+                      text: 'common.retry'.tr(),
                       onPressed: _performSearch,
-                      icon: const Icon(Icons.refresh),
-                      label: Text('common.retry'.tr()),
+                      icon: Icons.refresh,
+                      height: 44,
                     ),
                   ],
                 ),
@@ -127,37 +120,37 @@ class _KnowledgeSearchScreenState
   }
 
   Widget _buildEmptyState(BuildContext context, ThemeData theme) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.menu_book_rounded,
-              size: 80,
-              color: context.colors.primary.withValues(alpha: 0.3),
-            ),
-            SizedBox(height: context.spacing.panelPadding),
-            Text(
-              'knowledge.empty_title'.tr(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: context.spacing.labelBottomMargin),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.spacing.alertPadding * 2,
-              ),
-              child: Text(
-                'knowledge.empty_message'.tr(),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.menu_book_rounded,
+          size: 80,
+          color: context.colors.primary.withValues(alpha: 0.3),
         ),
-      );
+        SizedBox(height: context.spacing.panelPadding),
+        Text(
+          'knowledge.empty_title'.tr(),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: context.spacing.labelBottomMargin),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.alertPadding * 2,
+          ),
+          child: Text(
+            'knowledge.empty_message'.tr(),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 class _KnowledgeCard extends StatelessWidget {
@@ -170,9 +163,7 @@ class _KnowledgeCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Card(
-      margin: EdgeInsets.only(
-        bottom: context.spacing.paragraphBottomMarginSm,
-      ),
+      margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
       child: Padding(
         padding: EdgeInsets.all(context.spacing.panelPadding),
         child: Column(
@@ -205,8 +196,7 @@ class _KnowledgeCard extends StatelessWidget {
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: context.colors.primary
-                          .withValues(alpha: 0.1),
+                      color: context.colors.primary.withValues(alpha: 0.1),
                       borderRadius: context.radius.tile,
                     ),
                     child: Text(
@@ -240,11 +230,7 @@ class _KnowledgeCard extends StatelessWidget {
                   ),
                 if (entry.verified) ...[
                   SizedBox(width: context.spacing.labelBottomMargin),
-                  Icon(
-                    Icons.verified,
-                    size: 16,
-                    color: context.colors.success,
-                  ),
+                  Icon(Icons.verified, size: 16, color: context.colors.success),
                   const SizedBox(width: 4),
                   Text(
                     'knowledge.verified'.tr(),
@@ -270,14 +256,13 @@ class _KnowledgeCard extends StatelessWidget {
     );
   }
 
-  IconData _categoryIcon(String? category) =>
-      switch (category?.toLowerCase()) {
-        'ciencia' || 'science' => Icons.science,
-        'historia' || 'history' => Icons.history_edu,
-        'naturaleza' || 'nature' => Icons.eco,
-        'arte' || 'art' => Icons.palette,
-        'matematicas' || 'math' => Icons.calculate,
-        'musica' || 'music' => Icons.music_note,
-        _ => Icons.menu_book_rounded,
-      };
+  IconData _categoryIcon(String? category) => switch (category?.toLowerCase()) {
+    'ciencia' || 'science' => Icons.science,
+    'historia' || 'history' => Icons.history_edu,
+    'naturaleza' || 'nature' => Icons.eco,
+    'arte' || 'art' => Icons.palette,
+    'matematicas' || 'math' => Icons.calculate,
+    'musica' || 'music' => Icons.music_note,
+    _ => Icons.menu_book_rounded,
+  };
 }

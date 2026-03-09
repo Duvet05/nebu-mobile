@@ -20,6 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _identifierController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isGoogleSigningIn = false;
 
   @override
   void initState() {
@@ -267,9 +268,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleGoogleSignIn() async {
+    setState(() => _isGoogleSigningIn = true);
     try {
       final googleSignIn = ref.read(googleSignInProvider);
       final googleUser = await googleSignIn.authenticate();
+      if (!mounted) return;
 
       final googleAuth = googleUser.authentication;
       final idToken = googleAuth.idToken;
@@ -284,6 +287,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('auth.google_signin_failed_detail'.tr())),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isGoogleSigningIn = false);
       }
     }
   }
@@ -307,7 +314,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
+                      SizedBox(height: context.spacing.labelBottomMargin),
                       AuthBackButton(onPressed: () {
                         if (context.canPop()) {
                           context.pop();
@@ -315,7 +322,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           context.go(AppRoutes.home.path);
                         }
                       }),
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.spacing.alertPadding),
                       Text(
                         'auth.welcome_back'.tr(),
                         style: textTheme.headlineMedium?.copyWith(
@@ -324,7 +331,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: context.colors.textNormal,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: context.spacing.labelBottomMargin),
                       Text(
                         'auth.sign_in_subtitle_long'.tr(),
                         style: textTheme.titleMedium?.copyWith(
@@ -400,14 +407,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       AuthPrimaryButton(
                         text: 'auth.sign_in'.tr(),
                         isLoading: authState.isLoading,
-                        onPressed: _handleEmailLogin,
+                        onPressed: _isGoogleSigningIn
+                            ? null
+                            : _handleEmailLogin,
                       ),
                       SizedBox(height: context.spacing.panelPadding),
                       const AuthOrDivider(),
                       SizedBox(height: context.spacing.panelPadding),
                       AuthGoogleButton(
                         text: 'auth.continue_with_google'.tr(),
-                        isLoading: authState.isLoading,
+                        isLoading: _isGoogleSigningIn || authState.isLoading,
                         onPressed: _handleGoogleSignIn,
                       ),
                       SizedBox(height: context.spacing.paragraphBottomMargin),
@@ -421,11 +430,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () => context.push(AppRoutes.signUp.path),
+                            onTap: authState.isLoading || _isGoogleSigningIn
+                                ? null
+                                : () => context.push(AppRoutes.signUp.path),
                             child: Text(
                               'auth.sign_up'.tr(),
                               style: textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.primary,
+                                color: authState.isLoading || _isGoogleSigningIn
+                                    ? context.colors.grey500
+                                    : colorScheme.primary,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

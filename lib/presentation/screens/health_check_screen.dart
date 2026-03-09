@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/services/health_service.dart';
 import '../providers/api_provider.dart';
+import '../widgets/custom_button.dart';
 
 /// Screen for testing backend connectivity
 class HealthCheckScreen extends ConsumerStatefulWidget {
@@ -46,36 +47,20 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
     final theme = context.theme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('health_check.title'.tr()),
-      ),
+      appBar: AppBar(title: Text('health_check.title'.tr())),
       body: Padding(
         padding: EdgeInsets.all(context.spacing.alertPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            ElevatedButton.icon(
+            CustomButton(
+              text: _isLoading
+                  ? 'health_check.checking'.tr()
+                  : 'health_check.check_button'.tr(),
               onPressed: _isLoading ? null : _checkHealth,
-              icon: _isLoading
-                  ? SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: context.colors.textOnFilled,
-                      ),
-                    )
-                  : const Icon(Icons.refresh),
-              label: Text(
-                _isLoading
-                    ? 'health_check.checking'.tr()
-                    : 'health_check.check_button'.tr(),
-              ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.all(context.spacing.alertPadding),
-                backgroundColor: context.colors.info,
-                foregroundColor: context.colors.textOnFilled,
-              ),
+              icon: _isLoading ? null : Icons.refresh,
+              isLoading: _isLoading,
+              isFullWidth: true,
             ),
             SizedBox(height: context.spacing.panelPadding),
             if (_errorMessage != null)
@@ -277,24 +262,22 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
   }
 
   Widget _buildInfoRow(ThemeData theme, String label, String value) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 140,
-              child: Text(
-                '$label:',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      children: [
+        SizedBox(
+          width: 140,
+          child: Text(
+            '$label:',
+            style: theme.textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
-            Expanded(
-              child: Text(value, style: theme.textTheme.bodyMedium),
-            ),
-          ],
+          ),
         ),
-      );
+        Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
+      ],
+    ),
+  );
 
   Widget _buildProgressRow(ThemeData theme, String label, int percent) =>
       Padding(

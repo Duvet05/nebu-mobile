@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
+            padding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding),
             child: Column(
               children: [
                 const Spacer(flex: 2),
@@ -87,11 +87,13 @@ class WelcomeScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () => context.push(AppRoutes.connectionSetup.path),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: context.spacing.paragraphBottomMarginSm),
                     child: Text(
                       'welcome.continue_without_account'.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: context.colors.textOnFilled.withValues(alpha: 0.7),
+                        color: context.colors.textOnFilled.withValues(
+                          alpha: 0.7,
+                        ),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -110,87 +112,77 @@ class WelcomeScreen extends StatelessWidget {
 
 // Botón primario con efecto glass
 class _PrimaryButton extends StatelessWidget {
-
-  const _PrimaryButton({
-    required this.text,
-    required this.onPressed,
-  });
+  const _PrimaryButton({required this.text, required this.onPressed});
   final String text;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: context.radius.panel,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            color: context.colors.bgPrimary,
-            borderRadius: context.radius.panel,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.textNormal.withValues(alpha: 0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: context.colors.primary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-              ),
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onPressed,
+      borderRadius: context.radius.panel,
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          color: context.colors.bgPrimary,
+          borderRadius: context.radius.panel,
+          boxShadow: [
+            BoxShadow(
+              color: context.colors.textNormal.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: context.colors.primary,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
         ),
       ),
-    );
+    ),
+  );
 }
 
 // Botón secundario con borde
 class _SecondaryButton extends StatelessWidget {
-
-  const _SecondaryButton({
-    required this.text,
-    required this.onPressed,
-  });
+  const _SecondaryButton({required this.text, required this.onPressed});
   final String text;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) => Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: context.radius.panel,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            color: context.colors.textOnFilled.withValues(alpha: 0.1),
-            borderRadius: context.radius.panel,
-            border: Border.all(
-              color: context.colors.textOnFilled.withValues(alpha: 0.4),
-              width: 1.5,
-            ),
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onPressed,
+      borderRadius: context.radius.panel,
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          color: context.colors.textOnFilled.withValues(alpha: 0.1),
+          borderRadius: context.radius.panel,
+          border: Border.all(
+            color: context.colors.textOnFilled.withValues(alpha: 0.4),
+            width: 1.5,
           ),
-          child: Center(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: context.colors.textOnFilled.withValues(alpha: 0.95),
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-              ),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: context.colors.textOnFilled.withValues(alpha: 0.95),
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
         ),
       ),
-    );
+    ),
+  );
 }

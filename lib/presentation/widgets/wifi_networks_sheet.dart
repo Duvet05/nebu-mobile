@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../data/services/wifi_service.dart';
+import 'custom_button.dart';
 
 /// Modal bottom sheet for scanning and selecting available WiFi networks.
 class WifiNetworksSheet extends StatefulWidget {
@@ -108,9 +109,9 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 24),
-                  ElevatedButton(
+                  CustomButton(
+                    text: 'common.retry'.tr(),
                     onPressed: _scanNetworks,
-                    child: Text('common.retry'.tr()),
                   ),
                 ],
               ),
@@ -149,9 +150,10 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
               ),
             ),
           const SizedBox(height: 16),
-          TextButton(
+          CustomButton(
+            text: 'common.cancel'.tr(),
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('common.cancel'.tr()),
+            variant: ButtonVariant.text,
           ),
         ],
       ),

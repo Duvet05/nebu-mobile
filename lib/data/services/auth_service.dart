@@ -257,28 +257,4 @@ class AuthService {
     }
   }
 
-  // Email Verification
-  Future<bool> verifyEmail(String token) async {
-    try {
-      await _dio.post<void>(
-        '/auth/verify-email',
-        queryParameters: {'token': token},
-      );
-      return true;
-    } on Exception {
-      return false;
-    }
-  }
-
-  Future<bool> resendVerificationEmail(String email) async {
-    try {
-      await _dio.post<void>(
-        '/auth/resend-verification',
-        data: {'email': email},
-      );
-      return true;
-    } on Exception {
-      return false;
-    }
-  }
 }

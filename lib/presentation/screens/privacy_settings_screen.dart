@@ -11,6 +11,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/custom_button.dart';
 
 class PrivacySettingsScreen extends ConsumerStatefulWidget {
   const PrivacySettingsScreen({super.key});
@@ -272,12 +273,12 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
-          ElevatedButton(
+          CustomButton(
+            text: 'privacy.download'.tr(),
             onPressed: () {
               Navigator.pop(context);
               context.showInfoSnackBar('privacy.download_started'.tr());
             },
-            child: Text('privacy.download'.tr()),
           ),
         ],
       ),
@@ -336,7 +337,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
         ? Chip(
             label: Text(
               'privacy.current'.tr(),
-              style: const TextStyle(fontSize: 10),
+              style: context.textTheme.labelSmall,
             ),
             backgroundColor: context.colors.success.withValues(alpha: 0.1),
           )
@@ -373,6 +374,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
+          // TODO(design-system): migrate to CustomButton when it supports custom colors
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -446,6 +448,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
+          // TODO(design-system): migrate to CustomButton when it supports custom colors
           ElevatedButton(
             onPressed: () {
               if (confirmController.text.toUpperCase() != 'DELETE') {

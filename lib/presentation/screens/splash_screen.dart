@@ -153,13 +153,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   child: Text(
                     'splash.app_name'.tr(),
                     style: GoogleFonts.poppins(
-                      fontSize: 64,
+                      textStyle: context.theme.textTheme.displayLarge,
                       fontWeight: FontWeight.bold,
                       color: context.colors.textOnFilled,
                       letterSpacing: 6,
                       shadows: [
                         Shadow(
-                          color: context.colors.textNormal.withValues(alpha: 0.25),
+                          color: context.colors.textNormal.withValues(
+                            alpha: 0.25,
+                          ),
                           offset: const Offset(0, 4),
                           blurRadius: 12,
                         ),
@@ -180,7 +182,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 child: Text(
                   'splash.powered_by'.tr(),
                   style: GoogleFonts.poppins(
-                    fontSize: 16,
+                    textStyle: context.theme.textTheme.bodyLarge,
                     fontWeight: FontWeight.w300,
                     color: context.colors.textOnFilled.withValues(alpha: 0.85),
                     letterSpacing: 2,

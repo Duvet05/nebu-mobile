@@ -184,7 +184,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           ),
           backgroundColor: context.colors.success,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
+          shape: RoundedRectangleBorder(borderRadius: context.radius.button),
           margin: EdgeInsets.all(context.spacing.alertPadding),
         ),
       );
@@ -207,7 +207,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           ),
           backgroundColor: context.colors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
+          shape: RoundedRectangleBorder(borderRadius: context.radius.button),
           margin: EdgeInsets.all(context.spacing.alertPadding),
         ),
       );
@@ -266,7 +266,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                   height: 4,
                   decoration: BoxDecoration(
                     color: context.colors.grey700,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: context.radius.checkbox,
                   ),
                 ),
                 SizedBox(height: context.spacing.panelPadding),
@@ -902,7 +902,7 @@ class _BottomSheet extends StatelessWidget {
             height: 4,
             decoration: BoxDecoration(
               color: context.colors.grey700,
-              borderRadius: BorderRadius.circular(2),
+              borderRadius: context.radius.checkbox,
             ),
           ),
           const SizedBox(height: 24),

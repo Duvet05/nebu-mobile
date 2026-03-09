@@ -254,29 +254,6 @@ class WiFiService {
     }
   }
 
-  /// Desconectar de la red actual
-  Future<void> disconnect() async {
-    try {
-      _logger.i('Disconnecting from WiFi');
-
-      // Simular desconexión
-      await Future<void>.delayed(const Duration(seconds: 1));
-
-      _currentNetwork = null;
-
-      const result = WiFiConnectionResult(
-        success: true,
-        message: 'Disconnected from WiFi',
-      );
-
-      _connectionController.add(result);
-      _logger.i('WiFi disconnected');
-    } catch (e) {
-      _logger.e('Error disconnecting from WiFi: $e');
-      rethrow;
-    }
-  }
-
   /// Obtener red actual conectada
   WiFiNetwork? get currentNetwork => _currentNetwork;
 
@@ -325,18 +302,6 @@ class WiFiService {
   /// Stream de resultados de conexión
   Stream<WiFiConnectionResult> get connectionStream =>
       _connectionController.stream;
-
-  /// Verificar permisos necesarios
-  Future<bool> checkPermissions() async {
-    try {
-      final locationPermission = await Permission.location.status;
-
-      return locationPermission.isGranted;
-    } on Exception catch (e) {
-      _logger.e('Error checking permissions: $e');
-      return false;
-    }
-  }
 
   /// Solicitar permisos necesarios
   Future<bool> requestPermissions() async {

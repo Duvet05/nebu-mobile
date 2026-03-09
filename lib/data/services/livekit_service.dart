@@ -213,56 +213,6 @@ class LiveKitService {
     }
   }
 
-  /// Send IoT device data via LiveKit data channel.
-  Future<void> sendDeviceData(IoTDeviceData deviceData) async {
-    if (_room == null || _status != LiveKitConnectionStatus.connected) {
-      throw Exception('Not connected to LiveKit room');
-    }
-
-    try {
-      final payload = utf8.encode(jsonEncode(deviceData.toJson()));
-      await _room!.localParticipant?.publishData(
-        payload,
-        topic: 'iot-device-data',
-        reliable: false,
-      );
-      _logger.d('Sent IoT device data: ${deviceData.deviceId}');
-    } catch (e) {
-      _logger.e('Error sending device data: $e');
-      rethrow;
-    }
-  }
-
-  /// Send command to a device via LiveKit data channel.
-  Future<void> sendDeviceCommand({
-    required String deviceId,
-    required String command,
-    required Map<String, dynamic> parameters,
-  }) async {
-    if (_room == null || _status != LiveKitConnectionStatus.connected) {
-      throw Exception('Not connected to LiveKit room');
-    }
-
-    try {
-      final commandData = {
-        'deviceId': deviceId,
-        'command': command,
-        'parameters': parameters,
-        'timestamp': DateTime.now().millisecondsSinceEpoch,
-      };
-      final payload = utf8.encode(jsonEncode(commandData));
-      await _room!.localParticipant?.publishData(
-        payload,
-        topic: 'device-command',
-        reliable: true,
-      );
-      _logger.d('Sent device command: $command to $deviceId');
-    } catch (e) {
-      _logger.e('Error sending device command: $e');
-      rethrow;
-    }
-  }
-
   Future<void> setMicrophoneEnabled({required bool enabled}) async {
     if (_room == null) {
       return;
@@ -272,18 +222,6 @@ class LiveKitService {
       _logger.d('Microphone ${enabled ? 'enabled' : 'disabled'}');
     } on Exception catch (e) {
       _logger.e('Error setting microphone: $e');
-    }
-  }
-
-  Future<void> setCameraEnabled({required bool enabled}) async {
-    if (_room == null) {
-      return;
-    }
-    try {
-      await _room!.localParticipant?.setCameraEnabled(enabled);
-      _logger.d('Camera ${enabled ? 'enabled' : 'disabled'}');
-    } on Exception catch (e) {
-      _logger.e('Error setting camera: $e');
     }
   }
 

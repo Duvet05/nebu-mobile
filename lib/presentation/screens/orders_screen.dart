@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../providers/api_provider.dart';
+import '../widgets/custom_button.dart';
 
 class OrdersScreen extends ConsumerStatefulWidget {
   const OrdersScreen({super.key});
@@ -76,10 +77,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: context.spacing.panelPadding),
-                      ElevatedButton.icon(
+                      CustomButton(
+                        text: 'common.retry'.tr(),
                         onPressed: _loadOrders,
-                        icon: const Icon(Icons.refresh),
-                        label: Text('common.retry'.tr()),
+                        icon: Icons.refresh,
                       ),
                     ],
                   ),
@@ -336,7 +337,7 @@ class _OrderDetailsSheet extends StatelessWidget {
                 height: 4,
                 decoration: BoxDecoration(
                   color: context.colors.grey700,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: context.radius.checkbox,
                 ),
               ),
             ),
@@ -390,7 +391,8 @@ class _OrderDetailsSheet extends StatelessWidget {
             // Actions
             if (order.status.toUpperCase() != 'CANCELLED' &&
                 order.status.toUpperCase() != 'DELIVERED')
-              ElevatedButton(
+              CustomButton(
+                text: 'orders.track_order'.tr(),
                 onPressed: () {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -399,29 +401,21 @@ class _OrderDetailsSheet extends StatelessWidget {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: context.radius.tile,
-                  ),
-                ),
-                child: Text('orders.track_order'.tr()),
+                isFullWidth: true,
+                height: 50,
               ),
             SizedBox(height: context.spacing.paragraphBottomMarginSm),
-            OutlinedButton(
+            CustomButton(
+              text: 'orders.contact_support'.tr(),
               onPressed: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('orders.support_coming_soon'.tr())),
                 );
               },
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: context.radius.tile,
-                ),
-              ),
-              child: Text('orders.contact_support'.tr()),
+              variant: ButtonVariant.outline,
+              isFullWidth: true,
+              height: 50,
             ),
           ],
         ),

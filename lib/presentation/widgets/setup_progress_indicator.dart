@@ -23,11 +23,11 @@ class SetupProgressIndicator extends StatelessWidget {
           children: [
             Text(
               'setup_progress.step_of'.tr(args: ['$currentStep', '$totalSteps']),
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             Text(
               '${(progress * 100).toInt()}%',
-              style: TextStyle(fontSize: 14, color: context.colors.grey400),
+              style: context.textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
             ),
           ],
         ),

@@ -9,6 +9,7 @@ import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/bluetooth_provider.dart';
 import '../providers/device_provider.dart';
+import '../widgets/custom_button.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -46,8 +47,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.settings_outlined),
-                    onPressed: () =>
-                        context.push(AppRoutes.settings.path),
+                    onPressed: () => context.push(AppRoutes.settings.path),
                   ),
                 ],
               ),
@@ -67,11 +67,13 @@ class HomeScreen extends ConsumerWidget {
                     'home.my_active_toys'.tr(),
                     style: theme.textTheme.titleLarge,
                   ),
-                  TextButton.icon(
+                  CustomButton(
+                    text: 'home.add_toy'.tr(),
                     onPressed: () =>
                         context.push(AppRoutes.connectionSetup.path),
-                    icon: const Icon(Icons.add),
-                    label: Text('home.add_toy'.tr()),
+                    icon: Icons.add,
+                    variant: ButtonVariant.text,
+                    height: 40,
                   ),
                 ],
               ),
@@ -81,6 +83,48 @@ class HomeScreen extends ConsumerWidget {
               // Active Toys List
               _buildActiveToysList(context, ref),
 
+              SizedBox(height: context.spacing.panelPadding),
+
+              // Quick Actions
+              Text(
+                'home.quick_actions'.tr(),
+                style: theme.textTheme.titleLarge,
+              ),
+
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: _QuickActionCard(
+                      icon: Icons.record_voice_over,
+                      label: 'home.voice_history'.tr(),
+                      color: context.colors.success,
+                      onTap: () => context.push(AppRoutes.voiceHistory.path),
+                    ),
+                  ),
+                  SizedBox(width: context.spacing.labelBottomMargin),
+                  Expanded(
+                    child: _QuickActionCard(
+                      icon: Icons.menu_book_rounded,
+                      label: 'home.knowledge'.tr(),
+                      color: context.colors.warning,
+                      onTap: () => context.push(AppRoutes.knowledgeSearch.path),
+                    ),
+                  ),
+                  SizedBox(width: context.spacing.labelBottomMargin),
+                  Expanded(
+                    child: _QuickActionCard(
+                      icon: Icons.auto_awesome,
+                      label: 'home.personalities'.tr(),
+                      color: context.colors.secondary,
+                      onTap: () => context.push(AppRoutes.personalities.path),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: context.spacing.panelPadding),
             ],
           ),
         ),
@@ -124,15 +168,14 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Text(
                   hasDevices
-                      ? 'home.toys_connected'
-                          .tr(args: [deviceCount.toString()])
+                      ? 'home.toys_connected'.tr(args: [deviceCount.toString()])
                       : 'home.no_toys_hero'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: context.colors.textOnFilled,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: context.spacing.labelBottomMargin),
                 Text(
                   hasDevices
                       ? 'home.all_good'.tr()
@@ -144,7 +187,7 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: context.spacing.alertPadding),
           Icon(
             Icons.smart_toy,
             size: 48,
@@ -172,50 +215,43 @@ class HomeScreen extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => _buildErrorBanner(
-        context,
-        theme,
-        'home.devices_error'.tr(),
-      ),
+      error: (_, _) =>
+          _buildErrorBanner(context, theme, 'home.devices_error'.tr()),
     );
   }
 
   Widget _buildErrorBanner(
-          BuildContext context, ThemeData theme, String message) =>
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
-          borderRadius: context.radius.tile,
-          border: Border.all(
-            color: theme.colorScheme.error.withValues(alpha: 0.3),
+    BuildContext context,
+    ThemeData theme,
+    String message,
+  ) => Container(
+    padding: EdgeInsets.all(context.spacing.alertPadding),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+      borderRadius: context.radius.tile,
+      border: Border.all(color: theme.colorScheme.error.withValues(alpha: 0.3)),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.error_outline, size: 32, color: theme.colorScheme.error),
+        SizedBox(height: context.spacing.labelBottomMargin),
+        Text(
+          message,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onErrorContainer,
           ),
+          textAlign: TextAlign.center,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 32,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
+      ],
+    ),
+  );
 
   Widget _buildNoToysPlaceholder(BuildContext context, ThemeData theme) =>
       SizedBox(
         width: double.infinity,
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(context.spacing.panelPadding),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -247,14 +283,14 @@ class HomeScreen extends ConsumerWidget {
                   color: context.colors.primary.withValues(alpha: 0.5),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: context.spacing.alertPadding),
               Text(
                 'home.no_toys'.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: context.spacing.labelBottomMargin),
               Text(
                 'home.no_toys_hint'.tr(),
                 textAlign: TextAlign.center,
@@ -292,15 +328,12 @@ class _DeviceBatteryCard extends ConsumerWidget {
     final batteryLevel = ref.watch(batteryLevelProvider(device));
 
     return Container(
-      margin:
-          EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
+      margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
       padding: EdgeInsets.all(context.spacing.alertPadding),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: context.radius.panel,
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withValues(alpha: 0.05),
@@ -313,7 +346,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
         children: [
           // Icon container
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: EdgeInsets.all(context.spacing.paragraphBottomMarginSm),
             decoration: BoxDecoration(
               color: context.colors.primary.withValues(alpha: 0.1),
               borderRadius: context.radius.tile,
@@ -323,7 +356,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
               color: context.colors.primary,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: context.spacing.paragraphBottomMarginSm),
           // Name + status
           Expanded(
             child: Column(
@@ -396,4 +429,52 @@ class _DeviceBatteryCard extends ConsumerWidget {
   }
 }
 
+class _QuickActionCard extends StatelessWidget {
+  const _QuickActionCard({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.theme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: context.radius.tile,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: context.spacing.paragraphBottomMarginSm,
+          horizontal: context.spacing.labelBottomMargin,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: context.radius.tile,
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color),
+            SizedBox(height: context.spacing.labelBottomMargin),
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

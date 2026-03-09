@@ -8,6 +8,7 @@ import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/walkie_talkie_provider.dart';
 import '../widgets/connection_status_indicator.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/push_to_talk_button.dart';
 
 class WalkieTalkieScreen extends ConsumerStatefulWidget {
@@ -67,7 +68,9 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                 // Toy info
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: context.colors.primary.withValues(alpha: 0.2),
+                  backgroundColor: context.colors.primary.withValues(
+                    alpha: 0.2,
+                  ),
                   child: Icon(
                     Icons.smart_toy,
                     size: 48,
@@ -75,10 +78,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                   ),
                 ),
                 SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                Text(
-                  widget.toy.name,
-                  style: theme.textTheme.titleLarge,
-                ),
+                Text(widget.toy.name, style: theme.textTheme.titleLarge),
 
                 SizedBox(height: context.spacing.panelPadding),
 
@@ -116,22 +116,18 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                 // End session button
                 if (state.phase == WalkieTalkiePhase.connected ||
                     state.phase == WalkieTalkiePhase.error)
-                  OutlinedButton.icon(
+                  CustomButton(
+                    text: 'walkie_talkie.end_session'.tr(),
                     onPressed: () async {
                       await _endSession();
                       if (context.mounted) {
                         Navigator.of(context).pop();
                       }
                     },
-                    icon: Icon(Icons.call_end, color: context.colors.error),
-                    label: Text(
-                      'walkie_talkie.end_session'.tr(),
-                      style: TextStyle(color: context.colors.error),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: context.colors.error),
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
+                    icon: Icons.call_end,
+                    variant: ButtonVariant.outline,
+                    isFullWidth: true,
+                    height: 48,
                   ),
 
                 SizedBox(height: context.spacing.panelPadding),
@@ -143,33 +139,14 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
     );
   }
 
-  Widget _buildRemoteMuteButton(WalkieTalkieState state) => OutlinedButton.icon(
-        onPressed: () =>
-            ref.read(walkieTalkieProvider.notifier).toggleRemoteMute(),
-        icon: Icon(
-          state.isRemoteMuted ? Icons.volume_off : Icons.volume_up,
-          color: state.isRemoteMuted
-              ? context.colors.error
-              : context.colors.success,
-        ),
-        label: Text(
-          state.isRemoteMuted
-              ? 'walkie_talkie.unmute_toy'.tr()
-              : 'walkie_talkie.mute_toy'.tr(),
-          style: TextStyle(
-            color: state.isRemoteMuted
-                ? context.colors.error
-                : context.colors.success,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(
-            color: state.isRemoteMuted
-                ? context.colors.error
-                : context.colors.success,
-          ),
-        ),
-      );
+  Widget _buildRemoteMuteButton(WalkieTalkieState state) => CustomButton(
+    text: state.isRemoteMuted
+        ? 'walkie_talkie.unmute_toy'.tr()
+        : 'walkie_talkie.mute_toy'.tr(),
+    onPressed: () => ref.read(walkieTalkieProvider.notifier).toggleRemoteMute(),
+    icon: state.isRemoteMuted ? Icons.volume_off : Icons.volume_up,
+    variant: ButtonVariant.outline,
+  );
 
   Widget _buildErrorState(WalkieTalkieState state) {
     final errorKey = state.error ?? 'connection_failed';
@@ -183,19 +160,16 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
         Text(
           translationKey.tr(),
           style: context.theme.textTheme.bodyLarge?.copyWith(
-                color: context.colors.error,
-              ),
+            color: context.colors.error,
+          ),
           textAlign: TextAlign.center,
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
-        ElevatedButton.icon(
+        CustomButton(
+          text: 'walkie_talkie.retry'.tr(),
           onPressed: () =>
               ref.read(walkieTalkieProvider.notifier).startSession(widget.toy),
-          icon: const Icon(Icons.refresh),
-          label: Text('walkie_talkie.retry'.tr()),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: context.colors.primary,
-          ),
+          icon: Icons.refresh,
         ),
       ],
     );

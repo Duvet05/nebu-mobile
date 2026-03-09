@@ -6,6 +6,7 @@ import '../../core/theme/app_colors.dart';
 import '../../data/models/activity.dart';
 import '../providers/activity_provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/custom_button.dart';
 
 class ActivityLogScreen extends ConsumerStatefulWidget {
   const ActivityLogScreen({super.key});
@@ -83,10 +84,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final state = ref.watch(activityNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('activity_log.title'.tr()),
-        actions: const [],
-      ),
+      appBar: AppBar(title: Text('activity_log.title'.tr()), actions: const []),
       body: _buildBody(state, theme),
     );
   }
@@ -119,7 +117,9 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
                 Container(
                   padding: EdgeInsets.all(context.spacing.alertPadding),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+                    color: theme.colorScheme.errorContainer.withValues(
+                      alpha: 0.3,
+                    ),
                     borderRadius: context.radius.tile,
                     border: Border.all(
                       color: theme.colorScheme.error.withValues(alpha: 0.3),
@@ -134,18 +134,10 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
                   ),
                 ),
                 SizedBox(height: context.spacing.panelPadding),
-                ElevatedButton.icon(
+                CustomButton(
+                  text: 'common.retry'.tr(),
                   onPressed: _loadActivities,
-                  icon: const Icon(Icons.refresh),
-                  label: Text('common.retry'.tr()),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: context.colors.textOnFilled,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
+                  icon: Icons.refresh,
                 ),
               ],
             ),
@@ -195,45 +187,45 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   }
 
   Widget _buildEmptyState(ThemeData theme) => Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: theme.colorScheme.surfaceContainerHighest,
-            ),
-            child: Icon(
-              Icons.history,
-              size: 80,
-              color: context.colors.secondary,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 150,
+          height: 150,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: theme.colorScheme.surfaceContainerHighest,
+          ),
+          child: Icon(Icons.history, size: 80, color: context.colors.secondary),
+        ),
+        SizedBox(height: context.spacing.paragraphBottomMargin),
+        Text(
+          'activity_log.empty_title'.tr(),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48),
+          child: Text(
+            'activity_log.empty_message'.tr(),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: context.spacing.paragraphBottomMargin),
-          Text(
-            'activity_log.empty_title'.tr(),
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: context.spacing.sectionTitleBottomMargin),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48),
-            child: Text(
-              'activity_log.empty_message'.tr(),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
 
-  Widget _buildActivityCard(BuildContext context, Activity activity, ThemeData theme) {
+  Widget _buildActivityCard(
+    BuildContext context,
+    Activity activity,
+    ThemeData theme,
+  ) {
     final icon = _getIconForActivityType(activity.type);
     final activityColor = _getColorForActivityType(context, activity.type);
 
@@ -246,7 +238,9 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         ),
         title: Text(
           _getActivityTitle(activity.type),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,40 +269,41 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   }
 
   IconData _getIconForActivityType(ActivityType type) => switch (type) {
-      ActivityType.voiceCommand => Icons.mic,
-      ActivityType.connection => Icons.link,
-      ActivityType.interaction => Icons.touch_app,
-      ActivityType.update => Icons.system_update,
-      ActivityType.error => Icons.error,
-      ActivityType.play => Icons.play_circle,
-      ActivityType.sleep => Icons.bedtime,
-      ActivityType.wake => Icons.wb_sunny,
-      ActivityType.chat => Icons.chat,
-    };
+    ActivityType.voiceCommand => Icons.mic,
+    ActivityType.connection => Icons.link,
+    ActivityType.interaction => Icons.touch_app,
+    ActivityType.update => Icons.system_update,
+    ActivityType.error => Icons.error,
+    ActivityType.play => Icons.play_circle,
+    ActivityType.sleep => Icons.bedtime,
+    ActivityType.wake => Icons.wb_sunny,
+    ActivityType.chat => Icons.chat,
+  };
 
-  Color _getColorForActivityType(BuildContext context, ActivityType type) => switch (type) {
-      ActivityType.voiceCommand => context.colors.secondary,
-      ActivityType.connection => context.colors.success,
-      ActivityType.interaction => context.colors.primary,
-      ActivityType.update => context.colors.warning,
-      ActivityType.error => context.colors.error,
-      ActivityType.play => context.colors.primary,
-      ActivityType.sleep => context.colors.primary,
-      ActivityType.wake => context.colors.warning100,
-      ActivityType.chat => context.colors.secondary100,
-    };
+  Color _getColorForActivityType(BuildContext context, ActivityType type) =>
+      switch (type) {
+        ActivityType.voiceCommand => context.colors.secondary,
+        ActivityType.connection => context.colors.success,
+        ActivityType.interaction => context.colors.primary,
+        ActivityType.update => context.colors.warning,
+        ActivityType.error => context.colors.error,
+        ActivityType.play => context.colors.primary,
+        ActivityType.sleep => context.colors.primary,
+        ActivityType.wake => context.colors.warning100,
+        ActivityType.chat => context.colors.secondary100,
+      };
 
   String _getActivityTitle(ActivityType type) => switch (type) {
-      ActivityType.voiceCommand => 'activity_log.voice_command'.tr(),
-      ActivityType.connection => 'activity_log.connection'.tr(),
-      ActivityType.interaction => 'activity_log.interaction'.tr(),
-      ActivityType.update => 'activity_log.update'.tr(),
-      ActivityType.error => 'activity_log.error_type'.tr(),
-      ActivityType.play => 'activity_log.play'.tr(),
-      ActivityType.sleep => 'activity_log.sleep'.tr(),
-      ActivityType.wake => 'activity_log.wake'.tr(),
-      ActivityType.chat => 'activity_log.chat'.tr(),
-    };
+    ActivityType.voiceCommand => 'activity_log.voice_command'.tr(),
+    ActivityType.connection => 'activity_log.connection'.tr(),
+    ActivityType.interaction => 'activity_log.interaction'.tr(),
+    ActivityType.update => 'activity_log.update'.tr(),
+    ActivityType.error => 'activity_log.error_type'.tr(),
+    ActivityType.play => 'activity_log.play'.tr(),
+    ActivityType.sleep => 'activity_log.sleep'.tr(),
+    ActivityType.wake => 'activity_log.wake'.tr(),
+    ActivityType.chat => 'activity_log.chat'.tr(),
+  };
 
   String _formatTimestamp(DateTime timestamp) {
     final now = DateTime.now();

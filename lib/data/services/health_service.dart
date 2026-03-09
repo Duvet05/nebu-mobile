@@ -44,39 +44,6 @@ class HealthService {
     }
   }
 
-  /// Get backend version
-  Future<String?> getBackendVersion() async {
-    try {
-      final response = await checkHealth();
-      return response['version'] as String?;
-    } on Exception catch (e) {
-      _logger.e('Failed to get backend version: $e');
-      return null;
-    }
-  }
-
-  /// Get backend environment
-  Future<String?> getBackendEnvironment() async {
-    try {
-      final response = await checkHealth();
-      return response['environment'] as String?;
-    } on Exception catch (e) {
-      _logger.e('Failed to get backend environment: $e');
-      return null;
-    }
-  }
-
-  /// Get backend uptime in seconds
-  Future<int?> getBackendUptime() async {
-    try {
-      final response = await checkHealth();
-      return response['uptime'] as int?;
-    } on Exception catch (e) {
-      _logger.e('Failed to get backend uptime: $e');
-      return null;
-    }
-  }
-
   /// Get detailed health status with all checks
   Future<HealthStatus> getDetailedHealthStatus() async {
     try {

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
+import '../widgets/custom_button.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
@@ -78,12 +79,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         elevation: 0,
         actions: [
           if (unreadCount > 0)
-            TextButton(
+            CustomButton(
+              text: 'notifications.mark_all_read'.tr(),
               onPressed: _markAllAsRead,
-              child: Text(
-                'notifications.mark_all_read'.tr(),
-                style: TextStyle(color: theme.colorScheme.primary),
-              ),
+              variant: ButtonVariant.text,
+              height: 40,
             ),
         ],
       ),

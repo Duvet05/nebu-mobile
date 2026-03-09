@@ -35,13 +35,6 @@ class PersonalityService {
     return [];
   }
 
-  Future<Personality> getPersonality(String id) async {
-    _logger.d('Fetching personality: $id');
-    final response = await _apiService
-        .get<Map<String, dynamic>>('/agent/personalities/$id');
-    return Personality.fromJson(response);
-  }
-
   Future<void> assignPersonalityToToy({
     required String toyId,
     required String personalityId,

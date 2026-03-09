@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 
-enum ButtonVariant { primary, secondary, outline }
+enum ButtonVariant { primary, secondary, outline, text }
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -124,6 +124,23 @@ class CustomButton extends StatelessWidget {
                 borderRadius: context.radius.panel,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            ),
+            child: buttonChild,
+          ),
+        );
+
+      case ButtonVariant.text:
+        return SizedBox(
+          width: buttonWidth,
+          height: buttonHeight,
+          child: TextButton(
+            onPressed: isLoading ? null : onPressed,
+            style: TextButton.styleFrom(
+              foregroundColor: colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: context.radius.panel,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
             child: buttonChild,
           ),

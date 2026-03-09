@@ -11,6 +11,7 @@ import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
+import '../widgets/custom_button.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -20,7 +21,7 @@ class SettingsScreen extends ConsumerWidget {
     final isLoggedIn = ref.watch(authProvider).value != null;
     final appVersion =
         ref.watch(packageInfoProvider).whenData((info) => info.version).value ??
-            '';
+        '';
     final themeAsync = ref.watch(themeProvider);
     final languageAsync = ref.watch(languageProvider);
     final themeState = themeAsync.value;
@@ -57,10 +58,10 @@ class SettingsScreen extends ConsumerWidget {
                         onChanged: (value) {
                           ref.read(themeProvider.notifier).toggleDarkMode();
                         },
-                        activeTrackColor:
-                            context.colors.primary.withValues(alpha: 0.5),
-                        thumbColor:
-                            WidgetStateProperty.resolveWith((states) {
+                        activeTrackColor: context.colors.primary.withValues(
+                          alpha: 0.5,
+                        ),
+                        thumbColor: WidgetStateProperty.resolveWith((states) {
                           if (states.contains(WidgetState.selected)) {
                             return context.colors.primary;
                           }
@@ -87,9 +88,13 @@ class SettingsScreen extends ConsumerWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CountryFlag.fromLanguageCode('en',
-                                    theme: const ImageTheme(
-                                        height: 24, width: 32)),
+                                CountryFlag.fromLanguageCode(
+                                  'en',
+                                  theme: const ImageTheme(
+                                    height: 24,
+                                    width: 32,
+                                  ),
+                                ),
                                 const SizedBox(width: 8),
                                 const Text('English'),
                               ],
@@ -100,9 +105,13 @@ class SettingsScreen extends ConsumerWidget {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                CountryFlag.fromLanguageCode('es',
-                                    theme: const ImageTheme(
-                                        height: 24, width: 32)),
+                                CountryFlag.fromLanguageCode(
+                                  'es',
+                                  theme: const ImageTheme(
+                                    height: 24,
+                                    width: 32,
+                                  ),
+                                ),
                                 const SizedBox(width: 8),
                                 const Text('Español'),
                               ],
@@ -145,8 +154,7 @@ class SettingsScreen extends ConsumerWidget {
                         Icons.chevron_right,
                         color: context.colors.grey400,
                       ),
-                      onTap: () =>
-                          context.push(AppRoutes.healthCheck.path),
+                      onTap: () => context.push(AppRoutes.healthCheck.path),
                     ),
 
                     _SettingsTile(
@@ -157,8 +165,9 @@ class SettingsScreen extends ConsumerWidget {
                       trailing: Text(
                         'v$appVersion',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                       ),
                       onTap: () {
@@ -188,25 +197,11 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                child: ElevatedButton.icon(
+                child: CustomButton(
+                  text: 'auth.sign_in'.tr(),
                   onPressed: () => context.go(AppRoutes.login.path),
-                  icon: const Icon(Icons.login),
-                  label: Text(
-                    'auth.sign_in'.tr(),
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: context.colors.textOnFilled,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    foregroundColor: context.colors.textOnFilled,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: context.radius.button,
-                    ),
-                  ),
+                  icon: Icons.login,
+                  isFullWidth: true,
                 ),
               ),
           ],
@@ -291,11 +286,15 @@ void _showAboutAppDialog(BuildContext context, String appVersion) {
       height: 64,
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [context.colors.primary, context.colors.secondary]),
+          colors: [context.colors.primary, context.colors.secondary],
+        ),
         borderRadius: context.radius.panel,
       ),
-      child: Icon(Icons.smart_toy,
-          color: context.colors.textOnFilled, size: 32),
+      child: Icon(
+        Icons.smart_toy,
+        color: context.colors.textOnFilled,
+        size: 32,
+      ),
     ),
     children: [
       SizedBox(height: context.spacing.sectionTitleBottomMargin),
@@ -329,8 +328,7 @@ class _SettingsTile extends StatelessWidget {
         iconColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.8);
 
     return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(

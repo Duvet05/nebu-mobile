@@ -20,6 +20,8 @@ class MyToysScreen extends ConsumerStatefulWidget {
 }
 
 class _MyToysScreenState extends ConsumerState<MyToysScreen> {
+  bool _isDeletingToy = false;
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +50,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         final localIds = localToys.map((t) => t.id).toSet();
         final merged = [
           ...current.where((t) => !localIds.contains(t.id)),
-          ...localToys
+          ...localToys,
         ];
         notifier.setToys(merged);
       }
@@ -70,6 +72,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       return;
     }
 
+    setState(() => _isDeletingToy = true);
     try {
       if (toy.id.startsWith('local_')) {
         await ref.read(toyProvider.notifier).removeLocalToy(toy.id);
@@ -78,11 +81,16 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       }
       if (mounted) {
         context.showSuccessSnackBar(
-            'toys.deleted_success'.tr(args: [toy.name]));
+          'toys.deleted_success'.tr(args: [toy.name]),
+        );
       }
     } on Exception {
       if (mounted) {
         context.showErrorSnackBar('toys.delete_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isDeletingToy = false);
       }
     }
   }
@@ -117,7 +125,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                   height: 4,
                   decoration: BoxDecoration(
                     color: theme.dividerColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: context.radius.checkbox,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -163,10 +171,9 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                               const SizedBox(width: 6),
                               Text(
                                 statusText,
-                                style: TextStyle(
+                                style: theme.textTheme.labelMedium?.copyWith(
                                   color: statusColor,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 13,
                                 ),
                               ),
                             ],
@@ -216,7 +223,9 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.03),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.03,
+                      ),
                       borderRadius: context.radius.tile,
                       border: Border.all(
                         color: theme.dividerColor.withValues(alpha: 0.12),
@@ -227,28 +236,38 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                       children: [
                         if (toy.model != null)
                           _detailRow(
-                            theme, Icons.category_outlined,
-                            'toys.model'.tr(), toy.model!,
+                            theme,
+                            Icons.category_outlined,
+                            'toys.model'.tr(),
+                            toy.model!,
                           ),
                         if (toy.firmwareVersion != null)
                           _detailRow(
-                            theme, Icons.system_update_outlined,
-                            'toys.firmware'.tr(), toy.firmwareVersion!,
+                            theme,
+                            Icons.system_update_outlined,
+                            'toys.firmware'.tr(),
+                            toy.firmwareVersion!,
                           ),
                         if (toy.batteryLevel != null)
                           _detailRow(
-                            theme, Icons.battery_std_outlined,
-                            'toys.battery'.tr(), '${toy.batteryLevel}%',
+                            theme,
+                            Icons.battery_std_outlined,
+                            'toys.battery'.tr(),
+                            '${toy.batteryLevel}%',
                           ),
                         if (toy.signalStrength != null)
                           _detailRow(
-                            theme, Icons.signal_cellular_alt,
-                            'toys.signal'.tr(), '${toy.signalStrength} dBm',
+                            theme,
+                            Icons.signal_cellular_alt,
+                            'toys.signal'.tr(),
+                            '${toy.signalStrength} dBm',
                           ),
                         if (toy.iotDeviceId != null)
                           _detailRow(
-                            theme, Icons.router_outlined,
-                            'toys.iot_device'.tr(), toy.iotDeviceId!,
+                            theme,
+                            Icons.router_outlined,
+                            'toys.iot_device'.tr(),
+                            toy.iotDeviceId!,
                           ),
                       ],
                     ),
@@ -256,19 +275,25 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 ],
                 const SizedBox(height: 20),
                 // Action buttons
+                // TODO(design-system): migrate to CustomButton when it supports custom colors
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      context.push(AppRoutes.toySettings.path, extra: toy);
-                    },
+                    onPressed: _isDeletingToy
+                        ? null
+                        : () {
+                            Navigator.pop(context);
+                            this.context.push(
+                              AppRoutes.toySettings.path,
+                              extra: toy,
+                            );
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: context.colors.textOnFilled,
+                      foregroundColor: this.context.colors.textOnFilled,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: context.radius.tile,
+                        borderRadius: this.context.radius.tile,
                       ),
                     ),
                     icon: const Icon(Icons.settings, size: 20),
@@ -276,24 +301,36 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                // TODO(design-system): migrate to CustomButton when it supports custom colors
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _deleteToy(toy);
-                    },
+                    onPressed: _isDeletingToy
+                        ? null
+                        : () {
+                            Navigator.pop(context);
+                            _deleteToy(toy);
+                          },
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: context.colors.error,
+                      foregroundColor: this.context.colors.error,
                       side: BorderSide(
-                        color: context.colors.error.withValues(alpha: 0.4),
+                        color: this.context.colors.error.withValues(alpha: 0.4),
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                        borderRadius: context.radius.tile,
+                        borderRadius: this.context.radius.tile,
                       ),
                     ),
-                    icon: const Icon(Icons.delete_outline, size: 20),
+                    icon: _isDeletingToy
+                        ? SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: this.context.colors.error,
+                            ),
+                          )
+                        : const Icon(Icons.delete_outline, size: 20),
                     label: Text('toys.remove'.tr()),
                   ),
                 ),
@@ -312,30 +349,38 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       toy.signalStrength != null ||
       toy.iotDeviceId != null;
 
-  Widget _detailRow(ThemeData theme, IconData icon, String label, String value) =>
-      Row(
-        children: [
-          Icon(icon, size: 16, color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
-          const SizedBox(width: 10),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
+  Widget _detailRow(
+    ThemeData theme,
+    IconData icon,
+    String label,
+    String value,
+  ) => Row(
+    children: [
+      Icon(
+        icon,
+        size: 16,
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+      ),
+      const SizedBox(width: 10),
+      Text(
+        label,
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+        ),
+      ),
+      const Spacer(),
+      Flexible(
+        child: Text(
+          value,
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w600,
           ),
-          const Spacer(),
-          Flexible(
-            child: Text(
-              value,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.end,
-            ),
-          ),
-        ],
-      );
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.end,
+        ),
+      ),
+    ],
+  );
 
   void _addNewToy(BuildContext context) {
     context.push(AppRoutes.connectionSetup.path);
@@ -377,30 +422,30 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       ),
       body: toysAsync.when(
         data: (toys) => RefreshIndicator(
-            onRefresh: _loadToys,
-            child: ListView(
-              padding: EdgeInsets.all(context.spacing.alertPadding),
-              children: [
-                if (toys.isEmpty) ...[
-                  _buildEmptyState(context, theme),
-                ] else
-                  ...[
-                    ...toys.map<Widget>(
-                          (toy) =>
-                          _ToyCard(
-                            toy: toy,
-                            theme: theme,
-                            isDark: isDark,
-                            onTap: () => _showToyDetails(toy, theme, isDark),
-                          ),
-                    ),
+          onRefresh: _loadToys,
+          child: ListView(
+            padding: EdgeInsets.all(context.spacing.alertPadding),
+            children: [
+              if (toys.isEmpty) ...[
+                _buildEmptyState(context, theme),
+              ] else ...[
+                ...toys.map<Widget>(
+                  (toy) => _ToyCard(
+                    toy: toy,
+                    theme: theme,
+                    isDark: isDark,
+                    onTap: _isDeletingToy
+                        ? () {}
+                        : () => _showToyDetails(toy, theme, isDark),
+                  ),
+                ),
 
-                    // Add another toy
-                    _buildAddToyCard(theme),
-                  ],
+                // Add another toy
+                _buildAddToyCard(theme),
               ],
-            ),
+            ],
           ),
+        ),
         loading: () => _buildLoadingSkeleton(theme),
         error: (_, _) => _buildErrorState(theme),
       ),
@@ -520,6 +565,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMargin),
+        // TODO(design-system): migrate to CustomButton when it supports custom colors
         ElevatedButton.icon(
           onPressed: () => _addNewToy(context),
           icon: const Icon(Icons.add),
@@ -527,13 +573,8 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: context.colors.textOnFilled,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 12,
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: context.radius.button,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: context.radius.button),
           ),
         ),
       ],
@@ -546,14 +587,14 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     children: List.generate(
       3,
       (_) => Container(
-        margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
+        margin: EdgeInsets.only(
+          bottom: context.spacing.paragraphBottomMarginSm,
+        ),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: context.radius.panel,
-          border: Border.all(
-            color: theme.dividerColor.withValues(alpha: 0.15),
-          ),
+          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.15)),
         ),
         child: Row(
           children: [
@@ -574,8 +615,10 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     width: 120,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(4),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.08,
+                      ),
+                      borderRadius: context.radius.checkbox,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -583,8 +626,10 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     width: 80,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(4),
+                      color: theme.colorScheme.onSurface.withValues(
+                        alpha: 0.05,
+                      ),
+                      borderRadius: context.radius.checkbox,
                     ),
                   ),
                 ],
@@ -621,6 +666,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: context.spacing.panelPadding),
+              // TODO(design-system): migrate to CustomButton when it supports custom colors
               ElevatedButton.icon(
                 onPressed: _loadToys,
                 icon: const Icon(Icons.refresh),
@@ -667,9 +713,7 @@ class _ToyCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: context.radius.panel,
-        border: Border.all(
-          color: theme.dividerColor.withValues(alpha: 0.15),
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.15)),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withValues(alpha: 0.05),
@@ -730,8 +774,7 @@ class _ToyCard extends StatelessWidget {
                               const SizedBox(width: 6),
                               Text(
                                 badgeText,
-                                style: TextStyle(
-                                  fontSize: 13,
+                                style: theme.textTheme.labelMedium?.copyWith(
                                   color: accentColor,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -803,7 +846,11 @@ class _ToyCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.touch_app_outlined, size: 16, color: accentColor),
+                        Icon(
+                          Icons.touch_app_outlined,
+                          size: 16,
+                          color: accentColor,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'toys.configure'.tr(),
@@ -824,7 +871,9 @@ class _ToyCard extends StatelessWidget {
                     child: Text(
                       _formatLastConnected(toy.lastConnected!),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -875,9 +924,7 @@ class _QuickActionButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: context.radius.tile,
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -900,6 +947,3 @@ class _QuickActionButton extends StatelessWidget {
     ),
   );
 }
-
-
-

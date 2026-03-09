@@ -6,6 +6,8 @@ import '../../core/theme/app_colors.dart';
 import '../../data/models/conversation.dart';
 import '../../data/models/toy.dart';
 import '../providers/memory_provider.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_input.dart';
 
 class ToyMemoryScreen extends ConsumerStatefulWidget {
   const ToyMemoryScreen({required this.toy, super.key});
@@ -36,33 +38,27 @@ class _ToyMemoryScreenState extends ConsumerState<ToyMemoryScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('memory.title'.tr()),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: [
-              Tab(
-                icon: const Icon(Icons.psychology),
-                text: 'memory.tab_memories'.tr(),
-              ),
-              Tab(
-                icon: const Icon(Icons.search),
-                text: 'memory.tab_search'.tr(),
-              ),
-            ],
+    appBar: AppBar(
+      title: Text('memory.title'.tr()),
+      bottom: TabBar(
+        controller: _tabController,
+        tabs: [
+          Tab(
+            icon: const Icon(Icons.psychology),
+            text: 'memory.tab_memories'.tr(),
           ),
-        ),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            _MemoriesTab(toyId: widget.toy.id),
-            _SearchTab(
-              toyId: widget.toy.id,
-              searchController: _searchController,
-            ),
-          ],
-        ),
-      );
+          Tab(icon: const Icon(Icons.search), text: 'memory.tab_search'.tr()),
+        ],
+      ),
+    ),
+    body: TabBarView(
+      controller: _tabController,
+      children: [
+        _MemoriesTab(toyId: widget.toy.id),
+        _SearchTab(toyId: widget.toy.id, searchController: _searchController),
+      ],
+    ),
+  );
 }
 
 // ─── Memories Tab ───
@@ -89,8 +85,7 @@ class _MemoriesTab extends ConsumerWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () async =>
-              ref.invalidate(toyMemoriesProvider(toyId)),
+          onRefresh: () async => ref.invalidate(toyMemoriesProvider(toyId)),
           child: ListView.builder(
             padding: EdgeInsets.all(context.spacing.alertPadding),
             itemCount: memories.length,
@@ -108,28 +103,23 @@ class _MemoriesTab extends ConsumerWidget {
     BuildContext context,
     ThemeData theme,
     WidgetRef ref,
-  ) =>
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: theme.colorScheme.error,
-            ),
-            SizedBox(height: context.spacing.panelPadding),
-            Text('memory.error_loading'.tr()),
-            SizedBox(height: context.spacing.panelPadding),
-            ElevatedButton.icon(
-              onPressed: () =>
-                  ref.invalidate(toyMemoriesProvider(toyId)),
-              icon: const Icon(Icons.refresh),
-              label: Text('common.retry'.tr()),
-            ),
-          ],
+  ) => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+        SizedBox(height: context.spacing.panelPadding),
+        Text('memory.error_loading'.tr()),
+        SizedBox(height: context.spacing.panelPadding),
+        CustomButton(
+          text: 'common.retry'.tr(),
+          onPressed: () => ref.invalidate(toyMemoriesProvider(toyId)),
+          icon: Icons.refresh,
+          height: 44,
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _MemoryCard extends StatelessWidget {
@@ -143,9 +133,7 @@ class _MemoryCard extends StatelessWidget {
     final emotionColor = _emotionColor(context, emotion);
 
     return Card(
-      margin: EdgeInsets.only(
-        bottom: context.spacing.paragraphBottomMarginSm,
-      ),
+      margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
       child: Padding(
         padding: EdgeInsets.all(context.spacing.panelPadding),
         child: Row(
@@ -154,11 +142,7 @@ class _MemoryCard extends StatelessWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: emotionColor.withValues(alpha: 0.15),
-              child: Icon(
-                _emotionIcon(emotion),
-                color: emotionColor,
-                size: 20,
-              ),
+              child: Icon(_emotionIcon(emotion), color: emotionColor, size: 20),
             ),
             SizedBox(width: context.spacing.paragraphBottomMarginSm),
             Expanded(
@@ -202,8 +186,7 @@ class _MemoryCard extends StatelessWidget {
                   Text(memory.summary, style: theme.textTheme.bodyMedium),
 
                   // Topics
-                  if (memory.topics != null &&
-                      memory.topics!.isNotEmpty) ...[
+                  if (memory.topics != null && memory.topics!.isNotEmpty) ...[
                     SizedBox(height: context.spacing.labelBottomMargin),
                     Wrap(
                       spacing: 6,
@@ -219,8 +202,9 @@ class _MemoryCard extends StatelessWidget {
                             style: theme.textTheme.labelSmall,
                           ),
                           visualDensity: VisualDensity.compact,
-                          backgroundColor: context.colors.primary
-                              .withValues(alpha: 0.08),
+                          backgroundColor: context.colors.primary.withValues(
+                            alpha: 0.08,
+                          ),
                         );
                       }).toList(),
                     ),
@@ -280,15 +264,14 @@ class _MemoryCard extends StatelessWidget {
         _ => context.colors.primary,
       };
 
-  IconData _emotionIcon(String emotion) =>
-      switch (emotion.toLowerCase()) {
-        'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
-        'sad' || 'triste' => Icons.sentiment_dissatisfied,
-        'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
-        'curious' || 'curioso' => Icons.psychology,
-        'excited' || 'emocionado' => Icons.celebration,
-        _ => Icons.sentiment_neutral,
-      };
+  IconData _emotionIcon(String emotion) => switch (emotion.toLowerCase()) {
+    'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
+    'sad' || 'triste' => Icons.sentiment_dissatisfied,
+    'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
+    'curious' || 'curioso' => Icons.psychology,
+    'excited' || 'emocionado' => Icons.celebration,
+    _ => Icons.sentiment_neutral,
+  };
 
   String _formatTimestamp(String iso) {
     final date = DateTime.tryParse(iso);
@@ -319,38 +302,34 @@ class _SearchTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = context.theme;
-    final AsyncValue<List<MemoryEntry>> searchResults =
-        ref.watch(memorySearchProvider);
+    final AsyncValue<List<MemoryEntry>> searchResults = ref.watch(
+      memorySearchProvider,
+    );
 
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.all(context.spacing.alertPadding),
-          child: TextField(
+          child: CustomInput(
             controller: searchController,
-            decoration: InputDecoration(
-              hintText: 'memory.search_hint'.tr(),
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        searchController.clear();
-                        ref.read(memorySearchProvider.notifier).clear();
-                      },
-                    )
-                  : null,
-              border: OutlineInputBorder(
-                borderRadius: context.radius.input,
-              ),
-            ),
+            hint: 'memory.search_hint'.tr(),
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      searchController.clear();
+                      ref.read(memorySearchProvider.notifier).clear();
+                    },
+                  )
+                : null,
             textInputAction: TextInputAction.search,
-            onSubmitted: (query) {
-              if (query.trim().isNotEmpty) {
-                ref.read(memorySearchProvider.notifier).search(
-                      query: query.trim(),
-                      toyId: toyId,
-                    );
+            onEditingComplete: () {
+              final query = searchController.text.trim();
+              if (query.isNotEmpty) {
+                ref
+                    .read(memorySearchProvider.notifier)
+                    .search(query: query, toyId: toyId);
               }
             },
           ),
@@ -388,8 +367,7 @@ class _SearchTab extends ConsumerWidget {
                     _MemoryCard(memory: results[index]),
               );
             },
-            loading: () =>
-                const Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, __) => Center(
               child: Text(
                 'memory.search_error'.tr(),
@@ -413,36 +391,35 @@ Widget _buildEmptyState(
   IconData icon,
   String title,
   String message,
-) =>
-    Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 80,
-            color: context.colors.primary.withValues(alpha: 0.3),
-          ),
-          SizedBox(height: context.spacing.panelPadding),
-          Text(
-            title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: context.spacing.labelBottomMargin),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.spacing.alertPadding * 2,
-            ),
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
-        ],
+) => Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(
+        icon,
+        size: 80,
+        color: context.colors.primary.withValues(alpha: 0.3),
       ),
-    );
+      SizedBox(height: context.spacing.panelPadding),
+      Text(
+        title,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      SizedBox(height: context.spacing.labelBottomMargin),
+      Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.spacing.alertPadding * 2,
+        ),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
+    ],
+  ),
+);

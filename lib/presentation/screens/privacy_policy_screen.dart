@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/config.dart';
 import '../../core/theme/app_colors.dart';
+import '../widgets/custom_button.dart';
 
 class PrivacyPolicyScreen extends ConsumerWidget {
   const PrivacyPolicyScreen({super.key});
@@ -110,19 +111,23 @@ class PrivacyPolicyScreen extends ConsumerWidget {
             Wrap(
               spacing: 12,
               children: [
-                TextButton.icon(
+                CustomButton(
+                  text: 'privacy_policy.delete_account_button'.tr(),
                   onPressed: () async {
                     await _openExternalLink(context, Config.deleteAccountUrl);
                   },
-                  icon: const Icon(Icons.person_off_outlined),
-                  label: Text('privacy_policy.delete_account_button'.tr()),
+                  icon: Icons.person_off_outlined,
+                  variant: ButtonVariant.text,
+                  height: 40,
                 ),
-                TextButton.icon(
+                CustomButton(
+                  text: 'privacy_policy.delete_data_button'.tr(),
                   onPressed: () async {
                     await _openExternalLink(context, Config.deleteDataUrl);
                   },
-                  icon: const Icon(Icons.delete_sweep_outlined),
-                  label: Text('privacy_policy.delete_data_button'.tr()),
+                  icon: Icons.delete_sweep_outlined,
+                  variant: ButtonVariant.text,
+                  height: 40,
                 ),
               ],
             ),

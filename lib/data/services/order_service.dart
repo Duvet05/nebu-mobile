@@ -26,9 +26,4 @@ class OrderService {
     return [];
   }
 
-  /// Get a specific order by ID
-  Future<Map<String, dynamic>> getOrder(String orderId) async {
-    _logger.d('Fetching order $orderId');
-    return _apiService.get<Map<String, dynamic>>('/orders/$orderId');
-  }
 }

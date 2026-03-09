@@ -90,18 +90,6 @@ class UserService {
     return User.fromJson(response);
   }
 
-  /// Obtener usuario por ID
-  Future<User> getUserById(String userId) async {
-    _logger.d('Fetching user by ID: $userId');
-
-    final response = await _apiService.get<Map<String, dynamic>>(
-      '/users/$userId',
-    );
-
-    _logger.d('User fetched successfully');
-    return User.fromJson(response);
-  }
-
   /// Eliminar cuenta propia (hard delete)
   /// Elimina permanentemente la cuenta y todos los datos asociados
   Future<String> deleteOwnAccount({

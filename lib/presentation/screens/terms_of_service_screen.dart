@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/config.dart';
 import '../../core/theme/app_colors.dart';
+import '../widgets/custom_button.dart';
 
 class TermsOfServiceScreen extends ConsumerWidget {
   const TermsOfServiceScreen({super.key});
@@ -121,15 +122,17 @@ class TermsOfServiceScreen extends ConsumerWidget {
             SizedBox(height: context.spacing.titleBottomMarginSm),
             Align(
               alignment: Alignment.centerLeft,
-              child: TextButton.icon(
+              child: CustomButton(
+                text: 'terms.delete_button'.tr(),
                 onPressed: () async {
                   await _openExternalLink(
                     context,
                     Config.deleteAccountUrl,
                   );
                 },
-                icon: const Icon(Icons.person_off_outlined),
-                label: Text('terms.delete_button'.tr()),
+                icon: Icons.person_off_outlined,
+                variant: ButtonVariant.text,
+                height: 40,
               ),
             ),
 

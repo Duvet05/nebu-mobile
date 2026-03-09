@@ -239,7 +239,11 @@
     "personalities": "Personalidades",
     "playground": "Playground",
     "unknown_device": "Dispositivo desconocido",
-    "connected": "Conectado"
+    "connected": "Conectado",
+    "quick_actions": "Explorar",
+    "voice_history": "Sesiones",
+    "knowledge": "Conocimiento",
+    "personalities": "Personalidades"
   },
   "profile": {
     "title": "Perfil",
