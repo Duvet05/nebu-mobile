@@ -279,7 +279,7 @@
     "user_not_found": "Usuario no encontrado",
     "avatar_camera": "Tomar Foto",
     "avatar_gallery": "Elegir de la Galería",
-    "avatar_upload_pending": "Subida de imagen próximamente",
+    "avatar_updated": "¡Avatar actualizado!",
     "avatar_error": "No se pudo actualizar el avatar. Intenta de nuevo."
   },
   "voice_agent": {

@@ -36,6 +36,9 @@ class StorageKeys {
   static const String localToys = 'local_toys';
   static const String setupDeviceRegistered = 'setup_device_registered';
 
+  // Avatar
+  static const String localAvatar = 'local_avatar_path';
+
   // Activity Migration
   static const String localUserId = 'local_user_id';
   static const String activitiesMigrated = 'activities_migrated';

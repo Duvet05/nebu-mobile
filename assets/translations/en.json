@@ -197,7 +197,7 @@
     "user_not_found": "User not found",
     "avatar_camera": "Take Photo",
     "avatar_gallery": "Choose from Gallery",
-    "avatar_upload_pending": "Image upload coming soon",
+    "avatar_updated": "Avatar updated!",
     "avatar_error": "Could not update avatar. Please try again."
   },
   "activity_log": {

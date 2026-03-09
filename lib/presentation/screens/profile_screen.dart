@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../screens/edit_profile_screen.dart';
 import '../widgets/custom_button.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -19,6 +22,7 @@ class ProfileScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
     final user = authState.value;
 
+    final localAvatar = ref.watch(localAvatarProvider).value;
     final themeAsync = ref.watch(themeProvider);
     final themeState = themeAsync.value;
     final isDark = themeState?.isDarkMode ?? false;
@@ -71,23 +75,12 @@ class ProfileScreen extends ConsumerWidget {
                         color: context.colors.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: user?.avatar != null
-                          ? ClipOval(
-                              child: Image.network(
-                                user!.avatar!,
-                                width: 64,
-                                height: 64,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : Center(
-                              child: Text(
-                                (user?.name ?? 'U')[0].toUpperCase(),
-                                style: theme.textTheme.headlineMedium?.copyWith(
-                                  color: context.colors.primary,
-                                ),
-                              ),
-                            ),
+                      child: _buildAvatar(
+                        localAvatar: localAvatar,
+                        networkAvatar: user?.avatar,
+                        name: user?.name,
+                        theme: theme,
+                      ),
                     ),
                     SizedBox(width: context.spacing.alertPadding),
                     // Name and View Profile
@@ -268,6 +261,47 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
+
+  static Widget _buildAvatar({
+    required String? localAvatar,
+    required String? networkAvatar,
+    required String? name,
+    required ThemeData theme,
+  }) {
+    if (localAvatar != null && File(localAvatar).existsSync()) {
+      return ClipOval(
+        child: Image.file(
+          File(localAvatar),
+          width: 64,
+          height: 64,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    if (networkAvatar != null) {
+      return ClipOval(
+        child: Image.network(
+          networkAvatar,
+          width: 64,
+          height: 64,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _buildInitials(name, theme),
+        ),
+      );
+    }
+
+    return _buildInitials(name, theme);
+  }
+
+  static Widget _buildInitials(String? name, ThemeData theme) => Center(
+    child: Text(
+      (name ?? 'U')[0].toUpperCase(),
+      style: theme.textTheme.headlineMedium?.copyWith(
+        color: theme.colorScheme.primary,
+      ),
+    ),
+  );
 
   Future<bool?> _showLogoutDialog(BuildContext context) => showDialog<bool>(
     context: context,

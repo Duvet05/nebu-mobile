@@ -1,14 +1,24 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
+import '../../core/constants/storage_keys.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_input.dart';
+
+/// Local avatar path, stored in secure storage.
+final localAvatarProvider = FutureProvider<String?>((ref) async {
+  final storage = ref.watch(secureStorageProvider);
+  return storage.read(key: StorageKeys.localAvatar);
+});
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -21,7 +31,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
-  final bool _isUpdatingAvatar = false;
+  bool _isUpdatingAvatar = false;
 
   @override
   void initState() {
@@ -96,6 +106,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       return;
     }
 
+    await _pickAndSaveAvatar(source);
+  }
+
+  Future<void> _pickAndSaveAvatar(ImageSource source) async {
     try {
       final picker = ImagePicker();
       final image = await picker.pickImage(
@@ -109,13 +123,36 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         return;
       }
 
-      // TODO(backend): Upload image to storage and get URL.
-      // Backend accepts avatarUrl (PATCH /users/me/avatar).
-      // Needs a file upload endpoint or external storage (S3/Firebase).
-      context.showInfoSnackBar('profile.avatar_upload_pending'.tr());
+      setState(() {
+        _isUpdatingAvatar = true;
+      });
+
+      // Copy to app documents dir with a stable filename
+      final appDir = await getApplicationDocumentsDirectory();
+      final avatarFile = File('${appDir.path}/avatar.jpg');
+      await File(image.path).copy(avatarFile.path);
+
+      // Persist the path
+      await ref.read(secureStorageProvider).write(
+        key: StorageKeys.localAvatar,
+        value: avatarFile.path,
+      );
+
+      // Refresh the provider so UI updates everywhere
+      ref.invalidate(localAvatarProvider);
+
+      if (mounted) {
+        context.showSuccessSnackBar('profile.avatar_updated'.tr());
+      }
     } on Exception {
       if (mounted) {
         context.showErrorSnackBar('profile.avatar_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUpdatingAvatar = false;
+        });
       }
     }
   }
@@ -124,6 +161,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.value;
+    final localAvatar = ref.watch(localAvatarProvider).value;
     final colorScheme = context.theme.colorScheme;
     final theme = context.theme;
 
@@ -163,20 +201,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ),
                     child: _isUpdatingAvatar
                         ? const Center(child: CircularProgressIndicator())
-                        : user.avatar != null
-                            ? ClipOval(
-                                child: Image.network(
-                                  user.avatar!,
-                                  width: 96,
-                                  height: 96,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (_, _, _) => _buildInitials(
-                                    user.name,
-                                    theme,
-                                  ),
-                                ),
-                              )
-                            : _buildInitials(user.name, theme),
+                        : _buildAvatarImage(
+                            localAvatar: localAvatar,
+                            networkAvatar: user.avatar,
+                            name: user.name,
+                            theme: theme,
+                          ),
                   ),
                   Positioned(
                     bottom: 0,
@@ -226,6 +256,39 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         ),
       ),
     );
+  }
+
+  /// Priority: local file > network URL > initials fallback.
+  Widget _buildAvatarImage({
+    required String? localAvatar,
+    required String? networkAvatar,
+    required String? name,
+    required ThemeData theme,
+  }) {
+    if (localAvatar != null && File(localAvatar).existsSync()) {
+      return ClipOval(
+        child: Image.file(
+          File(localAvatar),
+          width: 96,
+          height: 96,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+
+    if (networkAvatar != null) {
+      return ClipOval(
+        child: Image.network(
+          networkAvatar,
+          width: 96,
+          height: 96,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _buildInitials(name, theme),
+        ),
+      );
+    }
+
+    return _buildInitials(name, theme);
   }
 
   Widget _buildInitials(String? name, ThemeData theme) => Center(
