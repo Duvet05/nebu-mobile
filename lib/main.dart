@@ -18,7 +18,7 @@ void main() async {
     () async {
       try {
         await Firebase.initializeApp();
-      } catch (e) {
+      } on Exception catch (e) {
         debugPrint('Firebase skip: $e');
       }
     }(),
