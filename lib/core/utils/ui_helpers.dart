@@ -27,9 +27,9 @@ Future<bool> showConfirmDialog(
   required String content,
   String? confirmText,
   bool destructive = false,
-}) async {
-  return await showDialog<bool>(
-        context: context,
+    }) async =>
+    await showDialog<bool>(
+      context: context,
         builder: (ctx) => AlertDialog(
           title: Text(title),
           content: Text(content),
@@ -49,4 +49,3 @@ Future<bool> showConfirmDialog(
         ),
       ) ??
       false;
-}

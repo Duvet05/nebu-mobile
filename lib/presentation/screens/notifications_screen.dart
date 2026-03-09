@@ -54,8 +54,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     } on Exception catch (e) {
       if (!mounted) {
         return;
+      }
       setState(() => _isLoading = false);
-      ccontext.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      context.showErrorSnackBar(
+        e.toString().replaceFirst('Exception: ', ''),
+      );
     }
   }
 
