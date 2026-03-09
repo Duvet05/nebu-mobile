@@ -7,12 +7,12 @@ part 'voice_session.g.dart';
 abstract class VoiceSession with _$VoiceSession {
   const factory VoiceSession({
     required String id,
+    required String status,
+    required DateTime startedAt,
     String? userId,
     String? toyId,
     String? roomName,
-    required String status,
     @Default('es') String language,
-    required DateTime startedAt,
     DateTime? endedAt,
     int? durationSeconds,
     @Default(0) int messageCount,
@@ -27,10 +27,16 @@ abstract class VoiceSession with _$VoiceSession {
 }
 
 /// Backend may return topics as JSON array or comma string.
-List<String>? _topicsFromJson(dynamic value) {
-  if (value == null) return null;
-  if (value is List) return value.cast<String>();
-  if (value is String) return value.split(',').map((e) => e.trim()).toList();
+List<String>? _topicsFromJson(Object? value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is List) {
+    return value.cast<String>();
+  }
+  if (value is String) {
+    return value.split(',').map((e) => e.trim()).toList();
+  }
   return null;
 }
 

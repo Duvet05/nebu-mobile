@@ -79,16 +79,13 @@ class AuthNotifier extends AsyncNotifier<User?> {
     }
   }
 
-  /// Clear any previous error state (e.g. when navigating between login/signup)
-  void clearError() {
-    if (state.hasError) {
-      state = const AsyncValue.data(null);
-    }
-  }
-
   /// Single pipeline for all auth flows: call service → validate → save → migrate.
   Future<void> _authenticate(
-    Future<AuthResponse> Function(AuthService service) authCall,
+
+    Future<({bool success, User? user, String? error})> Function(
+      AuthService service,
+    )
+    authCall,
     String fallbackError,
   ) async {
     state = const AsyncValue.loading();
@@ -105,36 +102,41 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> login({required String identifier, required String password}) =>
-      _authenticate(
-        (s) => s.login(identifier: identifier, password: password),
-        'Login failed',
-      );
+      _authenticate((s) async {
+        final r = await s.login(identifier: identifier, password: password);
+        return (success: r.success, user: r.user, error: r.error);
+      }, 'Login failed');
 
   Future<void> register({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
-  }) => _authenticate(
-    (s) => s.register(
+  }) => _authenticate((s) async {
+    final r = await s.register(
       email: email,
       password: password,
       firstName: firstName,
       lastName: lastName,
-    ),
-    'Registration failed',
-  );
+    );
+    return (success: r.success, user: r.user, error: r.error);
+  }, 'Registration failed');
 
-  Future<void> loginWithGoogle(String googleToken) =>
-      _authenticate((s) => s.googleLogin(googleToken), 'Google login failed');
+  Future<void> loginWithGoogle(String googleToken) => _authenticate((s) async {
+    final r = await s.googleLogin(googleToken);
+    return (success: r.success, user: r.user, error: r.error);
+  }, 'Google login failed');
 
-  Future<void> loginWithFacebook(String facebookToken) => _authenticate(
-    (s) => s.facebookLogin(facebookToken),
-    'Facebook login failed',
-  );
+  Future<void> loginWithFacebook(String facebookToken) =>
+      _authenticate((s) async {
+        final r = await s.facebookLogin(facebookToken);
+        return (success: r.success, user: r.user, error: r.error);
+      }, 'Facebook login failed');
 
-  Future<void> loginWithApple(String appleToken) =>
-      _authenticate((s) => s.appleLogin(appleToken), 'Apple login failed');
+  Future<void> loginWithApple(String appleToken) => _authenticate((s) async {
+    final r = await s.appleLogin(appleToken);
+    return (success: r.success, user: r.user, error: r.error);
+  }, 'Apple login failed');
 
   Future<void> logout() async {
     state = const AsyncValue.loading();

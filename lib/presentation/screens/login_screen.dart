@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
 import '../providers/google_signin_provider.dart';
 import '../widgets/auth_widgets.dart';
@@ -21,13 +22,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isGoogleSigningIn = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Clear any previous auth errors (e.g. from signup screen)
-    ref.read(authProvider.notifier).clearError();
-  }
+  String? _authError;
 
   @override
   void dispose() {
@@ -103,6 +98,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final textTheme = context.theme.textTheme;
     final colorScheme = context.theme.colorScheme;
 
+    // React only to state changes during this screen's lifetime.
+    // Stale errors from other screens are ignored automatically.
+    ref.listen<AsyncValue<User?>>(authProvider, (prev, next) {
+      setState(() {
+        _authError = next.hasError && !next.isLoading
+            ? next.error.toString().replaceFirst('Exception: ', '')
+            : null;
+      });
+    });
+
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,
       body: SafeArea(
@@ -143,13 +148,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: context.spacing.largePageBottomMargin),
-                      if (authState.hasError && !authState.isLoading)
-                        AuthErrorBanner(
-                          message: authState.error.toString().replaceFirst(
-                            'Exception: ',
-                            '',
-                          ),
-                        ),
+                      if (_authError != null)
+                        AuthErrorBanner(message: _authError!),
                       SizedBox(height: context.spacing.titleBottomMargin),
                       AuthTextField(
                         controller: _identifierController,

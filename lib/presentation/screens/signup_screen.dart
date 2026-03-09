@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
 import '../providers/google_signin_provider.dart';
 import '../widgets/auth_widgets.dart';
@@ -25,13 +26,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-
-  @override
-  void initState() {
-    super.initState();
-    // Clear any previous auth errors (e.g. from login screen)
-    ref.read(authProvider.notifier).clearError();
-  }
+  String? _authError;
 
   @override
   void dispose() {
@@ -48,12 +43,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       return;
     }
 
-    await ref.read(authProvider.notifier).register(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      firstName: _firstNameController.text.trim(),
-      lastName: _lastNameController.text.trim(),
-    );
+    await ref
+        .read(authProvider.notifier)
+        .register(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          firstName: _firstNameController.text.trim(),
+          lastName: _lastNameController.text.trim(),
+        );
   }
 
   Future<void> _handleGoogleSignUp() async {
@@ -83,6 +80,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final authState = ref.watch(authProvider);
     final textTheme = context.theme.textTheme;
 
+    ref.listen<AsyncValue<User?>>(authProvider, (prev, next) {
+      setState(() {
+        _authError = next.hasError && !next.isLoading
+            ? next.error.toString().replaceFirst('Exception: ', '')
+            : null;
+      });
+    });
+
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,
       body: SafeArea(
@@ -97,13 +102,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: context.spacing.labelBottomMargin),
-                      AuthBackButton(onPressed: () {
-                        if (context.canPop()) {
-                          context.pop();
-                        } else {
-                          context.go(AppRoutes.home.path);
-                        }
-                      }),
+                      AuthBackButton(
+                        onPressed: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppRoutes.home.path);
+                          }
+                        },
+                      ),
                       SizedBox(height: context.spacing.alertPadding),
                       Text(
                         'auth.create_account'.tr(),
@@ -124,12 +131,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.largePageBottomMargin),
 
                       // Error message
-                      if (authState.hasError && !authState.isLoading) ...[
-                        AuthErrorBanner(
-                          message: authState.error
-                              .toString()
-                              .replaceFirst('Exception: ', ''),
-                        ),
+                      if (_authError != null) ...[
+                        AuthErrorBanner(message: _authError!),
                         SizedBox(height: context.spacing.titleBottomMargin),
                       ],
 
@@ -219,8 +222,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                         onSuffixTap: () {
-                          setState(() =>
-                              _obscureConfirmPassword = !_obscureConfirmPassword);
+                          setState(
+                            () => _obscureConfirmPassword =
+                                !_obscureConfirmPassword,
+                          );
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
