@@ -191,7 +191,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
               child: Row(
                 children: [
                   GestureDetector(
@@ -295,7 +295,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                       width: 2,
                                     ),
                                   ),
-                                  contentPadding: const EdgeInsets.all(20),
+                                  contentPadding: EdgeInsets.all(context.spacing.gapXxl),
                                 ),
                                 validator: (value) {
                                   if (value == null ||
@@ -383,7 +383,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                         onTap: _showSkipSetupDialog,
                         child: Padding(
                           padding:
-                              const EdgeInsets.symmetric(vertical: 8),
+                              EdgeInsets.symmetric(vertical: context.spacing.gapMd),
                           child: Text(
                             'setup.connection.skip_setup'.tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(

@@ -87,7 +87,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                           final isSelected = _selectedVoice == voice['label'];
 
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: EdgeInsets.only(bottom: context.spacing.gapLg),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -95,7 +95,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                 });
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? context.colors.primary

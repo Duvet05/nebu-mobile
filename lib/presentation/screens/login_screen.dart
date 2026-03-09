@@ -49,224 +49,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         );
   }
 
-  void _showForgotPasswordDialog() {
-    final emailController = TextEditingController(
-      text: _identifierController.text.contains('@')
-          ? _identifierController.text.trim()
-          : '',
-    );
-
-    showDialog<void>(
+  Future<void> _showForgotPasswordDialog() async {
+    final success = await showDialog<bool>(
       context: context,
-      builder: (ctx) {
-        var isSending = false;
-
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) => AlertDialog(
-            title: Text('auth.forgot_password_title'.tr()),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('auth.forgot_password_body'.tr()),
-                SizedBox(height: context.spacing.sectionTitleBottomMargin),
-                TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'auth.forgot_password_email_hint'.tr(),
-                    prefixIcon: const Icon(Icons.email_outlined),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text('common.cancel'.tr()),
-              ),
-              TextButton(
-                onPressed: isSending
-                    ? null
-                    : () async {
-                        final email = emailController.text.trim();
-                        if (email.isEmpty || !email.contains('@')) {
-                          return;
-                        }
-
-                        setDialogState(() => isSending = true);
-                        final success = await ref
-                            .read(authProvider.notifier)
-                            .requestPasswordReset(email);
-                        if (!ctx.mounted) {
-                          return;
-                        }
-                        Navigator.pop(ctx);
-
-                        if (mounted) {
-                          if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'auth.forgot_password_success'.tr(),
-                                ),
-                                backgroundColor: context.colors.success,
-                              ),
-                            );
-                            _showResetPasswordDialog();
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'auth.forgot_password_error'.tr(),
-                                ),
-                                backgroundColor: context.colors.error,
-                              ),
-                            );
-                          }
-                        }
-                      },
-                child: isSending
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text('auth.forgot_password_send'.tr()),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (_) => _ForgotPasswordDialog(
+        initialEmail: _identifierController.text.contains('@')
+            ? _identifierController.text.trim()
+            : '',
+      ),
     );
-  }
 
-  void _showResetPasswordDialog() {
-    final tokenController = TextEditingController();
-    final passwordController = TextEditingController();
-    final confirmController = TextEditingController();
-
-    showDialog<void>(
-      context: context,
-      builder: (ctx) {
-        var isSubmitting = false;
-        String? errorText;
-
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) => AlertDialog(
-            title: Text('auth.reset_password_title'.tr()),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('auth.reset_password_body'.tr()),
-                  SizedBox(height: context.spacing.sectionTitleBottomMargin),
-                  TextField(
-                    controller: tokenController,
-                    decoration: InputDecoration(
-                      hintText: 'auth.reset_password_token_hint'.tr(),
-                      prefixIcon: const Icon(Icons.key_outlined),
-                    ),
-                  ),
-                  SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                  TextField(
-                    controller: passwordController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'auth.reset_password_new_password_hint'.tr(),
-                      prefixIcon: const Icon(Icons.lock_outline),
-                    ),
-                  ),
-                  SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                  TextField(
-                    controller: confirmController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'auth.reset_password_confirm_hint'.tr(),
-                      prefixIcon: const Icon(Icons.lock_outline),
-                    ),
-                  ),
-                  if (errorText != null) ...[
-                    SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                    Text(
-                      errorText!,
-                      style: context.theme.textTheme.bodySmall?.copyWith(
-                        color: context.colors.error,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: Text('common.cancel'.tr()),
-              ),
-              TextButton(
-                onPressed: isSubmitting
-                    ? null
-                    : () async {
-                        final token = tokenController.text.trim();
-                        final password = passwordController.text;
-                        final confirm = confirmController.text;
-
-                        if (token.isEmpty) {
-                          return;
-                        }
-                        if (password.length < 8) {
-                          setDialogState(() {
-                            errorText = 'auth.reset_password_too_short'.tr();
-                          });
-                          return;
-                        }
-                        if (password != confirm) {
-                          setDialogState(() {
-                            errorText = 'auth.reset_password_mismatch'.tr();
-                          });
-                          return;
-                        }
-
-                        setDialogState(() {
-                          isSubmitting = true;
-                          errorText = null;
-                        });
-
-                        final success = await ref
-                            .read(authProvider.notifier)
-                            .resetPassword(token: token, newPassword: password);
-                        if (!ctx.mounted) {
-                          return;
-                        }
-                        Navigator.pop(ctx);
-
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                success
-                                    ? 'auth.reset_password_success'.tr()
-                                    : 'auth.reset_password_error'.tr(),
-                              ),
-                              backgroundColor: success
-                                  ? context.colors.success
-                                  : context.colors.error,
-                            ),
-                          );
-                        }
-                      },
-                child: isSubmitting
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text('auth.reset_password_submit'.tr()),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    if ((success ?? false) && mounted) {
+      await showDialog<void>(
+        context: context,
+        builder: (_) => const _ResetPasswordDialog(),
+      );
+    }
   }
 
   Future<void> _handleGoogleSignIn() async {
@@ -461,6 +259,232 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ─── Forgot Password Dialog ───
+
+class _ForgotPasswordDialog extends ConsumerStatefulWidget {
+  const _ForgotPasswordDialog({required this.initialEmail});
+  final String initialEmail;
+
+  @override
+  ConsumerState<_ForgotPasswordDialog> createState() =>
+      _ForgotPasswordDialogState();
+}
+
+class _ForgotPasswordDialogState extends ConsumerState<_ForgotPasswordDialog> {
+  late final TextEditingController _emailController;
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController = TextEditingController(text: widget.initialEmail);
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) return;
+
+    setState(() => _isSending = true);
+    final success = await ref
+        .read(authProvider.notifier)
+        .requestPasswordReset(email);
+    if (!mounted) return;
+
+    Navigator.pop(context, success);
+
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'auth.forgot_password_success'.tr()
+              : 'auth.forgot_password_error'.tr(),
+        ),
+        backgroundColor: success
+            ? context.colors.success
+            : context.colors.error,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('auth.forgot_password_title'.tr()),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('auth.forgot_password_body'.tr()),
+          SizedBox(height: context.spacing.sectionTitleBottomMargin),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              hintText: 'auth.forgot_password_email_hint'.tr(),
+              prefixIcon: const Icon(Icons.email_outlined),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('common.cancel'.tr()),
+        ),
+        TextButton(
+          onPressed: _isSending ? null : _submit,
+          child: _isSending
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text('auth.forgot_password_send'.tr()),
+        ),
+      ],
+    );
+  }
+}
+
+// ─── Reset Password Dialog ───
+
+class _ResetPasswordDialog extends ConsumerStatefulWidget {
+  const _ResetPasswordDialog();
+
+  @override
+  ConsumerState<_ResetPasswordDialog> createState() =>
+      _ResetPasswordDialogState();
+}
+
+class _ResetPasswordDialogState extends ConsumerState<_ResetPasswordDialog> {
+  final _tokenController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
+  bool _isSubmitting = false;
+  String? _errorText;
+
+  @override
+  void dispose() {
+    _tokenController.dispose();
+    _passwordController.dispose();
+    _confirmController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final token = _tokenController.text.trim();
+    final password = _passwordController.text;
+    final confirm = _confirmController.text;
+
+    if (token.isEmpty) return;
+    if (password.length < 8) {
+      setState(() => _errorText = 'auth.reset_password_too_short'.tr());
+      return;
+    }
+    if (password != confirm) {
+      setState(() => _errorText = 'auth.reset_password_mismatch'.tr());
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _errorText = null;
+    });
+
+    final success = await ref
+        .read(authProvider.notifier)
+        .resetPassword(token: token, newPassword: password);
+    if (!mounted) return;
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? 'auth.reset_password_success'.tr()
+              : 'auth.reset_password_error'.tr(),
+        ),
+        backgroundColor: success
+            ? context.colors.success
+            : context.colors.error,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('auth.reset_password_title'.tr()),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('auth.reset_password_body'.tr()),
+            SizedBox(height: context.spacing.sectionTitleBottomMargin),
+            TextField(
+              controller: _tokenController,
+              decoration: InputDecoration(
+                hintText: 'auth.reset_password_token_hint'.tr(),
+                prefixIcon: const Icon(Icons.key_outlined),
+              ),
+            ),
+            SizedBox(height: context.spacing.paragraphBottomMarginSm),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'auth.reset_password_new_password_hint'.tr(),
+                prefixIcon: const Icon(Icons.lock_outline),
+              ),
+            ),
+            SizedBox(height: context.spacing.paragraphBottomMarginSm),
+            TextField(
+              controller: _confirmController,
+              obscureText: true,
+              decoration: InputDecoration(
+                hintText: 'auth.reset_password_confirm_hint'.tr(),
+                prefixIcon: const Icon(Icons.lock_outline),
+              ),
+            ),
+            if (_errorText != null) ...[
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
+              Text(
+                _errorText!,
+                style: context.theme.textTheme.bodySmall?.copyWith(
+                  color: context.colors.error,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text('common.cancel'.tr()),
+        ),
+        TextButton(
+          onPressed: _isSubmitting ? null : _submit,
+          child: _isSubmitting
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text('auth.reset_password_submit'.tr()),
+        ),
+      ],
     );
   }
 }

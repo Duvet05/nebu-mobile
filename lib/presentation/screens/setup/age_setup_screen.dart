@@ -70,7 +70,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                           final isSelected = _selectedAge == age['label'];
 
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: EdgeInsets.only(bottom: context.spacing.gapLg),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -78,7 +78,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                 });
                               },
                               child: Container(
-                                padding: const EdgeInsets.all(16),
+                                padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? context.colors.primary

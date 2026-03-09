@@ -201,7 +201,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   }
 
   Widget _buildSectionHeader(String title, ThemeData theme) => Padding(
-    padding: const EdgeInsets.only(left: 4, bottom: 12),
+    padding: EdgeInsets.only(left: context.spacing.gapXs, bottom: context.spacing.gapLg),
     child: Text(
       title,
       style: theme.textTheme.titleMedium?.copyWith(

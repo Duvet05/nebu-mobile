@@ -365,7 +365,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
               child: Row(
                 children: [
                   _BackButton(onPressed: () => context.pop()),
@@ -441,7 +441,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                     GestureDetector(
                       onTap: _showSkipSetupSheet,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
                         child: Text(
                           'setup.connection.skip_for_now'.tr(),
                           style: textTheme.bodyMedium?.copyWith(
@@ -580,7 +580,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
             ),
             SizedBox(width: context.spacing.gapMd),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapXxs),
               decoration: BoxDecoration(
                 color: context.colors.primary.withValues(alpha: 0.1),
                 borderRadius: context.radius.tile,
@@ -764,8 +764,8 @@ class _DeviceCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: context.spacing.gapLg),
+        padding: EdgeInsets.all(context.spacing.gapXl),
         decoration: BoxDecoration(
           color: isSelected
               ? context.colors.primary.withValues(alpha: 0.08)
@@ -893,7 +893,7 @@ class _BottomSheet extends StatelessWidget {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(context.spacing.gapXxl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -956,7 +956,7 @@ class _BottomSheet extends StatelessWidget {
           GestureDetector(
             onTap: secondaryOnPressed,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(vertical: context.spacing.gapLg),
               child: Text(
                 secondaryText,
                 style: textTheme.bodyMedium?.copyWith(
@@ -993,7 +993,7 @@ class _OptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.spacing.gapXl),
         decoration: BoxDecoration(
           color: isSecondary
               ? context.colors.grey900

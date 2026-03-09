@@ -262,7 +262,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
   }
 
   Widget _buildInfoRow(ThemeData theme, String label, String value) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: context.spacing.gapXs),
     child: Row(
       children: [
         SizedBox(
@@ -281,7 +281,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
 
   Widget _buildProgressRow(ThemeData theme, String label, int percent) =>
       Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: EdgeInsets.symmetric(vertical: context.spacing.gapXs),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -314,7 +314,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
   Widget _buildCheckRow(ThemeData theme, String label, CheckStatus check) {
     final isHealthy = check.status == 'ok';
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: EdgeInsets.symmetric(vertical: context.spacing.gapXs),
       child: Row(
         children: [
           SizedBox(

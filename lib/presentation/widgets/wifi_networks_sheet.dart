@@ -87,10 +87,10 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
           ),
           SizedBox(height: context.spacing.gapXxl),
           if (_isLoading)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(),
+                padding: EdgeInsets.all(context.spacing.gapXxl),
+                child: const CircularProgressIndicator(),
               ),
             )
           else if (_error != null)

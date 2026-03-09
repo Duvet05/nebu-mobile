@@ -192,7 +192,7 @@ class _OrderCard extends StatelessWidget {
               // Items
               ...order.items.map(
                 (item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.only(bottom: context.spacing.gapMd),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -550,7 +550,7 @@ class _OrderDetailsSheet extends StatelessWidget {
     ThemeData theme, {
     bool bold = false,
   }) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
+    padding: EdgeInsets.only(bottom: context.spacing.gapMd),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
