@@ -410,43 +410,52 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       onTap: () => _addNewToy(context),
       borderRadius: context.radius.panel,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+        width: double.infinity,
+        padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          borderRadius: context.radius.panel,
-          border: Border.all(
-            color: context.colors.primary.withValues(alpha: 0.2),
+          gradient: LinearGradient(
+            colors: [
+              context.colors.primary.withValues(alpha: 0.04),
+              context.colors.secondary.withValues(alpha: 0.05),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          color: context.colors.primary.withValues(alpha: 0.02),
+          borderRadius: context.radius.panel,
         ),
         child: Column(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
-                color: context.colors.primary.withValues(alpha: 0.08),
+                gradient: LinearGradient(
+                  colors: [
+                    context.colors.primary.withValues(alpha: 0.08),
+                    context.colors.secondary.withValues(alpha: 0.08),
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.add,
-                size: 28,
+                Icons.smart_toy_outlined,
+                size: 36,
                 color: context.colors.primary.withValues(alpha: 0.5),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
               'toys.setup_new_toy'.tr(),
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: context.colors.primary.withValues(alpha: 0.7),
-                fontWeight: FontWeight.w600,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(
               'toys.add_more_hint'.tr(),
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withAlpha(153),
               ),
             ),
           ],
@@ -735,32 +744,6 @@ class _ToyCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                // Configure prompt for pending toys
-                if (isPending) ...[
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.06),
-                      borderRadius: context.radius.tile,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.touch_app_outlined, size: 16, color: accentColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          'toys.configure'.tr(),
-                          style: context.textTheme.labelMedium?.copyWith(
-                            color: accentColor,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
                 // Quick action buttons for online toys
                 if (isOnline) ...[
                   const SizedBox(height: 12),
@@ -802,6 +785,32 @@ class _ToyCard extends StatelessWidget {
                         ),
                       ),
                     ],
+                  ),
+                ],
+                // Configure prompt for pending toys
+                if (isPending) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.06),
+                      borderRadius: context.radius.tile,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.touch_app_outlined, size: 16, color: accentColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          'toys.configure'.tr(),
+                          style: context.textTheme.labelMedium?.copyWith(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
                 // Last connected time for offline toys
@@ -888,3 +897,5 @@ class _QuickActionButton extends StatelessWidget {
     ),
   );
 }
+
+

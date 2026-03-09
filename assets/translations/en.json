@@ -232,9 +232,6 @@
     "add_toy": "Add Toy",
     "no_toys": "No toys configured yet",
     "no_toys_hint": "Tap \"Add Toy\" to set up your first Nebu device",
-    "quick_actions": "Quick Actions",
-    "scan_qr": "Scan QR",
-    "devices": "Devices",
     "activity_log": "Activity Log",
     "setup_new_toy": "Setup New Toy",
     "devices_error": "Could not load connected devices. Please try again.",
@@ -385,18 +382,6 @@
     "configure_toy": "Configure",
     "memory": "Memory"
   },
-  "device_management": {
-    "title": "My Devices",
-    "coming_soon": "Device management coming soon!",
-    "no_devices": "No devices found",
-    "error_loading": "Couldn't load your devices. Please try again.",
-    "remove_success": "Device removed successfully!",
-    "remove_error": "Couldn't remove the device. Please try again.",
-    "remove_title": "Remove Device",
-    "remove_confirm": "Are you sure you want to remove {}?",
-    "model": "Model: {}",
-    "status": "Status: {}"
-  },
   "voice_setup": {
     "title": "Voice Setup",
     "subtitle": "Configure your voice interaction preferences",
@@ -421,7 +406,6 @@
   },
   "qr_scanner": {
     "title": "QR Scanner",
-    "coming_soon": "QR Scanner - Coming Soon",
     "scan_hint": "Position the QR code within the frame to scan",
     "scanned": "Scanned",
     "unrecognized_format": "Unrecognized QR format",
@@ -455,14 +439,6 @@
     "unknown": "Unknown",
     "audio_controls": "Audio Controls",
     "save_changes": "Save Changes"
-  },
-  "all_devices": {
-    "title": "All Devices",
-    "tab_toys": "My Toys",
-    "tab_iot": "Connected Devices",
-    "no_iot_devices": "No connected devices found.",
-    "type": "Type: {}",
-    "error_iot": "Couldn't load devices. Please try again."
   },
   "child_profile": {
     "title": "Child Profile",
@@ -521,12 +497,6 @@
     "memory_usage": "Memory Usage",
     "health_checks": "Health Checks",
     "performance": "Performance"
-  },
-  "iot_devices": {
-    "title": "Connected Devices",
-    "no_devices": "No connected devices found.",
-    "type": "Type: {}",
-    "load_error": "Could not load devices. Please try again."
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",

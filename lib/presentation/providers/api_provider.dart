@@ -14,7 +14,6 @@ import '../../data/services/device_token_service.dart';
 import '../../data/services/esp32_wifi_config_service.dart';
 import '../../data/services/firebase_push_service.dart';
 import '../../data/services/health_service.dart';
-import '../../data/services/iot_service.dart';
 import '../../data/services/livekit_service.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../../data/services/notification_service.dart';
@@ -106,12 +105,6 @@ final toyServiceProvider = Provider<ToyService>((ref) {
   final apiService = ref.watch(apiServiceProvider);
   final logger = ref.watch(loggerProvider);
   return ToyService(apiService: apiService, logger: logger);
-});
-
-final iotServiceProvider = Provider<IoTService>((ref) {
-  final apiService = ref.watch(apiServiceProvider);
-  final logger = ref.watch(loggerProvider);
-  return IoTService(apiService: apiService, logger: logger);
 });
 
 final activityServiceProvider = Provider<ActivityService>((ref) {

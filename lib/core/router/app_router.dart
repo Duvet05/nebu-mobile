@@ -8,13 +8,10 @@ import '../../data/models/user.dart';
 import '../../presentation/providers/auth_provider.dart';
 import '../../presentation/providers/toy_provider.dart';
 import '../../presentation/screens/activity_log_screen.dart';
-import '../../presentation/screens/all_devices_screen.dart';
 import '../../presentation/screens/child_profile_screen.dart';
-import '../../presentation/screens/device_management_screen.dart';
 import '../../presentation/screens/edit_profile_screen.dart';
 import '../../presentation/screens/health_check_screen.dart';
 import '../../presentation/screens/home_screen.dart';
-import '../../presentation/screens/iot_devices_screen.dart';
 import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
@@ -196,18 +193,6 @@ class AppRouter {
     ),
 
     // Other top-level screens
-    GoRoute(
-      path: AppRoutes.deviceManagement.path,
-      builder: (_, _) => const DeviceManagementScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.iotDevices.path,
-      builder: (_, _) => const IoTDevicesScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.allDevices.path,
-      builder: (_, _) => const AllDevicesScreen(),
-    ),
     GoRoute(
       path: AppRoutes.qrScanner.path,
       builder: (_, _) => const QRScannerScreen(),

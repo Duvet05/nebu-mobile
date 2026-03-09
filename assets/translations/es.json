@@ -232,9 +232,6 @@
     "add_toy": "Agregar Juguete",
     "no_toys": "Aún no hay juguetes configurados",
     "no_toys_hint": "Toca \"Agregar Juguete\" para configurar tu primer dispositivo Nebu",
-    "quick_actions": "Acciones Rápidas",
-    "scan_qr": "Escanear QR",
-    "devices": "Dispositivos",
     "activity_log": "Registro de actividad",
     "setup_new_toy": "Configurar Nuevo Juguete",
     "devices_error": "No se pudieron cargar los dispositivos conectados. Intenta de nuevo.",
@@ -385,18 +382,6 @@
     "configure_toy": "Configurar",
     "memory": "Memoria"
   },
-  "device_management": {
-    "title": "Mis Dispositivos",
-    "coming_soon": "Gestión de dispositivos próximamente!",
-    "no_devices": "No se encontraron dispositivos",
-    "error_loading": "No pudimos cargar tus dispositivos. Intenta de nuevo.",
-    "remove_success": "Dispositivo eliminado correctamente!",
-    "remove_error": "No se pudo eliminar el dispositivo. Intenta de nuevo.",
-    "remove_title": "Eliminar Dispositivo",
-    "remove_confirm": "¿Estás seguro de que quieres eliminar {}?",
-    "model": "Modelo: {}",
-    "status": "Estado: {}"
-  },
   "voice_setup": {
     "title": "Configuración de Voz",
     "subtitle": "Configura tus preferencias de interacción por voz",
@@ -421,7 +406,6 @@
   },
   "qr_scanner": {
     "title": "Escáner QR",
-    "coming_soon": "Escáner QR - Próximamente",
     "scan_hint": "Posiciona el código QR dentro del marco para escanearlo",
     "scanned": "Escaneado",
     "unrecognized_format": "Formato QR no reconocido",
@@ -455,14 +439,6 @@
     "unknown": "Desconocido",
     "audio_controls": "Controles de Audio",
     "save_changes": "Guardar Cambios"
-  },
-  "all_devices": {
-    "title": "Todos los Dispositivos",
-    "tab_toys": "Mis Juguetes",
-    "tab_iot": "Dispositivos Conectados",
-    "no_iot_devices": "No se encontraron dispositivos conectados.",
-    "type": "Tipo: {}",
-    "error_iot": "No se pudieron cargar los dispositivos. Intenta de nuevo."
   },
   "child_profile": {
     "title": "Perfil del Niño",
@@ -521,12 +497,6 @@
     "memory_usage": "Uso de Memoria",
     "health_checks": "Verificaciones de Salud",
     "performance": "Rendimiento"
-  },
-  "iot_devices": {
-    "title": "Dispositivos Conectados",
-    "no_devices": "No se encontraron dispositivos conectados.",
-    "type": "Tipo: {}",
-    "load_error": "No se pudieron cargar los dispositivos. Intenta de nuevo."
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
