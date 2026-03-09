@@ -246,7 +246,9 @@
     "no_toys_hero": "Aún no hay juguetes",
     "no_toys_hero_hint": "Conecta tu primer juguete Nebu para comenzar",
     "personalities": "Personalidades",
-    "playground": "Playground"
+    "playground": "Playground",
+    "unknown_device": "Dispositivo desconocido",
+    "connected": "Conectado"
   },
   "profile": {
     "title": "Perfil",
@@ -348,7 +350,8 @@
     "timeline_processing": "En proceso",
     "timeline_shipped": "Enviado",
     "timeline_delivered": "Entregado",
-    "quantity": "{}x"
+    "quantity": "{}x",
+    "load_error": "No se pudieron cargar los pedidos. Intenta de nuevo."
   },
   "toys": {
     "title": "Mis Juguetes",
@@ -522,7 +525,8 @@
   "iot_devices": {
     "title": "Dispositivos Conectados",
     "no_devices": "No se encontraron dispositivos conectados.",
-    "type": "Tipo: {}"
+    "type": "Tipo: {}",
+    "load_error": "No se pudieron cargar los dispositivos. Intenta de nuevo."
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
@@ -839,5 +843,8 @@
     "contact_title": "13. Información de Contacto",
     "contact_content": "Si tienes alguna pregunta sobre estos Términos, contáctanos:",
     "contact_info": "¿Preguntas? Contáctanos"
+  },
+  "setup_progress": {
+    "step_of": "Paso {} de {}"
   }
 }

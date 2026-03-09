@@ -246,7 +246,9 @@
     "no_toys_hero": "No toys yet",
     "no_toys_hero_hint": "Connect your first Nebu toy to get started",
     "personalities": "Personalities",
-    "playground": "Playground"
+    "playground": "Playground",
+    "unknown_device": "Unknown Device",
+    "connected": "Connected"
   },
   "profile": {
     "title": "Profile",
@@ -348,7 +350,8 @@
     "timeline_processing": "Processing",
     "timeline_shipped": "Shipped",
     "timeline_delivered": "Delivered",
-    "quantity": "{}x"
+    "quantity": "{}x",
+    "load_error": "Could not load orders. Please try again."
   },
   "toys": {
     "title": "My Toys",
@@ -522,7 +525,8 @@
   "iot_devices": {
     "title": "Connected Devices",
     "no_devices": "No connected devices found.",
-    "type": "Type: {}"
+    "type": "Type: {}",
+    "load_error": "Could not load devices. Please try again."
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
@@ -839,5 +843,8 @@
     "contact_title": "13. Contact Information",
     "contact_content": "If you have any questions about these Terms, please contact us:",
     "contact_info": "Questions? Contact Us"
+  },
+  "setup_progress": {
+    "step_of": "Step {} of {}"
   }
 }

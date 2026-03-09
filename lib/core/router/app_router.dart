@@ -6,6 +6,7 @@ import '../../data/models/personality.dart';
 import '../../data/models/toy.dart';
 import '../../data/models/user.dart';
 import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/toy_provider.dart';
 import '../../presentation/screens/activity_log_screen.dart';
 import '../../presentation/screens/all_devices_screen.dart';
 import '../../presentation/screens/child_profile_screen.dart';
@@ -56,13 +57,17 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(authProvider, (_, _) {
     _authChangeNotifier.notify();
   });
+  ref.listen(hasLocalToysProvider, (_, _) {
+    _authChangeNotifier.notify();
+  });
 
   return GoRouter(
     initialLocation: AppRoutes.splash.path,
     refreshListenable: _authChangeNotifier,
     redirect: (context, state) {
       final authState = ref.read(authProvider);
-      return AppRouter._redirectLogic(authState, state);
+      final hasLocalToys = ref.read(hasLocalToysProvider).value ?? false;
+      return AppRouter._redirectLogic(authState, state, hasLocalToys: hasLocalToys);
     },
     routes: AppRouter._getRoutesStatic(),
     errorBuilder: (context, state) => Scaffold(
@@ -76,8 +81,9 @@ class AppRouter {
 
   static String? _redirectLogic(
     AsyncValue<User?> authState,
-    GoRouterState state,
-  ) {
+    GoRouterState state, {
+    bool hasLocalToys = false,
+  }) {
     final isAuthenticated = authState.value != null;
     final isLoading = authState.isLoading;
     final location = state.matchedLocation;
@@ -89,7 +95,10 @@ class AppRouter {
 
     // Splash screen: redirect once auth state is resolved
     if (location == AppRoutes.splash.path) {
-      return isAuthenticated ? AppRoutes.home.path : AppRoutes.welcome.path;
+      if (isAuthenticated || hasLocalToys) {
+        return AppRoutes.home.path;
+      }
+      return AppRoutes.welcome.path;
     }
 
     // Routes accessible only when not authenticated

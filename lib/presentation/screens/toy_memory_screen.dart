@@ -141,7 +141,7 @@ class _MemoryCard extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         color: theme.colorScheme.error,
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: context.colors.textOnFilled),
       ),
       confirmDismiss: (_) async {
         final confirmed = await showDialog<bool>(

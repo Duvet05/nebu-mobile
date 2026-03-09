@@ -17,6 +17,7 @@ class OrdersScreen extends ConsumerStatefulWidget {
 class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   List<_Order> _orders = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -25,7 +26,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
   }
 
   Future<void> _loadOrders() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
     try {
       final service = ref.read(orderServiceProvider);
       final data = await service.getMyOrders();
@@ -40,7 +44,10 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
       if (!mounted) {
         return;
       }
-      setState(() => _isLoading = false);
+      setState(() {
+        _error = 'orders.load_error'.tr();
+        _isLoading = false;
+      });
     }
   }
 
@@ -52,9 +59,34 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
       appBar: AppBar(title: Text('orders.title'.tr()), elevation: 0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _orders.isEmpty
-              ? _buildEmptyState(theme)
-              : RefreshIndicator(
+          : _error != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: theme.colorScheme.error,
+                      ),
+                      SizedBox(height: context.spacing.panelPadding),
+                      Text(
+                        _error!,
+                        style: theme.textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: context.spacing.panelPadding),
+                      ElevatedButton.icon(
+                        onPressed: _loadOrders,
+                        icon: const Icon(Icons.refresh),
+                        label: Text('common.retry'.tr()),
+                      ),
+                    ],
+                  ),
+                )
+              : _orders.isEmpty
+                  ? _buildEmptyState(theme)
+                  : RefreshIndicator(
                   onRefresh: _loadOrders,
                   child: ListView.builder(
                     padding: EdgeInsets.all(context.spacing.alertPadding),

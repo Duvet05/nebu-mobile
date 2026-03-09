@@ -22,9 +22,27 @@ class IoTDevicesScreen extends ConsumerWidget {
           ? const Center(child: CircularProgressIndicator())
           : iotDevicesState.error != null
               ? Center(
-                  child: Text(
-                    'Error: ${iotDevicesState.error}',
-                    style: TextStyle(color: context.colors.error),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: context.colors.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'iot_devices.load_error'.tr(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => ref.read(iotDevicesProvider.notifier).fetchUserDevices(),
+                        icon: const Icon(Icons.refresh),
+                        label: Text('common.retry'.tr()),
+                      ),
+                    ],
                   ),
                 )
               : iotDevicesState.devices.isEmpty

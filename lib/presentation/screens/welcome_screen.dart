@@ -23,7 +23,7 @@ class WelcomeScreen extends StatelessWidget {
             colors: [
               context.colors.primary100,
               context.colors.primary,
-              const Color(0xFF5240D9),
+              context.colors.secondary,
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
@@ -21,7 +22,7 @@ class SetupProgressIndicator extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Step $currentStep of $totalSteps',
+              'setup_progress.step_of'.tr(args: ['$currentStep', '$totalSteps']),
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
             Text(
