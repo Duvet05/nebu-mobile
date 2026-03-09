@@ -20,6 +20,7 @@ class AuthService {
     _dio.options.baseUrl = Config.apiBaseUrl;
     _dio.options.connectTimeout = Config.apiTimeout;
     _dio.options.receiveTimeout = Config.apiTimeout;
+    _dio.options.sendTimeout = Config.apiTimeout;
   }
   final Dio _dio;
   final SharedPreferences _prefs;

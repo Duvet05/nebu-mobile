@@ -20,6 +20,7 @@ abstract final class Config {
   // ============================================
   static const String appName = 'Nebu Mobile';
   static const Duration apiTimeout = Duration(seconds: 30);
+  static const Duration healthTimeout = Duration(seconds: 10);
   static const int maxRetries = 3;
   static const String languageEnglish = 'en';
   static const String languageSpanish = 'es';

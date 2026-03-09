@@ -22,7 +22,14 @@ class HealthService {
   /// Hits GET /health at the server root (no /api/v1 prefix)
   Future<Map<String, dynamic>> checkHealth() async {
     _logger.i('Checking backend health at $_serverUrl/health');
-    final response = await Dio().get<Map<String, dynamic>>(
+    final dio = Dio(
+      BaseOptions(
+        connectTimeout: Config.healthTimeout,
+        receiveTimeout: Config.healthTimeout,
+        sendTimeout: Config.healthTimeout,
+      ),
+    );
+    final response = await dio.get<Map<String, dynamic>>(
       '$_serverUrl/health',
     );
     final data = response.data!;
