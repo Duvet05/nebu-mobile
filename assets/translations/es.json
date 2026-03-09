@@ -279,7 +279,12 @@
     "avatar_camera": "Tomar Foto",
     "avatar_gallery": "Elegir de la Galería",
     "avatar_updated": "¡Avatar actualizado!",
-    "avatar_error": "No se pudo actualizar el avatar. Intenta de nuevo."
+    "avatar_error": "No se pudo actualizar el avatar. Intenta de nuevo.",
+    "delete_account": "Eliminar Cuenta",
+    "delete_account_description": "Solicita la eliminación de tu cuenta y datos asociados.",
+    "delete_account_cancel": "Cancelar",
+    "delete_account_action": "Abrir página de eliminación",
+    "link_error": "No se pudo abrir el enlace. Inténtalo de nuevo."
   },
   "voice_agent": {
     "title": "Agente de Voz",

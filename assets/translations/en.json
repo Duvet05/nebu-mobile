@@ -198,7 +198,12 @@
     "avatar_camera": "Take Photo",
     "avatar_gallery": "Choose from Gallery",
     "avatar_updated": "Avatar updated!",
-    "avatar_error": "Could not update avatar. Please try again."
+    "avatar_error": "Could not update avatar. Please try again.",
+    "delete_account": "Delete Account",
+    "delete_account_description": "Request the deletion of your account and associated data.",
+    "delete_account_cancel": "Cancel",
+    "delete_account_action": "Open deletion page",
+    "link_error": "Could not open the link. Please try again."
   },
   "activity_log": {
     "title": "Activity Log",
