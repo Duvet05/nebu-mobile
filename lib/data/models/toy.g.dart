@@ -19,11 +19,17 @@ _Toy _$ToyFromJson(Map<String, dynamic> json) => _Toy(
   capabilities: json['capabilities'] as Map<String, dynamic>?,
   settings: json['settings'] as Map<String, dynamic>?,
   notes: json['notes'] as String?,
+  prompt: json['prompt'] as String?,
+  personalityProfile: json['personalityProfile'] as String?,
+  greeting: json['greeting'] as String?,
   batteryLevel: json['batteryLevel'] as String?,
   signalStrength: json['signalStrength'] as String?,
-  lastConnected: json['lastConnected'] == null
+  lastConnected: json['lastSeenAt'] == null
       ? null
-      : DateTime.parse(json['lastConnected'] as String),
+      : DateTime.parse(json['lastSeenAt'] as String),
+  activatedAt: json['activatedAt'] == null
+      ? null
+      : DateTime.parse(json['activatedAt'] as String),
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -45,9 +51,13 @@ Map<String, dynamic> _$ToyToJson(_Toy instance) => <String, dynamic>{
   'capabilities': instance.capabilities,
   'settings': instance.settings,
   'notes': instance.notes,
+  'prompt': instance.prompt,
+  'personalityProfile': instance.personalityProfile,
+  'greeting': instance.greeting,
   'batteryLevel': instance.batteryLevel,
   'signalStrength': instance.signalStrength,
-  'lastConnected': instance.lastConnected?.toIso8601String(),
+  'lastSeenAt': instance.lastConnected?.toIso8601String(),
+  'activatedAt': instance.activatedAt?.toIso8601String(),
   'createdAt': instance.createdAt?.toIso8601String(),
   'updatedAt': instance.updatedAt?.toIso8601String(),
 };
@@ -65,9 +75,9 @@ const _$ToyStatusEnumMap = {
 
 _CreateToyRequest _$CreateToyRequestFromJson(Map<String, dynamic> json) =>
     _CreateToyRequest(
-      iotDeviceId: json['iotDeviceId'] as String,
+      deviceId: json['deviceId'] as String?,
+      macAddress: json['macAddress'] as String?,
       name: json['name'] as String,
-      userId: json['userId'] as String,
       model: json['model'] as String?,
       manufacturer: json['manufacturer'] as String?,
       status: $enumDecodeNullable(_$ToyStatusEnumMap, json['status']),
@@ -75,13 +85,16 @@ _CreateToyRequest _$CreateToyRequestFromJson(Map<String, dynamic> json) =>
       capabilities: json['capabilities'] as Map<String, dynamic>?,
       settings: json['settings'] as Map<String, dynamic>?,
       notes: json['notes'] as String?,
+      prompt: json['prompt'] as String?,
+      personalityProfile: json['personalityProfile'] as String?,
+      greeting: json['greeting'] as String?,
     );
 
 Map<String, dynamic> _$CreateToyRequestToJson(_CreateToyRequest instance) =>
     <String, dynamic>{
-      'iotDeviceId': instance.iotDeviceId,
+      'deviceId': instance.deviceId,
+      'macAddress': instance.macAddress,
       'name': instance.name,
-      'userId': instance.userId,
       'model': instance.model,
       'manufacturer': instance.manufacturer,
       'status': _$ToyStatusEnumMap[instance.status],
@@ -89,11 +102,15 @@ Map<String, dynamic> _$CreateToyRequestToJson(_CreateToyRequest instance) =>
       'capabilities': instance.capabilities,
       'settings': instance.settings,
       'notes': instance.notes,
+      'prompt': instance.prompt,
+      'personalityProfile': instance.personalityProfile,
+      'greeting': instance.greeting,
     };
 
 _AssignToyRequest _$AssignToyRequestFromJson(Map<String, dynamic> json) =>
     _AssignToyRequest(
-      macAddress: json['macAddress'] as String,
+      macAddress: json['macAddress'] as String?,
+      deviceId: json['deviceId'] as String?,
       userId: json['userId'] as String,
       toyName: json['toyName'] as String?,
     );
@@ -101,6 +118,7 @@ _AssignToyRequest _$AssignToyRequestFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$AssignToyRequestToJson(_AssignToyRequest instance) =>
     <String, dynamic>{
       'macAddress': instance.macAddress,
+      'deviceId': instance.deviceId,
       'userId': instance.userId,
       'toyName': instance.toyName,
     };
