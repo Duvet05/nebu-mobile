@@ -147,7 +147,8 @@ class ApiService {
     }
 
     // HTTP status-based errors
-    return switch (statusCode) {
+    final code = statusCode ?? 0;
+    return switch (code) {
       401 => AuthException(backendMsg ?? 'Not authorized', statusCode: 401),
       403 => AuthException(backendMsg ?? 'Forbidden', statusCode: 403),
       404 => NotFoundException(backendMsg ?? 'Not found', statusCode: 404),
@@ -166,12 +167,12 @@ class ApiService {
       >= 500 =>
           ServerException(
             backendMsg ?? 'Server error',
-            statusCode: statusCode,
+            statusCode: code,
           ),
       _ =>
           ServerException(
             backendMsg ?? error.message ?? 'Unknown error',
-            statusCode: statusCode,
+            statusCode: code,
           ),
     };
   }
