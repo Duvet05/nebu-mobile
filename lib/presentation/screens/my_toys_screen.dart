@@ -376,8 +376,6 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         data: (toys) {
           final pendingToys = toys.where((t) =>
           t.status == ToyStatus.pending || t.id.startsWith('local_')).toList();
-          final hasPendingOnly = toys.isNotEmpty &&
-              pendingToys.length == toys.length;
 
           return RefreshIndicator(
             onRefresh: _loadToys,
@@ -389,7 +387,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 ] else
                   ...[
                     // Banner for unconfigured toys
-                    if (hasPendingOnly)
+                    if (pendingToys.isNotEmpty)
                       _buildPendingBanner(context, theme),
 
                     ...toys.map<Widget>(
@@ -417,7 +415,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                           Icons.smart_toy_outlined,
                           size: 18,
                           color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.4),
+                              alpha: 0.55),
                         ),
                         const SizedBox(width: 8),
                         Flexible(
@@ -426,7 +424,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onSurface.withValues(
-                                  alpha: 0.4),
+                                  alpha: 0.55),
                             ),
                           ),
                         ),
@@ -438,66 +436,8 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => RefreshIndicator(
-          onRefresh: _loadToys,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.all(context.spacing.pageMargin),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: theme.colorScheme.error,
-                  ),
-                  SizedBox(height: context.spacing.sectionTitleBottomMargin),
-                  Text(
-                    'toys.error_loading'.tr(),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                  Container(
-                    padding: EdgeInsets.all(context.spacing.alertPadding),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
-                      borderRadius: context.radius.tile,
-                      border: Border.all(
-                        color: theme.colorScheme.error.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      'toys.error_loading'.tr(),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onErrorContainer,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(height: context.spacing.panelPadding),
-                  ElevatedButton.icon(
-                    onPressed: _loadToys,
-                    icon: const Icon(Icons.refresh),
-                    label: Text('common.retry'.tr()),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: context.colors.textOnFilled,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        loading: () => _buildLoadingSkeleton(theme),
+        error: (_, _) => _buildErrorState(theme),
       ),
     );
   }
@@ -605,6 +545,107 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           ),
         ),
       ],
+    ),
+  );
+
+  Widget _buildLoadingSkeleton(ThemeData theme) => ListView(
+    padding: EdgeInsets.all(context.spacing.alertPadding),
+    physics: const NeverScrollableScrollPhysics(),
+    children: List.generate(
+      3,
+      (_) => Container(
+        margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: context.radius.panel,
+          border: Border.all(
+            color: theme.dividerColor.withValues(alpha: 0.15),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 80,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Widget _buildErrorState(ThemeData theme) => RefreshIndicator(
+    onRefresh: _loadToys,
+    child: SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: EdgeInsets.all(context.spacing.pageMargin),
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * 0.6,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: theme.colorScheme.error,
+              ),
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+              Text(
+                'toys.error_loading'.tr(),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.spacing.panelPadding),
+              ElevatedButton.icon(
+                onPressed: _loadToys,
+                icon: const Icon(Icons.refresh),
+                label: Text('common.retry'.tr()),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: context.colors.textOnFilled,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -829,8 +870,7 @@ class _QuickActionButton extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
+              style: context.textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: color,
               ),

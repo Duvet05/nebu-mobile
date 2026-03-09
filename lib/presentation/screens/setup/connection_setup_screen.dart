@@ -254,7 +254,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
           return Container(
             decoration: BoxDecoration(
-              color: context.colors.textOnFilled,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             ),
             padding: EdgeInsets.all(context.spacing.pageMargin),
@@ -890,7 +890,7 @@ class _BottomSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.textOnFilled,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.all(24),

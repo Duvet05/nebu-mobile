@@ -183,7 +183,7 @@ class HomeScreen extends ConsumerWidget {
                           .tr(args: [deviceCount.toString()])
                       : 'home.no_toys_hero'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
+                    color: context.colors.textOnFilled,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -193,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
                       ? 'home.all_good'.tr()
                       : 'home.no_toys_hero_hint'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.85),
+                    color: context.colors.textOnFilled.withValues(alpha: 0.85),
                   ),
                 ),
               ],
@@ -203,7 +203,7 @@ class HomeScreen extends ConsumerWidget {
           Icon(
             Icons.smart_toy,
             size: 48,
-            color: Colors.white.withValues(alpha: 0.85),
+            color: context.colors.textOnFilled.withValues(alpha: 0.85),
           ),
         ],
       ),
@@ -387,7 +387,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
                 Text(
                   device.platformName.isNotEmpty
                       ? device.platformName
-                      : 'Unknown Device',
+                      : 'home.unknown_device'.tr(),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -405,7 +405,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Connected',
+                      'home.connected'.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: context.colors.success,
                         fontWeight: FontWeight.w500,

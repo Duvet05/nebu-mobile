@@ -290,7 +290,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                           'walkie_talkie.no_iot_device'.tr(),
                           style: TextStyle(
                             fontSize: 12,
-                            color: context.colors.textOnFilled.withValues(alpha: 0.6),
+                            color: context.colors.textDisabled,
                           ),
                         ),
                       ),
