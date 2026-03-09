@@ -114,19 +114,33 @@ class AppRouter {
         return AppRoutes.home.path;
       }
     } else {
-      // For unauthenticated users, only a specific set of routes are allowed.
-      final allowedUnauthRoutes = [
-        ...unauthenticatedRoutes,
-        AppRoutes.home.path,
-        AppRoutes.activityLog.path,
-        AppRoutes.myToys.path,
-        AppRoutes.settings.path,
-      ];
-
       final isSetupRoute = location.startsWith('/setup');
 
-      if (!allowedUnauthRoutes.contains(location) && !isSetupRoute) {
-        return AppRoutes.welcome.path;
+      if (hasLocalToys) {
+        // User has a local toy — allow all app routes except auth-only ones
+        // Only block routes that require a real account (profile, orders, etc.)
+        final authRequiredRoutes = [
+          AppRoutes.editProfile.path,
+          AppRoutes.orders.path,
+          AppRoutes.notifications.path,
+          AppRoutes.privacySettings.path,
+        ];
+        if (authRequiredRoutes.contains(location)) {
+          return AppRoutes.login.path;
+        }
+      } else {
+        // No local toys, no auth — only allow onboarding routes
+        final allowedUnauthRoutes = [
+          ...unauthenticatedRoutes,
+          AppRoutes.home.path,
+          AppRoutes.activityLog.path,
+          AppRoutes.myToys.path,
+          AppRoutes.settings.path,
+        ];
+
+        if (!allowedUnauthRoutes.contains(location) && !isSetupRoute) {
+          return AppRoutes.welcome.path;
+        }
       }
     }
 

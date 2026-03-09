@@ -373,11 +373,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         ],
       ),
       body: toysAsync.when(
-        data: (toys) {
-          final pendingToys = toys.where((t) =>
-          t.status == ToyStatus.pending || t.id.startsWith('local_')).toList();
-
-          return RefreshIndicator(
+        data: (toys) => RefreshIndicator(
             onRefresh: _loadToys,
             child: ListView(
               padding: EdgeInsets.all(context.spacing.alertPadding),
@@ -386,10 +382,6 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                   _buildEmptyState(context, theme),
                 ] else
                   ...[
-                    // Banner for unconfigured toys
-                    if (pendingToys.isNotEmpty)
-                      _buildPendingBanner(context, theme),
-
                     ...toys.map<Widget>(
                           (toy) =>
                           _ToyCard(
@@ -399,81 +391,69 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                             onTap: () => _showToyDetails(toy, theme, isDark),
                           ),
                     ),
-                  ],
 
-                if (toys.isNotEmpty) ...[
-                  SizedBox(height: context.spacing.panelPadding),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.spacing.alertPadding,
-                      vertical: context.spacing.paragraphBottomMarginSm,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.smart_toy_outlined,
-                          size: 18,
-                          color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.55),
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            'toys.add_more_hint'.tr(),
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                  alpha: 0.55),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                    // Add another toy
+                    _buildAddToyCard(theme),
+                  ],
               ],
             ),
-          );
-        },
+          ),
         loading: () => _buildLoadingSkeleton(theme),
         error: (_, _) => _buildErrorState(theme),
       ),
     );
   }
 
-  Widget _buildPendingBanner(BuildContext context, ThemeData theme) =>
-      Container(
-        margin: EdgeInsets.only(
-            bottom: context.spacing.paragraphBottomMarginSm),
-        padding: const EdgeInsets.all(14),
+  Widget _buildAddToyCard(ThemeData theme) => Padding(
+    padding: EdgeInsets.only(top: context.spacing.paragraphBottomMarginSm),
+    child: InkWell(
+      onTap: () => _addNewToy(context),
+      borderRadius: context.radius.panel,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
         decoration: BoxDecoration(
-          color: context.colors.warning.withValues(alpha: 0.08),
-          borderRadius: context.radius.tile,
+          borderRadius: context.radius.panel,
           border: Border.all(
-            color: context.colors.warning.withValues(alpha: 0.3),
+            color: context.colors.primary.withValues(alpha: 0.2),
           ),
+          color: context.colors.primary.withValues(alpha: 0.02),
         ),
-        child: Row(
+        child: Column(
           children: [
-            Icon(
-              Icons.info_outline,
-              size: 20,
-              color: context.colors.warning,
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: context.colors.primary.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.add,
+                size: 28,
+                color: context.colors.primary.withValues(alpha: 0.5),
+              ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'toys.pending_banner'.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: context.colors.warning,
-                  fontWeight: FontWeight.w500,
-                ),
+            const SizedBox(height: 12),
+            Text(
+              'toys.setup_new_toy'.tr(),
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: context.colors.primary.withValues(alpha: 0.7),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'toys.add_more_hint'.tr(),
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.45),
               ),
             ),
           ],
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildEmptyState(BuildContext context, ThemeData theme) => Container(
     padding: EdgeInsets.all(context.spacing.paragraphBottomMargin),
@@ -755,6 +735,32 @@ class _ToyCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                // Configure prompt for pending toys
+                if (isPending) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.06),
+                      borderRadius: context.radius.tile,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.touch_app_outlined, size: 16, color: accentColor),
+                        const SizedBox(width: 8),
+                        Text(
+                          'toys.configure'.tr(),
+                          style: context.textTheme.labelMedium?.copyWith(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 // Quick action buttons for online toys
                 if (isOnline) ...[
                   const SizedBox(height: 12),
