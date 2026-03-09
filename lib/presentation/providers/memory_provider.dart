@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/conversation.dart';
+import '../../data/models/voice_session.dart';
 import '../../data/services/memory_service.dart';
 import 'api_provider.dart';
 
@@ -38,4 +39,36 @@ class MemorySearchNotifier extends Notifier<AsyncValue<List<MemoryEntry>>> {
 final memorySearchProvider =
     NotifierProvider<MemorySearchNotifier, AsyncValue<List<MemoryEntry>>>(
   MemorySearchNotifier.new,
+);
+
+/// Knowledge base search
+class KnowledgeSearchNotifier
+    extends Notifier<AsyncValue<List<KnowledgeEntry>>> {
+  @override
+  AsyncValue<List<KnowledgeEntry>> build() => const AsyncValue.data([]);
+
+  Future<void> search({
+    required String query,
+    String? category,
+    String? language,
+  }) async {
+    state = const AsyncValue<List<KnowledgeEntry>>.loading();
+    final service = ref.read(memoryServiceProvider);
+    state = await AsyncValue.guard(
+      () => service.searchKnowledge(
+        query: query,
+        category: category,
+        language: language,
+      ),
+    );
+  }
+
+  void clear() {
+    state = const AsyncValue.data([]);
+  }
+}
+
+final knowledgeSearchProvider = NotifierProvider<KnowledgeSearchNotifier,
+    AsyncValue<List<KnowledgeEntry>>>(
+  KnowledgeSearchNotifier.new,
 );

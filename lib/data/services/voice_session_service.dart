@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../models/voice_session.dart';
 import 'api_service.dart';
 
 class VoiceSessionService {
@@ -10,108 +11,99 @@ class VoiceSessionService {
   final ApiService _apiService;
   final Logger _logger;
 
-  /// Create a new voice session
-  Future<Map<String, dynamic>> createSession({
-    required String userId,
-    String? sessionToken,
-    String? roomName,
-    String language = 'es',
-    Map<String, dynamic>? metadata,
-  }) async {
-    _logger.d('Creating voice session for user: $userId');
-    final response = await _apiService.post<Map<String, dynamic>>(
-      '/voice/sessions',
-      data: {
-        'userId': userId,
-        if (sessionToken != null) 'sessionToken': sessionToken,
-        if (roomName != null) 'roomName': roomName,
-        'language': language,
-        if (metadata != null) 'metadata': metadata,
-      },
-    );
-    _logger.d('Voice session created: ${response['id']}');
-    return response;
-  }
-
-  /// Get voice sessions with optional filters
-  Future<List<Map<String, dynamic>>> getSessions({
-    String? userId,
-    String? status,
-    String? language,
-  }) async {
-    _logger.d('Fetching voice sessions');
-    final response = await _apiService.get<dynamic>(
-      '/voice/sessions',
-      queryParameters: {
-        if (userId != null) 'userId': userId,
-        if (status != null) 'status': status,
-        if (language != null) 'language': language,
-      },
-    );
-    if (response is List) {
-      return response.cast<Map<String, dynamic>>();
-    }
-    return [];
-  }
-
-  /// Get a specific session by ID (includes conversations)
-  Future<Map<String, dynamic>> getSession(String sessionId) async {
-    _logger.d('Fetching voice session: $sessionId');
-    return _apiService
-        .get<Map<String, dynamic>>('/voice/sessions/$sessionId');
-  }
-
-  /// Get sessions for a specific user
-  Future<List<Map<String, dynamic>>> getUserSessions(String userId) async {
+  /// Get sessions for the authenticated user.
+  /// Backend: GET /voice/sessions/user/:userId
+  Future<List<VoiceSession>> getUserSessions(String userId) async {
     _logger.d('Fetching sessions for user: $userId');
     final response = await _apiService
         .get<dynamic>('/voice/sessions/user/$userId');
-    if (response is List) {
-      return response.cast<Map<String, dynamic>>();
-    }
-    return [];
+    return _parseSessionList(response);
   }
 
-  /// Get active voice sessions
-  Future<List<Map<String, dynamic>>> getActiveSessions() async {
-    _logger.d('Fetching active voice sessions');
+  /// Get a specific session by ID (includes conversations).
+  /// Backend: GET /voice/sessions/:id
+  Future<VoiceSession> getSession(String sessionId) async {
+    _logger.d('Fetching voice session: $sessionId');
     final response = await _apiService
-        .get<dynamic>('/voice/sessions/active');
-    if (response is List) {
-      return response.cast<Map<String, dynamic>>();
-    }
-    return [];
+        .get<Map<String, dynamic>>('/voice/sessions/$sessionId');
+    return VoiceSession.fromJson(response);
   }
 
-  /// End a voice session
-  Future<Map<String, dynamic>> endSession(
-    String sessionId, {
-    String? reason,
-  }) async {
-    _logger.d('Ending voice session: $sessionId');
-    return _apiService.post<Map<String, dynamic>>(
-      '/voice/sessions/$sessionId/end',
-      data: {if (reason != null) 'reason': reason},
-    );
-  }
-
-  /// Get conversations for a session
-  Future<List<Map<String, dynamic>>> getSessionConversations(
+  /// Get conversations for a session.
+  /// Backend: GET /voice/sessions/:id/conversations
+  Future<List<AiConversation>> getSessionConversations(
     String sessionId,
   ) async {
     _logger.d('Fetching conversations for session: $sessionId');
     final response = await _apiService
         .get<dynamic>('/voice/sessions/$sessionId/conversations');
     if (response is List) {
-      return response.cast<Map<String, dynamic>>();
+      return response
+          .cast<Map<String, dynamic>>()
+          .map(AiConversation.fromJson)
+          .toList();
     }
     return [];
   }
 
-  /// Get session metrics/statistics
-  Future<Map<String, dynamic>> getSessionMetrics() async {
+  /// Get session metrics/statistics.
+  /// Backend: GET /voice/sessions/metrics
+  Future<VoiceMetrics> getMetrics() async {
     _logger.d('Fetching voice session metrics');
-    return _apiService
+    final response = await _apiService
         .get<Map<String, dynamic>>('/voice/sessions/metrics');
+    return VoiceMetrics.fromJson(response);
+  }
+
+  /// Create a new voice session.
+  /// Backend: POST /voice/sessions
+  Future<VoiceSession> createSession({
+    required String userId,
+    required String sessionToken,
+    required String roomName,
+  }) async {
+    _logger.d('Creating voice session for user: $userId');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/voice/sessions',
+      data: {
+        'userId': userId,
+        'sessionToken': sessionToken,
+        'roomName': roomName,
+      },
+    );
+    return VoiceSession.fromJson(response);
+  }
+
+  /// End a voice session.
+  /// Backend: POST /voice/sessions/:id/end
+  Future<VoiceSession> endSession(
+    String sessionId, {
+    String? reason,
+  }) async {
+    _logger.d('Ending voice session: $sessionId');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/voice/sessions/$sessionId/end',
+      data: {if (reason != null) 'reason': reason},
+    );
+    return VoiceSession.fromJson(response);
+  }
+
+  List<VoiceSession> _parseSessionList(Object? response) {
+    if (response is List) {
+      return response
+          .cast<Map<String, dynamic>>()
+          .map(VoiceSession.fromJson)
+          .toList();
+    }
+    if (response is Map<String, dynamic>) {
+      final data = response['sessions'] ?? response['data'];
+      if (data is List) {
+        return data
+            .cast<Map<String, dynamic>>()
+            .map(VoiceSession.fromJson)
+            .toList();
+      }
+    }
+    return [];
   }
 }

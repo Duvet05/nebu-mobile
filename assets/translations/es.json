@@ -824,6 +824,32 @@
     "contact_content": "Si tienes alguna pregunta sobre estos Términos, contáctanos:",
     "contact_info": "¿Preguntas? Contáctanos"
   },
+  "knowledge": {
+    "title": "Base de Conocimiento",
+    "search_hint": "Buscar conocimiento... (ej. \"sistema solar\")",
+    "no_results": "No se encontraron resultados",
+    "error": "No se pudo buscar. Intenta de nuevo.",
+    "verified": "Verificado",
+    "empty_title": "Explora el Conocimiento",
+    "empty_message": "Busca en la base de conocimiento para descubrir contenido educativo para tu hijo"
+  },
+  "voice_history": {
+    "title": "Sesiones de Voz",
+    "sessions": "Sesiones Recientes",
+    "metrics": "Resumen",
+    "total_sessions": "Sesiones",
+    "total_conversations": "Mensajes",
+    "avg_duration": "Duración Prom.",
+    "empty_title": "Sin Sesiones Aún",
+    "empty_message": "Las conversaciones de voz con tu juguete aparecerán aquí",
+    "error": "No se pudieron cargar las sesiones. Intenta de nuevo.",
+    "session_default": "Sesión de Voz",
+    "active": "Activa",
+    "messages": "{} mensajes",
+    "conversation": "Conversación",
+    "no_messages": "Sin mensajes en esta sesión",
+    "error_conversations": "No se pudieron cargar los mensajes"
+  },
   "setup_progress": {
     "step_of": "Paso {} de {}"
   }

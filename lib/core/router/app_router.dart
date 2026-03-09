@@ -13,6 +13,7 @@ import '../../presentation/screens/child_profile_screen.dart';
 import '../../presentation/screens/edit_profile_screen.dart';
 import '../../presentation/screens/health_check_screen.dart';
 import '../../presentation/screens/home_screen.dart';
+import '../../presentation/screens/knowledge_search_screen.dart';
 import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
@@ -38,6 +39,7 @@ import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_memory_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
+import '../../presentation/screens/voice_sessions_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
 import '../constants/app_routes.dart';
@@ -65,7 +67,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final hasLocalToys = ref.read(hasLocalToysProvider).value ?? false;
-      return AppRouter._redirectLogic(authState, state, hasLocalToys: hasLocalToys);
+      return AppRouter._redirectLogic(
+        authState,
+        state,
+        hasLocalToys: hasLocalToys,
+      );
     },
     routes: AppRouter._getRoutesStatic(),
     errorBuilder: (context, state) => Scaffold(
@@ -154,10 +160,7 @@ class AppRouter {
       path: AppRoutes.welcome.path,
       builder: (_, _) => const WelcomeScreen(),
     ),
-    GoRoute(
-      path: AppRoutes.login.path,
-      builder: (_, _) => const LoginScreen(),
-    ),
+    GoRoute(path: AppRoutes.login.path, builder: (_, _) => const LoginScreen()),
     GoRoute(
       path: AppRoutes.signUp.path,
       builder: (_, _) => const SignUpScreen(),
@@ -182,8 +185,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.profile.path,
-          pageBuilder: (_, _) =>
-              const NoTransitionPage(child: ProfileScreen()),
+          pageBuilder: (_, _) => const NoTransitionPage(child: ProfileScreen()),
         ),
         GoRoute(
           path: AppRoutes.settings.path,
@@ -272,6 +274,14 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.healthCheck.path,
       builder: (_, _) => const HealthCheckScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.knowledgeSearch.path,
+      builder: (_, _) => const KnowledgeSearchScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.voiceHistory.path,
+      builder: (_, _) => const VoiceSessionsScreen(),
     ),
     GoRoute(
       path: AppRoutes.playground.path,

@@ -105,12 +105,12 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
 
       // 2. Create voice session on backend
       final user = ref.read(authProvider).value;
-      final sessionResponse = await _voiceSessionService.createSession(
+      final session = await _voiceSessionService.createSession(
         userId: user?.id ?? 'anonymous',
         sessionToken: token,
         roomName: roomName,
       );
-      final sessionId = sessionResponse['id'] as String?;
+      final sessionId = session.id;
 
       // 3. Connect to LiveKit room using server URL from backend
       await _liveKitService.connect(

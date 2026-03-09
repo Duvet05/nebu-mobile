@@ -633,6 +633,32 @@
     "contact_content": "If you have any questions about these Terms, please contact us:",
     "contact_info": "Questions? Contact Us"
   },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "search_hint": "Search knowledge... (e.g. \"solar system\")",
+    "no_results": "No results found",
+    "error": "Could not search. Please try again.",
+    "verified": "Verified",
+    "empty_title": "Explore Knowledge",
+    "empty_message": "Search the knowledge base to discover educational content for your child"
+  },
+  "voice_history": {
+    "title": "Voice Sessions",
+    "sessions": "Recent Sessions",
+    "metrics": "Overview",
+    "total_sessions": "Sessions",
+    "total_conversations": "Messages",
+    "avg_duration": "Avg Duration",
+    "empty_title": "No Sessions Yet",
+    "empty_message": "Voice conversations with your toy will appear here",
+    "error": "Could not load sessions. Please try again.",
+    "session_default": "Voice Session",
+    "active": "Active",
+    "messages": "{} messages",
+    "conversation": "Conversation",
+    "no_messages": "No messages in this session",
+    "error_conversations": "Could not load messages"
+  },
   "setup_progress": {
     "step_of": "Step {} of {}"
   }

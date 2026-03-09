@@ -1,6 +1,7 @@
 import 'package:logger/logger.dart';
 
 import '../models/conversation.dart';
+import '../models/voice_session.dart';
 import 'api_service.dart';
 
 class MemoryService {
@@ -50,6 +51,48 @@ class MemoryService {
     );
 
     return _parseMemoryList(response);
+  }
+
+  // ─── Knowledge Base Search ───
+
+  /// Search the knowledge base using vector similarity.
+  /// Backend: POST /vector-memory/knowledge/search
+  Future<List<KnowledgeEntry>> searchKnowledge({
+    required String query,
+    String? ageRange,
+    String? category,
+    String? language,
+    int limit = 10,
+  }) async {
+    _logger.d('Searching knowledge: "$query"');
+    final response = await _apiService.post<dynamic>(
+      '/vector-memory/knowledge/search',
+      data: {
+        'query': query,
+        'limit': limit,
+        if (ageRange != null) 'ageRange': ageRange,
+        if (category != null) 'category': category,
+        if (language != null) 'language': language,
+      },
+    );
+
+    if (response is List) {
+      return response
+          .cast<Map<String, dynamic>>()
+          .map(KnowledgeEntry.fromJson)
+          .toList();
+    }
+    if (response is Map<String, dynamic>) {
+      final data =
+          response['results'] ?? response['knowledge'] ?? response['data'];
+      if (data is List) {
+        return data
+            .cast<Map<String, dynamic>>()
+            .map(KnowledgeEntry.fromJson)
+            .toList();
+      }
+    }
+    return [];
   }
 
   // ─── Parsing ───

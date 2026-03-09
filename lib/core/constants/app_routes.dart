@@ -30,6 +30,8 @@ enum AppRoutes {
   personalities('/personalities'),
   playground('/playground'),
   healthCheck('/health-check'),
+  knowledgeSearch('/knowledge-search'),
+  voiceHistory('/voice-history'),
   settings('/settings');
 
   const AppRoutes(this.path);
