@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'core/config/config.dart';
 import 'core/router/app_router.dart';
@@ -14,12 +15,22 @@ void main() async {
   // Inicialización paralela (más rápido que secuencial)
   await Future.wait([
     EasyLocalization.ensureInitialized(),
-    // Firebase se inicializa solo si es necesario, o lo movemos a un provider
     () async {
       try {
         await Firebase.initializeApp();
       } on Exception catch (e) {
         debugPrint('Firebase skip: $e');
+      }
+    }(),
+    () async {
+      try {
+        await GoogleSignIn.instance.initialize(
+          serverClientId: Config.googleWebClientId.isNotEmpty
+              ? Config.googleWebClientId
+              : null,
+        );
+      } on Exception catch (e) {
+        debugPrint('GoogleSignIn init skip: $e');
       }
     }(),
   ]);

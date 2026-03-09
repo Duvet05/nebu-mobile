@@ -4,24 +4,16 @@ import 'package:logger/logger.dart';
 import '../../core/config/config.dart';
 
 /// Service for checking backend health and connectivity.
-/// Uses Dio directly (not ApiService) because /health lives at the server
-/// root, outside the /api/v1 prefix.
+/// Uses Dio directly (not ApiService) because health does not require auth.
 class HealthService {
   HealthService({required Logger logger}) : _logger = logger;
 
   final Logger _logger;
 
-  /// Base server URL without the /api/v1 prefix
-  String get _serverUrl {
-    final apiUrl = Config.apiBaseUrl;
-    final prefixIndex = apiUrl.indexOf('/api/v1');
-    return prefixIndex != -1 ? apiUrl.substring(0, prefixIndex) : apiUrl;
-  }
-
   /// Check backend health status
-  /// Hits GET /health at the server root (no /api/v1 prefix)
+  /// Hits GET /api/v1/health
   Future<Map<String, dynamic>> checkHealth() async {
-    _logger.i('Checking backend health at $_serverUrl/health');
+    _logger.i('Checking backend health at ${Config.apiBaseUrl}/health');
     final dio = Dio(
       BaseOptions(
         connectTimeout: Config.healthTimeout,
@@ -30,7 +22,7 @@ class HealthService {
       ),
     );
     final response = await dio.get<Map<String, dynamic>>(
-      '$_serverUrl/health',
+      '${Config.apiBaseUrl}/health',
     );
     final data = response.data!;
     _logger.i('Backend health check successful: ${data['status']}');

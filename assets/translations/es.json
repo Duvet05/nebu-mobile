@@ -610,7 +610,8 @@
     "reset_password_error": "Código inválido o expirado. Intenta de nuevo.",
     "reset_password_mismatch": "Las contraseñas no coinciden",
     "reset_password_too_short": "La contraseña debe tener al menos 8 caracteres",
-    "sign_up_coming_soon": "Registro próximamente"
+    "sign_up_coming_soon": "Registro próximamente",
+    "google_no_id_token": "No se pudo obtener el token de autenticación de Google. Inténtalo de nuevo."
   },
   "audio_controls": {
     "volume_error": "No se pudo cambiar el volumen. Intenta de nuevo.",

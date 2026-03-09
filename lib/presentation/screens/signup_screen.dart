@@ -2,13 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
-import '../providers/google_signin_provider.dart';
 import '../widgets/auth_widgets.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
@@ -56,17 +56,27 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   Future<void> _handleGoogleSignUp() async {
     try {
-      final googleSignIn = ref.read(googleSignInProvider);
-      final googleUser = await googleSignIn.authenticate();
-
-      final googleAuth = googleUser.authentication;
-      final idToken = googleAuth.idToken;
+      final googleUser = await GoogleSignIn.instance.authenticate();
+      final idToken = googleUser.authentication.idToken;
 
       if (idToken == null) {
-        throw Exception('No ID token received from Google');
+        throw Exception('auth.google_no_id_token'.tr());
       }
 
       await ref.read(authProvider.notifier).loginWithGoogle(idToken);
+    } on GoogleSignInException catch (e) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return;
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              e.description ?? 'auth.google_signup_failed_detail'.tr(),
+            ),
+          ),
+        );
+      }
     } on Exception {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

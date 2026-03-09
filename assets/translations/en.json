@@ -431,7 +431,8 @@
     "reset_password_success": "Password reset successfully! You can now log in.",
     "reset_password_error": "Invalid or expired code. Please try again.",
     "reset_password_mismatch": "Passwords don't match",
-    "reset_password_too_short": "Password must be at least 8 characters"
+    "reset_password_too_short": "Password must be at least 8 characters",
+    "google_no_id_token": "Could not get authentication token from Google. Please try again."
   },
   "audio_controls": {
     "volume_error": "Couldn't change volume. Please try again.",
