@@ -85,7 +85,7 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                   size: 20,
                   color: context.theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.gapMd),
                 SizedBox(
                   width: 45,
                   child: Text(
@@ -109,7 +109,7 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                   size: 20,
                   color: context.theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.gapMd),
                 Expanded(
                   child: Text(
                     isMuted ? 'audio_controls.muted'.tr() : 'audio_controls.unmuted'.tr(),
@@ -146,7 +146,7 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
             // Status info
             if (_isUpdatingVolume || _isUpdatingMute)
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: EdgeInsets.only(top: context.spacing.gapMd),
                 child: Row(
                   children: [
                     SizedBox(
@@ -157,7 +157,7 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                         color: context.theme.colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: context.spacing.gapMd),
                     Text(
                       'audio_controls.updating'.tr(),
                       style: context.theme.textTheme.bodySmall?.copyWith(

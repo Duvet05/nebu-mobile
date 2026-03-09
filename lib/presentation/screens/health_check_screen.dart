@@ -74,7 +74,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
                       Row(
                         children: [
                           Icon(Icons.error, color: context.colors.error),
-                          const SizedBox(width: 8),
+                          SizedBox(width: context.spacing.gapMd),
                           Text(
                             'health_check.error'.tr(),
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -136,7 +136,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           color: isHealthy ? context.colors.success : context.colors.warning,
           size: 32,
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: context.spacing.gapLg),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,7 +299,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
                 Text('$percent%', style: theme.textTheme.bodyMedium),
               ],
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: context.spacing.gapXs),
             LinearProgressIndicator(
               value: percent / 100,
               backgroundColor: context.colors.grey800,
@@ -331,7 +331,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
             color: isHealthy ? context.colors.success : context.colors.error,
             size: 20,
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: context.spacing.gapMd),
           Text(
             check.status.toUpperCase(),
             style: theme.textTheme.bodyMedium?.copyWith(

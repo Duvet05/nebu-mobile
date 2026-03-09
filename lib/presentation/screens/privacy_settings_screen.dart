@@ -374,8 +374,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
-          // TODO(design-system): migrate to CustomButton when it supports custom colors
-          ElevatedButton(
+          CustomButton(
+            text: 'privacy.delete_permanently'.tr(),
+            variant: ButtonVariant.danger,
             onPressed: () async {
               Navigator.pop(context);
               final password = await _confirmDeleteAccount();
@@ -383,11 +384,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 await _performAccountDeletion(password);
               }
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.error,
-              foregroundColor: context.colors.textOnFilled,
-            ),
-            child: Text('privacy.delete_permanently'.tr()),
           ),
         ],
       ),
@@ -448,8 +444,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
-          // TODO(design-system): migrate to CustomButton when it supports custom colors
-          ElevatedButton(
+          CustomButton(
+            text: 'common.delete'.tr(),
+            variant: ButtonVariant.danger,
             onPressed: () {
               if (confirmController.text.toUpperCase() != 'DELETE') {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -471,11 +468,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
               }
               Navigator.pop(context, passwordController.text);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.error,
-              foregroundColor: context.colors.textOnFilled,
-            ),
-            child: Text('common.delete'.tr()),
           ),
         ],
       ),

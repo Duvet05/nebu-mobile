@@ -60,7 +60,7 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
     final theme = context.theme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXxl, vertical: context.spacing.gapXxl),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
@@ -95,7 +95,7 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
             )
           else if (_error != null)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: EdgeInsets.all(context.spacing.gapXxl),
               child: Column(
                 children: [
                   Icon(
@@ -118,7 +118,7 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
             )
           else if (_networks.isEmpty)
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: EdgeInsets.all(context.spacing.gapXxl),
               child: Text(
                 'setup.wifi.no_networks_found'.tr(),
                 textAlign: TextAlign.center,

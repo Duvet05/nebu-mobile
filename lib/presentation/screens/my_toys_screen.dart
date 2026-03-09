@@ -146,7 +146,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                         color: statusColor,
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: context.spacing.gapXl),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,7 +158,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: context.spacing.gapXs),
                           Row(
                             children: [
                               Container(
@@ -169,7 +169,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: context.spacing.gapSm),
                               Text(
                                 statusText,
                                 style: theme.textTheme.labelMedium?.copyWith(
@@ -203,7 +203,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                           size: 18,
                           color: context.colors.warning,
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: context.spacing.gapLg),
                         Expanded(
                           child: Text(
                             'toys.pending_hint'.tr(),
@@ -333,7 +333,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         size: 16,
         color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
       ),
-      const SizedBox(width: 10),
+      SizedBox(width: context.spacing.gapLg),
       Text(
         label,
         style: theme.textTheme.bodySmall?.copyWith(
@@ -572,7 +572,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: context.spacing.gapXl),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -704,7 +704,7 @@ class _ToyCard extends StatelessWidget {
                         color: accentColor,
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    SizedBox(width: context.spacing.gapXl),
                     // Name + status
                     Expanded(
                       child: Column(
@@ -717,7 +717,7 @@ class _ToyCard extends StatelessWidget {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: context.spacing.gapXs),
                           Row(
                             children: [
                               Container(
@@ -728,7 +728,7 @@ class _ToyCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 6),
+                              SizedBox(width: context.spacing.gapSm),
                               Text(
                                 badgeText,
                                 style: theme.textTheme.labelMedium?.copyWith(
@@ -888,7 +888,7 @@ class _QuickActionButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: color),
-          const SizedBox(width: 6),
+          SizedBox(width: context.spacing.gapSm),
           Flexible(
             child: Text(
               label,

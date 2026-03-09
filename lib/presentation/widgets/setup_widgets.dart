@@ -77,7 +77,7 @@ class SetupHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
         child: Row(
           children: [
         SetupBackButton(previousRoute: previousRoute),
@@ -171,7 +171,7 @@ class SetupSkipButton extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
           child: Text(
             'setup.connection.skip_setup'.tr(),
             style: context.theme.textTheme.bodyMedium?.copyWith(

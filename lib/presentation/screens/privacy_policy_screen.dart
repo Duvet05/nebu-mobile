@@ -52,10 +52,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               'privacy_policy.collect_title'.tr(),
               'privacy_policy.collect_content'.tr(),
             ),
-            _buildBulletPoint(theme, 'privacy_policy.collect_1'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.collect_2'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.collect_3'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.collect_4'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.collect_1'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.collect_2'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.collect_3'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.collect_4'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
             // How We Use Your Information
@@ -65,10 +65,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               'privacy_policy.use_title'.tr(),
               'privacy_policy.use_content'.tr(),
             ),
-            _buildBulletPoint(theme, 'privacy_policy.use_1'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.use_2'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.use_3'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.use_4'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.use_1'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.use_2'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.use_3'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.use_4'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
             // Data Sharing
@@ -94,10 +94,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               'privacy_policy.rights_title'.tr(),
               'privacy_policy.rights_content'.tr(),
             ),
-            _buildBulletPoint(theme, 'privacy_policy.rights_1'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.rights_2'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.rights_3'.tr()),
-            _buildBulletPoint(theme, 'privacy_policy.rights_4'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.rights_1'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.rights_2'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.rights_3'.tr()),
+            _buildBulletPoint(context, theme, 'privacy_policy.rights_4'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
             // Account & Data Deletion
@@ -221,8 +221,8 @@ class PrivacyPolicyScreen extends ConsumerWidget {
         ),
       );
 
-  Widget _buildBulletPoint(ThemeData theme, String text) => Padding(
-    padding: const EdgeInsets.only(left: 16, bottom: 8),
+  Widget _buildBulletPoint(BuildContext context, ThemeData theme, String text) => Padding(
+    padding: EdgeInsets.only(left: context.spacing.gapXl, bottom: context.spacing.gapMd),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

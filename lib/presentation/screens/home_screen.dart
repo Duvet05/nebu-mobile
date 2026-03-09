@@ -370,7 +370,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: context.spacing.gapXs),
                 Row(
                   children: [
                     Container(
@@ -381,7 +381,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: context.spacing.gapSm),
                     Text(
                       'home.connected'.tr(),
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -406,7 +406,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
                       ? context.colors.success
                       : context.colors.error,
                 ),
-                const SizedBox(width: 4),
+                SizedBox(width: context.spacing.gapXs),
                 Text(
                   '$level%',
                   style: theme.textTheme.titleMedium?.copyWith(

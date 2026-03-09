@@ -99,7 +99,7 @@ class AuthTextField extends StatelessWidget {
           borderSide: BorderSide(color: context.colors.error, width: 1.5),
         ),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+            EdgeInsets.symmetric(horizontal: context.spacing.gapXxl, vertical: 18),
       ),
     );
   }
@@ -201,7 +201,7 @@ class AuthGoogleButton extends StatelessWidget {
                   color: context.colors.grey300,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: context.spacing.gapLg),
               Text(
                 text,
                 style: textTheme.titleMedium?.copyWith(
@@ -228,7 +228,7 @@ class AuthOrDivider extends StatelessWidget {
       children: [
         Expanded(child: Divider(color: context.colors.grey700, thickness: 1)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl),
           child: Text(
             'auth.or'.tr(),
             style: textTheme.bodySmall?.copyWith(
@@ -261,7 +261,7 @@ class AuthErrorBanner extends StatelessWidget {
       child: Row(
         children: [
           Icon(Icons.error_outline_rounded, color: context.colors.error, size: 22),
-          const SizedBox(width: 12),
+          SizedBox(width: context.spacing.gapLg),
           Expanded(
             child: Text(
               message,

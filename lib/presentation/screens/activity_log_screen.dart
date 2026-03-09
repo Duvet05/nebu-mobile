@@ -245,7 +245,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            SizedBox(height: context.spacing.gapXs),
             Text(
               activity.description,
               style: theme.textTheme.bodySmall?.copyWith(

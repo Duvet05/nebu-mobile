@@ -565,7 +565,7 @@ class _PersonalityCard extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: context.spacing.gapXs),
             if (personality.category != null)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

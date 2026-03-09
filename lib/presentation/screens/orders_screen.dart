@@ -175,7 +175,7 @@ class _OrderCard extends StatelessWidget {
                     size: 16,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: context.spacing.gapMd),
                   Text(
                     _formatDate(order.date),
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -501,7 +501,7 @@ class _OrderDetailsSheet extends StatelessWidget {
             ),
         ],
       ),
-      const SizedBox(width: 16),
+      SizedBox(width: context.spacing.gapXl),
       Text(
         label,
         style: theme.textTheme.bodyMedium?.copyWith(
