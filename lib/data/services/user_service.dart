@@ -30,9 +30,9 @@ class UserService {
         'firstName': firstName,
         'lastName': lastName,
         'password': password,
-        ?'username': username,
-        ?'phone': phone,
-        ?'preferredLanguage': preferredLanguage,
+        'username': ?username,
+        'phone': ?phone,
+        'preferredLanguage': ?preferredLanguage,
       },
     );
 
@@ -64,12 +64,12 @@ class UserService {
     final response = await _apiService.patch<Map<String, dynamic>>(
       '/users/me',
       data: {
-        ?'firstName': firstName,
-        ?'lastName': lastName,
-        ?'username': username,
-        ?'bio': bio,
-        ?'phone': phone,
-        ?'preferredLanguage': preferredLanguage,
+        'firstName': ?firstName,
+        'lastName': ?lastName,
+        'username': ?username,
+        'bio': ?bio,
+        'phone': ?phone,
+        'preferredLanguage': ?preferredLanguage,
       },
     );
 
@@ -100,7 +100,7 @@ class UserService {
 
     final response = await _apiService.delete<Map<String, dynamic>>(
       '/users/me',
-      data: {'password': password, ?'reason': reason},
+      data: {'password': password, 'reason': ?reason},
     );
 
     _logger.d('Account deleted successfully');

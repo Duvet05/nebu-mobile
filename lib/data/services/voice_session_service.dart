@@ -82,7 +82,7 @@ class VoiceSessionService {
     _logger.d('Ending voice session: $sessionId');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/voice/sessions/$sessionId/end',
-      data: {?'reason': reason},
+      data: {'reason': ?reason},
     );
     return VoiceSession.fromJson(response);
   }

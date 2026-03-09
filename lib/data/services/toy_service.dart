@@ -35,18 +35,18 @@ class ToyService {
       '/toys',
       data: {
         'name': name,
-        ?'deviceId': deviceId,
-        ?'macAddress': macAddress,
-        ?'model': model,
-        ?'manufacturer': manufacturer,
+        'deviceId': ?deviceId,
+        'macAddress': ?macAddress,
+        'model': ?model,
+        'manufacturer': ?manufacturer,
         if (status != null) 'status': status.name,
-        ?'firmwareVersion': firmwareVersion,
-        ?'capabilities': capabilities,
-        ?'settings': settings,
-        ?'notes': notes,
-        ?'prompt': prompt,
-        ?'personalityProfile': personalityProfile,
-        ?'greeting': greeting,
+        'firmwareVersion': ?firmwareVersion,
+        'capabilities': ?capabilities,
+        'settings': ?settings,
+        'notes': ?notes,
+        'prompt': ?prompt,
+        'personalityProfile': ?personalityProfile,
+        'greeting': ?greeting,
       },
     );
     _logger.d('Toy created successfully: ${response['id']}');
@@ -101,7 +101,7 @@ class ToyService {
       data: {
         'macAddress': macAddress,
         'userId': userId,
-        ?'toyName': toyName,
+        'toyName': ?toyName,
       },
     );
     _logger.d('Toy assigned successfully');
@@ -120,8 +120,8 @@ class ToyService {
       '/toys/connection/$deviceId',
       data: {
         'status': status.name,
-        ?'batteryLevel': batteryLevel,
-        ?'signalStrength': signalStrength,
+        'batteryLevel': ?batteryLevel,
+        'signalStrength': ?signalStrength,
       },
     );
     _logger.d('Toy status updated successfully');
@@ -155,17 +155,17 @@ class ToyService {
     final response = await _apiService.patch<Map<String, dynamic>>(
       '/toys/$id',
       data: {
-        ?'name': name,
-        ?'model': model,
-        ?'manufacturer': manufacturer,
+        'name': ?name,
+        'model': ?model,
+        'manufacturer': ?manufacturer,
         if (status != null) 'status': status.name,
-        ?'firmwareVersion': firmwareVersion,
-        ?'capabilities': capabilities,
-        ?'settings': settings,
-        ?'notes': notes,
-        ?'prompt': prompt,
-        ?'personalityProfile': personalityProfile,
-        ?'greeting': greeting,
+        'firmwareVersion': ?firmwareVersion,
+        'capabilities': ?capabilities,
+        'settings': ?settings,
+        'notes': ?notes,
+        'prompt': ?prompt,
+        'personalityProfile': ?personalityProfile,
+        'greeting': ?greeting,
       },
     );
     _logger.d('Toy updated successfully');
