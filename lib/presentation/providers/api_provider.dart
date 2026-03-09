@@ -152,7 +152,9 @@ final liveKitServiceProvider = Provider<LiveKitService>((ref) {
 
 final deviceTokenServiceProvider = Provider<DeviceTokenService>((ref) {
   final logger = ref.watch(loggerProvider);
-  final dio = ref.watch(apiServiceProvider).dio;
+  // Ensure ApiService has initialized the Dio instance (interceptors, baseUrl)
+  ref.watch(apiServiceProvider);
+  final dio = ref.watch(dioProvider);
   return DeviceTokenService(logger: logger, dio: dio);
 });
 
