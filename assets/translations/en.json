@@ -686,6 +686,13 @@
   "setup_progress": {
     "step_of": "Step {} of {}"
   },
+  "settings": {
+    "clear_local_data": "Clear Local Data",
+    "clear_local_data_title": "Clear Local Data?",
+    "clear_local_data_body": "This will delete all local toys, child profile data, setup preferences, and cached avatar. Your account, login, and language/theme settings will NOT be affected.",
+    "clear_local_data_confirm": "Clear Data",
+    "clear_local_data_success": "Local data cleared successfully"
+  },
   "errors": {
     "route_not_found": "Page not found"
   }

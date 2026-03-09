@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../core/config/config.dart';
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/storage_keys.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/language_provider.dart';
@@ -168,6 +173,20 @@ class SettingsScreen extends ConsumerWidget {
                       },
                     ),
 
+                    SizedBox(height: context.spacing.paragraphBottomMarginSm),
+
+                    _SettingsTile(
+                      theme: theme,
+                      icon: Icons.delete_sweep_outlined,
+                      iconColor: context.colors.error,
+                      title: 'settings.clear_local_data'.tr(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: context.colors.grey400,
+                      ),
+                      onTap: () => _handleClearLocalData(context, ref),
+                    ),
+
                     SizedBox(height: context.spacing.panelPadding),
                   ],
                 ),
@@ -296,6 +315,69 @@ void _showAboutAppDialog(BuildContext context, String appVersion) {
       Text('profile.about_copyright'.tr()),
     ],
   );
+}
+
+Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
+  final confirmed = await showConfirmDialog(
+    context,
+    title: 'settings.clear_local_data_title'.tr(),
+    content: 'settings.clear_local_data_body'.tr(),
+    confirmText: 'settings.clear_local_data_confirm'.tr(),
+    destructive: true,
+  );
+
+  if (!confirmed || !context.mounted) {
+    return;
+  }
+
+  final prefs = await ref.read(sharedPreferencesProvider.future);
+  final secureStorage = ref.read(secureStorageProvider);
+
+  await Future.wait([
+    // Local toys
+    prefs.remove(StorageKeys.localToys),
+    // Child data
+    prefs.remove(StorageKeys.localChildName),
+    prefs.remove(StorageKeys.localChildAge),
+    prefs.remove(StorageKeys.localChildPersonality),
+    prefs.remove(StorageKeys.localCustomPrompt),
+    // Setup wizard
+    prefs.remove(StorageKeys.setupCompleted),
+    prefs.remove(StorageKeys.setupCompletedLocally),
+    prefs.remove(StorageKeys.setupToyName),
+    prefs.remove(StorageKeys.setupDeviceRegistered),
+    prefs.remove(StorageKeys.setupLanguage),
+    prefs.remove(StorageKeys.setupTheme),
+    prefs.remove(StorageKeys.setupNotifications),
+    prefs.remove(StorageKeys.setupVoice),
+    prefs.remove(StorageKeys.setupHapticFeedback),
+    prefs.remove(StorageKeys.setupAutoSave),
+    prefs.remove(StorageKeys.setupAnalytics),
+    prefs.remove(StorageKeys.setupPersonalityId),
+    // Device
+    prefs.remove(StorageKeys.currentDeviceId),
+    // Activity migration
+    prefs.remove(StorageKeys.localUserId),
+    prefs.remove(StorageKeys.activitiesMigrated),
+    // Avatar (secure storage path + file)
+    secureStorage.delete(key: StorageKeys.localAvatar),
+  ]);
+
+  // Delete avatar file if it exists
+  try {
+    final appDir = await getApplicationDocumentsDirectory();
+    final avatarFile = File('${appDir.path}/avatar.jpg');
+    if (avatarFile.existsSync()) {
+      avatarFile.deleteSync();
+    }
+  } on Exception {
+    // Avatar file cleanup is best-effort
+  }
+
+  if (!context.mounted) {
+    return;
+  }
+  context.showSuccessSnackBar('settings.clear_local_data_success'.tr());
 }
 
 class _SettingsTile extends StatelessWidget {

@@ -876,6 +876,13 @@
   "setup_progress": {
     "step_of": "Paso {} de {}"
   },
+  "settings": {
+    "clear_local_data": "Borrar Datos Locales",
+    "clear_local_data_title": "¿Borrar Datos Locales?",
+    "clear_local_data_body": "Se eliminarán todos los juguetes locales, datos del perfil infantil, preferencias de configuración y avatar en caché. Tu cuenta, sesión e idioma/tema NO se verán afectados.",
+    "clear_local_data_confirm": "Borrar Datos",
+    "clear_local_data_success": "Datos locales borrados exitosamente"
+  },
   "errors": {
     "route_not_found": "Página no encontrada"
   }
