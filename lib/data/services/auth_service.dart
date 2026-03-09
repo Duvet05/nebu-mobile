@@ -32,8 +32,6 @@ class AuthService {
     required String password,
   }) async {
     try {
-      // Send as 'email' field for backend compatibility
-      // The backend should accept both email and username in this field
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/login',
         data: {'email': identifier, 'password': password},
@@ -41,7 +39,6 @@ class AuthService {
 
       _logger.d('[AUTH] Login response received');
 
-      // Use fromBackend to handle NestJS response format
       final authResponse = AuthResponse.fromBackend(response.data!);
 
       if (authResponse.success && authResponse.tokens != null) {
@@ -80,7 +77,6 @@ class AuthService {
         },
       );
 
-      // Use fromBackend to handle NestJS response format
       final authResponse = AuthResponse.fromBackend(response.data!);
 
       if (authResponse.success && authResponse.tokens != null) {
@@ -102,15 +98,27 @@ class AuthService {
     }
   }
 
-  // Social Authentication
-  Future<SocialAuthResult> googleLogin(String googleToken) async {
+  // Social Authentication — single implementation for all providers
+  Future<SocialAuthResult> googleLogin(String token) =>
+      _socialLogin('/auth/google', token, 'Google');
+
+  Future<SocialAuthResult> facebookLogin(String token) =>
+      _socialLogin('/auth/facebook', token, 'Facebook');
+
+  Future<SocialAuthResult> appleLogin(String token) =>
+      _socialLogin('/auth/apple', token, 'Apple');
+
+  Future<SocialAuthResult> _socialLogin(
+    String endpoint,
+    String token,
+    String providerName,
+  ) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
-        '/auth/google',
-        data: {'token': googleToken},
+        endpoint,
+        data: {'token': token},
       );
 
-      // Use fromBackend to handle NestJS response format
       final authResult = SocialAuthResult.fromBackend(response.data!);
 
       if (authResult.success && authResult.tokens != null) {
@@ -121,9 +129,8 @@ class AuthService {
     } on DioException catch (e) {
       return SocialAuthResult(
         success: false,
-        error:
-            (e.response?.data['message'] as String?) ??
-            'Google login failed. Please try again.',
+        error: _extractErrorMessage(e) ??
+            '$providerName login failed. Please try again.',
       );
     } on Exception {
       return const SocialAuthResult(
@@ -133,67 +140,7 @@ class AuthService {
     }
   }
 
-  Future<SocialAuthResult> facebookLogin(String facebookToken) async {
-    try {
-      final response = await _dio.post<Map<String, dynamic>>(
-        '/auth/facebook',
-        data: {'token': facebookToken},
-      );
-
-      // Use fromBackend to handle NestJS response format
-      final authResult = SocialAuthResult.fromBackend(response.data!);
-
-      if (authResult.success && authResult.tokens != null) {
-        await _storeTokens(authResult.tokens!);
-      }
-
-      return authResult;
-    } on DioException catch (e) {
-      return SocialAuthResult(
-        success: false,
-        error:
-            (e.response?.data['message'] as String?) ??
-            'Facebook login failed. Please try again.',
-      );
-    } on Exception {
-      return const SocialAuthResult(
-        success: false,
-        error: 'An unexpected error occurred.',
-      );
-    }
-  }
-
-  Future<SocialAuthResult> appleLogin(String appleToken) async {
-    try {
-      final response = await _dio.post<Map<String, dynamic>>(
-        '/auth/apple',
-        data: {'token': appleToken},
-      );
-
-      // Use fromBackend to handle NestJS response format
-      final authResult = SocialAuthResult.fromBackend(response.data!);
-
-      if (authResult.success && authResult.tokens != null) {
-        await _storeTokens(authResult.tokens!);
-      }
-
-      return authResult;
-    } on DioException catch (e) {
-      return SocialAuthResult(
-        success: false,
-        error:
-            (e.response?.data['message'] as String?) ??
-            'Apple login failed. Please try again.',
-      );
-    } on Exception {
-      return const SocialAuthResult(
-        success: false,
-        error: 'An unexpected error occurred.',
-      );
-    }
-  }
-
-  /// Extract error message from backend response (supports 'message' and 'error' fields)
+  /// Extract error message from backend response.
   static String? _extractErrorMessage(DioException e) {
     final data = e.response?.data;
     if (data is Map<String, dynamic>) {

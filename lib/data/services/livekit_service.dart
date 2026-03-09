@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:logger/logger.dart';
 
 import '../../core/config/config.dart';
+import 'api_service.dart';
 
-/// Configuración de LiveKit
+/// LiveKit room configuration
 class LiveKitConfig {
   const LiveKitConfig({
     required this.roomName,
@@ -21,7 +21,7 @@ class LiveKitConfig {
   final String? token;
 }
 
-/// Datos de dispositivo IoT
+/// IoT device data payload
 class IoTDeviceData {
   const IoTDeviceData({
     required this.deviceId,
@@ -37,7 +37,7 @@ class IoTDeviceData {
     timestamp: DateTime.fromMillisecondsSinceEpoch(json['timestamp'] as int),
   );
   final String deviceId;
-  final String deviceType; // 'sensor' | 'actuator' | 'camera' | 'microphone'
+  final String deviceType;
   final Map<String, dynamic> data;
   final DateTime timestamp;
 
@@ -49,22 +49,21 @@ class IoTDeviceData {
   };
 }
 
-/// Estados de conexión
+/// Connection states
 enum LiveKitConnectionStatus { disconnected, connecting, connected, error }
 
-/// Servicio de LiveKit para IoT
+/// LiveKit service for IoT real-time communication.
+/// Uses ApiService for backend API calls (token generation, room management).
 class LiveKitService {
-  LiveKitService({required Logger logger, required Dio dio})
+  LiveKitService({required Logger logger, required ApiService apiService})
     : _logger = logger,
-      _dio = dio;
+      _apiService = apiService;
   final Logger _logger;
-  final Dio _dio;
+  final ApiService _apiService;
 
   Room? _room;
-  // LiveKitConfig? _config; // Unused field, commented for future use
   LiveKitConnectionStatus _status = LiveKitConnectionStatus.disconnected;
 
-  // Streams para notificaciones
   final StreamController<LiveKitConnectionStatus> _statusController =
       StreamController<LiveKitConnectionStatus>.broadcast();
   final StreamController<IoTDeviceData> _deviceDataController =
@@ -72,25 +71,17 @@ class LiveKitService {
   final StreamController<List<RemoteParticipant>> _participantsController =
       StreamController<List<RemoteParticipant>>.broadcast();
 
-  // Callbacks
   void Function(IoTDeviceData)? onDeviceDataCallback;
   void Function(LiveKitConnectionStatus)? onConnectionStatusCallback;
 
-  /// Conectar a LiveKit
+  /// Connect to a LiveKit room.
   Future<void> connect(LiveKitConfig config) async {
     try {
-      // _config = config; // Unused assignment
       _setStatus(LiveKitConnectionStatus.connecting);
 
-      // Usar servidor local en desarrollo, demo server como fallback
       final serverUrl = config.serverUrl ?? Config.livekitUrl;
-
-      final roomName = config.roomName;
-      final participantName = config.participantName;
-
-      // Generar token demo para LiveKit demo server
-      final token =
-          config.token ?? await _generateDemoToken(participantName, roomName);
+      final token = config.token ??
+          await _fetchToken(config.participantName, config.roomName);
 
       _room = Room();
       _setupRoomEventHandlers();
@@ -98,7 +89,7 @@ class LiveKitService {
       await _room!.connect(serverUrl, token);
       _setStatus(LiveKitConnectionStatus.connected);
 
-      _logger.i('Connected to LiveKit room: $roomName');
+      _logger.d('Connected to LiveKit room: ${config.roomName}');
     } catch (error) {
       _logger.e('Failed to connect to LiveKit: $error');
       _setStatus(LiveKitConnectionStatus.error);
@@ -106,7 +97,6 @@ class LiveKitService {
     }
   }
 
-  /// Configurar manejadores de eventos de la sala
   void _setupRoomEventHandlers() {
     if (_room == null) {
       return;
@@ -114,27 +104,30 @@ class LiveKitService {
 
     _room!.createListener()
       ..on<RoomConnectedEvent>((event) {
-        _logger.i('LiveKit room connected');
+        _logger.d('LiveKit room connected');
         _setStatus(LiveKitConnectionStatus.connected);
       })
       ..on<RoomDisconnectedEvent>((event) {
-        _logger.i('LiveKit room disconnected');
+        _logger.d('LiveKit room disconnected');
         _setStatus(LiveKitConnectionStatus.disconnected);
       })
       ..on<DataReceivedEvent>((event) {
         _handleDataReceived(event.data);
       })
       ..on<ParticipantConnectedEvent>((event) {
-        _logger.i('Participant connected: ${event.participant.identity}');
-        _participantsController.add(_room?.remoteParticipants.values.toList() ?? []);
+        _logger.d('Participant connected: ${event.participant.identity}');
+        _participantsController.add(
+          _room?.remoteParticipants.values.toList() ?? [],
+        );
       })
       ..on<ParticipantDisconnectedEvent>((event) {
-        _logger.i('Participant disconnected: ${event.participant.identity}');
-        _participantsController.add(_room?.remoteParticipants.values.toList() ?? []);
+        _logger.d('Participant disconnected: ${event.participant.identity}');
+        _participantsController.add(
+          _room?.remoteParticipants.values.toList() ?? [],
+        );
       });
   }
 
-  /// Manejar datos recibidos
   void _handleDataReceived(List<int> data) {
     try {
       final payload = utf8.decode(data);
@@ -151,41 +144,36 @@ class LiveKitService {
     }
   }
 
-  /// Cambiar estado y notificar
   void _setStatus(LiveKitConnectionStatus status) {
     _status = status;
     _statusController.add(status);
     onConnectionStatusCallback?.call(status);
-    _logger.d('LiveKit status changed to: $status');
   }
 
-  /// Generar token demo
-  Future<String> _generateDemoToken(
+  /// Fetch token from backend. Falls back to a dev-only demo token.
+  Future<String> _fetchToken(
     String participantName,
     String roomName,
   ) async {
-    try {
-      // En desarrollo, usar token demo simple
-      if (Config.isDevelopment) {
-        return _createSimpleToken(participantName, roomName);
-      }
+    if (Config.isDevelopment) {
+      assert(true, 'Demo tokens must not be used in production');
+      return _createDevToken(participantName, roomName);
+    }
 
-      // En producción, obtener token del servidor
-      final response = await _dio.post<Map<String, dynamic>>(
-        '${Config.apiBaseUrl}/livekit/token',
+    try {
+      final response = await _apiService.post<Map<String, dynamic>>(
+        '/livekit/token',
         data: {'participantName': participantName, 'roomName': roomName},
       );
-
-      return response.data?['token'] as String;
+      return response['token'] as String;
     } on Exception catch (e) {
-      _logger.w('Failed to generate token from server, using demo token: $e');
-      return _createSimpleToken(participantName, roomName);
+      _logger.w('Failed to fetch token from server, using dev token: $e');
+      return _createDevToken(participantName, roomName);
     }
   }
 
-  /// Crear token simple para desarrollo
-  String _createSimpleToken(String participantName, String roomName) {
-    // Token demo simple (en producción usar JWT real)
+  /// Dev-only demo token. NOT cryptographically signed.
+  String _createDevToken(String participantName, String roomName) {
     final tokenData = {
       'sub': participantName,
       'room': roomName,
@@ -194,31 +182,34 @@ class LiveKitService {
           DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/
           1000,
     };
-
     return base64Encode(utf8.encode(jsonEncode(tokenData)));
   }
 
-  /// Mutear/desmutear un participante remoto en una sala
+  /// Mute/unmute a remote participant via backend API.
   Future<bool> muteParticipant({
     required String roomName,
     required String identity,
     bool mute = true,
   }) async {
     try {
-      _logger.d('${mute ? "Muting" : "Unmuting"} participant $identity in room $roomName');
-      await _dio.post<dynamic>(
-        '${Config.apiBaseUrl}/livekit/rooms/$roomName/participants/$identity/mute',
+      _logger.d(
+        '${mute ? "Muting" : "Unmuting"} participant $identity in $roomName',
+      );
+      await _apiService.post<dynamic>(
+        '/livekit/rooms/$roomName/participants/$identity/mute',
         data: {'mute': mute},
       );
-      _logger.i('Participant $identity ${mute ? "muted" : "unmuted"} successfully');
+      _logger.d(
+        'Participant $identity ${mute ? "muted" : "unmuted"} successfully',
+      );
       return true;
-    } on DioException catch (e) {
-      _logger.e('Error muting participant: ${e.message}');
+    } on Exception catch (e) {
+      _logger.e('Error muting participant: $e');
       return false;
     }
   }
 
-  /// Enviar datos de dispositivo IoT
+  /// Send IoT device data via LiveKit data channel.
   Future<void> sendDeviceData(IoTDeviceData deviceData) async {
     if (_room == null || _status != LiveKitConnectionStatus.connected) {
       throw Exception('Not connected to LiveKit room');
@@ -226,13 +217,11 @@ class LiveKitService {
 
     try {
       final payload = utf8.encode(jsonEncode(deviceData.toJson()));
-
       await _room!.localParticipant?.publishData(
         payload,
         topic: 'iot-device-data',
         reliable: false,
       );
-
       _logger.d('Sent IoT device data: ${deviceData.deviceId}');
     } catch (e) {
       _logger.e('Error sending device data: $e');
@@ -240,7 +229,7 @@ class LiveKitService {
     }
   }
 
-  /// Enviar comando a dispositivo
+  /// Send command to a device via LiveKit data channel.
   Future<void> sendDeviceCommand({
     required String deviceId,
     required String command,
@@ -257,15 +246,12 @@ class LiveKitService {
         'parameters': parameters,
         'timestamp': DateTime.now().millisecondsSinceEpoch,
       };
-
       final payload = utf8.encode(jsonEncode(commandData));
-
       await _room!.localParticipant?.publishData(
         payload,
         topic: 'device-command',
         reliable: true,
       );
-
       _logger.d('Sent device command: $command to $deviceId');
     } catch (e) {
       _logger.e('Error sending device command: $e');
@@ -273,12 +259,10 @@ class LiveKitService {
     }
   }
 
-  /// Habilitar/deshabilitar micrófono
   Future<void> setMicrophoneEnabled({required bool enabled}) async {
     if (_room == null) {
       return;
     }
-
     try {
       await _room!.localParticipant?.setMicrophoneEnabled(enabled);
       _logger.d('Microphone ${enabled ? 'enabled' : 'disabled'}');
@@ -287,12 +271,10 @@ class LiveKitService {
     }
   }
 
-  /// Habilitar/deshabilitar cámara
   Future<void> setCameraEnabled({required bool enabled}) async {
     if (_room == null) {
       return;
     }
-
     try {
       await _room!.localParticipant?.setCameraEnabled(enabled);
       _logger.d('Camera ${enabled ? 'enabled' : 'disabled'}');
@@ -301,40 +283,31 @@ class LiveKitService {
     }
   }
 
-  /// Obtener participantes conectados
   List<RemoteParticipant> get participants =>
       _room?.remoteParticipants.values.toList() ?? [];
 
-  /// Obtener estado de conexión
   LiveKitConnectionStatus get status => _status;
 
-  /// Stream de estados de conexión
   Stream<LiveKitConnectionStatus> get statusStream => _statusController.stream;
-
-  /// Stream de datos de dispositivos
   Stream<IoTDeviceData> get deviceDataStream => _deviceDataController.stream;
+  Stream<List<RemoteParticipant>> get participantsStream =>
+      _participantsController.stream;
 
-  /// Stream de participantes remotos
-  Stream<List<RemoteParticipant>> get participantsStream => _participantsController.stream;
-
-  /// Desconectar de LiveKit
   Future<void> disconnect() async {
     try {
       await _room?.disconnect();
       _room = null;
       _setStatus(LiveKitConnectionStatus.disconnected);
-      _logger.i('Disconnected from LiveKit');
+      _logger.d('Disconnected from LiveKit');
     } on Exception catch (e) {
       _logger.e('Error disconnecting from LiveKit: $e');
     }
   }
 
-  /// Cerrar servicio
   Future<void> dispose() async {
     await disconnect();
     await _statusController.close();
     await _deviceDataController.close();
     await _participantsController.close();
-    _logger.i('LiveKit Service disposed');
   }
 }

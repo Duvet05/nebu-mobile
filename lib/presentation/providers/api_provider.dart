@@ -146,16 +146,14 @@ final voiceSessionServiceProvider = Provider<VoiceSessionService>((ref) {
 
 final liveKitServiceProvider = Provider<LiveKitService>((ref) {
   final logger = ref.watch(loggerProvider);
-  final dio = ref.watch(dioProvider);
-  return LiveKitService(logger: logger, dio: dio);
+  final apiService = ref.watch(apiServiceProvider);
+  return LiveKitService(logger: logger, apiService: apiService);
 });
 
 final deviceTokenServiceProvider = Provider<DeviceTokenService>((ref) {
   final logger = ref.watch(loggerProvider);
-  // Ensure ApiService has initialized the Dio instance (interceptors, baseUrl)
-  ref.watch(apiServiceProvider);
-  final dio = ref.watch(dioProvider);
-  return DeviceTokenService(logger: logger, dio: dio);
+  final apiService = ref.watch(apiServiceProvider);
+  return DeviceTokenService(logger: logger, apiService: apiService);
 });
 
 final localChildDataServiceProvider = FutureProvider<LocalChildDataService>((

@@ -33,7 +33,7 @@
       "open_settings": "Abrir Configuración",
       "device_found": "Dispositivo: {name}",
       "signal_strength": "Señal: {rssi} dBm",
-      "connected_to": "Conectado a {0}",
+      "connected_to": "Conectado a {}",
       "connection_failed": "Falló la conexión. Por favor intenta de nuevo.",
       "setup_options": "Opciones de Configuración",
       "setup_options_desc": "Elige cómo quieres continuar",
@@ -87,7 +87,7 @@
       "current_wifi_label": "WiFi Actual",
       "error_generic": "Algo salió mal. Intenta de nuevo.",
       "error_send_credentials": "No se pudieron enviar las credenciales. Intenta de nuevo.",
-      "signal_info": "Señal: {0} dBm"
+      "signal_info": "Señal: {} dBm"
     },
     "profile": {
       "photo_captured": "¡Foto capturada!",
@@ -238,10 +238,10 @@
     "activity_log": "Registro de actividad",
     "setup_new_toy": "Configurar Nuevo Juguete",
     "devices_error": "No se pudieron cargar los dispositivos conectados. Intenta de nuevo.",
-    "greeting_name": "¡Hola, {0}!",
+    "greeting_name": "¡Hola, {}!",
     "greeting_default": "¡Hola, Invitado!",
     "subtitle": "¡A jugar!",
-    "toys_connected": "{0} juguetes conectados",
+    "toys_connected": "{} juguetes conectados",
     "all_good": "¡Todo se ve genial!",
     "no_toys_hero": "Aún no hay juguetes",
     "no_toys_hero_hint": "Conecta tu primer juguete Nebu para comenzar",
@@ -295,9 +295,9 @@
     "empty_title": "Sin Actividades Aún",
     "empty_message": "Las aventuras y conversaciones de tu juguete aparecerán aquí!",
     "just_now": "Ahora mismo",
-    "minutes_ago": "Hace {0}m",
-    "hours_ago": "Hace {0}h",
-    "days_ago": "Hace {0}d",
+    "minutes_ago": "Hace {}m",
+    "hours_ago": "Hace {}h",
+    "days_ago": "Hace {}d",
     "voice_command": "Comando de Voz",
     "connection": "Conexión",
     "interaction": "Interacción",
@@ -319,9 +319,9 @@
     "no_notifications_desc": "No tienes notificaciones en este momento.",
     "marked_all_read": "Todas las notificaciones marcadas como leídas",
     "just_now": "Ahora mismo",
-    "minutes_ago": "Hace {0}m",
-    "hours_ago": "Hace {0}h",
-    "days_ago": "Hace {0}d"
+    "minutes_ago": "Hace {}m",
+    "hours_ago": "Hace {}h",
+    "days_ago": "Hace {}d"
   },
   "orders": {
     "title": "Pedidos",
@@ -334,7 +334,7 @@
     "status_cancelled": "Cancelado",
     "today": "Hoy",
     "yesterday": "Ayer",
-    "days_ago": "Hace {0}d",
+    "days_ago": "Hace {}d",
     "order_details": "Detalles del Pedido",
     "items": "Artículos",
     "subtotal": "Subtotal",
@@ -348,7 +348,7 @@
     "timeline_processing": "En proceso",
     "timeline_shipped": "Enviado",
     "timeline_delivered": "Entregado",
-    "quantity": "{0}x"
+    "quantity": "{}x"
   },
   "toys": {
     "title": "Mis Juguetes",
@@ -364,8 +364,8 @@
     "remove": "Eliminar Juguete",
     "error_loading": "No pudimos cargar tus juguetes. Intenta de nuevo.",
     "delete_title": "Eliminar juguete",
-    "delete_confirm": "¿Estás seguro de que deseas eliminar \"{0}\"?",
-    "deleted_success": "{0} eliminado correctamente",
+    "delete_confirm": "¿Estás seguro de que deseas eliminar \"{}\"?",
+    "deleted_success": "{} eliminado correctamente",
     "delete_error": "No se pudo eliminar el juguete. Intenta de nuevo.",
     "no_toys_title": "Aún no hay juguetes!",
     "no_toys_subtitle": "Agrega tu primer juguete Nebu y comienza la diversión!",
@@ -390,9 +390,9 @@
     "remove_success": "Dispositivo eliminado correctamente!",
     "remove_error": "No se pudo eliminar el dispositivo. Intenta de nuevo.",
     "remove_title": "Eliminar Dispositivo",
-    "remove_confirm": "¿Estás seguro de que quieres eliminar {0}?",
-    "model": "Modelo: {0}",
-    "status": "Estado: {0}"
+    "remove_confirm": "¿Estás seguro de que quieres eliminar {}?",
+    "model": "Modelo: {}",
+    "status": "Estado: {}"
   },
   "voice_setup": {
     "title": "Configuración de Voz",
@@ -424,7 +424,7 @@
     "unrecognized_format": "Formato QR no reconocido",
     "scan_again": "Escanear de nuevo",
     "toy_assigned": "Juguete Asignado",
-    "toy_assigned_desc": "El juguete {0} ha sido asignado a tu cuenta",
+    "toy_assigned_desc": "El juguete {} ha sido asignado a tu cuenta",
     "done": "Listo",
     "assignment_failed": "Asignación Fallida",
     "invalid_wifi_qr": "Código QR de WiFi inválido",
@@ -439,7 +439,7 @@
     "remove_success": "Juguete eliminado correctamente",
     "remove_error": "No se pudo eliminar el juguete. Intenta de nuevo.",
     "remove_title": "Eliminar Juguete",
-    "remove_confirm": "¿Estás seguro de que quieres eliminar {0}?",
+    "remove_confirm": "¿Estás seguro de que quieres eliminar {}?",
     "toy_name": "Nombre del Juguete",
     "toy_name_hint": "Ingresa el nombre del juguete",
     "toy_name_required": "Por favor ingresa un nombre para el juguete",
@@ -458,17 +458,17 @@
     "tab_toys": "Mis Juguetes",
     "tab_iot": "Dispositivos Conectados",
     "no_iot_devices": "No se encontraron dispositivos conectados.",
-    "type": "Tipo: {0}",
+    "type": "Tipo: {}",
     "error_iot": "No se pudieron cargar los dispositivos. Intenta de nuevo."
   },
   "child_profile": {
     "title": "Perfil del Niño",
-    "error": "Error: {0}",
+    "error": "Error: {}",
     "error_generic": "No se pudo cargar el perfil. Intenta de nuevo.",
     "no_data_title": "Aún no hay perfil",
     "no_data_subtitle": "Configura el perfil de tu hijo para que Nebu personalice la experiencia!",
     "setup_profile": "Configurar Perfil",
-    "age": "Edad: {0}",
+    "age": "Edad: {}",
     "personality": "Personalidad",
     "delete_profile": "Eliminar Perfil",
     "confirm_deletion_title": "Confirmar Eliminación",
@@ -522,7 +522,7 @@
   "iot_devices": {
     "title": "Dispositivos Conectados",
     "no_devices": "No se encontraron dispositivos conectados.",
-    "type": "Tipo: {0}"
+    "type": "Tipo: {}"
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
@@ -545,8 +545,8 @@
     "unmute_toy": "Activar Sonido",
     "active_rooms": "Salas Activas",
     "no_active_rooms": "No hay salas de voz activas",
-    "room_name": "Sala: {0}",
-    "participants": "{0} participantes",
+    "room_name": "Sala: {}",
+    "participants": "{} participantes",
     "mute_success": "Participante silenciado",
     "unmute_success": "Participante activado",
     "mute_error": "No se pudo cambiar el estado de silencio"
@@ -652,10 +652,10 @@
     "search_error": "Error al buscar. Intenta de nuevo.",
     "delete_memory_title": "Eliminar Recuerdo",
     "delete_memory_confirm": "Estas seguro de que quieres eliminar este recuerdo? El juguete olvidara esta informacion.",
-    "minutes_ago": "Hace {0}m",
-    "hours_ago": "Hace {0}h",
-    "days_ago": "Hace {0}d",
-    "messages_count": "{0} mensajes",
+    "minutes_ago": "Hace {}m",
+    "hours_ago": "Hace {}h",
+    "days_ago": "Hace {}d",
+    "messages_count": "{} mensajes",
     "emotions": "Emociones"
   },
   "personalities": {
@@ -671,7 +671,7 @@
     "style": "Estilo",
     "no_toys": "Necesitas al menos un juguete para asignar una personalidad",
     "select_toy": "Selecciona un Juguete",
-    "assigned_success": "{0} asignado a {1} exitosamente!",
+    "assigned_success": "{} asignado a {} exitosamente!",
     "category_all": "Todos",
     "category_educativo": "Educativo",
     "category_entretenimiento": "Entretenimiento",
@@ -689,14 +689,14 @@
     "local_mode_banner": "Modo local - Las respuestas son simuladas",
     "empty_title": "Prueba una Personalidad",
     "empty_message": "Selecciona una personalidad arriba y empieza a chatear para ver como responde!",
-    "default_greeting": "Hola! Soy {0}. Vamos a charlar!",
-    "response_educativo": "Esa es una gran pregunta sobre \"{0}\"! Dejame explicarte...",
-    "response_entretenimiento": "Oh, \"{0}\"! Eso suena divertido! Dejame pensar algo entretenido...",
-    "response_companero": "Te escucho sobre \"{0}\". Estoy aqui para ti, hablemos de eso!",
-    "response_creativo": "Wow, \"{0}\" me da muchas ideas creativas! Y si...",
-    "response_aventura": "Una aventura sobre \"{0}\"? Vamos a explorar juntos!",
-    "response_bienestar": "Tomemos un momento para reflexionar sobre \"{0}\". Respira profundo...",
-    "response_default": "Gracias por compartir! Soy {0} y me encanta charlar contigo!"
+    "default_greeting": "Hola! Soy {}. Vamos a charlar!",
+    "response_educativo": "Esa es una gran pregunta sobre \"{}\"! Dejame explicarte...",
+    "response_entretenimiento": "Oh, \"{}\"! Eso suena divertido! Dejame pensar algo entretenido...",
+    "response_companero": "Te escucho sobre \"{}\". Estoy aqui para ti, hablemos de eso!",
+    "response_creativo": "Wow, \"{}\" me da muchas ideas creativas! Y si...",
+    "response_aventura": "Una aventura sobre \"{}\"? Vamos a explorar juntos!",
+    "response_bienestar": "Tomemos un momento para reflexionar sobre \"{}\". Respira profundo...",
+    "response_default": "Gracias por compartir! Soy {} y me encanta charlar contigo!"
   },
   "privacy": {
     "title": "Privacidad y Seguridad",
@@ -759,9 +759,9 @@
   "privacy_policy": {
     "title": "Política de Privacidad",
     "header": "Política de Privacidad",
-    "last_updated": "Última actualización: {0}",
+    "last_updated": "Última actualización: {}",
     "introduction_title": "Introducción",
-    "introduction_content": "Bienvenido a {0}. Estamos comprometidos con la protección de tu información personal y tu derecho a la privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos tu información cuando usas nuestra aplicación móvil.",
+    "introduction_content": "Bienvenido a {}. Estamos comprometidos con la protección de tu información personal y tu derecho a la privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos, divulgamos y protegemos tu información cuando usas nuestra aplicación móvil.",
     "collect_title": "Información que Recopilamos",
     "collect_content": "Recopilamos información que nos proporcionas directamente:",
     "collect_1": "Información personal (nombre, dirección de correo electrónico, número de teléfono)",
@@ -799,9 +799,9 @@
   "terms": {
     "title": "Términos de Servicio",
     "header": "Términos de Servicio",
-    "last_updated": "Última actualización: {0}",
+    "last_updated": "Última actualización: {}",
     "introduction_title": "1. Introducción",
-    "introduction_content": "Bienvenido a {0}. Estos Términos de Servicio rigen tu uso de nuestra aplicación móvil y servicios. Al acceder o usar nuestros servicios, aceptas estar sujeto a estos Términos.",
+    "introduction_content": "Bienvenido a {}. Estos Términos de Servicio rigen tu uso de nuestra aplicación móvil y servicios. Al acceder o usar nuestros servicios, aceptas estar sujeto a estos Términos.",
     "acceptance_title": "2. Aceptación de los Términos",
     "acceptance_content": "Al crear una cuenta o usar nuestros servicios, reconoces que has leído, entendido y aceptas estar sujeto a estos Términos. Si no estás de acuerdo, no debes usar nuestros servicios.",
     "use_title": "3. Uso del Servicio",

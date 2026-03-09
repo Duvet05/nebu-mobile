@@ -164,10 +164,13 @@ class BluetoothService {
 
           if (state == fbp.BluetoothConnectionState.disconnected) {
             _logger.i(
-              'Device ${device.remoteId} disconnected, clearing cache.',
+              'Device ${device.remoteId} disconnected, clearing state.',
             );
             _servicesCache.remove(device.remoteId.toString());
             _connectedDevice = null;
+            // Clean up the subscription itself to avoid zombie listeners
+            _connectionSubscription?.cancel();
+            _connectionSubscription = null;
           }
         },
         onError: (Object error) {

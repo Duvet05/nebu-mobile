@@ -46,8 +46,8 @@ abstract final class Config {
 
   /// URL del WebSocket en producción
   static String get wsBaseUrl => isProduction
-        ? 'wss://api.flow-telligence.com/api/v1'
-        : 'ws://localhost:3001/api/v1';
+      ? 'wss://api.flow-telligence.com/api/v1'
+      : 'ws://localhost:3001/api/v1';
 
   // ============================================
   // LiveKit
