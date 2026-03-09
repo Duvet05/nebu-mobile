@@ -43,9 +43,9 @@ class ProfileScreen extends ConsumerWidget {
               // Profile Header Card - Simplified and Clean
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 24,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.panelPadding,
+                  vertical: context.spacing.panelPadding,
                 ),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
@@ -88,7 +88,7 @@ class ProfileScreen extends ConsumerWidget {
                               ),
                             ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: context.spacing.alertPadding),
                     // Name and View Profile
                     Expanded(
                       child: Column(
@@ -395,7 +395,7 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+    contentPadding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.labelBottomMargin),
     leading: Icon(
       icon,
       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),

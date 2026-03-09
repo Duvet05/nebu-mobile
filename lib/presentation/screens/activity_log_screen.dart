@@ -171,10 +171,10 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         itemCount: state.activities.length + (state.isLoading ? 1 : 0),
         itemBuilder: (context, index) {
           if (index >= state.activities.length) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
-                child: CircularProgressIndicator(),
+                padding: EdgeInsets.all(context.spacing.alertPadding),
+                child: const CircularProgressIndicator(),
               ),
             );
           }
@@ -208,7 +208,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48),
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.largePageBottomMargin),
           child: Text(
             'activity_log.empty_message'.tr(),
             textAlign: TextAlign.center,

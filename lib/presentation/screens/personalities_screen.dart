@@ -251,8 +251,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                       decoration: BoxDecoration(
                         color: catColor.withValues(alpha: 0.08),
                         borderRadius: context.radius.tile,
-                        border:
-                            Border.all(color: catColor.withValues(alpha: 0.2)),
+                        border: Border.all(
+                          color: catColor.withValues(alpha: 0.2),
+                        ),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -341,11 +342,11 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                           onPressed: isAssigning
                               ? null
                               : () => _selectPersonalityFromModal(
-                                    ctx,
-                                    personality,
-                                    setModalState,
-                                    (v) => isAssigning = v,
-                                  ),
+                                  ctx,
+                                  personality,
+                                  setModalState,
+                                  (v) => isAssigning = v,
+                                ),
                           icon: Icons.check_circle_outline,
                         ),
                       ),
@@ -385,9 +386,11 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     ),
   );
 
-  Future<void> _selectPersonality(
+  Future<void> _selectPersonalityFromModal(
     BuildContext ctx,
     Personality personality,
+    StateSetter setModalState,
+    void Function({required bool value}) setAssigning,
   ) async {
     final toysAsync = ref.read(toyProvider);
     final toys = toysAsync.hasValue ? toysAsync.value! : <Toy>[];
@@ -401,7 +404,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     }
 
     if (toys.length == 1) {
-      Navigator.pop(ctx);
+      setModalState(() => setAssigning(value: true));
       try {
         await ref
             .read(personalityServiceProvider)
@@ -409,6 +412,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               toyId: toys.first.id,
               personalityId: personality.id,
             );
+        if (ctx.mounted) {
+          Navigator.pop(ctx);
+        }
         if (mounted) {
           context.showInfoSnackBar(
             'personalities.assigned_success'.tr(
@@ -421,6 +427,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
           context.showErrorSnackBar(
             e.toString().replaceFirst('Exception: ', ''),
           );
+        }
+      } finally {
+        if (ctx.mounted) {
+          setModalState(() => setAssigning(value: false));
         }
       }
       return;
@@ -452,10 +462,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     if (selectedToy == null || !mounted) {
       return;
     }
-    if (ctx.mounted) {
-      Navigator.pop(ctx);
-    }
 
+    if (ctx.mounted) {
+      setModalState(() => setAssigning(value: true));
+    }
     try {
       await ref
           .read(personalityServiceProvider)
@@ -463,6 +473,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
             toyId: selectedToy,
             personalityId: personality.id,
           );
+      if (ctx.mounted) {
+        Navigator.pop(ctx);
+      }
       if (mounted) {
         context.showInfoSnackBar(
           'personalities.assigned_success'.tr(args: [personality.name, '']),
@@ -471,6 +484,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     } on Exception catch (e) {
       if (mounted) {
         context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (ctx.mounted) {
+        setModalState(() => setAssigning(value: false));
       }
     }
   }

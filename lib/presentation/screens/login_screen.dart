@@ -41,7 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
-    await ref.read(authProvider.notifier).login(
+    await ref
+        .read(authProvider.notifier)
+        .login(
           identifier: _identifierController.text.trim(),
           password: _passwordController.text,
         );
@@ -105,7 +107,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    'auth.forgot_password_success'.tr()),
+                                  'auth.forgot_password_success'.tr(),
+                                ),
                                 backgroundColor: context.colors.success,
                               ),
                             );
@@ -113,8 +116,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content:
-                                    Text('auth.forgot_password_error'.tr()),
+                                content: Text(
+                                  'auth.forgot_password_error'.tr(),
+                                ),
                                 backgroundColor: context.colors.error,
                               ),
                             );
@@ -186,8 +190,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Text(
                       errorText!,
                       style: context.theme.textTheme.bodySmall?.copyWith(
-                            color: context.colors.error,
-                          ),
+                        color: context.colors.error,
+                      ),
                     ),
                   ],
                 ],
@@ -211,15 +215,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         }
                         if (password.length < 8) {
                           setDialogState(() {
-                            errorText =
-                                'auth.reset_password_too_short'.tr();
+                            errorText = 'auth.reset_password_too_short'.tr();
                           });
                           return;
                         }
                         if (password != confirm) {
                           setDialogState(() {
-                            errorText =
-                                'auth.reset_password_mismatch'.tr();
+                            errorText = 'auth.reset_password_mismatch'.tr();
                           });
                           return;
                         }
@@ -231,8 +233,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                         final success = await ref
                             .read(authProvider.notifier)
-                            .resetPassword(
-                                token: token, newPassword: password);
+                            .resetPassword(token: token, newPassword: password);
                         if (!ctx.mounted) {
                           return;
                         }
@@ -246,8 +247,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     ? 'auth.reset_password_success'.tr()
                                     : 'auth.reset_password_error'.tr(),
                               ),
-                              backgroundColor:
-                                  success ? context.colors.success : context.colors.error,
+                              backgroundColor: success
+                                  ? context.colors.success
+                                  : context.colors.error,
                             ),
                           );
                         }
@@ -272,7 +274,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final googleSignIn = ref.read(googleSignInProvider);
       final googleUser = await googleSignIn.authenticate();
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       final googleAuth = googleUser.authentication;
       final idToken = googleAuth.idToken;
@@ -315,13 +319,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: context.spacing.labelBottomMargin),
-                      AuthBackButton(onPressed: () {
-                        if (context.canPop()) {
-                          context.pop();
-                        } else {
-                          context.go(AppRoutes.home.path);
-                        }
-                      }),
+                      AuthBackButton(
+                        onPressed: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppRoutes.home.path);
+                          }
+                        },
+                      ),
                       SizedBox(height: context.spacing.alertPadding),
                       Text(
                         'auth.welcome_back'.tr(),
@@ -341,9 +347,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       SizedBox(height: context.spacing.largePageBottomMargin),
                       if (authState.hasError && !authState.isLoading)
                         AuthErrorBanner(
-                          message: authState.error
-                              .toString()
-                              .replaceFirst('Exception: ', ''),
+                          message: authState.error.toString().replaceFirst(
+                            'Exception: ',
+                            '',
+                          ),
                         ),
                       SizedBox(height: context.spacing.titleBottomMargin),
                       AuthTextField(

@@ -258,7 +258,7 @@ Widget _buildHelpOption(IconData icon, String title, String subtitle) =>
         return Row(
           children: [
             Icon(icon, size: 20),
-            const SizedBox(width: 12),
+            SizedBox(width: context.spacing.paragraphBottomMarginSm),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -328,9 +328,9 @@ class _SettingsTile extends StatelessWidget {
         iconColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.8);
 
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      contentPadding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.labelBottomMargin),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.all(context.spacing.labelBottomMargin),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: context.radius.tile,

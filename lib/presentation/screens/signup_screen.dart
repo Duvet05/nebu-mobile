@@ -96,7 +96,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
+                      SizedBox(height: context.spacing.labelBottomMargin),
                       AuthBackButton(onPressed: () {
                         if (context.canPop()) {
                           context.pop();
@@ -104,7 +104,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           context.go(AppRoutes.home.path);
                         }
                       }),
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.spacing.alertPadding),
                       Text(
                         'auth.create_account'.tr(),
                         style: textTheme.headlineMedium?.copyWith(
@@ -113,7 +113,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           color: context.colors.textNormal,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: context.spacing.labelBottomMargin),
                       Text(
                         'auth.create_account_subtitle'.tr(),
                         style: textTheme.titleMedium?.copyWith(
@@ -121,7 +121,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 36),
+                      SizedBox(height: context.spacing.largePageBottomMargin),
 
                       // Error message
                       if (authState.hasError && !authState.isLoading) ...[

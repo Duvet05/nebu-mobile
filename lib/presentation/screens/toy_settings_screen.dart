@@ -130,7 +130,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       content: 'toy_settings.remove_confirm'.tr(args: [_currentToy.name]),
       destructive: true,
     );
-    if (confirmed) {
+    if (confirmed && mounted) {
       await _deleteToy();
     }
   }
