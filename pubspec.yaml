@@ -1,5 +1,5 @@
 name: nebu_mobile_flutter
-description: "Nebu Mobile Application - Flutter Migration from React Native"
+description: "Nebu — smart toy companion app with Bluetooth pairing, real-time walkie talkie (WebRTC), AI personalities, and parental controls."
 publish_to: 'none'
 
 version: 1.0.9+13
@@ -41,7 +41,10 @@ dependencies:
   network_info_plus: ^6.1.1
   wifi_scan: ^0.4.1
 
-  # QR
+  # QR (pure Dart decoder, no ML Kit)
+  qr_code_dart_scan: ^0.11.5
+
+  # Image
   image_picker: ^1.0.7
 
   # LiveKit (WebRTC)
@@ -63,7 +66,6 @@ dependencies:
 
   # UI Helpers
   package_info_plus: ^9.0.0
-  qr_code_dart_scan: ^0.11.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
