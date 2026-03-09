@@ -147,10 +147,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           () => _obscurePassword = !_obscurePassword,
                         ),
                         validator: (v) =>
-                            (v == null ||
-                                v.length < ValidationRules.passwordMinLength)
-                            ? 'auth.password_short'.tr()
-                            : null,
+                            ValidationRules.validatePassword(v)?.tr(),
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -400,9 +397,11 @@ void _showResetPasswordDialog(
                       return;
                     }
 
-                    if (password.length < ValidationRules.passwordMinLength) {
+                    final passwordError =
+                        ValidationRules.validatePassword(password);
+                    if (passwordError != null) {
                       setDialogState(() {
-                        errorText = 'auth.reset_password_too_short'.tr();
+                        errorText = passwordError.tr();
                       });
                       return;
                     }

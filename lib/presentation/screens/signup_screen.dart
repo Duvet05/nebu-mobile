@@ -211,14 +211,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           setState(() => _obscurePassword = !_obscurePassword);
                         },
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'auth.password_required'.tr();
-                          }
-                          if (value.length <
-                              ValidationRules.passwordMinLength) {
-                            return 'auth.password_short'.tr();
-                          }
-                          return null;
+                          final error = ValidationRules.validatePassword(value);
+                          return error?.tr();
                         },
                       ),
 
