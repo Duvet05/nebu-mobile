@@ -93,12 +93,11 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
 
       // Crear el Toy en el backend
       await toyService.createToy(
-        iotDeviceId: deviceId,
+        deviceId: deviceId,
         name: toyName,
-        userId: user.id,
         status: ToyStatus.active,
-        model: 'ESP32', // Modelo detectado del Device ID
-        manufacturer: 'NEBU',
+        model: 'Nebu',
+        manufacturer: 'Nebu Technologies',
       );
 
       ref

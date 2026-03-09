@@ -23,9 +23,12 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
   @override
   void initState() {
     super.initState();
-    // Load toys when screen is first displayed
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadToys();
+      // Skip reload if toys are already loaded (prevents error on back-navigation)
+      final existing = ref.read(toyProvider);
+      if (!existing.hasValue || existing.value!.isEmpty) {
+        _loadToys();
+      }
     });
   }
 
@@ -654,7 +657,7 @@ class _ToyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOnline = toy.status == ToyStatus.active;
+    final isOnline = toy.status.isOnline;
     final isPending = toy.status == ToyStatus.pending;
     final accentColor = toy.status.color(context);
     final badgeText = toy.status.label();

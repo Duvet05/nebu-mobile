@@ -44,10 +44,11 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
   }
 
   /// Create/register a new toy
+  /// Backend auto-injects user from JWT. Identify device by [deviceId] (preferred) or [macAddress].
   Future<Toy> createToy({
-    required String iotDeviceId,
     required String name,
-    required String userId,
+    String? deviceId,
+    String? macAddress,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -55,12 +56,15 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
   }) async {
     try {
       final toy = await _toyService.createToy(
-        iotDeviceId: iotDeviceId,
         name: name,
-        userId: userId,
+        deviceId: deviceId,
+        macAddress: macAddress,
         model: model,
         manufacturer: manufacturer,
         status: status,
@@ -68,6 +72,9 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         capabilities: capabilities,
         settings: settings,
         notes: notes,
+        prompt: prompt,
+        personalityProfile: personalityProfile,
+        greeting: greeting,
       );
 
       ref.read(loggerProvider).d('Toy created successfully: ${toy.name}');

@@ -37,9 +37,13 @@ abstract class Toy with _$Toy {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
     String? batteryLevel,
     String? signalStrength,
-    DateTime? lastConnected,
+    @JsonKey(name: 'lastSeenAt') DateTime? lastConnected,
+    DateTime? activatedAt,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) = _Toy;
@@ -50,9 +54,9 @@ abstract class Toy with _$Toy {
 @freezed
 abstract class CreateToyRequest with _$CreateToyRequest {
   const factory CreateToyRequest({
-    required String iotDeviceId,
+    String? deviceId,
+    String? macAddress,
     required String name,
-    required String userId,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -60,6 +64,9 @@ abstract class CreateToyRequest with _$CreateToyRequest {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
   }) = _CreateToyRequest;
 
   factory CreateToyRequest.fromJson(Map<String, dynamic> json) =>
@@ -69,7 +76,8 @@ abstract class CreateToyRequest with _$CreateToyRequest {
 @freezed
 abstract class AssignToyRequest with _$AssignToyRequest {
   const factory AssignToyRequest({
-    required String macAddress,
+    String? macAddress,
+    String? deviceId,
     required String userId,
     String? toyName,
   }) = _AssignToyRequest;

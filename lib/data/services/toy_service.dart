@@ -13,10 +13,12 @@ class ToyService {
   final Logger _logger;
 
   /// Registrar un nuevo juguete
+  /// Backend identifies device by [deviceId] (preferred) or [macAddress] (legacy).
+  /// User is auto-injected from JWT — do NOT send userId.
   Future<Toy> createToy({
-    required String iotDeviceId,
     required String name,
-    required String userId,
+    String? deviceId,
+    String? macAddress,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -24,14 +26,17 @@ class ToyService {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
   }) async {
     _logger.d('Creating toy: $name');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/toys',
       data: {
-        'iotDeviceId': iotDeviceId,
         'name': name,
-        'userId': userId,
+        if (deviceId != null) 'deviceId': deviceId,
+        if (macAddress != null) 'macAddress': macAddress,
         if (model != null) 'model': model,
         if (manufacturer != null) 'manufacturer': manufacturer,
         if (status != null) 'status': status.name,
@@ -39,6 +44,9 @@ class ToyService {
         if (capabilities != null) 'capabilities': capabilities,
         if (settings != null) 'settings': settings,
         if (notes != null) 'notes': notes,
+        if (prompt != null) 'prompt': prompt,
+        if (personalityProfile != null) 'personalityProfile': personalityProfile,
+        if (greeting != null) 'greeting': greeting,
       },
     );
     _logger.d('Toy created successfully: ${response['id']}');
