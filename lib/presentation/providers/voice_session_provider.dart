@@ -27,9 +27,13 @@ final userVoiceSessionsProvider = FutureProvider<List<VoiceSession>>((
   return service.getUserSessions(user.id);
 });
 
-/// Conversations for a specific session
+/// Conversations for a specific session (requires auth)
 final sessionConversationsProvider =
     FutureProvider.family<List<AiConversation>, String>((ref, sessionId) async {
+      final user = ref.watch(authProvider).value;
+      if (user == null) {
+        return [];
+      }
       final service = ref.watch(voiceSessionServiceProvider);
       return service.getSessionConversations(sessionId);
     });

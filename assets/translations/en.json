@@ -194,7 +194,11 @@
     "logout": "Logout",
     "logout_confirmation": "Are you sure you want to logout?",
     "update_success": "Profile updated successfully!",
-    "user_not_found": "User not found"
+    "user_not_found": "User not found",
+    "avatar_camera": "Take Photo",
+    "avatar_gallery": "Choose from Gallery",
+    "avatar_upload_pending": "Image upload coming soon",
+    "avatar_error": "Could not update avatar. Please try again."
   },
   "activity_log": {
     "title": "Activity Log",
@@ -329,7 +333,11 @@
     "personality_none": "No personality assigned",
     "personality_change": "Change Personality",
     "personality_updated": "Personality updated",
-    "personality_error": "Could not update personality"
+    "personality_error": "Could not update personality",
+    "unassign_title": "Release Toy",
+    "unassign_confirm": "Are you sure you want to release {}? It can be assigned to another user.",
+    "unassign_success": "Toy released successfully",
+    "unassign_error": "Could not release the toy. Please try again."
   },
   "child_profile": {
     "title": "Child Profile",

@@ -276,7 +276,11 @@
     "logout": "Cerrar Sesión",
     "logout_confirmation": "¿Estás seguro de que quieres cerrar sesión?",
     "update_success": "¡Perfil actualizado correctamente!",
-    "user_not_found": "Usuario no encontrado"
+    "user_not_found": "Usuario no encontrado",
+    "avatar_camera": "Tomar Foto",
+    "avatar_gallery": "Elegir de la Galería",
+    "avatar_upload_pending": "Subida de imagen próximamente",
+    "avatar_error": "No se pudo actualizar el avatar. Intenta de nuevo."
   },
   "voice_agent": {
     "title": "Agente de Voz",
@@ -450,7 +454,11 @@
     "personality_none": "Sin personalidad asignada",
     "personality_change": "Cambiar Personalidad",
     "personality_updated": "Personalidad actualizada",
-    "personality_error": "No se pudo actualizar la personalidad"
+    "personality_error": "No se pudo actualizar la personalidad",
+    "unassign_title": "Liberar Juguete",
+    "unassign_confirm": "¿Estás seguro de que quieres liberar {}? Podrá ser asignado a otro usuario.",
+    "unassign_success": "Juguete liberado correctamente",
+    "unassign_error": "No se pudo liberar el juguete. Intenta de nuevo."
   },
   "child_profile": {
     "title": "Perfil del Niño",

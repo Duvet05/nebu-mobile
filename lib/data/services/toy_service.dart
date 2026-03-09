@@ -173,6 +173,16 @@ class ToyService {
     return Toy.fromJson(response);
   }
 
+  /// Liberar un juguete (desasignar del usuario sin eliminarlo)
+  Future<AssignToyResponse> unassignToy(String id) async {
+    _logger.d('Unassigning toy: $id');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/toys/$id/unassign',
+    );
+    _logger.d('Toy unassigned successfully');
+    return AssignToyResponse.fromJson(response);
+  }
+
   /// Eliminar un juguete
   Future<void> deleteToy(String id) async {
     _logger.d('Deleting toy: $id');

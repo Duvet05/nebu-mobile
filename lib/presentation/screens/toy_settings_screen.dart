@@ -126,6 +126,40 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     }
   }
 
+  Future<void> _unassignToy() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await ref.read(toyProvider.notifier).unassignToy(_currentToy.id);
+
+      if (mounted) {
+        context
+          ..showSuccessSnackBar('toy_settings.unassign_success'.tr())
+          ..pop();
+      }
+    } on Exception {
+      if (mounted) {
+        context.showErrorSnackBar('toy_settings.unassign_error'.tr());
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _showUnassignConfirmation() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'toy_settings.unassign_title'.tr(),
+      content: 'toy_settings.unassign_confirm'.tr(args: [_currentToy.name]),
+    );
+    if (confirmed && mounted) {
+      await _unassignToy();
+    }
+  }
+
   Future<void> _showDeleteConfirmation() async {
     final confirmed = await showConfirmDialog(
       context,
@@ -445,6 +479,21 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
+
+                    if (!_currentToy.id.startsWith('local_'))
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: context.spacing.sectionTitleBottomMargin,
+                        ),
+                        child: CustomButton(
+                          text: 'toy_settings.unassign_title'.tr(),
+                          icon: Icons.link_off,
+                          variant: ButtonVariant.outline,
+                          isFullWidth: true,
+                          height: 48,
+                          onPressed: _showUnassignConfirmation,
+                        ),
+                      ),
 
                     CustomButton(
                       text: 'toy_settings.remove_title'.tr(),

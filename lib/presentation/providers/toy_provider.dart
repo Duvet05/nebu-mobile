@@ -217,6 +217,23 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     }
   }
 
+  /// Unassign a toy (release from user without deleting it)
+  Future<void> unassignToy(String id) async {
+    try {
+      await _toyService.unassignToy(id);
+      ref.read(loggerProvider).d('Toy unassigned: $id');
+
+      final currentState = await _currentToys();
+      state = AsyncValue.data(
+        currentState.where((toy) => toy.id != id).toList(),
+      );
+    } catch (e, st) {
+      ref.read(loggerProvider).e('Error unassigning toy: $e');
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
   /// Delete a toy
   Future<void> deleteToy(String id) async {
     try {

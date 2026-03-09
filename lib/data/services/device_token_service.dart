@@ -8,7 +8,7 @@ class DeviceTokenRequest {
   const DeviceTokenRequest({required this.deviceId});
   final String deviceId;
 
-  Map<String, dynamic> toJson() => {'device_id': deviceId};
+  Map<String, dynamic> toJson() => {'deviceId': deviceId};
 }
 
 /// Device token response from backend

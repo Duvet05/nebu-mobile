@@ -90,6 +90,19 @@ class UserService {
     return User.fromJson(response);
   }
 
+  /// Actualizar avatar del usuario actual
+  Future<User> updateAvatar(String avatarUrl) async {
+    _logger.d('Updating user avatar');
+
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/users/me/avatar',
+      data: {'avatarUrl': avatarUrl},
+    );
+
+    _logger.d('Avatar updated successfully');
+    return User.fromJson(response);
+  }
+
   /// Eliminar cuenta propia (hard delete)
   /// Elimina permanentemente la cuenta y todos los datos asociados
   Future<String> deleteOwnAccount({
