@@ -110,11 +110,13 @@ class AuthNotifier extends AsyncNotifier<User?> {
 
   Future<void> logout() async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    try {
       await (await ref.read(authServiceProvider.future)).logout();
-      await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
-      return null;
-    });
+    } on Exception catch (e) {
+      ref.read(loggerProvider).w('Backend logout failed: $e');
+    }
+    await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    state = const AsyncValue.data(null);
   }
 
   Future<bool> requestPasswordReset(String email) async =>

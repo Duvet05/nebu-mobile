@@ -79,7 +79,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         return AppRoutes.home.path;
       }
 
-      // 3. Security: Check if route requires a real account
+      // 3. After logout: redirect to welcome if no user and no local toys
+      if (user == null && !isAuthPage && !hasToys) {
+        return AppRoutes.welcome.path;
+      }
+
+      // 4. Security: Check if route requires a real account
       final needsAccount = [
         AppRoutes.editProfile.path,
         AppRoutes.orders.path,

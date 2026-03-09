@@ -32,6 +32,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late TextEditingController _lastNameController;
   late TextEditingController _emailController;
   bool _isUpdatingAvatar = false;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -52,9 +53,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
   Future<void> _updateProfile() async {
     final user = ref.read(authProvider).value;
-    if (user == null) {
+    if (user == null || _isSaving) {
       return;
     }
+
+    setState(() => _isSaving = true);
 
     try {
       final userService = ref.read(userServiceProvider);
@@ -76,6 +79,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     } on Exception catch (e) {
       if (mounted) {
         context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
       }
     }
   }
@@ -179,7 +186,20 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           onPressed: () => context.pop(),
         ),
         actions: [
-          IconButton(icon: const Icon(Icons.check), onPressed: _updateProfile),
+          if (_isSaving)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.check),
+              onPressed: _updateProfile,
+            ),
         ],
       ),
       body: SingleChildScrollView(
