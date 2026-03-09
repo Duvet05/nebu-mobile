@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../models/conversation.dart';
@@ -20,37 +19,17 @@ class MemoryService {
     String? toyId,
     int limit = 10,
   }) async {
-    try {
-      _logger.d('Searching memory: "$query"');
-      final response = await _apiService.get<dynamic>(
-        '/agent/memory/search',
-        queryParameters: {
-          'query': query,
-          'limit': '$limit',
-          if (toyId != null) 'toyId': toyId,
-        },
-      );
+    _logger.d('Searching memory: "$query"');
+    final response = await _apiService.get<dynamic>(
+      '/agent/memory/search',
+      queryParameters: {
+        'query': query,
+        'limit': '$limit',
+        if (toyId != null) 'toyId': toyId,
+      },
+    );
 
-      if (response is List) {
-        return response
-            .cast<Map<String, dynamic>>()
-            .map(MemoryEntry.fromJson)
-            .toList();
-      }
-      if (response is Map<String, dynamic>) {
-        final data = response['results'] ?? response['memories'] ?? response['data'];
-        if (data is List) {
-          return data
-              .cast<Map<String, dynamic>>()
-              .map(MemoryEntry.fromJson)
-              .toList();
-        }
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error searching memory: ${e.message}');
-      return [];
-    }
+    return _parseMemoryList(response);
   }
 
   /// Get all memories for a toy
@@ -59,49 +38,23 @@ class MemoryService {
     int page = 1,
     int limit = 20,
   }) async {
-    try {
-      _logger.d('Fetching memories for toy: $toyId');
-      final response = await _apiService.get<dynamic>(
-        '/agent/memory',
-        queryParameters: {
-          'toyId': toyId,
-          'page': '$page',
-          'limit': '$limit',
-        },
-      );
+    _logger.d('Fetching memories for toy: $toyId');
+    final response = await _apiService.get<dynamic>(
+      '/agent/memory',
+      queryParameters: {
+        'toyId': toyId,
+        'page': '$page',
+        'limit': '$limit',
+      },
+    );
 
-      if (response is List) {
-        return response
-            .cast<Map<String, dynamic>>()
-            .map(MemoryEntry.fromJson)
-            .toList();
-      }
-      if (response is Map<String, dynamic>) {
-        final data = response['memories'] ?? response['data'];
-        if (data is List) {
-          return data
-              .cast<Map<String, dynamic>>()
-              .map(MemoryEntry.fromJson)
-              .toList();
-        }
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error fetching memories: ${e.message}');
-      return [];
-    }
+    return _parseMemoryList(response);
   }
 
   /// Delete a specific memory
-  Future<bool> deleteMemory(String memoryId) async {
-    try {
-      _logger.d('Deleting memory: $memoryId');
-      await _apiService.delete<dynamic>('/agent/memory/$memoryId');
-      return true;
-    } on DioException catch (e) {
-      _logger.e('Error deleting memory: ${e.message}');
-      return false;
-    }
+  Future<void> deleteMemory(String memoryId) async {
+    _logger.d('Deleting memory: $memoryId');
+    await _apiService.delete<dynamic>('/agent/memory/$memoryId');
   }
 
   // ─── Insights ───
@@ -110,33 +63,48 @@ class MemoryService {
   Future<List<ConversationInsight>> getToyInsights({
     required String toyId,
   }) async {
-    try {
-      _logger.d('Fetching insights for toy: $toyId');
-      final response = await _apiService.get<dynamic>(
-        '/agent/insights',
-        queryParameters: {'toyId': toyId},
-      );
+    _logger.d('Fetching insights for toy: $toyId');
+    final response = await _apiService.get<dynamic>(
+      '/agent/insights',
+      queryParameters: {'toyId': toyId},
+    );
 
-      if (response is List) {
-        return response
+    if (response is List) {
+      return response
+          .cast<Map<String, dynamic>>()
+          .map(ConversationInsight.fromJson)
+          .toList();
+    }
+    if (response is Map<String, dynamic>) {
+      final data = response['insights'] ?? response['data'];
+      if (data is List) {
+        return data
             .cast<Map<String, dynamic>>()
             .map(ConversationInsight.fromJson)
             .toList();
       }
-      if (response is Map<String, dynamic>) {
-        final data = response['insights'] ?? response['data'];
-        if (data is List) {
-          return data
-              .cast<Map<String, dynamic>>()
-              .map(ConversationInsight.fromJson)
-              .toList();
-        }
-      }
-      return [];
-    } on DioException catch (e) {
-      _logger.e('Error fetching insights: ${e.message}');
-      return [];
     }
+    return [];
   }
 
+  /// Parses memory entries from various backend response shapes.
+  List<MemoryEntry> _parseMemoryList(dynamic response) {
+    if (response is List) {
+      return response
+          .cast<Map<String, dynamic>>()
+          .map(MemoryEntry.fromJson)
+          .toList();
+    }
+    if (response is Map<String, dynamic>) {
+      final data =
+          response['results'] ?? response['memories'] ?? response['data'];
+      if (data is List) {
+        return data
+            .cast<Map<String, dynamic>>()
+            .map(MemoryEntry.fromJson)
+            .toList();
+      }
+    }
+    return [];
+  }
 }

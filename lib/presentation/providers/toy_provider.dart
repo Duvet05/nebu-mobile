@@ -19,6 +19,19 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
   ToyService get _toyService => ref.read(toyServiceProvider);
 
+  /// Returns the current toy list, or reloads from API if state is error.
+  /// This prevents the silent data-loss bug where `state.value ?? []`
+  /// would return an empty list when the previous operation had failed.
+  Future<List<Toy>> _currentToys() async {
+    if (state.hasError) {
+      ref.read(loggerProvider).w('Toy state was error, reloading from API');
+      final toys = await _toyService.getMyToys();
+      state = AsyncValue.data(toys);
+      return toys;
+    }
+    return state.value ?? [];
+  }
+
   /// Load user's toys
   Future<void> loadMyToys() async {
     state = const AsyncValue.loading();
@@ -58,8 +71,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
       ref.read(loggerProvider).d('Toy created successfully: ${toy.name}');
 
-      // Add to the list
-      final currentState = state.value ?? [];
+      final currentState = await _currentToys();
       state = AsyncValue.data([...currentState, toy]);
 
       return toy;
@@ -85,9 +97,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
       ref.read(loggerProvider).d('Toy assigned successfully: ${response.toy?.name}');
 
-      // Update the toy list
       if (response.toy != null) {
-        final currentState = state.value ?? [];
+        final currentState = await _currentToys();
         state = AsyncValue.data([...currentState, response.toy!]);
       }
 
@@ -116,8 +127,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
       ref.read(loggerProvider).d('Toy status updated: ${updatedToy.name}');
 
-      // Update in list
-      final currentState = state.value ?? [];
+      final currentState = await _currentToys();
       final index = currentState.indexWhere((toy) => toy.id == updatedToy.id);
       if (index != -1) {
         final newList = [...currentState];
@@ -137,15 +147,13 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       final toy = await _toyService.getToyById(id);
       ref.read(loggerProvider).d('Loaded toy: ${toy.name}');
 
-      // Update in list if already exists
-      final currentState = state.value ?? [];
+      final currentState = await _currentToys();
       final index = currentState.indexWhere((t) => t.id == toy.id);
       if (index != -1) {
         final newList = [...currentState];
         newList[index] = toy;
         state = AsyncValue.data(newList);
       } else {
-        // Add to list if not exists
         state = AsyncValue.data([...currentState, toy]);
       }
 
@@ -184,8 +192,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
       ref.read(loggerProvider).d('Toy updated: ${updatedToy.name}');
 
-      // Update in list
-      final currentState = state.value ?? [];
+      final currentState = await _currentToys();
       final index = currentState.indexWhere((toy) => toy.id == updatedToy.id);
       if (index != -1) {
         final newList = [...currentState];
@@ -207,8 +214,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       await _toyService.deleteToy(id);
       ref.read(loggerProvider).d('Toy deleted: $id');
 
-      // Remove from list
-      final currentState = state.value ?? [];
+      final currentState = await _currentToys();
       state = AsyncValue.data(
         currentState.where((toy) => toy.id != id).toList(),
       );
@@ -244,7 +250,6 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
     ref.read(loggerProvider).d('Local toy saved: ${toy.name}');
 
-    // Add to current state
     final currentState = state.value ?? [];
     state = AsyncValue.data([...currentState, toy]);
   }
@@ -282,7 +287,6 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
     ref.read(loggerProvider).d('Local toy removed: $id');
 
-    // Remove from current state
     final currentState = state.value ?? [];
     state = AsyncValue.data(
       currentState.where((toy) => toy.id != id).toList(),

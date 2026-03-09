@@ -54,10 +54,11 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     } on Exception catch (e) {
       if (!mounted) {
         return;
-      }
-      setState(() => _isLoading = false);ontext.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      }etState(() => _isLoading = false);
+      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
+
   }
 
   @override
@@ -177,18 +178,19 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   Future<void> _markAllAsRead() async {
     final service = ref.read(notificationServiceProvider);
-    final success = await service.markAllAsRead();
-    if (!mounted) {
-      return;
-    }
-    if (success) {
+    try {
+      await service.markAllAsRead();
+      if (!mounted) return;
       setState(() {
         for (final n in _notifications) {
           n.isRead = true;
         }
       });
+      context.showInfoSnackBar('notifications.marked_all_read'.tr());
+    } on Exception catch (e) {
+      if (!mounted) return;
+      context.showErrorSnackBar(e.toString());
     }
-    context.showInfoSnackBar('notifications.marked_all_read'.tr());
   }
 
   Future<void> _handleNotificationTap(_Notification notification) async {

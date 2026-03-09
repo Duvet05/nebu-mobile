@@ -33,17 +33,24 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     final user = ref.read(authProvider).value;
     final notifier = ref.read(toyProvider.notifier);
 
+    // Always load local toys first so we never flash a false empty state
+    final localToys = await notifier.loadLocalToys();
+
     if (user != null) {
-      // Authenticated: load from backend + local
+      // Authenticated: load from backend, then merge local toys
       await notifier.loadMyToys();
-      final localToys = await notifier.loadLocalToys();
       if (localToys.isNotEmpty) {
         final current = ref.read(toyProvider).value ?? [];
-        notifier.setToys([...current, ...localToys]);
+        // Avoid duplicates (local toy already synced to backend)
+        final localIds = localToys.map((t) => t.id).toSet();
+        final merged = [
+          ...current.where((t) => !localIds.contains(t.id)),
+          ...localToys
+        ];
+        notifier.setToys(merged);
       }
     } else {
       // Unauthenticated: only local toys
-      final localToys = await notifier.loadLocalToys();
       notifier.setToys(localToys);
     }
   }
@@ -278,59 +285,71 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         ],
       ),
       body: toysAsync.when(
-        data: (toys) => RefreshIndicator(
-          onRefresh: _loadToys,
-          child: ListView(
-                padding: EdgeInsets.all(context.spacing.alertPadding),
-                children: [
-                  if (toys.isEmpty) ...[
-                    // Empty state
-                    _buildEmptyState(context, theme),
-                  ] else ...[
-                    // Display toys from API
+        data: (toys) {
+          final pendingToys = toys.where((t) =>
+          t.status == ToyStatus.pending || t.id.startsWith('local_')).toList();
+          final hasPendingOnly = toys.isNotEmpty &&
+              pendingToys.length == toys.length;
+
+          return RefreshIndicator(
+            onRefresh: _loadToys,
+            child: ListView(
+              padding: EdgeInsets.all(context.spacing.alertPadding),
+              children: [
+                if (toys.isEmpty) ...[
+                  _buildEmptyState(context, theme),
+                ] else
+                  ...[
+                    // Banner for unconfigured toys
+                    if (hasPendingOnly)
+                      _buildPendingBanner(context, theme),
+
                     ...toys.map<Widget>(
-                      (toy) => _ToyCard(
-                        toy: toy,
-                        theme: theme,
-                        isDark: isDark,
-                        onTap: () => _showToyDetails(toy, theme, isDark),
-                      ),
+                          (toy) =>
+                          _ToyCard(
+                            toy: toy,
+                            theme: theme,
+                            isDark: isDark,
+                            onTap: () => _showToyDetails(toy, theme, isDark),
+                          ),
                     ),
                   ],
 
-                  if (toys.isNotEmpty) ...[
-                    SizedBox(height: context.spacing.panelPadding),
-                    // Add more hint
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.spacing.alertPadding,
-                        vertical: context.spacing.paragraphBottomMarginSm,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.smart_toy_outlined,
-                            size: 18,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              'toys.add_more_hint'.tr(),
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
-                              ),
+                if (toys.isNotEmpty) ...[
+                  SizedBox(height: context.spacing.panelPadding),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.spacing.alertPadding,
+                      vertical: context.spacing.paragraphBottomMarginSm,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.smart_toy_outlined,
+                          size: 18,
+                          color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.4),
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'toys.add_more_hint'.tr(),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.4),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ],
-              ),
+              ],
             ),
+          );
+        },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => RefreshIndicator(
           onRefresh: _loadToys,
@@ -394,6 +413,39 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       ),
     );
   }
+
+  Widget _buildPendingBanner(BuildContext context, ThemeData theme) =>
+      Container(
+        margin: EdgeInsets.only(
+            bottom: context.spacing.paragraphBottomMarginSm),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: context.colors.warning.withValues(alpha: 0.08),
+          borderRadius: context.radius.tile,
+          border: Border.all(
+            color: context.colors.warning.withValues(alpha: 0.3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              size: 20,
+              color: context.colors.warning,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'toys.pending_banner'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: context.colors.warning,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 
   Widget _buildEmptyState(BuildContext context, ThemeData theme) => Container(
     padding: EdgeInsets.all(context.spacing.paragraphBottomMargin),

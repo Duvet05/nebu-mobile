@@ -377,6 +377,7 @@
     "signal": "Señal",
     "pending": "Pendiente",
     "pending_hint": "Este juguete necesita conexión al dispositivo para sincronizar",
+    "pending_banner": "Tus juguetes necesitan terminar la configuración. Toca uno para configurarlo.",
     "talk_to_toy": "Hablar con Juguete",
     "configure_toy": "Configurar",
     "memory": "Memoria"

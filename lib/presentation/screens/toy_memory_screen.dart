@@ -166,8 +166,13 @@ class _MemoryCard extends ConsumerWidget {
         );
 
         if (confirmed ?? false) {
-          final service = ref.read(memoryServiceProvider);
-          return service.deleteMemory(memory.id);
+          try {
+            final service = ref.read(memoryServiceProvider);
+            await service.deleteMemory(memory.id);
+            return true;
+          } on Exception {
+            return false;
+          }
         }
         return false;
       },

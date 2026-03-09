@@ -377,6 +377,7 @@
     "signal": "Signal",
     "pending": "Pending",
     "pending_hint": "This toy needs device connection to sync",
+    "pending_banner": "Your toys need to finish setup. Tap a toy to configure it.",
     "talk_to_toy": "Talk to Toy",
     "configure_toy": "Configure",
     "memory": "Memory"

@@ -1,6 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../models/toy.dart';
 import 'api_service.dart';
 
@@ -25,92 +25,60 @@ class ToyService {
     Map<String, dynamic>? settings,
     String? notes,
   }) async {
-    try {
-      _logger.d('Creating toy: $name');
-
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/toys',
-        data: {
-          'iotDeviceId': iotDeviceId,
-          'name': name,
-          'userId': userId,
-          if (model != null) 'model': model,
-          if (manufacturer != null) 'manufacturer': manufacturer,
-          if (status != null) 'status': status.name,
-          if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
-          if (capabilities != null) 'capabilities': capabilities,
-          if (settings != null) 'settings': settings,
-          if (notes != null) 'notes': notes,
-        },
-      );
-
-      _logger.d('Toy created successfully: ${response['id']}');
-      return Toy.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error creating toy: ${e.message}');
-      throw Exception('Error al registrar el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error creating toy: $e');
-      throw Exception('Error inesperado al registrar el juguete');
-    }
+    _logger.d('Creating toy: $name');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/toys',
+      data: {
+        'iotDeviceId': iotDeviceId,
+        'name': name,
+        'userId': userId,
+        if (model != null) 'model': model,
+        if (manufacturer != null) 'manufacturer': manufacturer,
+        if (status != null) 'status': status.name,
+        if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
+        if (capabilities != null) 'capabilities': capabilities,
+        if (settings != null) 'settings': settings,
+        if (notes != null) 'notes': notes,
+      },
+    );
+    _logger.d('Toy created successfully: ${response['id']}');
+    return Toy.fromJson(response);
   }
 
   /// Obtener juguetes del usuario actual
   Future<List<Toy>> getMyToys() async {
+    _logger.d('Fetching my toys from /toys/my-toys');
+
+    List<dynamic> response;
     try {
-      _logger.d('🎮 [TOY_SERVICE] Fetching my toys from /toys/my-toys');
-
-      final response = await _apiService.get<List<dynamic>>('/toys/my-toys');
-
-      _logger
-        ..d('🎮 [TOY_SERVICE] Raw response type: ${response.runtimeType}')
-        ..d('🎮 [TOY_SERVICE] Response: $response');
-
-      if (response.isEmpty) {
-        _logger.i('🎮 [TOY_SERVICE] No toys found, returning empty list');
-        return [];
-      }
-
-      _logger.d('🎮 [TOY_SERVICE] First toy raw data: ${response.first}');
-
-      final toys = <Toy>[];
-      for (var i = 0; i < response.length; i++) {
-        try {
-          final json = response[i] as Map<String, dynamic>;
-          _logger.d('🎮 [TOY_SERVICE] Parsing toy $i: ${json['name'] ?? 'unknown'}');
-          final toy = Toy.fromJson(json);
-          toys.add(toy);
-        } on Exception catch (e, stack) {
-          _logger
-            ..e('🎮 [TOY_SERVICE] Error parsing toy $i: $e')
-            ..e('🎮 [TOY_SERVICE] Stack trace: $stack')
-            ..e('🎮 [TOY_SERVICE] Raw data: ${response[i]}');
-          // Continue parsing other toys instead of failing completely
-        }
-      }
-
-      _logger.i('🎮 [TOY_SERVICE] Successfully parsed ${toys.length} toys');
-      return toys;
-    } on DioException catch (e) {
-      _logger
-        ..e('🎮 [TOY_SERVICE] DioException: ${e.message}')
-        ..e('🎮 [TOY_SERVICE] Status code: ${e.response?.statusCode}')
-        ..e('🎮 [TOY_SERVICE] Response data: ${e.response?.data}');
-
-      if (e.response?.statusCode == 404) {
-        _logger.i('🎮 [TOY_SERVICE] 404 - No toys found, returning empty list');
-        return [];
-      }
-      if (e.response?.statusCode == 401) {
-        throw Exception('No autorizado. Por favor, inicia sesión nuevamente.');
-      }
-      throw Exception('Error al obtener los juguetes: ${e.message}');
-    } on Exception catch (e, stack) {
-      _logger
-        ..e('🎮 [TOY_SERVICE] Unexpected error: $e')
-        ..e('🎮 [TOY_SERVICE] Stack trace: $stack');
-      throw Exception('Error inesperado al obtener los juguetes: $e');
+      response = await _apiService.get<List<dynamic>>('/toys/my-toys');
+    } on NotFoundException {
+      // 404 means no toys found — valid empty state
+      _logger.i('No toys found (404), returning empty list');
+      return [];
     }
+
+    if (response.isEmpty) {
+      _logger.i('No toys found, returning empty list');
+      return [];
+    }
+
+    final toys = <Toy>[];
+    for (var i = 0; i < response.length; i++) {
+      try {
+        final json = response[i] as Map<String, dynamic>;
+        toys.add(Toy.fromJson(json));
+      } on Exception catch (e, stack) {
+        _logger
+          ..e('Error parsing toy $i: $e')
+          ..e('Stack trace: $stack')
+          ..e('Raw data: ${response[i]}');
+        // Continue parsing other toys instead of failing completely
+      }
+    }
+
+    _logger.i('Successfully parsed ${toys.length} toys');
+    return toys;
   }
 
   /// Asignar un juguete existente a la cuenta del usuario
@@ -119,32 +87,17 @@ class ToyService {
     required String userId,
     String? toyName,
   }) async {
-    try {
-      _logger.d('Assigning toy with MAC: $macAddress');
-
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/toys/assign',
-        data: {
-          'macAddress': macAddress,
-          'userId': userId,
-          if (toyName != null) 'toyName': toyName,
-        },
-      );
-
-      _logger.d('Toy assigned successfully');
-      return AssignToyResponse.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error assigning toy: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado con ese MAC address');
-      } else if (e.response?.statusCode == 409) {
-        throw Exception('Este juguete ya está asignado a otro usuario');
-      }
-      throw Exception('Error al asignar el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error assigning toy: $e');
-      throw Exception('Error inesperado al asignar el juguete');
-    }
+    _logger.d('Assigning toy with MAC: $macAddress');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/toys/assign',
+      data: {
+        'macAddress': macAddress,
+        'userId': userId,
+        if (toyName != null) 'toyName': toyName,
+      },
+    );
+    _logger.d('Toy assigned successfully');
+    return AssignToyResponse.fromJson(response);
   }
 
   /// Actualizar el estado de conexión del juguete
@@ -154,51 +107,25 @@ class ToyService {
     String? batteryLevel,
     String? signalStrength,
   }) async {
-    try {
-      _logger.d('Updating toy connection status: $deviceId');
-
-      final response = await _apiService.patch<Map<String, dynamic>>(
-        '/toys/connection/$deviceId',
-        data: {
-          'status': status.name,
-          if (batteryLevel != null) 'batteryLevel': batteryLevel,
-          if (signalStrength != null) 'signalStrength': signalStrength,
-        },
-      );
-
-      _logger.d('Toy status updated successfully');
-      return Toy.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error updating toy status: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado');
-      }
-      throw Exception('Error al actualizar el estado: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error updating toy status: $e');
-      throw Exception('Error inesperado al actualizar el estado');
-    }
+    _logger.d('Updating toy connection status: $deviceId');
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/toys/connection/$deviceId',
+      data: {
+        'status': status.name,
+        if (batteryLevel != null) 'batteryLevel': batteryLevel,
+        if (signalStrength != null) 'signalStrength': signalStrength,
+      },
+    );
+    _logger.d('Toy status updated successfully');
+    return Toy.fromJson(response);
   }
 
   /// Obtener un juguete por su ID
   Future<Toy> getToyById(String id) async {
-    try {
-      _logger.d('Fetching toy by ID: $id');
-
-      final response = await _apiService.get<Map<String, dynamic>>('/toys/$id');
-
-      _logger.d('Toy fetched successfully');
-      return Toy.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error fetching toy: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado');
-      }
-      throw Exception('Error al obtener el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error fetching toy: $e');
-      throw Exception('Error inesperado al obtener el juguete');
-    }
+    _logger.d('Fetching toy by ID: $id');
+    final response = await _apiService.get<Map<String, dynamic>>('/toys/$id');
+    _logger.d('Toy fetched successfully');
+    return Toy.fromJson(response);
   }
 
   /// Actualizar información de un juguete
@@ -213,81 +140,38 @@ class ToyService {
     Map<String, dynamic>? settings,
     String? notes,
   }) async {
-    try {
-      _logger.d('Updating toy: $id');
-
-      final response = await _apiService.patch<Map<String, dynamic>>(
-        '/toys/$id',
-        data: {
-          if (name != null) 'name': name,
-          if (model != null) 'model': model,
-          if (manufacturer != null) 'manufacturer': manufacturer,
-          if (status != null) 'status': status.name,
-          if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
-          if (capabilities != null) 'capabilities': capabilities,
-          if (settings != null) 'settings': settings,
-          if (notes != null) 'notes': notes,
-        },
-      );
-
-      _logger.d('Toy updated successfully');
-      return Toy.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error updating toy: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado');
-      }
-      throw Exception('Error al actualizar el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error updating toy: $e');
-      throw Exception('Error inesperado al actualizar el juguete');
-    }
+    _logger.d('Updating toy: $id');
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/toys/$id',
+      data: {
+        if (name != null) 'name': name,
+        if (model != null) 'model': model,
+        if (manufacturer != null) 'manufacturer': manufacturer,
+        if (status != null) 'status': status.name,
+        if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
+        if (capabilities != null) 'capabilities': capabilities,
+        if (settings != null) 'settings': settings,
+        if (notes != null) 'notes': notes,
+      },
+    );
+    _logger.d('Toy updated successfully');
+    return Toy.fromJson(response);
   }
 
   /// Desasignar un juguete de la cuenta del usuario
   Future<AssignToyResponse> unassignToy(String id) async {
-    try {
-      _logger.d('Unassigning toy: $id');
-
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/toys/$id/unassign',
-      );
-
-      _logger.d('Toy unassigned successfully');
-      return AssignToyResponse.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error unassigning toy: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado');
-      } else if (e.response?.statusCode == 409) {
-        throw Exception('No tienes permiso para liberar este juguete');
-      }
-      throw Exception('Error al liberar el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error unassigning toy: $e');
-      throw Exception('Error inesperado al liberar el juguete');
-    }
+    _logger.d('Unassigning toy: $id');
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/toys/$id/unassign',
+    );
+    _logger.d('Toy unassigned successfully');
+    return AssignToyResponse.fromJson(response);
   }
 
   /// Eliminar un juguete
   Future<void> deleteToy(String id) async {
-    try {
-      _logger.d('Deleting toy: $id');
-
-      await _apiService.delete<void>('/toys/$id');
-
-      _logger.d('Toy deleted successfully');
-    } on DioException catch (e) {
-      _logger.e('Error deleting toy: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Juguete no encontrado');
-      } else if (e.response?.statusCode == 409) {
-        throw Exception('No se puede eliminar el juguete porque está en uso');
-      }
-      throw Exception('Error al eliminar el juguete: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error deleting toy: $e');
-      throw Exception('Error inesperado al eliminar el juguete');
-    }
+    _logger.d('Deleting toy: $id');
+    await _apiService.delete<void>('/toys/$id');
+    _logger.d('Toy deleted successfully');
   }
 }

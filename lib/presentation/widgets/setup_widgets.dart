@@ -116,10 +116,11 @@ class SetupPrimaryButton extends StatelessWidget {
                     context.colors.primary100,
                     context.colors.primary,
                   ],
-                )
-              : null,olor: effectiveEnabled
-              ? null
-              : context.theme.colorScheme.surfaceContainerHighest..withValues(alpha: 0.5),
+                ) null,
+          color: effectiveEnabled
+              ? ? null
+              : context.theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.5),
           borderRadius: context.radius.panel,
           boxShadow: effectiveEnabled
               ? [

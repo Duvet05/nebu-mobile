@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -10,11 +9,14 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constants/app_routes.dart';
+import '../../../core/constants/validation_rules.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/services/esp32_wifi_config_service.dart';
+import '../../../data/services/wifi_qr_parser.dart';
 import '../../../data/services/wifi_service.dart';
 import '../../providers/api_provider.dart';
 import '../../widgets/setup_widgets.dart';
+import '../../widgets/wifi_networks_sheet.dart';
 
 class WifiSetupScreen extends ConsumerStatefulWidget {
   const WifiSetupScreen({super.key});
@@ -22,6 +24,11 @@ class WifiSetupScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<WifiSetupScreen> createState() => _WifiSetupScreenState();
 }
+
+const _kConnectionTimeout = Duration(seconds: 45);
+const _kNavigationDelay = Duration(seconds: 1);
+const _kSnackBarDuration = Duration(seconds: 2);
+const _kSnackBarDurationLong = Duration(seconds: 5);
 
 final _logger = logger.Logger();
 
@@ -35,77 +42,58 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   Timer? _timeoutTimer;
   final _networkInfo = NetworkInfo();
 
-  void _log(String message) {
-    _logger.d(message);
-  }
-
   @override
   void initState() {
     super.initState();
-    _log('🎬 [WIFI_SCREEN] Initializing WiFi setup screen');
     _subscribeToWifiStatus();
   }
 
+  @override
+  void dispose() {
+    _ssidController.dispose();
+    _passwordController.dispose();
+    _statusSubscription?.cancel();
+    _timeoutTimer?.cancel();
+    super.dispose();
+  }
+
+  // ─── Status Stream ───
+
   Future<void> _subscribeToWifiStatus() async {
-    _log('🔔 [WIFI_SCREEN] Subscribing to ESP32 status stream');
-
     final esp32service = await ref.read(esp32WifiConfigServiceProvider.future);
-
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     _statusSubscription = esp32service.statusStream.listen(
       (status) {
-        _log('🔔 [WIFI_SCREEN] Received status update: $status');
-
-        if (!mounted) {
-          _log('⚠️  [WIFI_SCREEN] Widget not mounted, ignoring status');
-          return;
-        }
+        if (!mounted) return;
 
         final messenger = ScaffoldMessenger.of(context);
 
         switch (status) {
           case ESP32WifiStatus.idle:
-            _log('💤 [WIFI_SCREEN] Status IDLE - no action required');
             break;
 
           case ESP32WifiStatus.connecting:
-            _log('🔵 [WIFI_SCREEN] Status CONNECTING - showing snackbar');
             messenger.showSnackBar(
               SnackBar(
                 content: Text('setup.wifi.status_connecting'.tr()),
                 backgroundColor: context.colors.info,
-                duration: const Duration(seconds: 2),
+                duration: _kSnackBarDuration,
               ),
             );
-            break;
 
           case ESP32WifiStatus.reconnecting:
-            _log(
-              '🔄 [WIFI_SCREEN] Status RECONNECTING - showing snackbar',
-            );
             messenger.showSnackBar(
               SnackBar(
                 content: Text('setup.wifi.status_reconnecting'.tr()),
                 backgroundColor: context.colors.warning,
-                duration: const Duration(seconds: 2),
+                duration: _kSnackBarDuration,
               ),
             );
-            break;
 
           case ESP32WifiStatus.connected:
-            _log(
-              '✅ [WIFI_SCREEN] Status CONNECTED - navigating to next step',
-            );
-
-            // Cancelar timeout si existe
             _timeoutTimer?.cancel();
-
-            setState(() {
-              _isConnecting = false;
-            });
+            setState(() => _isConnecting = false);
 
             messenger.showSnackBar(
               SnackBar(
@@ -114,30 +102,19 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
               ),
             );
 
-            // Continuar al siguiente paso
-            unawaited(Future<void>.delayed(const Duration(seconds: 1), () {
-              if (mounted) {
-                _log('➡️  [WIFI_SCREEN] Navigating to ToyNameSetup');
-                context.push(AppRoutes.toyNameSetup.path);
-              }
+            unawaited(Future<void>.delayed(_kNavigationDelay, () {
+              if (mounted) context.push(AppRoutes.toyNameSetup.path);
             }));
-            break;
 
           case ESP32WifiStatus.failed:
-            _log('❌ [WIFI_SCREEN] Status FAILED - showing retry option');
-
-            // Cancelar timeout si existe
             _timeoutTimer?.cancel();
-
-            setState(() {
-              _isConnecting = false;
-            });
+            setState(() => _isConnecting = false);
 
             messenger.showSnackBar(
               SnackBar(
                 content: Text('setup.wifi.status_failed'.tr()),
                 backgroundColor: context.colors.error,
-                duration: const Duration(seconds: 5),
+                duration: _kSnackBarDurationLong,
                 action: SnackBarAction(
                   label: 'setup.wifi.retry'.tr(),
                   textColor: context.colors.textOnFilled,
@@ -145,105 +122,61 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                 ),
               ),
             );
-            break;
         }
       },
       onError: (Object error) {
-        _log('❌ [WIFI_SCREEN] Stream error: $error');
-
-        if (!mounted) {
-          _log('⚠️  [WIFI_SCREEN] Widget not mounted, ignoring error');
-          return;
-        }
+        _logger.e('WiFi status stream error: $error');
+        if (!mounted) return;
 
         _timeoutTimer?.cancel();
-
         if (_isConnecting) {
-          setState(() {
-            _isConnecting = false;
-          });
-
+          setState(() => _isConnecting = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('setup.wifi.error_status_stream'.tr()),
               backgroundColor: context.colors.error,
-              duration: const Duration(seconds: 5),
+              duration: _kSnackBarDurationLong,
             ),
           );
         }
       },
       onDone: () {
-        _log('⚠️  [WIFI_SCREEN] Status stream closed');
-
-        if (!mounted) {
-          _log(
-            '⚠️  [WIFI_SCREEN] Widget not mounted, ignoring stream close',
-          );
-          return;
-        }
+        if (!mounted) return;
 
         _timeoutTimer?.cancel();
-
-        // El stream se cerró (ESP32 desconectado?)
         if (_isConnecting) {
-          setState(() {
-            _isConnecting = false;
-          });
-
+          setState(() => _isConnecting = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('setup.wifi.error_ble_disconnected'.tr()),
               backgroundColor: context.colors.error,
-              duration: const Duration(seconds: 5),
+              duration: _kSnackBarDurationLong,
             ),
           );
         }
       },
     );
-
-    _log('✅ [WIFI_SCREEN] Subscribed to status stream successfully');
   }
 
-  @override
-  void dispose() {
-    _log('🔚 [WIFI_SCREEN] Disposing WiFi setup screen');
-    _ssidController.dispose();
-    _passwordController.dispose();
-    _statusSubscription?.cancel();
-    _timeoutTimer?.cancel();
-    _log('🔚 [WIFI_SCREEN] Disposed successfully');
-    super.dispose();
-  }
+  // ─── Actions ───
 
   Future<void> _scanQrCode() async {
     final result = await context.push<String>(AppRoutes.qrScanner.path);
     if (result != null && mounted) {
-      _parseWifiQr(result);
-    }
-  }
-
-  void _parseWifiQr(String qrData) {
-    // Standard format: WIFI:S:<SSID>;T:<TYPE>;P:<PASSWORD>;H:<HIDDEN>;;
-    if (!qrData.startsWith('WIFI:')) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('qr_scanner.invalid_wifi_qr'.tr())));
-      return;
-    }
-
-    final ssidMatch = RegExp('S:(.*?);').firstMatch(qrData);
-    final passwordMatch = RegExp('P:(.*?);').firstMatch(qrData);
-
-    if (ssidMatch != null) {
-      setState(() {
-        _ssidController.text = ssidMatch.group(1) ?? '';
-        if (passwordMatch != null) {
-          _passwordController.text = passwordMatch.group(1) ?? '';
-        }
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('qr_scanner.wifi_loaded'.tr())),
-      );
+      final parsed = WiFiQrParser.parse(result);
+      if (parsed != null) {
+        setState(() {
+          _ssidController.text = parsed.ssid;
+          _passwordController.text = parsed.password;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('qr_scanner.wifi_loaded'.tr())),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('qr_scanner.invalid_wifi_qr'.tr())),
+        );
+      }
     }
   }
 
@@ -254,7 +187,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         final wifiName = await _networkInfo.getWifiName();
         if (wifiName != null && mounted) {
           setState(() {
-            // Remove quotes if present
             _ssidController.text = wifiName.replaceAll('"', '');
           });
         } else if (mounted) {
@@ -264,9 +196,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         }
       } on Exception {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('setup.wifi.error_generic'.tr())));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('setup.wifi.error_generic'.tr())),
+          );
         }
       }
     } else if (mounted) {
@@ -280,9 +212,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   Future<void> _showWifiNetworksSheet() async {
     final esp32Service = await ref.read(esp32WifiConfigServiceProvider.future);
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
+
     final wifiService = WiFiService(
       logger: logger.Logger(),
       esp32WifiConfigService: esp32Service,
@@ -292,62 +223,34 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => _WifiNetworksSheet(
+      builder: (sheetContext) =>
+          WifiNetworksSheet(
         wifiService: wifiService,
         onNetworkSelected: (ssid) {
-          setState(() {
-            _ssidController.text = ssid;
-          });
+          setState(() => _ssidController.text = ssid);
         },
       ),
     );
   }
 
   Future<void> _connectToWifi() async {
-    _log('📡 [WIFI_SCREEN] Connect button pressed');
-
-    if (!_formKey.currentState!.validate()) {
-      _log('⚠️  [WIFI_SCREEN] Form validation failed');
-      return;
-    }
-
-    // Prevenir múltiples llamadas simultáneas
-    if (_isConnecting) {
-      _log(
-        '⚠️  [WIFI_SCREEN] Already connecting, ignoring duplicate request',
-      );
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
+    if (_isConnecting) return;
 
     final messenger = ScaffoldMessenger.of(context);
     final colors = context.colors;
 
-    _log('📡 [WIFI_SCREEN] Starting WiFi connection process');
-    _log('📡 [WIFI_SCREEN] SSID: "${_ssidController.text.trim()}"');
-
-    setState(() {
-      _isConnecting = true;
-    });
+    setState(() => _isConnecting = true);
 
     try {
       final service = await ref.read(esp32WifiConfigServiceProvider.future);
-      _log('📤 [WIFI_SCREEN] Sending WiFi credentials to ESP32');
 
       final result = await service.sendWifiCredentials(
         ssid: _ssidController.text.trim(),
         password: _passwordController.text,
       );
 
-      _log(
-        '📤 [WIFI_SCREEN] Send result: ${result.success ? "SUCCESS" : "FAILED"}',
-      );
-      if (!result.success) {
-        _log('📤 [WIFI_SCREEN] Error message: ${result.message}');
-      }
-
       if (result.success) {
-        _log('✅ [WIFI_SCREEN] Credentials sent successfully');
-
         messenger.showSnackBar(
           SnackBar(
             content: Text('setup.wifi.credentials_sent'.tr()),
@@ -355,67 +258,44 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           ),
         );
 
-        // Iniciar timeout de 45 segundos
-        _log('⏱️  [WIFI_SCREEN] Starting 45 second timeout timer');
-        _timeoutTimer = Timer(const Duration(seconds: 45), () {
-          _log('⏱️  [WIFI_SCREEN] Timeout reached after 45 seconds');
-          if (_isConnecting && mounted) {
-            _showTimeoutDialog();
-          }
+        _timeoutTimer = Timer(_kConnectionTimeout, () {
+          if (_isConnecting && mounted) _showTimeoutDialog();
         });
-
-        _log('🔔 [WIFI_SCREEN] Waiting for status updates from ESP32');
-        // El statusStream se encargará de actualizar la UI cuando el ESP32 responda
       } else {
-        _log(
-          '❌ [WIFI_SCREEN] Failed to send credentials: ${result.message}',
-        );
         throw Exception(result.message);
       }
     } on Exception catch (e) {
-      _log('❌ [WIFI_SCREEN] Exception during WiFi connection: $e');
       final errorMsg = e.toString().toLowerCase();
 
-      // Detectar tipo de error específico
+      String translationKey;
+      Color snackColor;
       if (errorMsg.contains('disconnected') ||
           errorMsg.contains('connection') ||
           errorMsg.contains('not connected')) {
-        _log('❌ [WIFI_SCREEN] BLE disconnection error detected');
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('setup.wifi.error_ble_disconnected'.tr()),
-            backgroundColor: colors.error,
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        translationKey = 'setup.wifi.error_ble_disconnected';
+        snackColor = colors.error;
       } else if (errorMsg.contains('timeout') ||
           errorMsg.contains('timed out')) {
-        _log('❌ [WIFI_SCREEN] BLE timeout error detected');
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('setup.wifi.error_ble_timeout'.tr()),
-            backgroundColor: colors.warning,
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        translationKey = 'setup.wifi.error_ble_timeout';
+        snackColor = colors.warning;
       } else {
-        _log('❌ [WIFI_SCREEN] Generic error: $e');
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('setup.wifi.error_send_credentials'.tr()),
-            backgroundColor: colors.error,
-          ),
-        );
+        translationKey = 'setup.wifi.error_send_credentials';
+        snackColor = colors.error;
       }
 
-      setState(() {
-        _isConnecting = false;
-      });
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(translationKey.tr()),
+          backgroundColor: snackColor,
+          duration: _kSnackBarDurationLong,
+        ),
+      );
+
+      setState(() => _isConnecting = false);
     }
   }
 
   Future<void> _showTimeoutDialog() async {
-    _log('⏱️  [WIFI_SCREEN] Showing timeout dialog to user');
     final shouldContinue = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
@@ -424,17 +304,11 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         content: Text('setup.wifi.timeout_dialog_message'.tr()),
         actions: [
           TextButton(
-            onPressed: () {
-              _log('⏱️  [WIFI_SCREEN] User chose to keep waiting');
-              Navigator.of(context).pop(false);
-            },
+            onPressed: () => Navigator.of(context).pop(false),
             child: Text('setup.wifi.keep_waiting'.tr()),
           ),
           ElevatedButton(
-            onPressed: () {
-              _log('⏱️  [WIFI_SCREEN] User chose to continue anyway');
-              Navigator.of(context).pop(true);
-            },
+            onPressed: () => Navigator.of(context).pop(true),
             child: Text('setup.wifi.continue_anyway'.tr()),
           ),
         ],
@@ -442,15 +316,27 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     );
 
     if ((shouldContinue ?? false) && mounted) {
-      _log('➡️  [WIFI_SCREEN] Continuing to next step despite timeout');
-      setState(() {
-        _isConnecting = false;
-      });
+      setState(() => _isConnecting = false);
       await context.push(AppRoutes.toyNameSetup.path);
-    } else {
-      _log('⏱️  [WIFI_SCREEN] User still waiting for connection');
     }
   }
+
+  void _cancelConnection() {
+    _timeoutTimer?.cancel();
+    setState(() => _isConnecting = false);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('setup.wifi.connection_cancelled'.tr()),
+        backgroundColor: context.colors.warning,
+      ),
+    );
+  }
+
+  void _skipWifiSetup() {
+    context.push(AppRoutes.toyNameSetup.path);
+  }
+
+  // ─── Build ───
 
   @override
   Widget build(BuildContext context) {
@@ -459,9 +345,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     return PopScope(
       canPop: !_isConnecting,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) {
-          return;
-        }
+        if (didPop) return;
 
         if (_isConnecting && context.mounted) {
           final shouldPop = await showDialog<bool>(
@@ -497,7 +381,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
             children: [
               const SetupHeader(currentStep: 2, totalSteps: 7),
 
-              // Content
               Expanded(
                 child: Padding(
                   padding: context.spacing.pageEdgeInsets,
@@ -544,7 +427,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
                         const SizedBox(height: 16),
 
-                        // Connect button
                         SetupPrimaryButton(
                           text: 'setup.wifi.connect_button'.tr(),
                           isLoading: _isConnecting,
@@ -583,6 +465,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       ),
     );
   }
+
+  // ─── Sub-widgets ───
 
   Widget _buildHotspotHint() => Row(
     children: [
@@ -636,17 +520,14 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (value == null || value.trim().isEmpty) {
         return 'setup.wifi.validation_ssid_empty'.tr();
       }
-
-      // Validar longitud máxima del SSID (32 bytes en WiFi)
-      if (value.trim().length > 32) {
+      if (value
+          .trim()
+          .length > ValidationRules.wifiSsidMaxBytes) {
         return 'setup.wifi.validation_ssid_too_long'.tr();
       }
-
-      // Validar caracteres especiales problemáticos
       if (value.contains('\n') || value.contains('\r')) {
         return 'setup.wifi.validation_ssid_invalid_chars'.tr();
       }
-
       return null;
     },
   );
@@ -664,23 +545,20 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
         ),
         onPressed: () {
-          setState(() {
-            _isPasswordVisible = !_isPasswordVisible;
-          });
+          setState(() => _isPasswordVisible = !_isPasswordVisible);
         },
       ),
     ),
     validator: (value) {
-      // Validar longitud mínima de WPA2 (8 caracteres) si no está vacío
-      if (value != null && value.isNotEmpty && value.length < 8) {
+      if (value != null &&
+          value.isNotEmpty &&
+          value.length < ValidationRules.wifiPasswordMinLength) {
         return 'setup.wifi.validation_password_too_short'.tr();
       }
-
-      // Validar longitud máxima (63 caracteres para WPA2)
-      if (value != null && value.length > 63) {
+      if (value != null &&
+          value.length > ValidationRules.wifiPasswordMaxLength) {
         return 'setup.wifi.validation_password_too_long'.tr();
       }
-
       return null;
     },
   );
@@ -711,26 +589,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     contentPadding: const EdgeInsets.all(20),
     suffixIcon: suffixIcon,
   );
-
-  void _cancelConnection() {
-    _log('🛑 [WIFI_SCREEN] User cancelled WiFi connection');
-    _timeoutTimer?.cancel();
-    setState(() {
-      _isConnecting = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('setup.wifi.connection_cancelled'.tr()),
-        backgroundColor: context.colors.warning,
-      ),
-    );
-  }
-
-  void _skipWifiSetup() {
-    _log('⏭️  [WIFI_SCREEN] User skipped WiFi setup');
-    context.push(AppRoutes.toyNameSetup.path);
-  }
-
 }
 
 class _QuickActionButton extends StatelessWidget {
@@ -769,154 +627,6 @@ class _QuickActionButton extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _WifiNetworksSheet extends StatefulWidget {
-  const _WifiNetworksSheet({
-    required this.wifiService,
-    required this.onNetworkSelected,
-  });
-  final WiFiService wifiService;
-  final void Function(String) onNetworkSelected;
-
-  @override
-  State<_WifiNetworksSheet> createState() => _WifiNetworksSheetState();
-}
-
-class _WifiNetworksSheetState extends State<_WifiNetworksSheet> {
-  bool _isLoading = true;
-  List<WiFiNetwork> _networks = [];
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _scanNetworks();
-  }
-
-  Future<void> _scanNetworks() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      final networks = await widget.wifiService.scanNetworks();
-      if (mounted) {
-        setState(() {
-          _networks = networks;
-          _isLoading = false;
-        });
-      }
-    } on Exception catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.theme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        color: context.colors.textOnFilled,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'setup.wifi.scan_networks'.tr(),
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: context.colors.textNormal,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                onPressed: _scanNetworks,
-                icon: const Icon(Icons.refresh),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          if (_isLoading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(),
-              ),
-            )
-          else if (_error != null)
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Column(
-                children: [
-                  Icon(Icons.error_outline, color: context.colors.error, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    'setup.wifi.scan_error'.tr(),
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _scanNetworks,
-                    child: Text('common.retry'.tr()),
-                  ),
-                ],
-              ),
-            )
-          else if (_networks.isEmpty)
-            Padding(
-              padding: const EdgeInsets.all(32),
-              child: Text(
-                'setup.wifi.no_networks_found'.tr(),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.titleMedium,
-              ),
-            )
-          else
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: _networks.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final network = _networks[index];
-                  return ListTile(
-                    leading: const Icon(Icons.wifi),
-                    title: Text(network.ssid),
-                    subtitle: Text(
-                      'setup.wifi.signal_info'.tr(args: ['${network.rssi}']),
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      widget.onNetworkSelected(network.ssid);
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-              ),
-            ),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('common.cancel'.tr()),
-          ),
-        ],
       ),
     );
   }

@@ -200,7 +200,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'auth.password_required'.tr();
                           }
-                          if (value.length < 6) {
+                          if (value.length < 8) {
                             return 'auth.password_short'.tr();
                           }
                           return null;
