@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,7 +44,9 @@ import '../../presentation/screens/welcome_screen.dart';
 import '../constants/app_routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authChange = ValueNotifier<AsyncValue<User?>>(const AsyncValue.loading());
+  final authChange = ValueNotifier<AsyncValue<User?>>(
+    const AsyncValue.loading(),
+  );
   ref.listen(authProvider, (_, next) => authChange.value = next);
 
   return GoRouter(
@@ -53,7 +54,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: authChange,
     redirect: (context, state) {
       final auth = ref.read(authProvider);
-      if (auth.isLoading) return null;
+      if (auth.isLoading) {
+        return null;
+      }
 
       final user = auth.value;
       final path = state.matchedLocation;
@@ -61,12 +64,19 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 1. Splash Logic
       if (path == AppRoutes.splash.path) {
-        return (user != null || hasToys) ? AppRoutes.home.path : AppRoutes.welcome.path;
+        return (user != null || hasToys)
+            ? AppRoutes.home.path
+            : AppRoutes.welcome.path;
       }
 
       // 2. Public / Auth Routes
-      final isAuthPage = path == AppRoutes.login.path || path == AppRoutes.signUp.path || path == AppRoutes.welcome.path;
-      if (user != null && isAuthPage) return AppRoutes.home.path;
+      final isAuthPage =
+          path == AppRoutes.login.path ||
+          path == AppRoutes.signUp.path ||
+          path == AppRoutes.welcome.path;
+      if (user != null && isAuthPage) {
+        return AppRoutes.home.path;
+      }
 
       // 3. Security: Check if route requires a real account
       final needsAccount = [
@@ -76,13 +86,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         AppRoutes.privacySettings.path,
       ].contains(path);
 
-      if (needsAccount && user == null) return AppRoutes.login.path;
+      if (needsAccount && user == null) {
+        return AppRoutes.login.path;
+      }
 
       // 4. Default: Let it flow
       return null;
     },
     routes: AppRouter._getRoutes(),
-    errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Error: ${state.error}'))),
+    errorBuilder: (context, state) =>
+        Scaffold(body: Center(child: Text('Error: ${state.error}'))),
   );
 });
 
@@ -90,54 +103,153 @@ class AppRouter {
   AppRouter._();
 
   static List<RouteBase> _getRoutes() => [
-    GoRoute(path: AppRoutes.splash.path, builder: (_, _) => const SplashScreen()),
-    GoRoute(path: AppRoutes.welcome.path, builder: (_, _) => const WelcomeScreen()),
+    GoRoute(
+      path: AppRoutes.splash.path,
+      builder: (_, _) => const SplashScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.welcome.path,
+      builder: (_, _) => const WelcomeScreen(),
+    ),
     GoRoute(path: AppRoutes.login.path, builder: (_, _) => const LoginScreen()),
-    GoRoute(path: AppRoutes.signUp.path, builder: (_, _) => const SignUpScreen()),
+    GoRoute(
+      path: AppRoutes.signUp.path,
+      builder: (_, _) => const SignUpScreen(),
+    ),
 
     ShellRoute(
       builder: (context, state, child) => MainScreen(child: child),
       routes: [
-        GoRoute(path: AppRoutes.home.path, pageBuilder: (_, _) => const NoTransitionPage(child: HomeScreen())),
-        GoRoute(path: AppRoutes.activityLog.path, pageBuilder: (_, _) => const NoTransitionPage(child: ActivityLogScreen())),
-        GoRoute(path: AppRoutes.myToys.path, pageBuilder: (_, _) => const NoTransitionPage(child: MyToysScreen())),
-        GoRoute(path: AppRoutes.profile.path, pageBuilder: (_, _) => const NoTransitionPage(child: ProfileScreen())),
-        GoRoute(path: AppRoutes.settings.path, pageBuilder: (_, _) => const NoTransitionPage(child: SettingsScreen())),
+        GoRoute(
+          path: AppRoutes.home.path,
+          pageBuilder: (_, _) => const NoTransitionPage(child: HomeScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.activityLog.path,
+          pageBuilder: (_, _) =>
+              const NoTransitionPage(child: ActivityLogScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.myToys.path,
+          pageBuilder: (_, _) => const NoTransitionPage(child: MyToysScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.profile.path,
+          pageBuilder: (_, _) => const NoTransitionPage(child: ProfileScreen()),
+        ),
+        GoRoute(
+          path: AppRoutes.settings.path,
+          pageBuilder: (_, _) =>
+              const NoTransitionPage(child: SettingsScreen()),
+        ),
       ],
     ),
 
     // Common Apps
-    GoRoute(path: AppRoutes.qrScanner.path, builder: (_, _) => const QRScannerScreen()),
-    GoRoute(path: AppRoutes.editProfile.path, builder: (_, _) => const EditProfileScreen()),
-    GoRoute(path: AppRoutes.privacySettings.path, builder: (_, _) => const PrivacySettingsScreen()),
-    GoRoute(path: AppRoutes.privacyPolicy.path, builder: (_, _) => const PrivacyPolicyScreen()),
-    GoRoute(path: AppRoutes.termsOfService.path, builder: (_, _) => const TermsOfServiceScreen()),
-    GoRoute(path: AppRoutes.orders.path, builder: (_, _) => const OrdersScreen()),
-    GoRoute(path: AppRoutes.notifications.path, builder: (_, _) => const NotificationsScreen()),
-    GoRoute(path: AppRoutes.childProfile.path, builder: (_, _) => const ChildProfileScreen()),
-    GoRoute(path: AppRoutes.personalities.path, builder: (_, _) => const PersonalitiesScreen()),
-    GoRoute(path: AppRoutes.healthCheck.path, builder: (_, _) => const HealthCheckScreen()),
-    GoRoute(path: AppRoutes.knowledgeSearch.path, builder: (_, _) => const KnowledgeSearchScreen()),
-    GoRoute(path: AppRoutes.voiceHistory.path, builder: (_, _) => const VoiceSessionsScreen()),
+    GoRoute(
+      path: AppRoutes.qrScanner.path,
+      builder: (_, _) => const QRScannerScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.editProfile.path,
+      builder: (_, _) => const EditProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.privacySettings.path,
+      builder: (_, _) => const PrivacySettingsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.privacyPolicy.path,
+      builder: (_, _) => const PrivacyPolicyScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.termsOfService.path,
+      builder: (_, _) => const TermsOfServiceScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.orders.path,
+      builder: (_, _) => const OrdersScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.notifications.path,
+      builder: (_, _) => const NotificationsScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.childProfile.path,
+      builder: (_, _) => const ChildProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.personalities.path,
+      builder: (_, _) => const PersonalitiesScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.healthCheck.path,
+      builder: (_, _) => const HealthCheckScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.knowledgeSearch.path,
+      builder: (_, _) => const KnowledgeSearchScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.voiceHistory.path,
+      builder: (_, _) => const VoiceSessionsScreen(),
+    ),
 
     // Dynamic Routes
-    GoRoute(path: AppRoutes.toySettings.path, builder: (c, s) => ToySettingsScreen(toy: s.extra as Toy)),
-    GoRoute(path: AppRoutes.toyMemory.path, builder: (c, s) => ToyMemoryScreen(toy: s.extra as Toy)),
-    GoRoute(path: AppRoutes.walkieTalkie.path, builder: (c, s) => WalkieTalkieScreen(toy: s.extra as Toy)),
-    GoRoute(path: AppRoutes.playground.path, builder: (c, s) => PlaygroundScreen(initialPersonality: s.extra as Personality?)),
+    GoRoute(
+      path: AppRoutes.toySettings.path,
+      builder: (c, s) => ToySettingsScreen(toy: s.extra! as Toy),
+    ),
+    GoRoute(
+      path: AppRoutes.toyMemory.path,
+      builder: (c, s) => ToyMemoryScreen(toy: s.extra! as Toy),
+    ),
+    GoRoute(
+      path: AppRoutes.walkieTalkie.path,
+      builder: (c, s) => WalkieTalkieScreen(toy: s.extra! as Toy),
+    ),
+    GoRoute(
+      path: AppRoutes.playground.path,
+      builder: (c, s) =>
+          PlaygroundScreen(initialPersonality: s.extra as Personality?),
+    ),
 
     // Setup flow
     ..._getSetupRoutes(),
   ];
 
   static List<RouteBase> _getSetupRoutes() => [
-    GoRoute(path: AppRoutes.connectionSetup.path, builder: (_, _) => const ConnectionSetupScreen()),
-    GoRoute(path: AppRoutes.toyNameSetup.path, builder: (_, _) => const ToyNameSetupScreen()),
-    GoRoute(path: AppRoutes.wifiSetup.path, builder: (_, _) => const WifiSetupScreen()),
-    GoRoute(path: AppRoutes.ageSetup.path, builder: (_, _) => const AgeSetupScreen()),
-    GoRoute(path: AppRoutes.personalitySetup.path, builder: (_, _) => const PersonalitySetupScreen()),
-    GoRoute(path: AppRoutes.voiceSetup.path, builder: (_, _) => const VoiceSetupScreen()),
-    GoRoute(path: AppRoutes.favoritesSetup.path, builder: (_, _) => const FavoritesSetupScreen()),
-    GoRoute(path: AppRoutes.worldInfoSetup.path, builder: (_, _) => const WorldInfoSetupScreen()),
+    GoRoute(
+      path: AppRoutes.connectionSetup.path,
+      builder: (_, _) => const ConnectionSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.toyNameSetup.path,
+      builder: (_, _) => const ToyNameSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.wifiSetup.path,
+      builder: (_, _) => const WifiSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.ageSetup.path,
+      builder: (_, _) => const AgeSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.personalitySetup.path,
+      builder: (_, _) => const PersonalitySetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.voiceSetup.path,
+      builder: (_, _) => const VoiceSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.favoritesSetup.path,
+      builder: (_, _) => const FavoritesSetupScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.worldInfoSetup.path,
+      builder: (_, _) => const WorldInfoSetupScreen(),
+    ),
   ];
 }

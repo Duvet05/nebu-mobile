@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../data/models/user.dart';
 import '../../data/services/activity_migration_service.dart';
+import '../../data/services/auth_service.dart';
 import 'api_provider.dart';
 
 export 'api_provider.dart' show sharedPreferencesProvider;
@@ -22,24 +23,32 @@ class AuthNotifier extends AsyncNotifier<User?> {
         final userJson = await ref
             .watch(secureStorageProvider)
             .read(key: StorageKeys.user);
-        if (userJson != null) return User.fromJson(json.decode(userJson));
+        if (userJson != null) {
+          return User.fromJson(json.decode(userJson) as Map<String, dynamic>);
+        }
       }
-    } catch (e, st) {
+    } on Exception catch (e, st) {
       ref.read(loggerProvider).e('Load user failed', error: e, stackTrace: st);
     }
     return null;
   }
 
-  // EL TUBO ÚNICO: Centraliza la lógica de éxito y error
-  Future<void> _authenticate(Future<dynamic> Function() authCall) async {
+  /// Single pipeline for all auth flows: call service → validate → save → migrate.
+  Future<void> _authenticate(
+    Future<({bool success, User? user, String? error})> Function(
+      AuthService service,
+    )
+    authCall,
+  ) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final response = await authCall();
+      final authService = await ref.read(authServiceProvider.future);
+      final response = await authCall(authService);
       if (response.success && response.user != null) {
         await _onAuthSuccess(response.user!);
         return response.user;
       }
-      throw response.error ?? 'Authentication failed';
+      throw Exception(response.error ?? 'Authentication failed');
     });
   }
 
@@ -51,49 +60,46 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   void clearError() {
-    if (state.hasError) state = const AsyncValue.data(null);
+    if (state.hasError) {
+      state = const AsyncValue.data(null);
+    }
   }
 
-  // Ahora los métodos son "Línea Directa"
   Future<void> login({required String identifier, required String password}) =>
-      _authenticate(
-        () => ref
-            .read(authServiceProvider.future)
-            .then((s) => s.login(identifier: identifier, password: password)),
-      );
+      _authenticate((s) async {
+        final r = await s.login(identifier: identifier, password: password);
+        return (success: r.success, user: r.user, error: r.error);
+      });
 
   Future<void> register({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
-  }) => _authenticate(
-    () => ref
-        .read(authServiceProvider.future)
-        .then(
-          (s) => s.register(
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName,
-          ),
-        ),
-  );
+  }) => _authenticate((s) async {
+    final r = await s.register(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
-  Future<void> loginWithGoogle(String token) => _authenticate(
-    () =>
-        ref.read(authServiceProvider.future).then((s) => s.googleLogin(token)),
-  );
+  Future<void> loginWithGoogle(String token) => _authenticate((s) async {
+    final r = await s.googleLogin(token);
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
-  Future<void> loginWithFacebook(String token) => _authenticate(
-    () => ref
-        .read(authServiceProvider.future)
-        .then((s) => s.facebookLogin(token)),
-  );
+  Future<void> loginWithFacebook(String token) => _authenticate((s) async {
+    final r = await s.facebookLogin(token);
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
-  Future<void> loginWithApple(String token) => _authenticate(
-    () => ref.read(authServiceProvider.future).then((s) => s.appleLogin(token)),
-  );
+  Future<void> loginWithApple(String token) => _authenticate((s) async {
+    final r = await s.appleLogin(token);
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
   Future<void> updateUser(User user) async {
     await ref
