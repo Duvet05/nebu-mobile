@@ -397,7 +397,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     }
 
     // Multiple toys: show picker
-    if (!ctx.mounted) return;
+    if (!ctx.mounted) {
+      return;
+    }
     final selectedToy = await showDialog<String>(
       context: ctx,
       builder: (dialogCtx) => AlertDialog(
@@ -417,8 +419,12 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
       ),
     );
 
-    if (selectedToy == null) return;
-    if (ctx.mounted) Navigator.pop(ctx);
+    if (selectedToy == null) {
+      return;
+    }
+    if (ctx.mounted) {
+      Navigator.pop(ctx);
+    }
 
     try {
       await ref.read(personalityServiceProvider).assignPersonalityToToy(

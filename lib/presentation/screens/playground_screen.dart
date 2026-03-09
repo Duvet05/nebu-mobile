@@ -52,7 +52,9 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
 
   void _sendMessage() {
     final text = _messageController.text.trim();
-    if (text.isEmpty || _selectedPersonality == null) return;
+    if (text.isEmpty || _selectedPersonality == null) {
+      return;
+    }
 
     setState(() {
       _messages.add(_ChatMessage(text: text, isUser: true));
@@ -64,7 +66,9 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
 
     // Simulate local response (no backend call for playground)
     Future.delayed(const Duration(milliseconds: 800), () {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _messages.add(_ChatMessage(
           text: _generateLocalResponse(text, _selectedPersonality!),

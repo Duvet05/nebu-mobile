@@ -116,8 +116,8 @@ class SetupPrimaryButton extends StatelessWidget {
                     context.colors.primary100,
                     context.colors.primary,
                   ],
-              : null,
-          ccolor: effectiveEnabled
+              : : null,
+          color: effectiveEnabled
               ? null
               : context.theme.colorScheme.surfaceContainerHighest
               .withValues(alpha: 0.5),
@@ -147,11 +147,11 @@ class SetupPrimaryButton extends StatelessWidget {
               : Text(
                   text,
             style: context.theme.textTheme.titleMedium?.copyWith(
-                        color: effectiveEnabled
-                            ? context.colors.textOnFilled
-                            : context.theme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
+              color: effectiveEnabled
+                  ? context.colors.textOnFilled
+                  : context.theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.w600,
+            ),
                 ),
         ),
       ),

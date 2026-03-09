@@ -181,7 +181,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final service = ref.read(notificationServiceProvider);
     try {
       await service.markAllAsRead();
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         for (final n in _notifications) {
           n.isRead = true;
@@ -189,7 +191,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       });
       context.showInfoSnackBar('notifications.marked_all_read'.tr());
     } on Exception catch (e) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       context.showErrorSnackBar(e.toString());
     }
   }

@@ -67,10 +67,10 @@ class FirebasePushService {
 
   void _setupForegroundHandler() {
     FirebaseMessaging.onMessage.listen((message) {
-      _logger.d('Foreground message: ${message.messageId}');
-      _logger.d('Notification title: ${message.notification?.title}');
-      _logger.d('Notification body: ${message.notification?.body}');
-      _logger.d('Data: ${message.data}');
+      _logger..d('Foreground message: ${message.messageId}')..d(
+          'Notification title: ${message.notification?.title}')..d(
+          'Notification body: ${message.notification?.body}')..d(
+          'Data: ${message.data}');
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {

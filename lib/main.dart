@@ -31,8 +31,8 @@ void main() async {
   try {
     await ConfigLoader.initialize();
   } on Exception catch (e) {
-    _logger.w('Error loading configuration: $e');
-    _logger.w('Make sure .env exists (copy from .env.example)');
+    _logger..w('Error loading configuration: $e')..w(
+        'Make sure .env exists (copy from .env.example)');
     // En desarrollo, podemos continuar con valores por defecto
     // En producción, esto fallará si no hay dart-define
   }

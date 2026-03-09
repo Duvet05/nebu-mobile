@@ -180,17 +180,25 @@ class ApiService {
   static String? _extractBackendMessage(Object? data) {
     if (data is Map<String, dynamic>) {
       final message = data['message'];
-      if (message is String) return message;
-      if (message is List) return message.join(', ');
+      if (message is String) {
+        return message;
+      }
+      if (message is List) {
+        return message.join(', ');
+      }
       final error = data['error'];
-      if (error is String) return error;
+      if (error is String) {
+        return error;
+      }
     }
     return null;
   }
 
   static int? _extractRetryAfter(Response<dynamic>? response) {
     final header = response?.headers.value('retry-after');
-    if (header == null) return null;
+    if (header == null) {
+      return null;
+    }
     return int.tryParse(header);
   }
 

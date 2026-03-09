@@ -400,8 +400,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       if (!mounted) {
         return;
       }
-      context.showInfoSnackBar('privacy.account_deleted_success'.tr());
-      context.go(AppRoutes.welcome.path);
+      context
+        ..showInfoSnackBar('privacy.account_deleted_success'.tr())
+        ..go(AppRoutes.welcome.path);
     } on Exception catch (e) {
       if (!mounted) {
         return;

@@ -61,11 +61,15 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   Future<void> _subscribeToWifiStatus() async {
     final esp32service = await ref.read(esp32WifiConfigServiceProvider.future);
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     _statusSubscription = esp32service.statusStream.listen(
       (status) {
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         final messenger = ScaffoldMessenger.of(context);
 
@@ -103,7 +107,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
             );
 
             unawaited(Future<void>.delayed(_kNavigationDelay, () {
-              if (mounted) context.push(AppRoutes.toyNameSetup.path);
+              if (mounted) {
+                context.push(AppRoutes.toyNameSetup.path);
+              }
             }));
 
           case ESP32WifiStatus.failed:
@@ -126,7 +132,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       },
       onError: (Object error) {
         _logger.e('WiFi status stream error: $error');
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         _timeoutTimer?.cancel();
         if (_isConnecting) {
@@ -141,7 +149,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         }
       },
       onDone: () {
-        if (!mounted) return;
+        if (!mounted) {
+          return;
+        }
 
         _timeoutTimer?.cancel();
         if (_isConnecting) {
@@ -212,7 +222,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   Future<void> _showWifiNetworksSheet() async {
     final esp32Service = await ref.read(esp32WifiConfigServiceProvider.future);
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     final wifiService = WiFiService(
       logger: logger.Logger(),

@@ -7,10 +7,14 @@ class WiFiQrParser {
   /// Returns `(ssid, password)` if the QR data is a valid WiFi QR code,
   /// or `null` if the format is not recognized.
   static ({String ssid, String password})? parse(String qrData) {
-    if (!qrData.startsWith('WIFI:')) return null;
+    if (!qrData.startsWith('WIFI:')) {
+      return null;
+    }
 
     final ssidMatch = RegExp('S:(.*?);').firstMatch(qrData);
-    if (ssidMatch == null) return null;
+    if (ssidMatch == null) {
+      return null;
+    }
 
     final ssid = ssidMatch.group(1) ?? '';
     final passwordMatch = RegExp('P:(.*?);').firstMatch(qrData);

@@ -53,8 +53,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       await ref.read(authProvider.notifier).updateUser(updatedUser);
 
       if (mounted) {
-        context.pop();
-        context.showInfoSnackBar('profile.update_success'.tr());
+        context
+          ..pop()
+          ..showInfoSnackBar('profile.update_success'.tr());
       }
     } on Exception catch (e) {
       if (mounted) {

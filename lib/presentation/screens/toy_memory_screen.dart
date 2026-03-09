@@ -266,9 +266,15 @@ class _MemoryCard extends ConsumerWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final diff = now.difference(date);
-    if (diff.inMinutes < 60) return 'memory.minutes_ago'.tr(args: ['${diff.inMinutes}']);
-    if (diff.inHours < 24) return 'memory.hours_ago'.tr(args: ['${diff.inHours}']);
-    if (diff.inDays < 7) return 'memory.days_ago'.tr(args: ['${diff.inDays}']);
+    if (diff.inMinutes < 60) {
+      return 'memory.minutes_ago'.tr(args: ['${diff.inMinutes}']);
+    }
+    if (diff.inHours < 24) {
+      return 'memory.hours_ago'.tr(args: ['${diff.inHours}']);
+    }
+    if (diff.inDays < 7) {
+      return 'memory.days_ago'.tr(args: ['${diff.inDays}']);
+    }
     return '${date.day}/${date.month}/${date.year}';
   }
 }
@@ -421,7 +427,9 @@ class _InsightCard extends StatelessWidget {
         .toList()
       ..sort((a, b) => (b.value as num).compareTo(a.value as num));
 
-    if (entries.isEmpty) return const SizedBox.shrink();
+    if (entries.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

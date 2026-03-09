@@ -93,8 +93,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       await ref.read(toyProvider.notifier).deleteToy(_currentToy.id);
 
       if (mounted) {
-        context.showSuccessSnackBar('toy_settings.remove_success'.tr());
-        context.pop();
+        context
+          ..showSuccessSnackBar('toy_settings.remove_success'.tr())
+          ..pop();
       }
     } on Exception {
       if (mounted) {

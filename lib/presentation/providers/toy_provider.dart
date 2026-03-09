@@ -247,7 +247,6 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         existing != null ? json.decode(existing) as List<dynamic> : [];
     toyList.add(toy.toJson());
     await prefs.setString(StorageKeys.localToys, json.encode(toyList));
-
     ref.read(loggerProvider).d('Local toy saved: ${toy.name}');
 
     final currentState = state.value ?? [];
@@ -260,7 +259,9 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       auth_provider.sharedPreferencesProvider.future,
     );
     final stored = prefs.getString(StorageKeys.localToys);
-    if (stored == null) return [];
+    if (stored == null) {
+      return [];
+    }
 
     final List<dynamic> toyList = json.decode(stored) as List<dynamic>;
     final toys = toyList
@@ -277,14 +278,15 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       auth_provider.sharedPreferencesProvider.future,
     );
     final stored = prefs.getString(StorageKeys.localToys);
-    if (stored == null) return;
+    if (stored == null) {
+      return;
+    }
 
     final List<dynamic> toyList = json.decode(stored) as List<dynamic>;
     toyList.removeWhere(
       (e) => (e as Map<String, dynamic>)['id'] == id,
     );
     await prefs.setString(StorageKeys.localToys, json.encode(toyList));
-
     ref.read(loggerProvider).d('Local toy removed: $id');
 
     final currentState = state.value ?? [];
