@@ -106,11 +106,13 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
               ),
             );
 
-            unawaited(Future<void>.delayed(_kNavigationDelay, () {
-              if (mounted) {
-                context.push(AppRoutes.toyNameSetup.path);
-              }
-            }));
+            unawaited(
+              Future<void>.delayed(_kNavigationDelay, () {
+                if (mounted) {
+                  context.push(AppRoutes.toyNameSetup.path);
+                }
+              }),
+            );
 
           case ESP32WifiStatus.failed:
             _timeoutTimer?.cancel();
@@ -179,9 +181,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           _ssidController.text = parsed.ssid;
           _passwordController.text = parsed.password;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('qr_scanner.wifi_loaded'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('qr_scanner.wifi_loaded'.tr())));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('qr_scanner.invalid_wifi_qr'.tr())),
@@ -213,9 +215,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('qr_scanner.location_permission_required'.tr()),
-        ),
+        SnackBar(content: Text('qr_scanner.location_permission_required'.tr())),
       );
     }
   }
@@ -235,8 +235,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) =>
-          WifiNetworksSheet(
+      builder: (sheetContext) => WifiNetworksSheet(
         wifiService: wifiService,
         onNetworkSelected: (ssid) {
           setState(() => _ssidController.text = ssid);
@@ -390,7 +389,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           );
 
           if ((shouldPop ?? false) && context.mounted) {
-            Navigator.of(context).pop();
+            context.pop();
           }
         }
       },
@@ -453,10 +452,14 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                           onPressed: _connectToWifi,
                         ),
 
-                        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+                        SizedBox(
+                          height: context.spacing.sectionTitleBottomMargin,
+                        ),
 
                         GestureDetector(
-                          onTap: _isConnecting ? _cancelConnection : _skipWifiSetup,
+                          onTap: _isConnecting
+                              ? _cancelConnection
+                              : _skipWifiSetup,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Text(
@@ -494,7 +497,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         Icons.info_outline,
         size: 14,
         color: context.theme.colorScheme.onSurfaceVariant.withValues(
-            alpha: 0.7),
+          alpha: 0.7,
+        ),
       ),
       SizedBox(width: context.spacing.gapSm),
       Expanded(
@@ -502,7 +506,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           'setup.wifi.hotspot_hint'.tr(),
           style: context.theme.textTheme.bodySmall?.copyWith(
             color: context.theme.colorScheme.onSurfaceVariant.withValues(
-                alpha: 0.7),
+              alpha: 0.7,
+            ),
           ),
         ),
       ),
@@ -540,9 +545,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (value == null || value.trim().isEmpty) {
         return 'setup.wifi.validation_ssid_empty'.tr();
       }
-      if (value
-          .trim()
-          .length > ValidationRules.wifiSsidMaxBytes) {
+      if (value.trim().length > ValidationRules.wifiSsidMaxBytes) {
         return 'setup.wifi.validation_ssid_too_long'.tr();
       }
       if (value.contains('\n') || value.contains('\r')) {

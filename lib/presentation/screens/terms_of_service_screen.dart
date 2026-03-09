@@ -60,10 +60,10 @@ class TermsOfServiceScreen extends ConsumerWidget {
               'terms.use_title'.tr(),
               'terms.use_content'.tr(),
             ),
-            _buildBulletPoint(theme, 'terms.use_1'.tr()),
-            _buildBulletPoint(theme, 'terms.use_2'.tr()),
-            _buildBulletPoint(theme, 'terms.use_3'.tr()),
-            _buildBulletPoint(theme, 'terms.use_4'.tr()),
+            _buildBulletPoint(context, theme, 'terms.use_1'.tr()),
+            _buildBulletPoint(context, theme, 'terms.use_2'.tr()),
+            _buildBulletPoint(context, theme, 'terms.use_3'.tr()),
+            _buildBulletPoint(context, theme, 'terms.use_4'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
             // Account Responsibilities
@@ -81,11 +81,11 @@ class TermsOfServiceScreen extends ConsumerWidget {
               'terms.prohibited_title'.tr(),
               'terms.prohibited_content'.tr(),
             ),
-            _buildBulletPoint(theme, 'terms.prohibited_1'.tr()),
-            _buildBulletPoint(theme, 'terms.prohibited_2'.tr()),
-            _buildBulletPoint(theme, 'terms.prohibited_3'.tr()),
-            _buildBulletPoint(theme, 'terms.prohibited_4'.tr()),
-            _buildBulletPoint(theme, 'terms.prohibited_5'.tr()),
+            _buildBulletPoint(context, theme, 'terms.prohibited_1'.tr()),
+            _buildBulletPoint(context, theme, 'terms.prohibited_2'.tr()),
+            _buildBulletPoint(context, theme, 'terms.prohibited_3'.tr()),
+            _buildBulletPoint(context, theme, 'terms.prohibited_4'.tr()),
+            _buildBulletPoint(context, theme, 'terms.prohibited_5'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
             // Intellectual Property
@@ -252,8 +252,8 @@ class TermsOfServiceScreen extends ConsumerWidget {
     ),
   );
 
-  Widget _buildBulletPoint(ThemeData theme, String text) => Padding(
-    padding: const EdgeInsets.only(left: 16, bottom: 8),
+  Widget _buildBulletPoint(BuildContext context, ThemeData theme, String text) => Padding(
+    padding: EdgeInsets.only(left: context.spacing.gapXl, bottom: context.spacing.gapMd),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

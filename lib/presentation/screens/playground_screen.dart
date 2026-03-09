@@ -301,7 +301,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
           children: [
             if (!isUser && message.personality != null)
               Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: EdgeInsets.only(bottom: context.spacing.gapXs),
                 child: Text(
                   message.personality!,
                   style: theme.textTheme.labelSmall?.copyWith(
@@ -343,7 +343,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
             children: List.generate(
               3,
               (i) => Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
+                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXxs),
                 child: _BouncingDot(delay: i * 200),
               ),
             ),

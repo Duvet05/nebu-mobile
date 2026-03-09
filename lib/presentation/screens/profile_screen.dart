@@ -101,7 +101,7 @@ class ProfileScreen extends ConsumerWidget {
                               color: theme.colorScheme.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: context.spacing.gapXs),
                           Text(
                             'profile.view_profile'.tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(
@@ -177,7 +177,7 @@ class ProfileScreen extends ConsumerWidget {
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: context.spacing.gapMd),
                         Icon(Icons.chevron_right, color: context.colors.grey400),
                       ],
                     ),

@@ -191,9 +191,9 @@ class _KnowledgeCard extends StatelessWidget {
                   ),
                 if (entry.relevance != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.spacing.gapMd,
+                      vertical: context.spacing.gapXxs,
                     ),
                     decoration: BoxDecoration(
                       color: context.colors.primary.withValues(alpha: 0.1),

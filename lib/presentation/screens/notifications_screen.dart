@@ -92,15 +92,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           // Filter chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl, vertical: context.spacing.gapLg),
             child: Row(
               children: [
                 _buildFilterChip('all', 'notifications.all'.tr(), theme),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.gapMd),
                 _buildFilterChip('toys', 'notifications.toys'.tr(), theme),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.gapMd),
                 _buildFilterChip('orders', 'notifications.orders'.tr(), theme),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.gapMd),
                 _buildFilterChip('system', 'notifications.system'.tr(), theme),
               ],
             ),
@@ -115,7 +115,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     : RefreshIndicator(
                         onRefresh: _loadNotifications,
                         child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl),
                           itemCount: filteredNotifications.length,
                           itemBuilder: (context, index) {
                             final notification = filteredNotifications[index];
@@ -242,7 +242,7 @@ class _NotificationCard extends StatelessWidget {
       onDismissed: (_) => onDismiss(),
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
+        padding: EdgeInsets.only(right: context.spacing.gapXxl),
         decoration: BoxDecoration(
           color: context.colors.error,
           borderRadius: context.radius.tile,
@@ -288,7 +288,7 @@ class _NotificationCard extends StatelessWidget {
                     size: 24,
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: context.spacing.gapXl),
 
                 // Content
                 Expanded(
@@ -318,7 +318,7 @@ class _NotificationCard extends StatelessWidget {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      SizedBox(height: context.spacing.gapXs),
                       Text(
                         notification.message,
                         style: theme.textTheme.bodyMedium?.copyWith(

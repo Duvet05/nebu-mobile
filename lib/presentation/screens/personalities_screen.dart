@@ -209,10 +209,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             ),
                             if (personality.category != null)
                               Container(
-                                margin: const EdgeInsets.only(top: 4),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
+                                margin: EdgeInsets.only(top: context.spacing.gapXs),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: context.spacing.gapMd,
+                                  vertical: context.spacing.gapXxs,
                                 ),
                                 decoration: BoxDecoration(
                                   color: catColor.withValues(alpha: 0.15),
@@ -568,7 +568,7 @@ class _PersonalityCard extends StatelessWidget {
             SizedBox(height: context.spacing.gapXs),
             if (personality.category != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapXxs),
                 decoration: BoxDecoration(
                   color: catColor.withValues(alpha: 0.1),
                   borderRadius: context.radius.tile,

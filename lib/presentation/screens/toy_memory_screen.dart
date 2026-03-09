@@ -153,9 +153,9 @@ class _MemoryCard extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.spacing.gapMd,
+                          vertical: context.spacing.gapXxs,
                         ),
                         decoration: BoxDecoration(
                           color: emotionColor.withValues(alpha: 0.12),
