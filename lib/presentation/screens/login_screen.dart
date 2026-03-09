@@ -2,10 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/google_auth_helper.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
@@ -36,46 +37,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleEmailLogin() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
+
     await ref
         .read(authProvider.notifier)
         .login(
           identifier: _identifierController.text.trim(),
           password: _passwordController.text,
         );
-  }
-
-  Future<void> _handleGoogleSignIn() async {
-    try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
-      final idToken = googleUser.authentication.idToken;
-
-      if (idToken == null) {
-        throw Exception('auth.google_no_id_token'.tr());
-      }
-      await ref.read(authProvider.notifier).loginWithGoogle(idToken);
-    } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) {
-        return;
-      }
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.description ?? 'auth.google_signin_failed_detail'.tr(),
-            ),
-          ),
-        );
-      }
-    } on Exception {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('auth.google_signin_failed_detail'.tr())),
-        );
-      }
-    }
   }
 
   @override
@@ -159,7 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           child: Text(
                             'auth.forgot_password'.tr(),
-                            style: TextStyle(
+                            style: textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: context.theme.colorScheme.primary,
                             ),
@@ -180,14 +149,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onPressed: _handleEmailLogin,
                       ),
                       SizedBox(height: context.spacing.paragraphBottomMargin),
-                      _SignUpLink(isLoading: authState.isLoading),
+                      AuthSwitchLink(
+                        prompt: 'auth.no_account'.tr(),
+                        action: 'auth.sign_up'.tr(),
+                        enabled: !authState.isLoading,
+                        onTap: () => context.push(AppRoutes.signUp.path),
+                      ),
                       SizedBox(height: context.spacing.panelPadding),
                       const AuthOrDivider(),
                       SizedBox(height: context.spacing.panelPadding),
                       AuthGoogleButton(
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
-                        onPressed: _handleGoogleSignIn,
+                        onPressed: () => handleGoogleAuth(context, ref),
                       ),
                       SizedBox(height: context.spacing.panelPadding),
                     ],
@@ -200,34 +174,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ),
     );
   }
-}
-
-class _SignUpLink extends StatelessWidget {
-  const _SignUpLink({required this.isLoading});
-  final bool isLoading;
-
-  @override
-  Widget build(BuildContext context) => Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-        '${'auth.no_account'.tr()} ',
-        style: TextStyle(color: context.colors.grey400),
-      ),
-      GestureDetector(
-        onTap: isLoading ? null : () => context.push(AppRoutes.signUp.path),
-        child: Text(
-          'auth.sign_up'.tr(),
-          style: TextStyle(
-            color: isLoading
-                ? context.colors.grey500
-                : context.theme.colorScheme.primary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    ],
-  );
 }
 
 void _showForgotPasswordDialog(
@@ -269,9 +215,7 @@ void _showForgotPasswordDialog(
                 ? null
                 : () async {
                     final email = emailController.text.trim();
-                    if (email.isEmpty) {
-                      return;
-                    }
+                    if (email.isEmpty) return;
 
                     setDialogState(() => isLoading = true);
 
@@ -280,9 +224,7 @@ void _showForgotPasswordDialog(
                           .read(authProvider.notifier)
                           .requestPasswordReset(email);
 
-                      if (!ctx.mounted) {
-                        return;
-                      }
+                      if (!ctx.mounted) return;
                       Navigator.pop(ctx);
 
                       if (success) {
@@ -393,9 +335,7 @@ void _showResetPasswordDialog(
                     final password = passwordController.text;
                     final confirm = confirmController.text;
 
-                    if (token.isEmpty || password.isEmpty) {
-                      return;
-                    }
+                    if (token.isEmpty || password.isEmpty) return;
 
                     final passwordError =
                         ValidationRules.validatePassword(password);
@@ -423,9 +363,7 @@ void _showResetPasswordDialog(
                           .read(authProvider.notifier)
                           .resetPassword(token: token, newPassword: password);
 
-                      if (!ctx.mounted) {
-                        return;
-                      }
+                      if (!ctx.mounted) return;
 
                       if (success) {
                         Navigator.pop(ctx);

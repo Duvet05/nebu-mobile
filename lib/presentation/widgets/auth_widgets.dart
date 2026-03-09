@@ -256,6 +256,57 @@ class AuthOrDivider extends StatelessWidget {
   }
 }
 
+/// Link to switch between login/signup screens.
+/// Uses TextButton for proper touch target (not GestureDetector).
+class AuthSwitchLink extends StatelessWidget {
+  const AuthSwitchLink({
+    required this.prompt,
+    required this.action,
+    required this.onTap,
+    super.key,
+    this.enabled = true,
+  });
+  final String prompt;
+  final String action;
+  final VoidCallback onTap;
+  final bool enabled;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = context.theme.textTheme;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '$prompt ',
+          style: textTheme.bodyMedium?.copyWith(
+            color: context.colors.grey400,
+          ),
+        ),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: enabled ? onTap : null,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: context.spacing.labelBottomMargin,
+            ),
+            child: Text(
+              action,
+              style: textTheme.bodyMedium?.copyWith(
+                color: enabled
+                    ? context.theme.colorScheme.primary
+                    : context.colors.grey500,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class AuthErrorBanner extends StatelessWidget {
   const AuthErrorBanner({required this.message, super.key});
   final String message;

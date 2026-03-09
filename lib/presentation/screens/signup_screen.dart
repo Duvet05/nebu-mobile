@@ -2,11 +2,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/google_auth_helper.dart';
 import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
@@ -36,9 +36,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Future<void> _handleEmailSignUp() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+    if (!_formKey.currentState!.validate()) return;
 
     await ref
         .read(authProvider.notifier)
@@ -46,38 +44,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
-  }
-
-  Future<void> _handleGoogleSignUp() async {
-    try {
-      final googleUser = await GoogleSignIn.instance.authenticate();
-      final idToken = googleUser.authentication.idToken;
-
-      if (idToken == null) {
-        throw Exception('auth.google_no_id_token'.tr());
-      }
-
-      await ref.read(authProvider.notifier).loginWithGoogle(idToken);
-    } on GoogleSignInException catch (e) {
-      if (e.code == GoogleSignInExceptionCode.canceled) {
-        return;
-      }
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.description ?? 'auth.google_signup_failed_detail'.tr(),
-            ),
-          ),
-        );
-      }
-    } on Exception {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('auth.google_signup_failed_detail'.tr())),
-        );
-      }
-    }
   }
 
   @override
@@ -225,32 +191,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.paragraphBottomMargin),
 
                       // Sign in link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "${'auth.already_have_account'.tr()} ",
-                            style: textTheme.bodyMedium?.copyWith(
-                              color: context.colors.grey400,
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                context.go(AppRoutes.login.path);
-                              }
-                            },
-                            child: Text(
-                              'auth.sign_in'.tr(),
-                              style: textTheme.bodyMedium?.copyWith(
-                                color: context.colors.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
+                      AuthSwitchLink(
+                        prompt: 'auth.already_have_account'.tr(),
+                        action: 'auth.sign_in'.tr(),
+                        enabled: !authState.isLoading,
+                        onTap: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppRoutes.login.path);
+                          }
+                        },
                       ),
 
                       SizedBox(height: context.spacing.panelPadding),
@@ -264,7 +215,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       AuthGoogleButton(
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
-                        onPressed: _handleGoogleSignUp,
+                        onPressed: () => handleGoogleAuth(context, ref),
                       ),
 
                       SizedBox(height: context.spacing.panelPadding),

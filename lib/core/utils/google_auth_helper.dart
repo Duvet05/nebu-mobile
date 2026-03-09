@@ -1,0 +1,37 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import '../../presentation/providers/auth_provider.dart';
+
+/// Shared Google sign-in handler for login and signup screens.
+Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
+  try {
+    final googleUser = await GoogleSignIn.instance.authenticate();
+    final idToken = googleUser.authentication.idToken;
+
+    if (idToken == null) {
+      throw Exception('auth.google_no_id_token'.tr());
+    }
+
+    await ref.read(authProvider.notifier).loginWithGoogle(idToken);
+  } on GoogleSignInException catch (e) {
+    if (e.code == GoogleSignInExceptionCode.canceled) return;
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.description ?? 'auth.google_signin_failed_detail'.tr(),
+          ),
+        ),
+      );
+    }
+  } on Exception {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('auth.google_signin_failed_detail'.tr())),
+      );
+    }
+  }
+}
