@@ -149,28 +149,23 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     }
   }
 
-  /// Get a toy by ID
+  /// Get a toy by ID — does NOT set error state on failure
+  /// (a single toy fetch failure should not corrupt the entire list)
   Future<Toy> getToyById(String id) async {
-    try {
-      final toy = await _toyService.getToyById(id);
-      ref.read(loggerProvider).d('Loaded toy: ${toy.name}');
+    final toy = await _toyService.getToyById(id);
+    ref.read(loggerProvider).d('Loaded toy: ${toy.name}');
 
-      final currentState = await _currentToys();
-      final index = currentState.indexWhere((t) => t.id == toy.id);
-      if (index != -1) {
-        final newList = [...currentState];
-        newList[index] = toy;
-        state = AsyncValue.data(newList);
-      } else {
-        state = AsyncValue.data([...currentState, toy]);
-      }
-
-      return toy;
-    } catch (e, st) {
-      ref.read(loggerProvider).e('Error loading toy: $e');
-      state = AsyncValue.error(e, st);
-      rethrow;
+    final currentState = await _currentToys();
+    final index = currentState.indexWhere((t) => t.id == toy.id);
+    if (index != -1) {
+      final newList = [...currentState];
+      newList[index] = toy;
+      state = AsyncValue.data(newList);
+    } else {
+      state = AsyncValue.data([...currentState, toy]);
     }
+
+    return toy;
   }
 
   /// Update toy information

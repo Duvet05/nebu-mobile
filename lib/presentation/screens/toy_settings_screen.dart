@@ -41,6 +41,8 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
   }
 
   Future<void> _refreshToyStatus() async {
+    // Local toys don't exist on backend — skip API refresh
+    if (_currentToy.id.startsWith('local_')) return;
     try {
       final updated =
           await ref.read(toyProvider.notifier).getToyById(_currentToy.id);

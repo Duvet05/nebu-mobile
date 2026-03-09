@@ -396,3 +396,4 @@ class _DeviceBatteryCard extends ConsumerWidget {
   }
 }
 
+
