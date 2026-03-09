@@ -42,7 +42,6 @@ dependencies:
   wifi_scan: ^0.4.1
 
   # QR
-  mobile_scanner: ^7.1.2
   image_picker: ^1.0.7
 
   # LiveKit (WebRTC)
@@ -64,7 +63,7 @@ dependencies:
 
   # UI Helpers
   package_info_plus: ^9.0.0
-  easy_logger: ^0.0.2
+  qr_code_dart_scan: ^0.11.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

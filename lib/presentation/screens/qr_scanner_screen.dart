@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../providers/qr_scanner_provider.dart';
@@ -17,36 +17,17 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final state = ref.watch(qrScannerProvider);
     final notifier = ref.read(qrScannerProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('qr_scanner.title'.tr()),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.flip_camera_ios),
-            onPressed: state.scannerController.switchCamera,
-          ),
-          IconButton(
-            icon: Icon(
-              state.scannerController.torchEnabled
-                  ? Icons.flash_on
-                  : Icons.flash_off,
-            ),
-            onPressed: state.scannerController.toggleTorch,
-          ),
-        ],
       ),
       body: Stack(
         children: [
-          MobileScanner(
-            controller: state.scannerController,
-            onDetect: (capture) {
-              final List<Barcode> barcodes = capture.barcodes;
-              for (final barcode in barcodes) {
-                notifier.handleQRCode(barcode.rawValue, context);
-              }
+          QRCodeDartScanView(
+            onCapture: (result) {
+              notifier.handleQRCode(result.text, context);
             },
           ),
           _buildScannerOverlay(),

@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../core/theme/app_colors.dart';
 import 'api_provider.dart';
@@ -11,34 +10,25 @@ class QRScannerState {
   QRScannerState({
     required this.scannedCode,
     required this.isProcessing,
-    required this.scannerController,
   });
   final String scannedCode;
   final bool isProcessing;
-  final MobileScannerController scannerController;
 
   QRScannerState copyWith({
     String? scannedCode,
     bool? isProcessing,
-    MobileScannerController? scannerController,
   }) => QRScannerState(
     scannedCode: scannedCode ?? this.scannedCode,
     isProcessing: isProcessing ?? this.isProcessing,
-    scannerController: scannerController ?? this.scannerController,
   );
 }
 
 class QRScannerNotifier extends Notifier<QRScannerState> {
   @override
   QRScannerState build() {
-    ref.onDispose(() {
-      state.scannerController.dispose();
-    });
-
     return QRScannerState(
       scannedCode: '',
       isProcessing: false,
-      scannerController: MobileScannerController(),
     );
   }
 
