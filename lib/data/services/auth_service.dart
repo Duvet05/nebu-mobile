@@ -65,8 +65,6 @@ class AuthService {
   Future<AuthResponse> register({
     required String email,
     required String password,
-    required String firstName,
-    required String lastName,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
@@ -74,8 +72,8 @@ class AuthService {
         data: {
           'email': email,
           'password': password,
-          'firstName': firstName,
-          'lastName': lastName,
+          'firstName': 'Usuario',
+          'lastName': 'Nebu',
         },
       );
 

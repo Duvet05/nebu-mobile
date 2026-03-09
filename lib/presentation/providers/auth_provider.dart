@@ -74,14 +74,10 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> register({
     required String email,
     required String password,
-    required String firstName,
-    required String lastName,
   }) => _authenticate((s) async {
     final r = await s.register(
       email: email,
       password: password,
-      firstName: firstName,
-      lastName: lastName,
     );
     return (success: r.success, user: r.user, error: r.error);
   });

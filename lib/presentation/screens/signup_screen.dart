@@ -20,8 +20,6 @@ class SignUpScreen extends ConsumerStatefulWidget {
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -31,8 +29,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -49,8 +45,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         .register(
           email: _emailController.text.trim(),
           password: _passwordController.text,
-          firstName: _firstNameController.text.trim(),
-          lastName: _lastNameController.text.trim(),
         );
   }
 
@@ -147,38 +141,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         SizedBox(height: context.spacing.titleBottomMargin),
                       ],
 
-                      // First name
-                      AuthTextField(
-                        controller: _firstNameController,
-                        label: 'auth.first_name'.tr(),
-                        prefixIcon: Icons.person_outline_rounded,
-                        textCapitalization: TextCapitalization.words,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'auth.required'.tr();
-                          }
-                          return null;
-                        },
-                      ),
-
-                      SizedBox(height: context.spacing.titleBottomMargin),
-
-                      // Last name
-                      AuthTextField(
-                        controller: _lastNameController,
-                        label: 'auth.last_name'.tr(),
-                        prefixIcon: Icons.person_outline_rounded,
-                        textCapitalization: TextCapitalization.words,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'auth.required'.tr();
-                          }
-                          return null;
-                        },
-                      ),
-
-                      SizedBox(height: context.spacing.titleBottomMargin),
-
                       // Email field
                       AuthTextField(
                         controller: _emailController,
@@ -260,20 +222,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         onPressed: _handleEmailSignUp,
                       ),
 
-                      SizedBox(height: context.spacing.panelPadding),
-
-                      // Divider
-                      const AuthOrDivider(),
-
-                      SizedBox(height: context.spacing.panelPadding),
-
-                      // Google button
-                      AuthGoogleButton(
-                        text: 'auth.continue_with_google'.tr(),
-                        isLoading: authState.isLoading,
-                        onPressed: _handleGoogleSignUp,
-                      ),
-
                       SizedBox(height: context.spacing.paragraphBottomMargin),
 
                       // Sign in link
@@ -303,6 +251,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             ),
                           ),
                         ],
+                      ),
+
+                      SizedBox(height: context.spacing.panelPadding),
+
+                      // Divider
+                      const AuthOrDivider(),
+
+                      SizedBox(height: context.spacing.panelPadding),
+
+                      // Google button
+                      AuthGoogleButton(
+                        text: 'auth.continue_with_google'.tr(),
+                        isLoading: authState.isLoading,
+                        onPressed: _handleGoogleSignUp,
                       ),
 
                       SizedBox(height: context.spacing.panelPadding),
