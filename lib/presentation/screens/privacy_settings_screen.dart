@@ -373,7 +373,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
               SizedBox(height: context.spacing.sectionTitleBottomMargin),
               Text(
                 'privacy.delete_account_consequences'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: context.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: context.spacing.titleBottomMarginSm),
               Text('• ${'privacy.consequence_1'.tr()}'),

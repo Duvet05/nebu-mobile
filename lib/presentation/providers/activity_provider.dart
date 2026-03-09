@@ -155,7 +155,7 @@ class ActivityNotifier extends Notifier<ActivityState> {
   }
 
   /// Map exceptions to user-friendly i18n keys
-  String _mapErrorMessage(Exception e) => 'activity_log.error_loading';
+  String _mapErrorMessage(Exception _) => 'activity_log.error_loading';
 
   /// Refrescar actividades (pull to refresh)
   Future<void> refresh({

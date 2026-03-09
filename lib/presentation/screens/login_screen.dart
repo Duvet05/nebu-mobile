@@ -134,9 +134,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onSuffixTap: () => setState(
                           () => _obscurePassword = !_obscurePassword,
                         ),
-                        validator: (v) => (v == null || v.length < 6)
-                            ? 'auth.password_short'.tr()
-                            : null,
+                        validator: (v) =>
+                            (v == null ||
+                                    v.length < ValidationRules.passwordMinLength)
+                                ? 'auth.password_short'.tr()
+                                : null,
                       ),
                       Align(
                         alignment: Alignment.centerRight,

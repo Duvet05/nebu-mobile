@@ -162,15 +162,11 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text('common.cancel'.tr()),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () {
               Navigator.pop(context);
               context.go(AppRoutes.home.path);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: context.colors.primary,
-              foregroundColor: context.colors.textOnFilled,
-            ),
             child: Text('setup.connection.skip_setup'.tr()),
           ),
         ],
