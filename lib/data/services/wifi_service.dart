@@ -305,18 +305,18 @@ class WiFiService {
   /// Calcular fuerza de señal basada en RSSI
   String _getSignalStrength(int rssi) {
     if (rssi >= -30) {
-      return 'Excelente';
+      return 'excellent';
     }
     if (rssi >= -50) {
-      return 'Buena';
+      return 'good';
     }
     if (rssi >= -70) {
-      return 'Regular';
+      return 'fair';
     }
     if (rssi >= -80) {
-      return 'Débil';
+      return 'weak';
     }
-    return 'Muy débil';
+    return 'very_weak';
   }
 
   /// Stream de redes encontradas

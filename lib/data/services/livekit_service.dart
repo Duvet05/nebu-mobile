@@ -165,7 +165,11 @@ class LiveKitService {
         '/livekit/token',
         data: {'participantName': participantName, 'roomName': roomName},
       );
-      return response['token'] as String;
+      final token = response['token'];
+      if (token is! String) {
+        throw Exception('Invalid token response from server');
+      }
+      return token;
     } on Exception catch (e) {
       _logger.w('Failed to fetch token from server, using dev token: $e');
       return _createDevToken(participantName, roomName);

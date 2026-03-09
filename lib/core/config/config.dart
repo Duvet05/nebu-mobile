@@ -10,7 +10,7 @@ abstract final class Config {
   // ============================================
   // Environment
   // ============================================
-  static String get environment => 'production';
+  static String get environment => kDebugMode ? 'development' : 'production';
   static bool get isDevelopment => kDebugMode;
   static bool get isProduction => !kDebugMode;
   static bool get isStaging => false;

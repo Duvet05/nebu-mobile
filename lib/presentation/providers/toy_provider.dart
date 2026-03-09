@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/storage_keys.dart';
 import '../../data/models/toy.dart';
@@ -251,7 +252,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         .read(loggerProvider)
         .d('Local toy saved: ${toy.name}');
 
-    final currentState = state.value ?? [];
+    final currentState = await _currentToys();
     state = AsyncValue.data([...currentState, toy]);
   }
 
@@ -293,9 +294,17 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         .read(loggerProvider)
         .d('Local toy removed: $id');
 
-    final currentState = state.value ?? [];
+    final currentState = await _currentToys();
     state = AsyncValue.data(
       currentState.where((toy) => toy.id != id).toList(),
     );
   }
 }
+
+/// Whether any local toys exist in SharedPreferences.
+/// Used by the router to skip welcome screen if user has already set up a toy.
+final hasLocalToysProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final toysJson = prefs.getString(StorageKeys.localToys);
+  return toysJson != null && toysJson != '[]' && toysJson.isNotEmpty;
+});

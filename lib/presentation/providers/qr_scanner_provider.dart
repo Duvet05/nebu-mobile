@@ -125,7 +125,9 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pop();
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
               },
               child: Text('qr_scanner.done'.tr()),
             ),
