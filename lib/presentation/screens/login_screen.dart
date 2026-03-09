@@ -276,8 +276,7 @@ void _showForgotPasswordDialog(
                       if (success) {
                         ScaffoldMessenger.of(ctx).showSnackBar(
                           SnackBar(
-                            content:
-                                Text('auth.forgot_password_success'.tr()),
+                            content: Text('auth.forgot_password_success'.tr()),
                           ),
                         );
                         _showResetPasswordDialog(ctx, ref, email);
@@ -408,10 +407,7 @@ void _showResetPasswordDialog(
                     try {
                       final success = await ref
                           .read(authProvider.notifier)
-                          .resetPassword(
-                            token: token,
-                            newPassword: password,
-                          );
+                          .resetPassword(token: token, newPassword: password);
 
                       if (!ctx.mounted) {
                         return;
@@ -421,8 +417,7 @@ void _showResetPasswordDialog(
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(ctx).showSnackBar(
                           SnackBar(
-                            content:
-                                Text('auth.reset_password_success'.tr()),
+                            content: Text('auth.reset_password_success'.tr()),
                           ),
                         );
                       } else {
