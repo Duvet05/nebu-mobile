@@ -35,19 +35,18 @@ class ToyService {
       '/toys',
       data: {
         'name': name,
-        if (deviceId != null) 'deviceId': deviceId,
-        if (macAddress != null) 'macAddress': macAddress,
-        if (model != null) 'model': model,
-        if (manufacturer != null) 'manufacturer': manufacturer,
+        ?'deviceId': deviceId,
+        ?'macAddress': macAddress,
+        ?'model': model,
+        ?'manufacturer': manufacturer,
         if (status != null) 'status': status.name,
-        if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
-        if (capabilities != null) 'capabilities': capabilities,
-        if (settings != null) 'settings': settings,
-        if (notes != null) 'notes': notes,
-        if (prompt != null) 'prompt': prompt,
-        if (personalityProfile != null)
-          'personalityProfile': personalityProfile,
-        if (greeting != null) 'greeting': greeting,
+        ?'firmwareVersion': firmwareVersion,
+        ?'capabilities': capabilities,
+        ?'settings': settings,
+        ?'notes': notes,
+        ?'prompt': prompt,
+        ?'personalityProfile': personalityProfile,
+        ?'greeting': greeting,
       },
     );
     _logger.d('Toy created successfully: ${response['id']}');
@@ -102,7 +101,7 @@ class ToyService {
       data: {
         'macAddress': macAddress,
         'userId': userId,
-        if (toyName != null) 'toyName': toyName,
+        ?'toyName': toyName,
       },
     );
     _logger.d('Toy assigned successfully');
@@ -121,8 +120,8 @@ class ToyService {
       '/toys/connection/$deviceId',
       data: {
         'status': status.name,
-        if (batteryLevel != null) 'batteryLevel': batteryLevel,
-        if (signalStrength != null) 'signalStrength': signalStrength,
+        ?'batteryLevel': batteryLevel,
+        ?'signalStrength': signalStrength,
       },
     );
     _logger.d('Toy status updated successfully');
@@ -156,18 +155,17 @@ class ToyService {
     final response = await _apiService.patch<Map<String, dynamic>>(
       '/toys/$id',
       data: {
-        if (name != null) 'name': name,
-        if (model != null) 'model': model,
-        if (manufacturer != null) 'manufacturer': manufacturer,
+        ?'name': name,
+        ?'model': model,
+        ?'manufacturer': manufacturer,
         if (status != null) 'status': status.name,
-        if (firmwareVersion != null) 'firmwareVersion': firmwareVersion,
-        if (capabilities != null) 'capabilities': capabilities,
-        if (settings != null) 'settings': settings,
-        if (notes != null) 'notes': notes,
-        if (prompt != null) 'prompt': prompt,
-        if (personalityProfile != null)
-          'personalityProfile': personalityProfile,
-        if (greeting != null) 'greeting': greeting,
+        ?'firmwareVersion': firmwareVersion,
+        ?'capabilities': capabilities,
+        ?'settings': settings,
+        ?'notes': notes,
+        ?'prompt': prompt,
+        ?'personalityProfile': personalityProfile,
+        ?'greeting': greeting,
       },
     );
     _logger.d('Toy updated successfully');

@@ -25,12 +25,12 @@ class ActivityService {
 
     final queryParameters = <String, dynamic>{
       'userId': userId,
-      if (toyId != null) 'toyId': toyId,
+      ?'toyId': toyId,
       if (type != null) 'type': type.name,
       if (startDate != null) 'startDate': startDate.toIso8601String(),
       if (endDate != null) 'endDate': endDate.toIso8601String(),
-      if (limit != null) 'limit': limit,
-      if (page != null) 'page': page,
+      ?'limit': limit,
+      ?'page': page,
     };
 
     final response = await _apiService.get<Map<String, dynamic>>(
@@ -57,10 +57,10 @@ class ActivityService {
       '/activities',
       data: {
         'userId': userId,
-        if (toyId != null) 'toyId': toyId,
+        ?'toyId': toyId,
         'type': type.name,
         'description': description,
-        if (metadata != null) 'metadata': metadata,
+        ?'metadata': metadata,
         'timestamp': (timestamp ?? DateTime.now()).toIso8601String(),
       },
     );

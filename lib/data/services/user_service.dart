@@ -30,9 +30,9 @@ class UserService {
         'firstName': firstName,
         'lastName': lastName,
         'password': password,
-        if (username != null) 'username': username,
-        if (phone != null) 'phone': phone,
-        if (preferredLanguage != null) 'preferredLanguage': preferredLanguage,
+        ?'username': username,
+        ?'phone': phone,
+        ?'preferredLanguage': preferredLanguage,
       },
     );
 
@@ -61,29 +61,16 @@ class UserService {
   }) async {
     _logger.d('Updating current user profile');
 
-    final data = <String, dynamic>{};
-    if (firstName != null) {
-      data['firstName'] = firstName;
-    }
-    if (lastName != null) {
-      data['lastName'] = lastName;
-    }
-    if (username != null) {
-      data['username'] = username;
-    }
-    if (bio != null) {
-      data['bio'] = bio;
-    }
-    if (phone != null) {
-      data['phone'] = phone;
-    }
-    if (preferredLanguage != null) {
-      data['preferredLanguage'] = preferredLanguage;
-    }
-
     final response = await _apiService.patch<Map<String, dynamic>>(
       '/users/me',
-      data: data,
+      data: {
+        ?'firstName': firstName,
+        ?'lastName': lastName,
+        ?'username': username,
+        ?'bio': bio,
+        ?'phone': phone,
+        ?'preferredLanguage': preferredLanguage,
+      },
     );
 
     _logger.d('User profile updated successfully');
@@ -113,7 +100,7 @@ class UserService {
 
     final response = await _apiService.delete<Map<String, dynamic>>(
       '/users/me',
-      data: {'password': password, if (reason != null) 'reason': reason},
+      data: {'password': password, ?'reason': reason},
     );
 
     _logger.d('Account deleted successfully');

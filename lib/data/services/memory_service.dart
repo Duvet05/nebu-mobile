@@ -70,9 +70,9 @@ class MemoryService {
       data: {
         'query': query,
         'limit': limit,
-        if (ageRange != null) 'ageRange': ageRange,
-        if (category != null) 'category': category,
-        if (language != null) 'language': language,
+        ?'ageRange': ageRange,
+        ?'category': category,
+        ?'language': language,
       },
     );
 

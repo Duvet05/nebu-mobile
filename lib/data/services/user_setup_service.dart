@@ -61,11 +61,11 @@ class UserSetupService {
     await _apiService.patch<Map<String, dynamic>>(
       '/users/$userId/preferences',
       data: {
-        if (language != null) 'language': language,
-        if (theme != null) 'theme': theme,
-        if (hapticFeedback != null) 'hapticFeedback': hapticFeedback,
-        if (autoSave != null) 'autoSave': autoSave,
-        if (analytics != null) 'analytics': analytics,
+        ?'language': language,
+        ?'theme': theme,
+        ?'hapticFeedback': hapticFeedback,
+        ?'autoSave': autoSave,
+        ?'analytics': analytics,
       },
     );
 
