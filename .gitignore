@@ -83,3 +83,5 @@ fastlane/test_output
 # Misc
 doc/api/
 .fvm/
+/.claude/
+/CLAUDE.md

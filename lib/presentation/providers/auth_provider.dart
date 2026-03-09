@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../data/models/user.dart';
 import '../../data/services/activity_migration_service.dart';
+import '../../data/services/auth_service.dart';
 import 'api_provider.dart';
 
 // Re-export sharedPreferencesProvider for use in other files
@@ -28,8 +29,12 @@ class AuthNotifier extends AsyncNotifier<User?> {
       if (isAuthenticated) {
         final userJson = await secureStorage.read(key: StorageKeys.user);
         if (userJson != null) {
-          final user = User.fromJson(json.decode(userJson) as Map<String, dynamic>);
-          ref.read(loggerProvider).d('👤 [AUTH] Loaded user from secure storage');
+          final user = User.fromJson(
+            json.decode(userJson) as Map<String, dynamic>,
+          );
+          ref
+              .read(loggerProvider)
+              .d('👤 [AUTH] Loaded user from secure storage');
           return user;
         }
       }
@@ -81,103 +86,55 @@ class AuthNotifier extends AsyncNotifier<User?> {
     }
   }
 
-  Future<void> login({required String identifier, required String password}) async {
+  /// Single pipeline for all auth flows: call service → validate → save → migrate.
+  Future<void> _authenticate(
+    Future<AuthResponse> Function(AuthService service) authCall,
+    String fallbackError,
+  ) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final authService = await ref.read(authServiceProvider.future);
-      final response = await authService.login(
-        identifier: identifier,
-        password: password,
-      );
+      final response = await authCall(authService);
       if (response.success && response.user != null) {
         await _saveUser(response.user!);
-
-        // Migrate activities if needed
         await _migrateActivities(response.user!.id);
-
         return response.user;
       }
-      throw Exception(response.error ?? 'Login failed');
+      throw Exception(response.error ?? fallbackError);
     });
   }
+
+  Future<void> login({required String identifier, required String password}) =>
+      _authenticate(
+        (s) => s.login(identifier: identifier, password: password),
+        'Login failed',
+      );
 
   Future<void> register({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
-  }) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final authService = await ref.read(authServiceProvider.future);
-      final response = await authService.register(
-        email: email,
-        password: password,
-        firstName: firstName,
-        lastName: lastName,
-      );
-      if (response.success && response.user != null) {
-        await _saveUser(response.user!);
+  }) => _authenticate(
+    (s) => s.register(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    ),
+    'Registration failed',
+  );
 
-        // Migrate activities if needed
-        await _migrateActivities(response.user!.id);
+  Future<void> loginWithGoogle(String googleToken) =>
+      _authenticate((s) => s.googleLogin(googleToken), 'Google login failed');
 
-        return response.user;
-      }
-      throw Exception(response.error ?? 'Registration failed');
-    });
-  }
+  Future<void> loginWithFacebook(String facebookToken) => _authenticate(
+    (s) => s.facebookLogin(facebookToken),
+    'Facebook login failed',
+  );
 
-  Future<void> loginWithGoogle(String googleToken) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final authService = await ref.read(authServiceProvider.future);
-      final response = await authService.googleLogin(googleToken);
-      if (response.success && response.user != null) {
-        await _saveUser(response.user!);
-
-        // Migrate activities if needed
-        await _migrateActivities(response.user!.id);
-
-        return response.user;
-      }
-      throw Exception(response.error ?? 'Google login failed');
-    });
-  }
-
-  Future<void> loginWithFacebook(String facebookToken) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final authService = await ref.read(authServiceProvider.future);
-      final response = await authService.facebookLogin(facebookToken);
-      if (response.success && response.user != null) {
-        await _saveUser(response.user!);
-
-        // Migrate activities if needed
-        await _migrateActivities(response.user!.id);
-
-        return response.user;
-      }
-      throw Exception(response.error ?? 'Facebook login failed');
-    });
-  }
-
-  Future<void> loginWithApple(String appleToken) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final authService = await ref.read(authServiceProvider.future);
-      final response = await authService.appleLogin(appleToken);
-      if (response.success && response.user != null) {
-        await _saveUser(response.user!);
-
-        // Migrate activities if needed
-        await _migrateActivities(response.user!.id);
-
-        return response.user;
-      }
-      throw Exception(response.error ?? 'Apple login failed');
-    });
-  }
+  Future<void> loginWithApple(String appleToken) =>
+      _authenticate((s) => s.appleLogin(appleToken), 'Apple login failed');
 
   Future<void> logout() async {
     state = const AsyncValue.loading();
