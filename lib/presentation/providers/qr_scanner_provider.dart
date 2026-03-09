@@ -75,8 +75,8 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
               Text(
                 code,
                 style: context.theme.textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                    ),
+                  fontFamily: 'monospace',
+                ),
               ),
             ],
           ),
@@ -114,7 +114,11 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon: Icon(Icons.check_circle, color: context.colors.success, size: 48),
+          icon: Icon(
+            Icons.check_circle,
+            color: context.colors.success,
+            size: 48,
+          ),
           title: Text('qr_scanner.toy_assigned'.tr()),
           content: Text(
             'qr_scanner.toy_assigned_desc'.tr(

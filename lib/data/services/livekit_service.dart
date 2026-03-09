@@ -80,7 +80,8 @@ class LiveKitService {
       _setStatus(LiveKitConnectionStatus.connecting);
 
       final serverUrl = config.serverUrl ?? Config.livekitUrl;
-      final token = config.token ??
+      final token =
+          config.token ??
           await _fetchToken(config.participantName, config.roomName);
 
       _room = Room();
@@ -151,10 +152,7 @@ class LiveKitService {
   }
 
   /// Fetch token from backend. Falls back to a dev-only demo token.
-  Future<String> _fetchToken(
-    String participantName,
-    String roomName,
-  ) async {
+  Future<String> _fetchToken(String participantName, String roomName) async {
     if (Config.isDevelopment) {
       assert(true, 'Demo tokens must not be used in production');
       return _createDevToken(participantName, roomName);

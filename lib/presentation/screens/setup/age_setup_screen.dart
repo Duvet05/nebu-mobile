@@ -70,7 +70,9 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                           final isSelected = _selectedAge == age['label'];
 
                           return Padding(
-                            padding: EdgeInsets.only(bottom: context.spacing.gapLg),
+                            padding: EdgeInsets.only(
+                              bottom: context.spacing.gapLg,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -81,10 +83,11 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                 padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? context.colors.primary
-                                          .withValues(alpha: 0.08)
+                                      ? context.colors.primary.withValues(
+                                          alpha: 0.08,
+                                        )
                                       : colorScheme.surfaceContainerHighest
-                                          .withValues(alpha: 0.3),
+                                            .withValues(alpha: 0.3),
                                   borderRadius: context.radius.panel,
                                   border: Border.all(
                                     color: isSelected
@@ -100,10 +103,11 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                       height: 48,
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? context.colors.primary
-                                                .withValues(alpha: 0.15)
+                                            ? context.colors.primary.withValues(
+                                                alpha: 0.15,
+                                              )
                                             : colorScheme
-                                                .surfaceContainerHighest,
+                                                  .surfaceContainerHighest,
                                         borderRadius: context.radius.panel,
                                       ),
                                       child: Icon(
@@ -118,13 +122,13 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                     Expanded(
                                       child: Text(
                                         (age['label'] as String).tr(),
-                                        style:
-                                            theme.textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          color: isSelected
-                                              ? context.colors.primary
-                                              : colorScheme.onSurface,
-                                        ),
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: isSelected
+                                                  ? context.colors.primary
+                                                  : colorScheme.onSurface,
+                                            ),
                                       ),
                                     ),
                                     if (isSelected)

@@ -64,7 +64,9 @@ class _CustomInputState extends State<CustomInput> {
       if (widget.label != null) ...[
         Text(
           widget.label!,
-          style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: context.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
       ],

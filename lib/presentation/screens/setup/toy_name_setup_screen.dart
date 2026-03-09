@@ -191,7 +191,10 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.spacing.gapMd,
+                vertical: context.spacing.gapLg,
+              ),
               child: Row(
                 children: [
                   GestureDetector(
@@ -200,8 +203,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest
-                            .withValues(alpha: 0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        ),
                         borderRadius: context.radius.tile,
                       ),
                       child: Icon(
@@ -236,8 +240,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                             children: [
                               Text(
                                 'setup.toy_name.title'.tr(),
-                                style:
-                                    theme.textTheme.headlineMedium?.copyWith(
+                                style: theme.textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.5,
                                 ),
@@ -245,27 +248,26 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                               ),
 
                               SizedBox(
-                                  height: context.spacing.titleBottomMarginSm),
+                                height: context.spacing.titleBottomMarginSm,
+                              ),
 
                               Text(
                                 'setup.toy_name.subtitle'.tr(),
-                                style:
-                                    theme.textTheme.titleMedium?.copyWith(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
 
                               SizedBox(
-                                  height:
-                                      context.spacing.largePageBottomMargin),
+                                height: context.spacing.largePageBottomMargin,
+                              ),
 
                               // Name input
                               TextFormField(
                                 controller: _controller,
                                 style: theme.textTheme.titleMedium,
-                                textCapitalization:
-                                    TextCapitalization.words,
+                                textCapitalization: TextCapitalization.words,
                                 decoration: InputDecoration(
                                   hintText: 'setup.toy_name.hint'.tr(),
                                   hintStyle: TextStyle(
@@ -273,8 +275,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                         .withValues(alpha: 0.5),
                                   ),
                                   filled: true,
-                                  fillColor: colorScheme
-                                      .surfaceContainerHighest
+                                  fillColor: colorScheme.surfaceContainerHighest
                                       .withValues(alpha: 0.3),
                                   border: OutlineInputBorder(
                                     borderRadius: context.radius.input,
@@ -295,11 +296,12 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                       width: 2,
                                     ),
                                   ),
-                                  contentPadding: EdgeInsets.all(context.spacing.gapXxl),
+                                  contentPadding: EdgeInsets.all(
+                                    context.spacing.gapXxl,
+                                  ),
                                 ),
                                 validator: (value) {
-                                  if (value == null ||
-                                      value.trim().isEmpty) {
+                                  if (value == null || value.trim().isEmpty) {
                                     return 'setup.toy_name.validation_empty'
                                         .tr();
                                   }
@@ -327,8 +329,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                   final success =
                                       await _registerDeviceIfNeeded();
                                   if (success && context.mounted) {
-                                    await context
-                                        .push(AppRoutes.ageSetup.path);
+                                    await context.push(AppRoutes.ageSetup.path);
                                   }
                                 }
                               },
@@ -344,8 +345,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                             borderRadius: context.radius.panel,
                             boxShadow: [
                               BoxShadow(
-                                color: context.colors.primary
-                                    .withValues(alpha: 0.3),
+                                color: context.colors.primary.withValues(
+                                  alpha: 0.3,
+                                ),
                                 blurRadius: 20,
                                 offset: const Offset(0, 8),
                               ),
@@ -358,8 +360,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                     height: 24,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2.5,
-                                      valueColor:
-                                          AlwaysStoppedAnimation<Color>(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
                                         context.colors.textOnFilled,
                                       ),
                                     ),
@@ -368,22 +369,24 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                     'setup.toy_name.next'.tr(),
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(
-                                      color: context.colors.textOnFilled,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                          color: context.colors.textOnFilled,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                   ),
                           ),
                         ),
                       ),
 
                       SizedBox(
-                          height: context.spacing.sectionTitleBottomMargin),
+                        height: context.spacing.sectionTitleBottomMargin,
+                      ),
 
                       GestureDetector(
                         onTap: _showSkipSetupDialog,
                         child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.spacing.gapMd,
+                          ),
                           child: Text(
                             'setup.connection.skip_setup'.tr(),
                             style: theme.textTheme.bodyMedium?.copyWith(

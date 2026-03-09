@@ -39,14 +39,17 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
   }
 
   void _addGreeting(Personality personality) {
-    final greeting = personality.greeting ??
+    final greeting =
+        personality.greeting ??
         'playground.default_greeting'.tr(args: [personality.name]);
     setState(() {
-      _messages.add(_ChatMessage(
-        text: greeting,
-        isUser: false,
-        personality: personality.name,
-      ));
+      _messages.add(
+        _ChatMessage(
+          text: greeting,
+          isUser: false,
+          personality: personality.name,
+        ),
+      );
     });
   }
 
@@ -70,11 +73,13 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
         return;
       }
       setState(() {
-        _messages.add(_ChatMessage(
-          text: _generateLocalResponse(text, _selectedPersonality!),
-          isUser: false,
-          personality: _selectedPersonality!.name,
-        ));
+        _messages.add(
+          _ChatMessage(
+            text: _generateLocalResponse(text, _selectedPersonality!),
+            isUser: false,
+            personality: _selectedPersonality!.name,
+          ),
+        );
         _isSending = false;
       });
       _scrollToBottom();
@@ -85,18 +90,23 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
     final category = personality.category?.toLowerCase() ?? '';
 
     return switch (category) {
-      PersonalityCategories.educativo =>
-          'playground.response_educativo'.tr(args: [userMessage]),
+      PersonalityCategories.educativo => 'playground.response_educativo'.tr(
+        args: [userMessage],
+      ),
       PersonalityCategories.entretenimiento =>
         'playground.response_entretenimiento'.tr(args: [userMessage]),
-      PersonalityCategories.companero =>
-          'playground.response_companero'.tr(args: [userMessage]),
-      PersonalityCategories.creativo =>
-          'playground.response_creativo'.tr(args: [userMessage]),
-      PersonalityCategories.aventura =>
-          'playground.response_aventura'.tr(args: [userMessage]),
-      PersonalityCategories.bienestar =>
-          'playground.response_bienestar'.tr(args: [userMessage]),
+      PersonalityCategories.companero => 'playground.response_companero'.tr(
+        args: [userMessage],
+      ),
+      PersonalityCategories.creativo => 'playground.response_creativo'.tr(
+        args: [userMessage],
+      ),
+      PersonalityCategories.aventura => 'playground.response_aventura'.tr(
+        args: [userMessage],
+      ),
+      PersonalityCategories.bienestar => 'playground.response_bienestar'.tr(
+        args: [userMessage],
+      ),
       _ => 'playground.response_default'.tr(args: [personality.name]),
     };
   }
@@ -176,10 +186,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
                       if (index >= _messages.length) {
                         return _buildTypingIndicator(theme);
                       }
-                      return _buildMessageBubble(
-                        _messages[index],
-                        theme,
-                      );
+                      return _buildMessageBubble(_messages[index], theme);
                     },
                   ),
           ),
@@ -213,14 +220,18 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
             labelText: 'playground.select_personality'.tr(),
             prefixIcon: const Icon(Icons.psychology),
             border: OutlineInputBorder(borderRadius: context.radius.input),
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: context.spacing.paragraphBottomMarginSm, vertical: context.spacing.labelBottomMargin),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: context.spacing.paragraphBottomMarginSm,
+              vertical: context.spacing.labelBottomMargin,
+            ),
           ),
           items: personalities
-              .map((p) => DropdownMenuItem(
-                    value: p.id,
-                    child: Text(p.name, overflow: TextOverflow.ellipsis),
-                  ))
+              .map(
+                (p) => DropdownMenuItem(
+                  value: p.id,
+                  child: Text(p.name, overflow: TextOverflow.ellipsis),
+                ),
+              )
               .toList(),
           onChanged: (id) {
             final p = personalities.firstWhere((p) => p.id == id);
@@ -243,35 +254,37 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
   }
 
   Widget _buildEmptyState(ThemeData theme) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.smart_toy_outlined,
-              size: 80,
-              color: context.colors.primary.withValues(alpha: 0.3),
-            ),
-            SizedBox(height: context.spacing.alertPadding),
-            Text(
-              'playground.empty_title'.tr(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: context.spacing.labelBottomMargin),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.spacing.largePageBottomMargin),
-              child: Text(
-                'playground.empty_message'.tr(),
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.smart_toy_outlined,
+          size: 80,
+          color: context.colors.primary.withValues(alpha: 0.3),
         ),
-      );
+        SizedBox(height: context.spacing.alertPadding),
+        Text(
+          'playground.empty_title'.tr(),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: context.spacing.labelBottomMargin),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.largePageBottomMargin,
+          ),
+          child: Text(
+            'playground.empty_message'.tr(),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 
   Widget _buildMessageBubble(_ChatMessage message, ThemeData theme) {
     final isUser = message.isUser;
@@ -284,7 +297,10 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
           left: isUser ? context.spacing.largePageBottomMargin : 0,
           right: isUser ? 0 : context.spacing.largePageBottomMargin,
         ),
-        padding: EdgeInsets.symmetric(horizontal: context.spacing.alertPadding, vertical: context.spacing.paragraphBottomMarginSm),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.spacing.alertPadding,
+          vertical: context.spacing.paragraphBottomMarginSm,
+        ),
         decoration: BoxDecoration(
           color: isUser
               ? context.colors.primary
@@ -292,8 +308,12 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(AppRadius.panel),
             topRight: const Radius.circular(AppRadius.panel),
-            bottomLeft: Radius.circular(isUser ? AppRadius.panel : AppRadius.checkbox),
-            bottomRight: Radius.circular(isUser ? AppRadius.checkbox : AppRadius.panel),
+            bottomLeft: Radius.circular(
+              isUser ? AppRadius.panel : AppRadius.checkbox,
+            ),
+            bottomRight: Radius.circular(
+              isUser ? AppRadius.checkbox : AppRadius.panel,
+            ),
           ),
         ),
         child: Column(
@@ -325,84 +345,85 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
   }
 
   Widget _buildTypingIndicator(ThemeData theme) => Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          margin: EdgeInsets.only(right: context.spacing.largePageBottomMargin, bottom: context.spacing.labelBottomMargin),
-          padding: EdgeInsets.symmetric(horizontal: context.spacing.alertPadding, vertical: context.spacing.paragraphBottomMarginSm),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(AppRadius.panel),
-              topRight: Radius.circular(AppRadius.panel),
-              bottomRight: Radius.circular(AppRadius.panel),
-              bottomLeft: Radius.circular(AppRadius.checkbox),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: List.generate(
-              3,
-              (i) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXxs),
-                child: _BouncingDot(delay: i * 200),
-              ),
-            ),
+    alignment: Alignment.centerLeft,
+    child: Container(
+      margin: EdgeInsets.only(
+        right: context.spacing.largePageBottomMargin,
+        bottom: context.spacing.labelBottomMargin,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.alertPadding,
+        vertical: context.spacing.paragraphBottomMarginSm,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(AppRadius.panel),
+          topRight: Radius.circular(AppRadius.panel),
+          bottomRight: Radius.circular(AppRadius.panel),
+          bottomLeft: Radius.circular(AppRadius.checkbox),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(
+          3,
+          (i) => Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXxs),
+            child: _BouncingDot(delay: i * 200),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildInputBar(ThemeData theme) => Container(
-        padding: EdgeInsets.all(context.spacing.alertPadding),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          border: Border(
-            top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2)),
-          ),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _messageController,
-                  enabled: _selectedPersonality != null,
-                  decoration: InputDecoration(
-                    hintText: _selectedPersonality != null
-                        ? 'playground.message_hint'.tr()
-                        : 'playground.select_first'.tr(),
-                    border: OutlineInputBorder(
-                      borderRadius: context.radius.bottomSheet,
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: context.spacing.alertPadding,
-                      vertical: context.spacing.paragraphBottomMarginSm,
-                    ),
-                  ),
-                  textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _sendMessage(),
+    padding: EdgeInsets.all(context.spacing.alertPadding),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.surface,
+      border: Border(
+        top: BorderSide(color: theme.dividerColor.withValues(alpha: 0.2)),
+      ),
+    ),
+    child: SafeArea(
+      top: false,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              enabled: _selectedPersonality != null,
+              decoration: InputDecoration(
+                hintText: _selectedPersonality != null
+                    ? 'playground.message_hint'.tr()
+                    : 'playground.select_first'.tr(),
+                border: OutlineInputBorder(
+                  borderRadius: context.radius.bottomSheet,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.alertPadding,
+                  vertical: context.spacing.paragraphBottomMarginSm,
                 ),
               ),
-              SizedBox(width: context.spacing.labelBottomMargin),
-              IconButton.filled(
-                onPressed:
-                    _selectedPersonality != null && !_isSending
-                        ? _sendMessage
-                        : null,
-                icon: const Icon(Icons.send),
-              ),
-            ],
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => _sendMessage(),
+            ),
           ),
-        ),
-      );
+          SizedBox(width: context.spacing.labelBottomMargin),
+          IconButton.filled(
+            onPressed: _selectedPersonality != null && !_isSending
+                ? _sendMessage
+                : null,
+            icon: const Icon(Icons.send),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _ChatMessage {
-  _ChatMessage({
-    required this.text,
-    required this.isUser,
-    this.personality,
-  });
+  _ChatMessage({required this.text, required this.isUser, this.personality});
   final String text;
   final bool isUser;
   final String? personality;
@@ -428,9 +449,10 @@ class _BouncingDotState extends State<_BouncingDot>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _animation = Tween<double>(begin: 0, end: -6).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: -6,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     Future.delayed(Duration(milliseconds: widget.delay), () {
       if (mounted) {
         _controller.repeat(reverse: true);
@@ -446,17 +468,17 @@ class _BouncingDotState extends State<_BouncingDot>
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) => Transform.translate(
-          offset: Offset(0, _animation.value),
-          child: Container(
-            width: 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: context.theme.colorScheme.onSurfaceVariant,
-              shape: BoxShape.circle,
-            ),
-          ),
+    animation: _animation,
+    builder: (context, child) => Transform.translate(
+      offset: Offset(0, _animation.value),
+      child: Container(
+        width: 8,
+        height: 8,
+        decoration: BoxDecoration(
+          color: context.theme.colorScheme.onSurfaceVariant,
+          shape: BoxShape.circle,
         ),
-      );
+      ),
+    ),
+  );
 }

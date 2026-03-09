@@ -34,9 +34,9 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
         _healthStatus = status;
         _isLoading = false;
       });
-    } on Exception catch (e) {
+    } on Exception {
       setState(() {
-        _errorMessage = e.toString();
+        _errorMessage = 'health_check.error'.tr();
         _isLoading = false;
       });
     }

@@ -112,7 +112,9 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                 SizedBox(width: context.spacing.gapMd),
                 Expanded(
                   child: Text(
-                    isMuted ? 'audio_controls.muted'.tr() : 'audio_controls.unmuted'.tr(),
+                    isMuted
+                        ? 'audio_controls.muted'.tr()
+                        : 'audio_controls.unmuted'.tr(),
                     style: context.theme.textTheme.bodyMedium,
                   ),
                 ),
@@ -127,7 +129,9 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                             if (!success && context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('audio_controls.mute_error'.tr()),
+                                  content: Text(
+                                    'audio_controls.mute_error'.tr(),
+                                  ),
                                   backgroundColor: context.colors.error,
                                   duration: const Duration(seconds: 2),
                                 ),

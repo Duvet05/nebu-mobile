@@ -87,9 +87,7 @@ class CustomButton extends StatelessWidget {
               backgroundColor: Colors.transparent,
               foregroundColor: context.colors.textOnFilled,
               shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,
@@ -106,9 +104,7 @@ class CustomButton extends StatelessWidget {
               backgroundColor: colorScheme.surface,
               foregroundColor: colorScheme.primary,
               elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,
@@ -123,13 +119,8 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: OutlinedButton.styleFrom(
               foregroundColor: colorScheme.primary,
-              side: BorderSide(
-                color: colorScheme.primary,
-                width: 2,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              side: BorderSide(color: colorScheme.primary, width: 2),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,
@@ -144,9 +135,7 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
             child: buttonChild,
@@ -176,9 +165,7 @@ class CustomButton extends StatelessWidget {
               backgroundColor: Colors.transparent,
               foregroundColor: context.colors.textOnFilled,
               shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,
@@ -193,12 +180,8 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: OutlinedButton.styleFrom(
               foregroundColor: context.colors.error,
-              side: BorderSide(
-                color: context.colors.error,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: effectiveRadius,
-              ),
+              side: BorderSide(color: context.colors.error),
+              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,

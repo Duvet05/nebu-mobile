@@ -328,7 +328,10 @@ class _SettingsTile extends StatelessWidget {
         iconColor ?? theme.colorScheme.onSurface.withValues(alpha: 0.8);
 
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.labelBottomMargin),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: context.spacing.panelPadding,
+        vertical: context.spacing.labelBottomMargin,
+      ),
       leading: Container(
         padding: EdgeInsets.all(context.spacing.labelBottomMargin),
         decoration: BoxDecoration(

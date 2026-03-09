@@ -59,8 +59,8 @@ class WalkieTalkieState {
 
 final walkieTalkieProvider =
     NotifierProvider<WalkieTalkieNotifier, WalkieTalkieState>(
-  WalkieTalkieNotifier.new,
-);
+      WalkieTalkieNotifier.new,
+    );
 
 class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   late LiveKitService _liveKitService;
@@ -124,7 +124,9 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
 
       // 4. Listen to status and participant changes
       _statusSub = _liveKitService.statusStream.listen(_onStatusChanged);
-      _participantsSub = _liveKitService.participantsStream.listen((participants) {
+      _participantsSub = _liveKitService.participantsStream.listen((
+        participants,
+      ) {
         state = state.copyWith(
           isRemoteConnected: participants.isNotEmpty,
           remoteParticipantName: participants.isNotEmpty

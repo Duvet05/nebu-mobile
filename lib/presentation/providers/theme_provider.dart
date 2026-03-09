@@ -77,10 +77,7 @@ class ThemeNotifier extends AsyncNotifier<ThemeState> {
     await _saveTheme(themeMode);
 
     state = AsyncValue.data(
-      ThemeState(
-        themeMode: themeMode,
-        isDarkMode: themeMode == ThemeMode.dark,
-      ),
+      ThemeState(themeMode: themeMode, isDarkMode: themeMode == ThemeMode.dark),
     );
   }
 

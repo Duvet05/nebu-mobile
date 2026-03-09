@@ -29,7 +29,9 @@ class WelcomeScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.panelPadding,
+            ),
             child: Column(
               children: [
                 const Spacer(flex: 2),
@@ -87,7 +89,9 @@ class WelcomeScreen extends StatelessWidget {
                 GestureDetector(
                   onTap: () => context.push(AppRoutes.connectionSetup.path),
                   child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: context.spacing.paragraphBottomMarginSm),
+                    padding: EdgeInsets.symmetric(
+                      vertical: context.spacing.paragraphBottomMarginSm,
+                    ),
                     child: Text(
                       'welcome.continue_without_account'.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(

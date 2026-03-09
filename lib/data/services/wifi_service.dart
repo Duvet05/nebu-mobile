@@ -161,12 +161,12 @@ class WiFiService {
             security: ap.capabilities.contains('WPA3')
                 ? 'WPA3'
                 : ap.capabilities.contains('WPA2')
-                    ? 'WPA2'
-                    : ap.capabilities.contains('WPA')
-                        ? 'WPA'
-                        : ap.capabilities.contains('WEP')
-                            ? 'WEP'
-                            : 'Open',
+                ? 'WPA2'
+                : ap.capabilities.contains('WPA')
+                ? 'WPA'
+                : ap.capabilities.contains('WEP')
+                ? 'WEP'
+                : 'Open',
             frequency: ap.frequency,
           );
         }
@@ -214,10 +214,13 @@ class WiFiService {
                 s == ESP32WifiStatus.connected || s == ESP32WifiStatus.failed,
           )
           .first
-          .timeout(const Duration(seconds: 15), onTimeout: () {
-            _logger.w('Timeout waiting for ESP32 WiFi connection status');
-            return ESP32WifiStatus.failed;
-          });
+          .timeout(
+            const Duration(seconds: 15),
+            onTimeout: () {
+              _logger.w('Timeout waiting for ESP32 WiFi connection status');
+              return ESP32WifiStatus.failed;
+            },
+          );
 
       final success = status == ESP32WifiStatus.connected;
 

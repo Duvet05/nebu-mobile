@@ -15,8 +15,9 @@ class VoiceSessionService {
   /// Backend: GET /voice/sessions/user/:userId
   Future<List<VoiceSession>> getUserSessions(String userId) async {
     _logger.d('Fetching sessions for user: $userId');
-    final response = await _apiService
-        .get<dynamic>('/voice/sessions/user/$userId');
+    final response = await _apiService.get<dynamic>(
+      '/voice/sessions/user/$userId',
+    );
     return _parseSessionList(response);
   }
 
@@ -24,19 +25,19 @@ class VoiceSessionService {
   /// Backend: GET /voice/sessions/:id
   Future<VoiceSession> getSession(String sessionId) async {
     _logger.d('Fetching voice session: $sessionId');
-    final response = await _apiService
-        .get<Map<String, dynamic>>('/voice/sessions/$sessionId');
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/voice/sessions/$sessionId',
+    );
     return VoiceSession.fromJson(response);
   }
 
   /// Get conversations for a session.
   /// Backend: GET /voice/sessions/:id/conversations
-  Future<List<AiConversation>> getSessionConversations(
-    String sessionId,
-  ) async {
+  Future<List<AiConversation>> getSessionConversations(String sessionId) async {
     _logger.d('Fetching conversations for session: $sessionId');
-    final response = await _apiService
-        .get<dynamic>('/voice/sessions/$sessionId/conversations');
+    final response = await _apiService.get<dynamic>(
+      '/voice/sessions/$sessionId/conversations',
+    );
     if (response is List) {
       return response
           .cast<Map<String, dynamic>>()
@@ -50,8 +51,9 @@ class VoiceSessionService {
   /// Backend: GET /voice/sessions/metrics
   Future<VoiceMetrics> getMetrics() async {
     _logger.d('Fetching voice session metrics');
-    final response = await _apiService
-        .get<Map<String, dynamic>>('/voice/sessions/metrics');
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/voice/sessions/metrics',
+    );
     return VoiceMetrics.fromJson(response);
   }
 
@@ -76,10 +78,7 @@ class VoiceSessionService {
 
   /// End a voice session.
   /// Backend: POST /voice/sessions/:id/end
-  Future<VoiceSession> endSession(
-    String sessionId, {
-    String? reason,
-  }) async {
+  Future<VoiceSession> endSession(String sessionId, {String? reason}) async {
     _logger.d('Ending voice session: $sessionId');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/voice/sessions/$sessionId/end',

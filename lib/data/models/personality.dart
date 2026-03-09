@@ -51,6 +51,6 @@ abstract final class PersonalityCategories {
     companero,
     creativo,
     aventura,
-    bienestar
+    bienestar,
   ];
 }

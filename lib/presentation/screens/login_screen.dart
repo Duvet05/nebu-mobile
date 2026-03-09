@@ -218,11 +218,238 @@ class _SignUpLink extends StatelessWidget {
   );
 }
 
-// Nota: He movido los diálogos a funciones externas o widgets separados para limpiar el archivo principal.
 void _showForgotPasswordDialog(
   BuildContext context,
   WidgetRef ref,
   String initialEmail,
 ) {
-  // Implementación simplificada o widget separado...
+  final emailController = TextEditingController(text: initialEmail);
+  var isLoading = false;
+
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setDialogState) => AlertDialog(
+        title: Text('auth.forgot_password_title'.tr()),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'auth.forgot_password_body'.tr(),
+              style: Theme.of(ctx).textTheme.bodyMedium,
+            ),
+            SizedBox(height: ctx.spacing.panelPadding),
+            AuthTextField(
+              controller: emailController,
+              label: 'auth.email'.tr(),
+              prefixIcon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: isLoading ? null : () => Navigator.pop(ctx),
+            child: Text('common.cancel'.tr()),
+          ),
+          TextButton(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    final email = emailController.text.trim();
+                    if (email.isEmpty) {
+                      return;
+                    }
+
+                    setDialogState(() => isLoading = true);
+
+                    try {
+                      final success = await ref
+                          .read(authProvider.notifier)
+                          .requestPasswordReset(email);
+
+                      if (!ctx.mounted) {
+                        return;
+                      }
+                      Navigator.pop(ctx);
+
+                      if (success) {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('auth.forgot_password_success'.tr()),
+                          ),
+                        );
+                        _showResetPasswordDialog(ctx, ref, email);
+                      } else {
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content: Text('auth.forgot_password_error'.tr()),
+                          ),
+                        );
+                      }
+                    } on Exception {
+                      if (ctx.mounted) {
+                        setDialogState(() => isLoading = false);
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content: Text('auth.forgot_password_error'.tr()),
+                          ),
+                        );
+                      }
+                    }
+                  },
+            child: isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text('auth.forgot_password_send'.tr()),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+void _showResetPasswordDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String email,
+) {
+  final tokenController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmController = TextEditingController();
+  var isLoading = false;
+  String? errorText;
+
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setDialogState) => AlertDialog(
+        title: Text('auth.reset_password_title'.tr()),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'auth.reset_password_body'.tr(),
+                style: Theme.of(ctx).textTheme.bodyMedium,
+              ),
+              SizedBox(height: ctx.spacing.panelPadding),
+              AuthTextField(
+                controller: tokenController,
+                label: 'auth.reset_password_token_hint'.tr(),
+                prefixIcon: Icons.key_outlined,
+              ),
+              SizedBox(height: ctx.spacing.sectionTitleBottomMargin),
+              AuthTextField(
+                controller: passwordController,
+                label: 'auth.reset_password_new_password_hint'.tr(),
+                prefixIcon: Icons.lock_outline_rounded,
+                obscureText: true,
+              ),
+              SizedBox(height: ctx.spacing.sectionTitleBottomMargin),
+              AuthTextField(
+                controller: confirmController,
+                label: 'auth.reset_password_confirm_hint'.tr(),
+                prefixIcon: Icons.lock_outline_rounded,
+                obscureText: true,
+              ),
+              if (errorText != null) ...[
+                SizedBox(height: ctx.spacing.labelBottomMargin),
+                Text(
+                  errorText!,
+                  style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(ctx).colorScheme.error,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: isLoading ? null : () => Navigator.pop(ctx),
+            child: Text('common.cancel'.tr()),
+          ),
+          TextButton(
+            onPressed: isLoading
+                ? null
+                : () async {
+                    final token = tokenController.text.trim();
+                    final password = passwordController.text;
+                    final confirm = confirmController.text;
+
+                    if (token.isEmpty || password.isEmpty) {
+                      return;
+                    }
+
+                    if (password.length < 8) {
+                      setDialogState(() {
+                        errorText = 'auth.reset_password_too_short'.tr();
+                      });
+                      return;
+                    }
+
+                    if (password != confirm) {
+                      setDialogState(() {
+                        errorText = 'auth.reset_password_mismatch'.tr();
+                      });
+                      return;
+                    }
+
+                    setDialogState(() {
+                      isLoading = true;
+                      errorText = null;
+                    });
+
+                    try {
+                      final success = await ref
+                          .read(authProvider.notifier)
+                          .resetPassword(
+                            token: token,
+                            newPassword: password,
+                          );
+
+                      if (!ctx.mounted) {
+                        return;
+                      }
+
+                      if (success) {
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(ctx).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text('auth.reset_password_success'.tr()),
+                          ),
+                        );
+                      } else {
+                        setDialogState(() {
+                          isLoading = false;
+                          errorText = 'auth.reset_password_error'.tr();
+                        });
+                      }
+                    } on Exception {
+                      if (ctx.mounted) {
+                        setDialogState(() {
+                          isLoading = false;
+                          errorText = 'auth.reset_password_error'.tr();
+                        });
+                      }
+                    }
+                  },
+            child: isLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text('auth.reset_password_submit'.tr()),
+          ),
+        ],
+      ),
+    ),
+  );
 }

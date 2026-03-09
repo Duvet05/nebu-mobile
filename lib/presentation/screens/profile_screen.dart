@@ -171,7 +171,10 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                         ),
                         SizedBox(width: context.spacing.gapMd),
-                        Icon(Icons.chevron_right, color: context.colors.grey400),
+                        Icon(
+                          Icons.chevron_right,
+                          color: context.colors.grey400,
+                        ),
                       ],
                     ),
                     onTap: () {
@@ -375,7 +378,9 @@ class _SettingsCard extends StatelessWidget {
       borderRadius: context.radius.panel,
       boxShadow: [
         BoxShadow(
-          color: context.colors.textNormal.withValues(alpha: isDark ? 0.3 : 0.08),
+          color: context.colors.textNormal.withValues(
+            alpha: isDark ? 0.3 : 0.08,
+          ),
           blurRadius: 10,
           offset: const Offset(0, 2),
         ),
@@ -403,7 +408,10 @@ class _SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListTile(
-    contentPadding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.labelBottomMargin),
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: context.spacing.panelPadding,
+      vertical: context.spacing.labelBottomMargin,
+    ),
     leading: Icon(
       icon,
       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),

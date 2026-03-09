@@ -16,7 +16,8 @@ class ActivityMigrationService {
   Future<String?> getLocalUserIdForMigration() async {
     final prefs = await _ref.read(sharedPreferencesProvider.future);
     final localUserId = prefs.getString(StorageKeys.localUserId);
-    final migrationCompleted = prefs.getBool(StorageKeys.activitiesMigrated) ?? false;
+    final migrationCompleted =
+        prefs.getBool(StorageKeys.activitiesMigrated) ?? false;
 
     if (localUserId != null && !migrationCompleted) {
       _ref

@@ -272,30 +272,46 @@ class SemanticColors {
   final bool _isDark;
 
   // Primary
-  Color get primary => _isDark ? AppColors.primaryMainDark : AppColors.primaryMainLight;
+  Color get primary =>
+      _isDark ? AppColors.primaryMainDark : AppColors.primaryMainLight;
   Color get primaryLight => AppColors.primary100Light;
-  Color get primary100 => _isDark ? AppColors.primary100Dark : AppColors.primary100Light;
-  Color get primary200 => _isDark ? AppColors.primary200Dark : AppColors.primary200Light;
-  Color get primary300 => _isDark ? AppColors.primary300Dark : AppColors.primary300Light;
-  Color get primary400 => _isDark ? AppColors.primary400Dark : AppColors.primary400Light;
-  Color get primary500 => _isDark ? AppColors.primary500Dark : AppColors.primary500Light;
-  Color get primary600 => _isDark ? AppColors.primary600Dark : AppColors.primary600Light;
+  Color get primary100 =>
+      _isDark ? AppColors.primary100Dark : AppColors.primary100Light;
+  Color get primary200 =>
+      _isDark ? AppColors.primary200Dark : AppColors.primary200Light;
+  Color get primary300 =>
+      _isDark ? AppColors.primary300Dark : AppColors.primary300Light;
+  Color get primary400 =>
+      _isDark ? AppColors.primary400Dark : AppColors.primary400Light;
+  Color get primary500 =>
+      _isDark ? AppColors.primary500Dark : AppColors.primary500Light;
+  Color get primary600 =>
+      _isDark ? AppColors.primary600Dark : AppColors.primary600Light;
 
   // Secondary
-  Color get secondary => _isDark ? AppColors.secondaryMainDark : AppColors.secondaryMainLight;
-  Color get secondary100 => _isDark ? AppColors.secondary100Dark : AppColors.secondary100Light;
+  Color get secondary =>
+      _isDark ? AppColors.secondaryMainDark : AppColors.secondaryMainLight;
+  Color get secondary100 =>
+      _isDark ? AppColors.secondary100Dark : AppColors.secondary100Light;
 
   // Semantic
   Color get error => _isDark ? AppColors.redMainDark : AppColors.redMainLight;
   Color get error100 => _isDark ? AppColors.red100Dark : AppColors.red100Light;
   Color get errorBg => _isDark ? AppColors.red600Dark : AppColors.red600Light;
-  Color get success => _isDark ? AppColors.greenMainDark : AppColors.greenMainLight;
-  Color get success100 => _isDark ? AppColors.green100Dark : AppColors.green100Light;
-  Color get successBg => _isDark ? AppColors.green600Dark : AppColors.green600Light;
-  Color get warning => _isDark ? AppColors.amberMainDark : AppColors.amberMainLight;
-  Color get warning100 => _isDark ? AppColors.amber100Dark : AppColors.amber100Light;
-  Color get warningBg => _isDark ? AppColors.amber600Dark : AppColors.amber600Light;
-  Color get info => _isDark ? AppColors.secondaryMainDark : AppColors.secondaryMainLight;
+  Color get success =>
+      _isDark ? AppColors.greenMainDark : AppColors.greenMainLight;
+  Color get success100 =>
+      _isDark ? AppColors.green100Dark : AppColors.green100Light;
+  Color get successBg =>
+      _isDark ? AppColors.green600Dark : AppColors.green600Light;
+  Color get warning =>
+      _isDark ? AppColors.amberMainDark : AppColors.amberMainLight;
+  Color get warning100 =>
+      _isDark ? AppColors.amber100Dark : AppColors.amber100Light;
+  Color get warningBg =>
+      _isDark ? AppColors.amber600Dark : AppColors.amber600Light;
+  Color get info =>
+      _isDark ? AppColors.secondaryMainDark : AppColors.secondaryMainLight;
 
   // Grey scale
   Color get grey100 => _isDark ? AppColors.grey100Dark : AppColors.grey100Light;
@@ -309,28 +325,32 @@ class SemanticColors {
   Color get grey900 => _isDark ? AppColors.grey900Dark : AppColors.grey900Light;
 
   // Text
-  Color get textNormal => _isDark ? AppColors.textNormalDark : AppColors.textNormalLight;
-  Color get textLowPriority => _isDark ? AppColors.textLowPriorityDark : AppColors.textLowPriorityLight;
-  Color get textDisabled => _isDark ? AppColors.textNormalDisabledDark : AppColors.textNormalDisabledLight;
-  Color get textOnFilled => _isDark ? AppColors.textFilledButtonDark : AppColors.textFilledButtonLight;
+  Color get textNormal =>
+      _isDark ? AppColors.textNormalDark : AppColors.textNormalLight;
+  Color get textLowPriority =>
+      _isDark ? AppColors.textLowPriorityDark : AppColors.textLowPriorityLight;
+  Color get textDisabled => _isDark
+      ? AppColors.textNormalDisabledDark
+      : AppColors.textNormalDisabledLight;
+  Color get textOnFilled => _isDark
+      ? AppColors.textFilledButtonDark
+      : AppColors.textFilledButtonLight;
 
   // Background
-  Color get bgPrimary => _isDark ? AppColors.bgPrimaryDark : AppColors.bgPrimaryLight;
-  Color get bgSecondary => _isDark ? AppColors.bgSecondaryDark : AppColors.bgSecondaryLight;
+  Color get bgPrimary =>
+      _isDark ? AppColors.bgPrimaryDark : AppColors.bgPrimaryLight;
+  Color get bgSecondary =>
+      _isDark ? AppColors.bgSecondaryDark : AppColors.bgSecondaryLight;
   Color get bgModal => _isDark ? AppColors.bgModalDark : AppColors.bgModalLight;
 }
 
 extension ThemeColorsExtension on BuildContext {
-  SemanticColors get colors => SemanticColors._(
-        Theme.of(this).brightness == Brightness.dark,
-      );
+  SemanticColors get colors =>
+      SemanticColors._(Theme.of(this).brightness == Brightness.dark);
 }
 
 extension ThemeDataExtension on BuildContext {
   ThemeData get theme => Theme.of(this);
 
-  TextTheme get textTheme =>
-      Theme
-          .of(this)
-          .textTheme;
+  TextTheme get textTheme => Theme.of(this).textTheme;
 }

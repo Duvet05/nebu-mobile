@@ -182,13 +182,19 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             theme,
             children: [
               ListTile(
-                leading: Icon(Icons.delete_forever, color: context.colors.error),
+                leading: Icon(
+                  Icons.delete_forever,
+                  color: context.colors.error,
+                ),
                 title: Text(
                   'privacy.delete_account'.tr(),
                   style: TextStyle(color: context.colors.error),
                 ),
                 subtitle: Text('privacy.delete_account_desc'.tr()),
-                trailing: Icon(Icons.chevron_right, color: context.colors.error),
+                trailing: Icon(
+                  Icons.chevron_right,
+                  color: context.colors.error,
+                ),
                 onTap: _showDeleteAccountDialog,
               ),
             ],
@@ -201,7 +207,10 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   }
 
   Widget _buildSectionHeader(String title, ThemeData theme) => Padding(
-    padding: EdgeInsets.only(left: context.spacing.gapXs, bottom: context.spacing.gapLg),
+    padding: EdgeInsets.only(
+      left: context.spacing.gapXs,
+      bottom: context.spacing.gapLg,
+    ),
     child: Text(
       title,
       style: theme.textTheme.titleMedium?.copyWith(
@@ -263,62 +272,66 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   );
 
   void _showDownloadDataDialog() {
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('privacy.download_data'.tr()),
-        content: Text('privacy.download_data_info'.tr()),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
-          ),
-          CustomButton(
-            text: 'privacy.download'.tr(),
-            onPressed: () {
-              Navigator.pop(context);
-              context.showInfoSnackBar('privacy.download_started'.tr());
-            },
-          ),
-        ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('privacy.download_data'.tr()),
+          content: Text('privacy.download_data_info'.tr()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('common.cancel'.tr()),
+            ),
+            CustomButton(
+              text: 'privacy.download'.tr(),
+              onPressed: () {
+                Navigator.pop(context);
+                context.showInfoSnackBar('privacy.download_started'.tr());
+              },
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   void _showLoginHistoryDialog() {
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('privacy.login_history'.tr()),
-        content: SizedBox(
-          width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildLoginHistoryItem(
-                'Android Device',
-                'Lima, Peru',
-                'Just now',
-                true,
-              ),
-              const Divider(),
-              _buildLoginHistoryItem(
-                'Web Browser',
-                'Lima, Peru',
-                '2 days ago',
-                false,
-              ),
-            ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('privacy.login_history'.tr()),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildLoginHistoryItem(
+                  'Android Device',
+                  'Lima, Peru',
+                  'Just now',
+                  true,
+                ),
+                const Divider(),
+                _buildLoginHistoryItem(
+                  'Web Browser',
+                  'Lima, Peru',
+                  '2 days ago',
+                  false,
+                ),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('privacy.close'.tr()),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('privacy.close'.tr()),
-          ),
-        ],
       ),
-    ));
+    );
   }
 
   Widget _buildLoginHistoryItem(
@@ -345,49 +358,51 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   );
 
   void _showDeleteAccountDialog() {
-    unawaited(showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'privacy.delete_account'.tr(),
-          style: TextStyle(color: context.colors.error),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('privacy.delete_account_warning'.tr()),
-            SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            Text(
-              'privacy.delete_account_consequences'.tr(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+    unawaited(
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            'privacy.delete_account'.tr(),
+            style: TextStyle(color: context.colors.error),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('privacy.delete_account_warning'.tr()),
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+              Text(
+                'privacy.delete_account_consequences'.tr(),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: context.spacing.titleBottomMarginSm),
+              Text('• ${'privacy.consequence_1'.tr()}'),
+              Text('• ${'privacy.consequence_2'.tr()}'),
+              Text('• ${'privacy.consequence_3'.tr()}'),
+              Text('• ${'privacy.consequence_4'.tr()}'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('common.cancel'.tr()),
             ),
-            SizedBox(height: context.spacing.titleBottomMarginSm),
-            Text('• ${'privacy.consequence_1'.tr()}'),
-            Text('• ${'privacy.consequence_2'.tr()}'),
-            Text('• ${'privacy.consequence_3'.tr()}'),
-            Text('• ${'privacy.consequence_4'.tr()}'),
+            CustomButton(
+              text: 'privacy.delete_permanently'.tr(),
+              variant: ButtonVariant.danger,
+              onPressed: () async {
+                Navigator.pop(context);
+                final password = await _confirmDeleteAccount();
+                if (password != null && mounted) {
+                  await _performAccountDeletion(password);
+                }
+              },
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
-          ),
-          CustomButton(
-            text: 'privacy.delete_permanently'.tr(),
-            variant: ButtonVariant.danger,
-            onPressed: () async {
-              Navigator.pop(context);
-              final password = await _confirmDeleteAccount();
-              if (password != null && mounted) {
-                await _performAccountDeletion(password);
-              }
-            },
-          ),
-        ],
       ),
-    ));
+    );
   }
 
   Future<void> _performAccountDeletion(String password) async {

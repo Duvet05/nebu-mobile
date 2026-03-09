@@ -208,7 +208,9 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.spacing.largePageBottomMargin),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.largePageBottomMargin,
+          ),
           child: Text(
             'activity_log.empty_message'.tr(),
             textAlign: TextAlign.center,

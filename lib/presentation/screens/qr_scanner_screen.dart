@@ -101,7 +101,9 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
     left: 0,
     right: 0,
     child: Container(
-      margin: EdgeInsets.symmetric(horizontal: context.spacing.paragraphBottomMargin),
+      margin: EdgeInsets.symmetric(
+        horizontal: context.spacing.paragraphBottomMargin,
+      ),
       padding: EdgeInsets.all(context.spacing.alertPadding),
       decoration: BoxDecoration(
         color: context.colors.textNormal.withValues(alpha: 0.7),

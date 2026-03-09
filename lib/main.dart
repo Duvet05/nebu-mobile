@@ -24,15 +24,19 @@ void main() async {
   }
 
   // Initialize Easy Localization (only show warnings and errors)
-  EasyLocalization.logger.enableLevels = [LevelMessages.warning, LevelMessages.error];
+  EasyLocalization.logger.enableLevels = [
+    LevelMessages.warning,
+    LevelMessages.error,
+  ];
   await EasyLocalization.ensureInitialized();
 
   // Load configuration (from .env in dev, dart-define in prod)
   try {
     await ConfigLoader.initialize();
   } on Exception catch (e) {
-    _logger..w('Error loading configuration: $e')..w(
-        'Make sure .env exists (copy from .env.example)');
+    _logger
+      ..w('Error loading configuration: $e')
+      ..w('Make sure .env exists (copy from .env.example)');
     // En desarrollo, podemos continuar con valores por defecto
     // En producción, esto fallará si no hay dart-define
   }

@@ -51,16 +51,17 @@ class LocalChildDataService {
 
   /// Get all child data as a map
   Map<String, String?> getChildData() => {
-      'name': getChildName(),
-      'age': getChildAge(),
-      'personality': getChildPersonality(),
-      'customPrompt': getCustomPrompt(),
-    };
+    'name': getChildName(),
+    'age': getChildAge(),
+    'personality': getChildPersonality(),
+    'customPrompt': getCustomPrompt(),
+  };
 
   /// Check if child data exists
-  bool hasChildData() => getChildName() != null &&
-        getChildAge() != null &&
-        getChildPersonality() != null;
+  bool hasChildData() =>
+      getChildName() != null &&
+      getChildAge() != null &&
+      getChildPersonality() != null;
 
   /// Generate a system prompt based on stored child data
   String generateSystemPrompt() {
@@ -165,11 +166,11 @@ Communication style:
 
   /// Export child data as JSON-compatible map
   Map<String, dynamic> exportData() => {
-      'childName': getChildName(),
-      'childAge': getChildAge(),
-      'childPersonality': getChildPersonality(),
-      'customPrompt': getCustomPrompt(),
-      'systemPrompt': generateSystemPrompt(),
-      'setupCompleted': isSetupCompleted(),
-    };
+    'childName': getChildName(),
+    'childAge': getChildAge(),
+    'childPersonality': getChildPersonality(),
+    'customPrompt': getCustomPrompt(),
+    'systemPrompt': generateSystemPrompt(),
+    'setupCompleted': isSetupCompleted(),
+  };
 }

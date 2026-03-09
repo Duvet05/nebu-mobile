@@ -17,7 +17,8 @@ class GradientText extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ShaderMask(
     shaderCallback: (bounds) => LinearGradient(
-      colors: gradientColors ?? [context.colors.primary, context.colors.secondary],
+      colors:
+          gradientColors ?? [context.colors.primary, context.colors.secondary],
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     ).createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height)),

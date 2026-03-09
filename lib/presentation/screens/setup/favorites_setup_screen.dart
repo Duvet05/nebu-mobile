@@ -71,36 +71,40 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                       child: GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 1.2,
-                        ),
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1.2,
+                            ),
                         itemCount: _categories.length,
                         itemBuilder: (context, index) {
                           final category = _categories[index];
-                          final isSelected = _selectedFavorites
-                              .contains(category['label'] as String);
+                          final isSelected = _selectedFavorites.contains(
+                            category['label'] as String,
+                          );
 
                           return GestureDetector(
                             onTap: () {
                               setState(() {
                                 if (isSelected) {
-                                  _selectedFavorites
-                                      .remove(category['label'] as String);
+                                  _selectedFavorites.remove(
+                                    category['label'] as String,
+                                  );
                                 } else {
-                                  _selectedFavorites
-                                      .add(category['label'] as String);
+                                  _selectedFavorites.add(
+                                    category['label'] as String,
+                                  );
                                 }
                               });
                             },
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? context.colors.primary
-                                        .withValues(alpha: 0.08)
+                                    ? context.colors.primary.withValues(
+                                        alpha: 0.08,
+                                      )
                                     : colorScheme.surfaceContainerHighest
-                                        .withValues(alpha: 0.3),
+                                          .withValues(alpha: 0.3),
                                 borderRadius: context.radius.panel,
                                 border: Border.all(
                                   color: isSelected
@@ -117,10 +121,10 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                                     height: 48,
                                     decoration: BoxDecoration(
                                       color: isSelected
-                                          ? context.colors.primary
-                                              .withValues(alpha: 0.15)
-                                          : colorScheme
-                                              .surfaceContainerHighest,
+                                          ? context.colors.primary.withValues(
+                                              alpha: 0.15,
+                                            )
+                                          : colorScheme.surfaceContainerHighest,
                                       borderRadius: context.radius.panel,
                                     ),
                                     child: Icon(
@@ -134,8 +138,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                                   SizedBox(height: context.spacing.gapLg),
                                   Text(
                                     (category['label'] as String).tr(),
-                                    style:
-                                        theme.textTheme.titleSmall?.copyWith(
+                                    style: theme.textTheme.titleSmall?.copyWith(
                                       fontWeight: FontWeight.w600,
                                       color: isSelected
                                           ? context.colors.primary

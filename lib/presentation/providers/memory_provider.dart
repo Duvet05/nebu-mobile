@@ -12,8 +12,10 @@ final memoryServiceProvider = Provider<MemoryService>((ref) {
 });
 
 /// Recent memories for a specific toy
-final toyMemoriesProvider =
-    FutureProvider.family<List<MemoryEntry>, String>((ref, toyId) async {
+final toyMemoriesProvider = FutureProvider.family<List<MemoryEntry>, String>((
+  ref,
+  toyId,
+) async {
   final service = ref.watch(memoryServiceProvider);
   return service.getRecentMemories(toyId: toyId);
 });
@@ -38,8 +40,8 @@ class MemorySearchNotifier extends Notifier<AsyncValue<List<MemoryEntry>>> {
 
 final memorySearchProvider =
     NotifierProvider<MemorySearchNotifier, AsyncValue<List<MemoryEntry>>>(
-  MemorySearchNotifier.new,
-);
+      MemorySearchNotifier.new,
+    );
 
 /// Knowledge base search
 class KnowledgeSearchNotifier
@@ -68,7 +70,7 @@ class KnowledgeSearchNotifier
   }
 }
 
-final knowledgeSearchProvider = NotifierProvider<KnowledgeSearchNotifier,
-    AsyncValue<List<KnowledgeEntry>>>(
-  KnowledgeSearchNotifier.new,
-);
+final knowledgeSearchProvider =
+    NotifierProvider<KnowledgeSearchNotifier, AsyncValue<List<KnowledgeEntry>>>(
+      KnowledgeSearchNotifier.new,
+    );

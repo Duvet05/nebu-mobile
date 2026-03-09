@@ -9,18 +9,21 @@ class AuthBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 20,
-          color: context.colors.textNormal,
-        ),
-      );
+    onPressed: onPressed,
+    icon: Icon(
+      Icons.arrow_back_ios_new_rounded,
+      size: 20,
+      color: context.colors.textNormal,
+    ),
+  );
 }
 
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
-    required this.controller, required this.label, required this.prefixIcon, super.key,
+    required this.controller,
+    required this.label,
+    required this.prefixIcon,
+    super.key,
     this.hintText,
     this.keyboardType,
     this.obscureText = false,
@@ -54,17 +57,17 @@ class AuthTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
-        hintStyle: textTheme.bodyMedium?.copyWith(color: context.colors.grey500),
-        labelStyle: textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: context.colors.grey500,
+        ),
+        labelStyle: textTheme.bodyMedium?.copyWith(
+          color: context.colors.grey400,
+        ),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
           color: context.theme.colorScheme.primary,
           fontWeight: FontWeight.w500,
         ),
-        prefixIcon: Icon(
-          prefixIcon,
-          color: context.colors.grey500,
-          size: 22,
-        ),
+        prefixIcon: Icon(prefixIcon, color: context.colors.grey500, size: 22),
         suffixIcon: suffixIcon != null
             ? GestureDetector(
                 onTap: onSuffixTap,
@@ -88,7 +91,9 @@ class AuthTextField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: context.radius.panel,
           borderSide: BorderSide(
-              color: context.theme.colorScheme.primary, width: 1.5),
+            color: context.theme.colorScheme.primary,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: context.radius.panel,
@@ -98,8 +103,10 @@ class AuthTextField extends StatelessWidget {
           borderRadius: context.radius.panel,
           borderSide: BorderSide(color: context.colors.error, width: 1.5),
         ),
-        contentPadding:
-            EdgeInsets.symmetric(horizontal: context.spacing.gapXxl, vertical: 18),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: context.spacing.gapXxl,
+          vertical: 18,
+        ),
       ),
     );
   }
@@ -107,7 +114,9 @@ class AuthTextField extends StatelessWidget {
 
 class AuthPrimaryButton extends StatelessWidget {
   const AuthPrimaryButton({
-    required this.text, required this.onPressed, super.key,
+    required this.text,
+    required this.onPressed,
+    super.key,
     this.isLoading = false,
   });
   final String text;
@@ -145,7 +154,9 @@ class AuthPrimaryButton extends StatelessWidget {
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(context.colors.textOnFilled),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.colors.textOnFilled,
+                      ),
                     ),
                   )
                 : Text(
@@ -165,7 +176,9 @@ class AuthPrimaryButton extends StatelessWidget {
 
 class AuthGoogleButton extends StatelessWidget {
   const AuthGoogleButton({
-    required this.text, required this.onPressed, super.key,
+    required this.text,
+    required this.onPressed,
+    super.key,
     this.isLoading = false,
   });
   final String text;
@@ -260,7 +273,11 @@ class AuthErrorBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline_rounded, color: context.colors.error, size: 22),
+          Icon(
+            Icons.error_outline_rounded,
+            color: context.colors.error,
+            size: 22,
+          ),
           SizedBox(width: context.spacing.gapLg),
           Expanded(
             child: Text(

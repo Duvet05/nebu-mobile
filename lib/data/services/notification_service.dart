@@ -13,9 +13,7 @@ class NotificationService {
   /// Get my notifications
   Future<List<Map<String, dynamic>>> getMyNotifications() async {
     _logger.d('Fetching my notifications');
-    final response = await _apiService.get<List<dynamic>>(
-      '/notifications/my',
-    );
+    final response = await _apiService.get<List<dynamic>>('/notifications/my');
     return response.cast<Map<String, dynamic>>();
   }
 

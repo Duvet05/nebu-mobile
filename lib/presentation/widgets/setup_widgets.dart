@@ -41,34 +41,38 @@ class SetupBackButton extends StatelessWidget {
 
 class SetupStepIndicator extends StatelessWidget {
   const SetupStepIndicator({
-    required this.current, required this.total, super.key,
+    required this.current,
+    required this.total,
+    super.key,
   });
   final int current;
   final int total;
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(total, (index) {
-          final isActive = index < current;
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 20 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colors.primary
-                  : context.colors.primary.withValues(alpha: 0.2),
-              borderRadius: context.radius.checkbox,
-            ),
-          );
-        }),
+    mainAxisSize: MainAxisSize.min,
+    children: List.generate(total, (index) {
+      final isActive = index < current;
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        width: isActive ? 20 : 8,
+        height: 8,
+        decoration: BoxDecoration(
+          color: isActive
+              ? context.colors.primary
+              : context.colors.primary.withValues(alpha: 0.2),
+          borderRadius: context.radius.checkbox,
+        ),
       );
+    }),
+  );
 }
 
 class SetupHeader extends StatelessWidget {
   const SetupHeader({
-    required this.currentStep, required this.totalSteps, super.key,
+    required this.currentStep,
+    required this.totalSteps,
+    super.key,
     this.previousRoute,
   });
   final int currentStep;
@@ -77,22 +81,27 @@ class SetupHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
-        child: Row(
-          children: [
+    padding: EdgeInsets.symmetric(
+      horizontal: context.spacing.gapMd,
+      vertical: context.spacing.gapLg,
+    ),
+    child: Row(
+      children: [
         SetupBackButton(previousRoute: previousRoute),
         const Spacer(),
-            SetupStepIndicator(current: currentStep, total: totalSteps),
-            const Spacer(),
-            const SizedBox(width: 44),
-          ],
-        ),
-      );
+        SetupStepIndicator(current: currentStep, total: totalSteps),
+        const Spacer(),
+        const SizedBox(width: 44),
+      ],
+    ),
+  );
 }
 
 class SetupPrimaryButton extends StatelessWidget {
   const SetupPrimaryButton({
-    required this.text, required this.onPressed, super.key,
+    required this.text,
+    required this.onPressed,
+    super.key,
     this.isEnabled = true,
     this.isLoading = false,
   });
@@ -106,16 +115,14 @@ class SetupPrimaryButton extends StatelessWidget {
     final effectiveEnabled = isEnabled && !isLoading;
     final gradient = effectiveEnabled
         ? LinearGradient(
-            colors: [
-              context.colors.primary100,
-              context.colors.primary,
-            ],
+            colors: [context.colors.primary100, context.colors.primary],
           )
         : null;
     final bgColor = effectiveEnabled
         ? null
-        : context.theme.colorScheme.surfaceContainerHighest
-            .withValues(alpha: 0.5);
+        : context.theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.5,
+          );
     final shadow = effectiveEnabled
         ? [
             BoxShadow(
@@ -169,16 +176,16 @@ class SetupSkipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
-          child: Text(
-            'setup.connection.skip_setup'.tr(),
-            style: context.theme.textTheme.bodyMedium?.copyWith(
-              color: context.theme.colorScheme.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
+    onTap: onTap,
+    child: Padding(
+      padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+      child: Text(
+        'setup.connection.skip_setup'.tr(),
+        style: context.theme.textTheme.bodyMedium?.copyWith(
+          color: context.theme.colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
         ),
-      );
+      ),
+    ),
+  );
 }

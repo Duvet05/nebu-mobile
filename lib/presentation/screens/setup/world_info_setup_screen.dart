@@ -31,10 +31,9 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         try {
           final toys = ref.read(toyProvider).value ?? [];
           if (toys.isNotEmpty) {
-            await ref.read(toyProvider.notifier).updateToy(
-                  id: toys.last.id,
-                  personalityProfile: personalityId,
-                );
+            await ref
+                .read(toyProvider.notifier)
+                .updateToy(id: toys.last.id, personalityProfile: personalityId);
             logger.d('Personality $personalityId applied to toy');
           }
         } on Exception catch (e) {
@@ -44,8 +43,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       }
     } else {
       // Device was NOT registered — save as local toy with pending status
-      final toyName =
-          prefs.getString(StorageKeys.setupToyName) ?? 'My Nebu';
+      final toyName = prefs.getString(StorageKeys.setupToyName) ?? 'My Nebu';
 
       final localToy = Toy(
         id: 'local_${DateTime.now().millisecondsSinceEpoch}',
@@ -172,18 +170,19 @@ class WorldInfoSetupScreen extends ConsumerWidget {
   }
 
   Widget _buildFeatureSummary(
-          BuildContext context, ThemeData theme, IconData icon, String text) =>
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: context.colors.primary, size: 24),
-          SizedBox(width: context.spacing.gapLg),
-          Text(
-            text,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      );
+    BuildContext context,
+    ThemeData theme,
+    IconData icon,
+    String text,
+  ) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Icon(icon, color: context.colors.primary, size: 24),
+      SizedBox(width: context.spacing.gapLg),
+      Text(
+        text,
+        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+      ),
+    ],
+  );
 }

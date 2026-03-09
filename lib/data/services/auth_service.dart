@@ -49,7 +49,8 @@ class AuthService {
     } on DioException catch (e) {
       return AuthResponse(
         success: false,
-        error: _extractErrorMessage(e) ??
+        error:
+            _extractErrorMessage(e) ??
             'Login failed. Please check your credentials.',
       );
     } on Exception {
@@ -87,8 +88,8 @@ class AuthService {
     } on DioException catch (e) {
       return AuthResponse(
         success: false,
-        error: _extractErrorMessage(e) ??
-            'Registration failed. Please try again.',
+        error:
+            _extractErrorMessage(e) ?? 'Registration failed. Please try again.',
       );
     } on Exception {
       return const AuthResponse(
@@ -129,7 +130,8 @@ class AuthService {
     } on DioException catch (e) {
       return SocialAuthResult(
         success: false,
-        error: _extractErrorMessage(e) ??
+        error:
+            _extractErrorMessage(e) ??
             '$providerName login failed. Please try again.',
       );
     } on Exception {
@@ -161,8 +163,8 @@ class AuthService {
 
   /// Remove technical prefixes from backend error messages
   static String _cleanMessage(String msg) => msg
-        .replaceFirst(RegExp(r'^Validation failed:\s*'), '')
-        .replaceFirst(RegExp(r'^Error:\s*'), '');
+      .replaceFirst(RegExp(r'^Validation failed:\s*'), '')
+      .replaceFirst(RegExp(r'^Error:\s*'), '');
 
   // Token Management
   Future<void> _storeTokens(AuthTokens tokens) async {
@@ -256,5 +258,4 @@ class AuthService {
       return false;
     }
   }
-
 }

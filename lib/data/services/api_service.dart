@@ -36,17 +36,13 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _secureStorage.read(
-            key: StorageKeys.accessToken,
-          );
+          final token = await _secureStorage.read(key: StorageKeys.accessToken);
 
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
 
-          _logger.d(
-            'Request: ${options.method} ${options.path}',
-          );
+          _logger.d('Request: ${options.method} ${options.path}');
 
           return handler.next(options);
         },
@@ -191,10 +187,7 @@ class ApiService {
         statusCode: 429,
         retryAfter: _extractRetryAfter(error.response),
       ),
-      >= 500 => ServerException(
-        backendMsg ?? 'Server error',
-        statusCode: code,
-      ),
+      >= 500 => ServerException(backendMsg ?? 'Server error', statusCode: code),
       _ => ServerException(
         backendMsg ?? error.message ?? 'Unknown error',
         statusCode: code,
@@ -242,35 +235,70 @@ class ApiService {
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) => _request(() => _dio.get<T>(path, queryParameters: queryParameters, options: options), 'GET');
+  }) => _request(
+    () => _dio.get<T>(path, queryParameters: queryParameters, options: options),
+    'GET',
+  );
 
   Future<T> post<T>(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) => _request(() => _dio.post<T>(path, data: data, queryParameters: queryParameters, options: options), 'POST');
+  }) => _request(
+    () => _dio.post<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    ),
+    'POST',
+  );
 
   Future<T> put<T>(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) => _request(() => _dio.put<T>(path, data: data, queryParameters: queryParameters, options: options), 'PUT');
+  }) => _request(
+    () => _dio.put<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    ),
+    'PUT',
+  );
 
   Future<T> delete<T>(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) => _request(() => _dio.delete<T>(path, data: data, queryParameters: queryParameters, options: options), 'DELETE');
+  }) => _request(
+    () => _dio.delete<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    ),
+    'DELETE',
+  );
 
   Future<T> patch<T>(
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) => _request(() => _dio.patch<T>(path, data: data, queryParameters: queryParameters, options: options), 'PATCH');
+  }) => _request(
+    () => _dio.patch<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    ),
+    'PATCH',
+  );
 
   Future<T> _request<T>(
     Future<Response<T>> Function() execute,

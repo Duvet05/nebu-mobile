@@ -45,7 +45,8 @@ class ToyService {
         if (settings != null) 'settings': settings,
         if (notes != null) 'notes': notes,
         if (prompt != null) 'prompt': prompt,
-        if (personalityProfile != null) 'personalityProfile': personalityProfile,
+        if (personalityProfile != null)
+          'personalityProfile': personalityProfile,
         if (greeting != null) 'greeting': greeting,
       },
     );

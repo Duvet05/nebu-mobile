@@ -133,10 +133,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       await File(image.path).copy(avatarFile.path);
 
       // Persist the path
-      await ref.read(secureStorageProvider).write(
-        key: StorageKeys.localAvatar,
-        value: avatarFile.path,
-      );
+      await ref
+          .read(secureStorageProvider)
+          .write(key: StorageKeys.localAvatar, value: avatarFile.path);
 
       // Refresh the provider so UI updates everywhere
       ref.invalidate(localAvatarProvider);

@@ -58,7 +58,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _initializeBluetooth() async {
-    _adapterStateSubscription = fbp.FlutterBluePlus.adapterState.listen((state) {
+    _adapterStateSubscription = fbp.FlutterBluePlus.adapterState.listen((
+      state,
+    ) {
       _logger.d('Bluetooth adapter state changed: $state');
       if (mounted) {
         setState(() {
@@ -123,10 +125,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
-            .where((r) =>
-                r.device.platformName.isNotEmpty &&
-                (r.device.platformName.toLowerCase().contains('nebu') ||
-                    r.device.platformName.toLowerCase().contains('esp32')))
+            .where(
+              (r) =>
+                  r.device.platformName.isNotEmpty &&
+                  (r.device.platformName.toLowerCase().contains('nebu') ||
+                      r.device.platformName.toLowerCase().contains('esp32')),
+            )
             .toList();
 
         if (mounted) {
@@ -166,7 +170,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     setState(() => _isConnecting = true);
 
     try {
-      final esp32service = await ref.read(esp32WifiConfigServiceProvider.future);
+      final esp32service = await ref.read(
+        esp32WifiConfigServiceProvider.future,
+      );
       await esp32service.connectToESP32(device);
 
       if (!mounted) {
@@ -177,9 +183,15 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: context.colors.textOnFilled, size: 20),
+              Icon(
+                Icons.check_circle,
+                color: context.colors.textOnFilled,
+                size: 20,
+              ),
               SizedBox(width: context.spacing.gapLg),
-              Text('setup.connection.connected_to'.tr(args: [device.platformName])),
+              Text(
+                'setup.connection.connected_to'.tr(args: [device.platformName]),
+              ),
             ],
           ),
           backgroundColor: context.colors.success,
@@ -200,7 +212,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.error_outline, color: context.colors.textOnFilled, size: 20),
+              Icon(
+                Icons.error_outline,
+                color: context.colors.textOnFilled,
+                size: 20,
+              ),
               SizedBox(width: context.spacing.gapLg),
               Expanded(child: Text('setup.connection.connection_failed'.tr())),
             ],
@@ -246,90 +262,91 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
   void _showSkipSetupSheet() {
     showModalBottomSheet<void>(
-        context: context,
-        backgroundColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (context) {
-          final textTheme = context.theme.textTheme;
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        final textTheme = context.theme.textTheme;
 
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            ),
-            padding: EdgeInsets.all(context.spacing.pageMargin),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: context.colors.grey700,
-                    borderRadius: context.radius.checkbox,
-                  ),
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          padding: EdgeInsets.all(context.spacing.pageMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: context.colors.grey700,
+                  borderRadius: context.radius.checkbox,
                 ),
-                SizedBox(height: context.spacing.panelPadding),
-                Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    color: context.colors.primary.withValues(alpha: 0.1),
-                    borderRadius: context.radius.bottomSheet,
-                  ),
-                  child: Icon(
-                    Icons.settings_rounded,
-                    color: context.colors.primary,
-                    size: 32,
-                  ),
+              ),
+              SizedBox(height: context.spacing.panelPadding),
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: context.colors.primary.withValues(alpha: 0.1),
+                  borderRadius: context.radius.bottomSheet,
                 ),
-                SizedBox(height: context.spacing.titleBottomMargin),
-                Text(
-                  'setup.connection.setup_options'.tr(),
-                  style: textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: context.colors.textNormal,
-                  ),
+                child: Icon(
+                  Icons.settings_rounded,
+                  color: context.colors.primary,
+                  size: 32,
                 ),
-                SizedBox(height: context.spacing.titleBottomMarginSm),
-                Text(
-                  'setup.connection.setup_options_desc'.tr(),
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: context.colors.grey400,
-                  ),
+              ),
+              SizedBox(height: context.spacing.titleBottomMargin),
+              Text(
+                'setup.connection.setup_options'.tr(),
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  color: context.colors.textNormal,
                 ),
-                SizedBox(height: context.spacing.titleBottomMargin),
+              ),
+              SizedBox(height: context.spacing.titleBottomMarginSm),
+              Text(
+                'setup.connection.setup_options_desc'.tr(),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: context.colors.grey400,
+                ),
+              ),
+              SizedBox(height: context.spacing.titleBottomMargin),
 
-                // Option 1: Configure Locally
-                _OptionCard(
-                  icon: Icons.phone_android_rounded,
-                  title: 'setup.connection.configure_locally'.tr(),
-                  description: 'setup.connection.configure_locally_desc'.tr(),
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.push(AppRoutes.toyNameSetup.path);
-                  },
-                ),
+              // Option 1: Configure Locally
+              _OptionCard(
+                icon: Icons.phone_android_rounded,
+                title: 'setup.connection.configure_locally'.tr(),
+                description: 'setup.connection.configure_locally_desc'.tr(),
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push(AppRoutes.toyNameSetup.path);
+                },
+              ),
 
-                SizedBox(height: context.spacing.paragraphBottomMarginSm),
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
 
-                // Option 2: Skip
-                _OptionCard(
-                  icon: Icons.arrow_forward_rounded,
-                  title: 'setup.connection.skip_setup'.tr(),
-                  description: 'setup.connection.skip_setup_desc'.tr(),
-                  isSecondary: true,
-                  onTap: () {
-                    Navigator.pop(context);
-                    context.go(AppRoutes.home.path);
-                  },
-                ),
+              // Option 2: Skip
+              _OptionCard(
+                icon: Icons.arrow_forward_rounded,
+                title: 'setup.connection.skip_setup'.tr(),
+                description: 'setup.connection.skip_setup_desc'.tr(),
+                isSecondary: true,
+                onTap: () {
+                  Navigator.pop(context);
+                  context.go(AppRoutes.home.path);
+                },
+              ),
 
-                SizedBox(height: context.spacing.sectionTitleBottomMargin),
-              ],
-            ),
-          );
-        });
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showPermissionsDeniedSheet() {
@@ -340,8 +357,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         icon: Icons.security_rounded,
         iconColor: context.colors.warning,
         title: 'setup.connection.permissions_required_title'.tr(),
-        description:
-            'setup.connection.permissions_denied_desc'.tr(),
+        description: 'setup.connection.permissions_denied_desc'.tr(),
         primaryText: 'setup.connection.open_settings'.tr(),
         primaryOnPressed: () {
           Navigator.pop(context);
@@ -365,7 +381,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           children: [
             // Header
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapLg),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.spacing.gapMd,
+                vertical: context.spacing.gapLg,
+              ),
               child: Row(
                 children: [
                   _BackButton(onPressed: () => context.pop()),
@@ -410,8 +429,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       child: _isScanning
                           ? _buildScanningView()
                           : _scanResults.isEmpty
-                              ? _buildEmptyState()
-                              : _buildDevicesList(),
+                          ? _buildEmptyState()
+                          : _buildDevicesList(),
                     ),
 
                     // Bottom buttons
@@ -419,8 +438,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       text: _isScanning
                           ? 'setup.connection.scanning'.tr()
                           : canProceed
-                              ? 'common.continue'.tr()
-                              : 'setup.connection.start_scan'.tr(),
+                          ? 'common.continue'.tr()
+                          : 'setup.connection.start_scan'.tr(),
                       isLoading: _isScanning,
                       onPressed: () {
                         if (_isScanning) {
@@ -441,7 +460,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                     GestureDetector(
                       onTap: _showSkipSetupSheet,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+                        padding: EdgeInsets.symmetric(
+                          vertical: context.spacing.gapMd,
+                        ),
                         child: Text(
                           'setup.connection.skip_for_now'.tr(),
                           style: textTheme.bodyMedium?.copyWith(
@@ -505,9 +526,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           SizedBox(height: context.spacing.gapXxl),
           Text(
             'setup.connection.looking_for_devices'.tr(),
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           SizedBox(height: context.spacing.gapMd),
           Text(
@@ -545,9 +564,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           SizedBox(height: context.spacing.gapXxl),
           Text(
             'setup.connection.ready_to_connect'.tr(),
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
           ),
           SizedBox(height: context.spacing.gapMd),
           Text(
@@ -580,7 +597,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
             ),
             SizedBox(width: context.spacing.gapMd),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapXxs),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.spacing.gapMd,
+                vertical: context.spacing.gapXxs,
+              ),
               decoration: BoxDecoration(
                 color: context.colors.primary.withValues(alpha: 0.1),
                 borderRadius: context.radius.tile,
@@ -651,31 +671,28 @@ class _BackButton extends StatelessWidget {
 }
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator({
-    required this.currentStep,
-    required this.totalSteps,
-  });
+  const _StepIndicator({required this.currentStep, required this.totalSteps});
   final int currentStep;
   final int totalSteps;
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: List.generate(totalSteps, (index) {
-          final isActive = index < currentStep;
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: isActive ? 20 : 8,
-            height: 8,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? context.colors.primary
-                  : context.colors.primary.withValues(alpha: 0.2),
-              borderRadius: context.radius.checkbox,
-            ),
-          );
-        }),
+    mainAxisSize: MainAxisSize.min,
+    children: List.generate(totalSteps, (index) {
+      final isActive = index < currentStep;
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 3),
+        width: isActive ? 20 : 8,
+        height: 8,
+        decoration: BoxDecoration(
+          color: isActive
+              ? context.colors.primary
+              : context.colors.primary.withValues(alpha: 0.2),
+          borderRadius: context.radius.checkbox,
+        ),
       );
+    }),
+  );
 }
 
 class _PrimaryButton extends StatelessWidget {
@@ -716,7 +733,9 @@ class _PrimaryButton extends StatelessWidget {
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(context.colors.textOnFilled),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      context.colors.textOnFilled,
+                    ),
                   ),
                 )
               : Text(
@@ -772,8 +791,7 @@ class _DeviceCard extends StatelessWidget {
               : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           borderRadius: context.radius.panel,
           border: Border.all(
-            color:
-                isSelected ? context.colors.primary : colorScheme.outline,
+            color: isSelected ? context.colors.primary : colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1018,7 +1036,9 @@ class _OptionCard extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isSecondary ? context.colors.grey400 : context.colors.primary,
+                color: isSecondary
+                    ? context.colors.grey400
+                    : context.colors.primary,
                 size: 22,
               ),
             ),

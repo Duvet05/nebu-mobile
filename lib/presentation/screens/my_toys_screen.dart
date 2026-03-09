@@ -188,7 +188,9 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 if (isPending) ...[
                   SizedBox(height: context.spacing.alertPadding),
                   Container(
-                    padding: EdgeInsets.all(context.spacing.paragraphBottomMarginSm),
+                    padding: EdgeInsets.all(
+                      context.spacing.paragraphBottomMarginSm,
+                    ),
                     decoration: BoxDecoration(
                       color: context.colors.warning.withValues(alpha: 0.08),
                       borderRadius: context.radius.tile,
@@ -795,7 +797,9 @@ class _ToyCard extends StatelessWidget {
                   SizedBox(height: context.spacing.paragraphBottomMarginSm),
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: context.spacing.paragraphBottomMarginSm),
+                    padding: EdgeInsets.symmetric(
+                      vertical: context.spacing.paragraphBottomMarginSm,
+                    ),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.06),
                       borderRadius: context.radius.tile,
@@ -877,7 +881,10 @@ class _QuickActionButton extends StatelessWidget {
     onTap: onTap,
     borderRadius: context.radius.tile,
     child: Container(
-      padding: EdgeInsets.symmetric(horizontal: context.spacing.paragraphBottomMarginSm, vertical: context.spacing.labelBottomMargin),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.paragraphBottomMarginSm,
+        vertical: context.spacing.labelBottomMargin,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: context.radius.tile,

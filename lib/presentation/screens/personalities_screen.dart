@@ -61,7 +61,8 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               vertical: context.spacing.labelBottomMargin,
             ),
             itemCount: PersonalityCategories.values.length,
-            separatorBuilder: (_, _) => SizedBox(width: context.spacing.labelBottomMargin),
+            separatorBuilder: (_, _) =>
+                SizedBox(width: context.spacing.labelBottomMargin),
             itemBuilder: (context, index) {
               final cat = PersonalityCategories.values[index];
               final isSelected = _selectedCategory == cat;
@@ -174,7 +175,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     child: Container(
                       width: 40,
                       height: 4,
-                      margin: EdgeInsets.only(bottom: context.spacing.alertPadding),
+                      margin: EdgeInsets.only(
+                        bottom: context.spacing.alertPadding,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.onSurfaceVariant.withValues(
                           alpha: 0.3,
@@ -209,7 +212,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             ),
                             if (personality.category != null)
                               Container(
-                                margin: EdgeInsets.only(top: context.spacing.gapXs),
+                                margin: EdgeInsets.only(
+                                  top: context.spacing.gapXs,
+                                ),
                                 padding: EdgeInsets.symmetric(
                                   horizontal: context.spacing.gapMd,
                                   vertical: context.spacing.gapXxs,
@@ -263,7 +268,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             color: catColor,
                             size: 20,
                           ),
-                          SizedBox(width: context.spacing.paragraphBottomMarginSm),
+                          SizedBox(
+                            width: context.spacing.paragraphBottomMarginSm,
+                          ),
                           Expanded(
                             child: Text(
                               personality.greeting!,
@@ -568,7 +575,10 @@ class _PersonalityCard extends StatelessWidget {
             SizedBox(height: context.spacing.gapXs),
             if (personality.category != null)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapMd, vertical: context.spacing.gapXxs),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapMd,
+                  vertical: context.spacing.gapXxs,
+                ),
                 decoration: BoxDecoration(
                   color: catColor.withValues(alpha: 0.1),
                   borderRadius: context.radius.tile,

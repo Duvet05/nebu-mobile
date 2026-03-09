@@ -96,9 +96,7 @@ class ActivityService {
     );
 
     final migratedCount = response['migratedCount'] as int? ?? 0;
-    _logger.i(
-      '✅ [MIGRATION] Successfully migrated $migratedCount activities',
-    );
+    _logger.i('✅ [MIGRATION] Successfully migrated $migratedCount activities');
 
     return response;
   }

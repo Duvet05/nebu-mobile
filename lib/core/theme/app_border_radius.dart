@@ -53,9 +53,9 @@ class SemanticRadius {
 
   /// Bottom-sheet top corners only (topLeft + topRight).
   BorderRadius get bottomSheetTop => const BorderRadius.only(
-        topLeft: Radius.circular(AppRadius.bottomSheet),
-        topRight: Radius.circular(AppRadius.bottomSheet),
-      );
+    topLeft: Radius.circular(AppRadius.bottomSheet),
+    topRight: Radius.circular(AppRadius.bottomSheet),
+  );
 }
 
 // ═══════════════════════════════════════════════════════════

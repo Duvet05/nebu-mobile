@@ -7,9 +7,7 @@ import '../../core/config/config.dart';
 /// Uses Dio directly (not ApiService) because /health lives at the server
 /// root, outside the /api/v1 prefix.
 class HealthService {
-  HealthService({
-    required Logger logger,
-  }) : _logger = logger;
+  HealthService({required Logger logger}) : _logger = logger;
 
   final Logger _logger;
 
@@ -71,24 +69,24 @@ class HealthStatus {
   });
 
   factory HealthStatus.fromJson(Map<String, dynamic> json) => HealthStatus(
-      status: json['status'] as String,
-      timestamp: json['timestamp'] as String,
-      service: json['service'] as String,
-      version: json['version'] as String,
-      environment: json['environment'] as String,
-      uptime: json['uptime'] as int,
-      memory: json['memory'] != null
-          ? MemoryMetrics.fromJson(json['memory'] as Map<String, dynamic>)
-          : null,
-      checks: json['checks'] != null
-          ? HealthChecks.fromJson(json['checks'] as Map<String, dynamic>)
-          : null,
-      performance: json['performance'] != null
-          ? PerformanceMetrics.fromJson(
-              json['performance'] as Map<String, dynamic>,
-            )
-          : null,
-    );
+    status: json['status'] as String,
+    timestamp: json['timestamp'] as String,
+    service: json['service'] as String,
+    version: json['version'] as String,
+    environment: json['environment'] as String,
+    uptime: json['uptime'] as int,
+    memory: json['memory'] != null
+        ? MemoryMetrics.fromJson(json['memory'] as Map<String, dynamic>)
+        : null,
+    checks: json['checks'] != null
+        ? HealthChecks.fromJson(json['checks'] as Map<String, dynamic>)
+        : null,
+    performance: json['performance'] != null
+        ? PerformanceMetrics.fromJson(
+            json['performance'] as Map<String, dynamic>,
+          )
+        : null,
+  );
 
   final String status;
   final String timestamp;
@@ -101,16 +99,16 @@ class HealthStatus {
   final PerformanceMetrics? performance;
 
   Map<String, dynamic> toJson() => {
-      'status': status,
-      'timestamp': timestamp,
-      'service': service,
-      'version': version,
-      'environment': environment,
-      'uptime': uptime,
-      if (memory != null) 'memory': memory!.toJson(),
-      if (checks != null) 'checks': checks!.toJson(),
-      if (performance != null) 'performance': performance!.toJson(),
-    };
+    'status': status,
+    'timestamp': timestamp,
+    'service': service,
+    'version': version,
+    'environment': environment,
+    'uptime': uptime,
+    if (memory != null) 'memory': memory!.toJson(),
+    if (checks != null) 'checks': checks!.toJson(),
+    if (performance != null) 'performance': performance!.toJson(),
+  };
 }
 
 class MemoryMetrics {
@@ -121,20 +119,20 @@ class MemoryMetrics {
   });
 
   factory MemoryMetrics.fromJson(Map<String, dynamic> json) => MemoryMetrics(
-      heapUsed: (json['heapUsed'] as num).toDouble(),
-      heapTotal: (json['heapTotal'] as num).toDouble(),
-      heapUsedPercent: json['heapUsedPercent'] as int,
-    );
+    heapUsed: (json['heapUsed'] as num).toDouble(),
+    heapTotal: (json['heapTotal'] as num).toDouble(),
+    heapUsedPercent: json['heapUsedPercent'] as int,
+  );
 
   final double heapUsed;
   final double heapTotal;
   final int heapUsedPercent;
 
   Map<String, dynamic> toJson() => {
-      'heapUsed': heapUsed,
-      'heapTotal': heapTotal,
-      'heapUsedPercent': heapUsedPercent,
-    };
+    'heapUsed': heapUsed,
+    'heapTotal': heapTotal,
+    'heapUsedPercent': heapUsedPercent,
+  };
 }
 
 class HealthChecks {
@@ -145,41 +143,36 @@ class HealthChecks {
   });
 
   factory HealthChecks.fromJson(Map<String, dynamic> json) => HealthChecks(
-      database: CheckStatus.fromJson(json['database'] as Map<String, dynamic>),
-      redis: CheckStatus.fromJson(json['redis'] as Map<String, dynamic>),
-      configuration:
-          CheckStatus.fromJson(json['configuration'] as Map<String, dynamic>),
-    );
+    database: CheckStatus.fromJson(json['database'] as Map<String, dynamic>),
+    redis: CheckStatus.fromJson(json['redis'] as Map<String, dynamic>),
+    configuration: CheckStatus.fromJson(
+      json['configuration'] as Map<String, dynamic>,
+    ),
+  );
 
   final CheckStatus database;
   final CheckStatus redis;
   final CheckStatus configuration;
 
   Map<String, dynamic> toJson() => {
-      'database': database.toJson(),
-      'redis': redis.toJson(),
-      'configuration': configuration.toJson(),
-    };
+    'database': database.toJson(),
+    'redis': redis.toJson(),
+    'configuration': configuration.toJson(),
+  };
 }
 
 class CheckStatus {
-  CheckStatus({
-    required this.status,
-    required this.connected,
-  });
+  CheckStatus({required this.status, required this.connected});
 
   factory CheckStatus.fromJson(Map<String, dynamic> json) => CheckStatus(
-      status: json['status'] as String,
-      connected: json['connected'] as bool,
-    );
+    status: json['status'] as String,
+    connected: json['connected'] as bool,
+  );
 
   final String status;
   final bool connected;
 
-  Map<String, dynamic> toJson() => {
-      'status': status,
-      'connected': connected,
-    };
+  Map<String, dynamic> toJson() => {'status': status, 'connected': connected};
 }
 
 class PerformanceMetrics {
@@ -190,12 +183,13 @@ class PerformanceMetrics {
     required this.nodeVersion,
   });
 
-  factory PerformanceMetrics.fromJson(Map<String, dynamic> json) => PerformanceMetrics(
-      responseTime: json['responseTime'] as int,
-      pid: json['pid'] as int,
-      platform: json['platform'] as String,
-      nodeVersion: json['nodeVersion'] as String,
-    );
+  factory PerformanceMetrics.fromJson(Map<String, dynamic> json) =>
+      PerformanceMetrics(
+        responseTime: json['responseTime'] as int,
+        pid: json['pid'] as int,
+        platform: json['platform'] as String,
+        nodeVersion: json['nodeVersion'] as String,
+      );
 
   final int responseTime;
   final int pid;
@@ -203,9 +197,9 @@ class PerformanceMetrics {
   final String nodeVersion;
 
   Map<String, dynamic> toJson() => {
-      'responseTime': responseTime,
-      'pid': pid,
-      'platform': platform,
-      'nodeVersion': nodeVersion,
-    };
+    'responseTime': responseTime,
+    'pid': pid,
+    'platform': platform,
+    'nodeVersion': nodeVersion,
+  };
 }

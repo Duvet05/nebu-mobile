@@ -42,9 +42,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 title: json['title'] as String? ?? '',
                 message: json['message'] as String? ?? '',
                 type: json['type'] as String? ?? 'system',
-                timestamp: DateTime.tryParse(
-                      json['createdAt'] as String? ?? '',
-                    ) ??
+                timestamp:
+                    DateTime.tryParse(json['createdAt'] as String? ?? '') ??
                     DateTime.now(),
                 isRead: json['readAt'] != null,
               ),
@@ -57,9 +56,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         return;
       }
       setState(() => _isLoading = false);
-      context.showErrorSnackBar(
-        e.toString().replaceFirst('Exception: ', ''),
-      );
+      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 
@@ -92,7 +89,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           // Filter chips
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl, vertical: context.spacing.gapLg),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.spacing.gapXl,
+              vertical: context.spacing.gapLg,
+            ),
             child: Row(
               children: [
                 _buildFilterChip('all', 'notifications.all'.tr(), theme),
@@ -111,24 +111,24 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : filteredNotifications.isEmpty
-                    ? _buildEmptyState(theme)
-                    : RefreshIndicator(
-                        onRefresh: _loadNotifications,
-                        child: ListView.builder(
-                          padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl),
-                          itemCount: filteredNotifications.length,
-                          itemBuilder: (context, index) {
-                            final notification = filteredNotifications[index];
-                            return _NotificationCard(
-                              notification: notification,
-                              onTap: () =>
-                                  _handleNotificationTap(notification),
-                              onDismiss: () =>
-                                  _dismissNotification(notification),
-                            );
-                          },
-                        ),
+                ? _buildEmptyState(theme)
+                : RefreshIndicator(
+                    onRefresh: _loadNotifications,
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.spacing.gapXl,
                       ),
+                      itemCount: filteredNotifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = filteredNotifications[index];
+                        return _NotificationCard(
+                          notification: notification,
+                          onTap: () => _handleNotificationTap(notification),
+                          onDismiss: () => _dismissNotification(notification),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -250,7 +250,9 @@ class _NotificationCard extends StatelessWidget {
         child: Icon(Icons.delete, color: context.colors.textOnFilled),
       ),
       child: Card(
-        margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
+        margin: EdgeInsets.only(
+          bottom: context.spacing.paragraphBottomMarginSm,
+        ),
         elevation: notification.isRead ? 0 : 2,
         color: notification.isRead
             ? theme.colorScheme.surface

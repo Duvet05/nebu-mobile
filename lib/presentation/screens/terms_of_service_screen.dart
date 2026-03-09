@@ -252,8 +252,15 @@ class TermsOfServiceScreen extends ConsumerWidget {
     ),
   );
 
-  Widget _buildBulletPoint(BuildContext context, ThemeData theme, String text) => Padding(
-    padding: EdgeInsets.only(left: context.spacing.gapXl, bottom: context.spacing.gapMd),
+  Widget _buildBulletPoint(
+    BuildContext context,
+    ThemeData theme,
+    String text,
+  ) => Padding(
+    padding: EdgeInsets.only(
+      left: context.spacing.gapXl,
+      bottom: context.spacing.gapMd,
+    ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

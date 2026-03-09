@@ -200,29 +200,37 @@ class PrivacyPolicyScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, ThemeData theme, String title, String content) =>
-      Padding(
-        padding: EdgeInsets.only(bottom: context.spacing.sectionTitleBottomMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: context.spacing.titleBottomMarginSm),
-            Text(
-              content,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
-            ),
-          ],
+  Widget _buildSection(
+    BuildContext context,
+    ThemeData theme,
+    String title,
+    String content,
+  ) => Padding(
+    padding: EdgeInsets.only(bottom: context.spacing.sectionTitleBottomMargin),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      );
+        SizedBox(height: context.spacing.titleBottomMarginSm),
+        Text(content, style: theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+      ],
+    ),
+  );
 
-  Widget _buildBulletPoint(BuildContext context, ThemeData theme, String text) => Padding(
-    padding: EdgeInsets.only(left: context.spacing.gapXl, bottom: context.spacing.gapMd),
+  Widget _buildBulletPoint(
+    BuildContext context,
+    ThemeData theme,
+    String text,
+  ) => Padding(
+    padding: EdgeInsets.only(
+      left: context.spacing.gapXl,
+      bottom: context.spacing.gapMd,
+    ),
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

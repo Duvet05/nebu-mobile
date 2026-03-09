@@ -461,7 +461,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                               ? _cancelConnection
                               : _skipWifiSetup,
                           child: Padding(
-                            padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.spacing.gapMd,
+                            ),
                             child: Text(
                               _isConnecting
                                   ? 'setup.wifi.cancel_button'.tr()
@@ -632,7 +634,10 @@ class _QuickActionButton extends StatelessWidget {
       onTap: onPressed,
       borderRadius: context.radius.input,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXl, vertical: context.spacing.gapLg),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.spacing.gapXl,
+          vertical: context.spacing.gapLg,
+        ),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           borderRadius: context.radius.input,

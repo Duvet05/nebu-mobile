@@ -5,11 +5,9 @@ import 'package:logger/logger.dart';
 import 'api_service.dart';
 
 class FirebasePushService {
-  FirebasePushService({
-    required Logger logger,
-    required ApiService apiService,
-  })  : _logger = logger,
-        _apiService = apiService;
+  FirebasePushService({required Logger logger, required ApiService apiService})
+    : _logger = logger,
+      _apiService = apiService;
 
   final Logger _logger;
   final ApiService _apiService;
@@ -67,10 +65,11 @@ class FirebasePushService {
 
   void _setupForegroundHandler() {
     FirebaseMessaging.onMessage.listen((message) {
-      _logger..d('Foreground message: ${message.messageId}')..d(
-          'Notification title: ${message.notification?.title}')..d(
-          'Notification body: ${message.notification?.body}')..d(
-          'Data: ${message.data}');
+      _logger
+        ..d('Foreground message: ${message.messageId}')
+        ..d('Notification title: ${message.notification?.title}')
+        ..d('Notification body: ${message.notification?.body}')
+        ..d('Data: ${message.data}');
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {

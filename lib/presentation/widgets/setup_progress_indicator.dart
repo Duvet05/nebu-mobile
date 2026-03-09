@@ -22,12 +22,18 @@ class SetupProgressIndicator extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'setup_progress.step_of'.tr(args: ['$currentStep', '$totalSteps']),
-              style: context.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              'setup_progress.step_of'.tr(
+                args: ['$currentStep', '$totalSteps'],
+              ),
+              style: context.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Text(
               '${(progress * 100).toInt()}%',
-              style: context.textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
+              style: context.textTheme.bodyMedium?.copyWith(
+                color: context.colors.grey400,
+              ),
             ),
           ],
         ),
@@ -38,9 +44,7 @@ class SetupProgressIndicator extends StatelessWidget {
             value: progress,
             minHeight: 8,
             backgroundColor: context.colors.grey800,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              context.colors.primary,
-            ),
+            valueColor: AlwaysStoppedAnimation<Color>(context.colors.primary),
           ),
         ),
       ],

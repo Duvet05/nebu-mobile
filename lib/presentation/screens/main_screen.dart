@@ -27,26 +27,42 @@ class MainScreen extends ConsumerWidget {
   }
 
   List<BottomNavigationBarItem> _authItems() => [
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.home), label: 'nav.home'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.history), label: 'nav.activity'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.dashboard), label: 'nav.my_toys'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.person), label: 'nav.profile'.tr()),
-      ];
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.home),
+      label: 'nav.home'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.history),
+      label: 'nav.activity'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.dashboard),
+      label: 'nav.my_toys'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.person),
+      label: 'nav.profile'.tr(),
+    ),
+  ];
 
   List<BottomNavigationBarItem> _unauthItems() => [
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.home), label: 'nav.home'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.history), label: 'nav.activity'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.dashboard), label: 'nav.my_toys'.tr()),
-        BottomNavigationBarItem(
-            icon: const Icon(Icons.settings), label: 'nav.settings'.tr()),
-      ];
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.home),
+      label: 'nav.home'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.history),
+      label: 'nav.activity'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.dashboard),
+      label: 'nav.my_toys'.tr(),
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(Icons.settings),
+      label: 'nav.settings'.tr(),
+    ),
+  ];
 
   int _calculateSelectedIndex(BuildContext context, bool isLoggedIn) {
     final String location = GoRouterState.of(context).matchedLocation;

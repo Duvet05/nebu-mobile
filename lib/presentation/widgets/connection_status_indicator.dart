@@ -54,10 +54,7 @@ class ConnectionStatusIndicator extends StatelessWidget {
           isRemoteConnected
               ? 'walkie_talkie.toy_connected'.tr()
               : 'walkie_talkie.waiting_for_toy'.tr(),
-          style: TextStyle(
-            fontSize: 12,
-            color: context.colors.grey400,
-          ),
+          style: TextStyle(fontSize: 12, color: context.colors.grey400),
         ),
       ],
     );

@@ -95,14 +95,18 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
                     boxShadow: widget.isTalking
                         ? [
                             BoxShadow(
-                              color: context.colors.primary.withValues(alpha: 0.4),
+                              color: context.colors.primary.withValues(
+                                alpha: 0.4,
+                              ),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
                           ]
                         : [
                             BoxShadow(
-                              color: context.colors.textNormal.withValues(alpha: 0.1),
+                              color: context.colors.textNormal.withValues(
+                                alpha: 0.1,
+                              ),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -126,7 +130,9 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: widget.isTalking ? context.colors.primary : context.colors.grey400,
+            color: widget.isTalking
+                ? context.colors.primary
+                : context.colors.grey400,
           ),
         ),
       ],

@@ -86,5 +86,4 @@ class DeviceService {
       return -1;
     }
   }
-
 }

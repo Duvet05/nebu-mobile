@@ -27,25 +27,25 @@ Future<bool> showConfirmDialog(
   required String content,
   String? confirmText,
   bool destructive = false,
-    }) async =>
+}) async =>
     await showDialog<bool>(
       context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text('common.cancel'.tr()),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              style: destructive
-                  ? TextButton.styleFrom(foregroundColor: context.colors.error)
-                  : null,
-              child: Text(confirmText ?? 'common.delete'.tr()),
-            ),
-          ],
-        ),
-      ) ??
-      false;
+      builder: (ctx) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('common.cancel'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: destructive
+                ? TextButton.styleFrom(foregroundColor: context.colors.error)
+                : null,
+            child: Text(confirmText ?? 'common.delete'.tr()),
+          ),
+        ],
+      ),
+    ) ??
+    false;

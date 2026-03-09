@@ -5,7 +5,6 @@ part 'user.g.dart';
 
 @freezed
 abstract class User with _$User {
-
   const factory User({
     required String id,
     required String email,
@@ -82,7 +81,9 @@ abstract class AuthResponse with _$AuthResponse {
     if (json.containsKey('accessToken')) {
       return AuthResponse(
         success: true,
-        user: json['user'] != null ? User.fromJson(json['user'] as Map<String, dynamic>) : null,
+        user: json['user'] != null
+            ? User.fromJson(json['user'] as Map<String, dynamic>)
+            : null,
         tokens: AuthTokens(
           accessToken: json['accessToken'] as String,
           refreshToken: json['refreshToken'] as String,
@@ -112,7 +113,9 @@ abstract class SocialAuthResult with _$SocialAuthResult {
     if (json.containsKey('accessToken')) {
       return SocialAuthResult(
         success: true,
-        user: json['user'] != null ? User.fromJson(json['user'] as Map<String, dynamic>) : null,
+        user: json['user'] != null
+            ? User.fromJson(json['user'] as Map<String, dynamic>)
+            : null,
         tokens: AuthTokens(
           accessToken: json['accessToken'] as String,
           refreshToken: json['refreshToken'] as String,

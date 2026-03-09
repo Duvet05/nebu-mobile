@@ -87,7 +87,9 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                           final isSelected = _selectedVoice == voice['label'];
 
                           return Padding(
-                            padding: EdgeInsets.only(bottom: context.spacing.gapLg),
+                            padding: EdgeInsets.only(
+                              bottom: context.spacing.gapLg,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -98,10 +100,11 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                 padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? context.colors.primary
-                                          .withValues(alpha: 0.08)
+                                      ? context.colors.primary.withValues(
+                                          alpha: 0.08,
+                                        )
                                       : colorScheme.surfaceContainerHighest
-                                          .withValues(alpha: 0.3),
+                                            .withValues(alpha: 0.3),
                                   borderRadius: context.radius.panel,
                                   border: Border.all(
                                     color: isSelected
@@ -117,10 +120,11 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                       height: 48,
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? context.colors.primary
-                                                .withValues(alpha: 0.15)
+                                            ? context.colors.primary.withValues(
+                                                alpha: 0.15,
+                                              )
                                             : colorScheme
-                                                .surfaceContainerHighest,
+                                                  .surfaceContainerHighest,
                                         borderRadius: context.radius.panel,
                                       ),
                                       child: Icon(
@@ -141,24 +145,28 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                             (voice['label'] as String).tr(),
                                             style: theme.textTheme.titleMedium
                                                 ?.copyWith(
-                                              fontWeight: FontWeight.w600,
-                                              color: isSelected
-                                                  ? context.colors.primary
-                                                  : colorScheme.onSurface,
-                                            ),
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isSelected
+                                                      ? context.colors.primary
+                                                      : colorScheme.onSurface,
+                                                ),
                                           ),
-                                          SizedBox(height: context.spacing.gapXs),
+                                          SizedBox(
+                                            height: context.spacing.gapXs,
+                                          ),
                                           Text(
                                             (voice['description'] as String)
                                                 .tr(),
                                             style: theme.textTheme.bodySmall
                                                 ?.copyWith(
-                                              color: isSelected
-                                                  ? context.colors.primary
-                                                      .withValues(alpha: 0.7)
-                                                  : colorScheme
-                                                      .onSurfaceVariant,
-                                            ),
+                                                  color: isSelected
+                                                      ? context.colors.primary
+                                                            .withValues(
+                                                              alpha: 0.7,
+                                                            )
+                                                      : colorScheme
+                                                            .onSurfaceVariant,
+                                                ),
                                           ),
                                         ],
                                       ),

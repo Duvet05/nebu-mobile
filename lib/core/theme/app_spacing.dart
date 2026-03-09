@@ -147,133 +147,123 @@ class SemanticSpacing {
 
   // --- Page margins ---
   double get pageMargin => _resolve(
-        AppSpacing.pageMarginSm,
-        AppSpacing.pageMarginDf,
-        AppSpacing.pageMarginLg,
-      );
+    AppSpacing.pageMarginSm,
+    AppSpacing.pageMarginDf,
+    AppSpacing.pageMarginLg,
+  );
   double get largePageBottomMargin => _resolve(
-        AppSpacing.largePageBottomMarginSm,
-        AppSpacing.largePageBottomMarginDf,
-        AppSpacing.largePageBottomMarginLg,
-      );
+    AppSpacing.largePageBottomMarginSm,
+    AppSpacing.largePageBottomMarginDf,
+    AppSpacing.largePageBottomMarginLg,
+  );
   double get buttonBottomMargin => _resolve(
-        AppSpacing.buttonBottomMarginSm,
-        AppSpacing.buttonBottomMarginDf,
-        AppSpacing.buttonBottomMarginLg,
-      );
+    AppSpacing.buttonBottomMarginSm,
+    AppSpacing.buttonBottomMarginDf,
+    AppSpacing.buttonBottomMarginLg,
+  );
 
   // --- Input / label ---
   double get inputBottomMargin => _resolve(
-        AppSpacing.inputBottomMarginSm,
-        AppSpacing.inputBottomMarginDf,
-        AppSpacing.inputBottomMarginLg,
-      );
+    AppSpacing.inputBottomMarginSm,
+    AppSpacing.inputBottomMarginDf,
+    AppSpacing.inputBottomMarginLg,
+  );
   double get labelBottomMargin => _resolve(
-        AppSpacing.labelBottomMarginSm,
-        AppSpacing.labelBottomMarginDf,
-        AppSpacing.labelBottomMarginLg,
-      );
+    AppSpacing.labelBottomMarginSm,
+    AppSpacing.labelBottomMarginDf,
+    AppSpacing.labelBottomMarginLg,
+  );
 
   // --- Panel / modal / alert ---
   double get panelPadding => _resolve(
-        AppSpacing.panelPaddingSm,
-        AppSpacing.panelPaddingDf,
-        AppSpacing.panelPaddingLg,
-      );
+    AppSpacing.panelPaddingSm,
+    AppSpacing.panelPaddingDf,
+    AppSpacing.panelPaddingLg,
+  );
   double get smallPanelPadding => _resolve(
-        AppSpacing.smallPanelPaddingSm,
-        AppSpacing.smallPanelPaddingDf,
-        AppSpacing.smallPanelPaddingLg,
-      );
+    AppSpacing.smallPanelPaddingSm,
+    AppSpacing.smallPanelPaddingDf,
+    AppSpacing.smallPanelPaddingLg,
+  );
   double get modalPadding => _resolve(
-        AppSpacing.modalPaddingSm,
-        AppSpacing.modalPaddingDf,
-        AppSpacing.modalPaddingLg,
-      );
+    AppSpacing.modalPaddingSm,
+    AppSpacing.modalPaddingDf,
+    AppSpacing.modalPaddingLg,
+  );
   double get alertPadding => _resolve(
-        AppSpacing.alertPaddingSm,
-        AppSpacing.alertPaddingDf,
-        AppSpacing.alertPaddingLg,
-      );
+    AppSpacing.alertPaddingSm,
+    AppSpacing.alertPaddingDf,
+    AppSpacing.alertPaddingLg,
+  );
 
   // --- List items ---
   double get listItemHPadding => _resolve(
-        AppSpacing.listItemHPaddingSm,
-        AppSpacing.listItemHPaddingDf,
-        AppSpacing.listItemHPaddingLg,
-      );
+    AppSpacing.listItemHPaddingSm,
+    AppSpacing.listItemHPaddingDf,
+    AppSpacing.listItemHPaddingLg,
+  );
   double get listItemVPadding => _resolve(
-        AppSpacing.listItemVPaddingSm,
-        AppSpacing.listItemVPaddingDf,
-        AppSpacing.listItemVPaddingLg,
-      );
+    AppSpacing.listItemVPaddingSm,
+    AppSpacing.listItemVPaddingDf,
+    AppSpacing.listItemVPaddingLg,
+  );
 
   // --- Title / paragraph / section ---
   double get titleBottomMargin => _resolve(
-        AppSpacing.titleBottomMarginSm,
-        AppSpacing.titleBottomMarginDf,
-        AppSpacing.titleBottomMarginLg,
-      );
+    AppSpacing.titleBottomMarginSm,
+    AppSpacing.titleBottomMarginDf,
+    AppSpacing.titleBottomMarginLg,
+  );
   double get titleBottomMarginSm => _resolve(
-        AppSpacing.titleBottomMarginSmSm,
-        AppSpacing.titleBottomMarginSmDf,
-        AppSpacing.titleBottomMarginSmLg,
-      );
+    AppSpacing.titleBottomMarginSmSm,
+    AppSpacing.titleBottomMarginSmDf,
+    AppSpacing.titleBottomMarginSmLg,
+  );
   double get paragraphBottomMargin => _resolve(
-        AppSpacing.paragraphBottomMarginSm,
-        AppSpacing.paragraphBottomMarginDf,
-        AppSpacing.paragraphBottomMarginLg,
-      );
+    AppSpacing.paragraphBottomMarginSm,
+    AppSpacing.paragraphBottomMarginDf,
+    AppSpacing.paragraphBottomMarginLg,
+  );
   double get paragraphBottomMarginSm => _resolve(
-        AppSpacing.paragraphBottomMarginSmSm,
-        AppSpacing.paragraphBottomMarginSmDf,
-        AppSpacing.paragraphBottomMarginSmLg,
-      );
+    AppSpacing.paragraphBottomMarginSmSm,
+    AppSpacing.paragraphBottomMarginSmDf,
+    AppSpacing.paragraphBottomMarginSmLg,
+  );
   double get sectionTitleBottomMargin => _resolve(
-        AppSpacing.sectionTitleBottomMarginSm,
-        AppSpacing.sectionTitleBottomMarginDf,
-        AppSpacing.sectionTitleBottomMarginLg,
-      );
+    AppSpacing.sectionTitleBottomMarginSm,
+    AppSpacing.sectionTitleBottomMarginDf,
+    AppSpacing.sectionTitleBottomMarginLg,
+  );
   double get sectionTitleTopMargin => _resolve(
-        AppSpacing.sectionTitleTopMarginSm,
-        AppSpacing.sectionTitleTopMarginDf,
-        AppSpacing.sectionTitleTopMarginLg,
-      );
+    AppSpacing.sectionTitleTopMarginSm,
+    AppSpacing.sectionTitleTopMarginDf,
+    AppSpacing.sectionTitleTopMarginLg,
+  );
 
   // --- Snackbar ---
   double get snackbarBottomSpace => _resolve(
-        AppSpacing.snackbarBottomSpaceSm,
-        AppSpacing.snackbarBottomSpaceDf,
-        AppSpacing.snackbarBottomSpaceLg,
-      );
+    AppSpacing.snackbarBottomSpaceSm,
+    AppSpacing.snackbarBottomSpaceDf,
+    AppSpacing.snackbarBottomSpaceLg,
+  );
 
   // --- Generic gaps ---
   double get gapXxs => AppSpacing.gapXxs;
   double get gapXs => AppSpacing.gapXs;
   double get gapSm => AppSpacing.gapSm;
   double get gapMd => AppSpacing.gapMd;
-  double get gapLg => _resolve(
-        AppSpacing.gapLgSm,
-        AppSpacing.gapLgDf,
-        AppSpacing.gapLgLg,
-      );
-  double get gapXl => _resolve(
-        AppSpacing.gapXlSm,
-        AppSpacing.gapXlDf,
-        AppSpacing.gapXlLg,
-      );
-  double get gapXxl => _resolve(
-        AppSpacing.gapXxlSm,
-        AppSpacing.gapXxlDf,
-        AppSpacing.gapXxlLg,
-      );
+  double get gapLg =>
+      _resolve(AppSpacing.gapLgSm, AppSpacing.gapLgDf, AppSpacing.gapLgLg);
+  double get gapXl =>
+      _resolve(AppSpacing.gapXlSm, AppSpacing.gapXlDf, AppSpacing.gapXlLg);
+  double get gapXxl =>
+      _resolve(AppSpacing.gapXxlSm, AppSpacing.gapXxlDf, AppSpacing.gapXxlLg);
 
   // ═══════════════════════════════════════════════════════════
   // CONVENIENCE EdgeInsets GETTERS
   // ═══════════════════════════════════════════════════════════
 
-  EdgeInsets get pageEdgeInsets =>
-      EdgeInsets.symmetric(horizontal: pageMargin);
+  EdgeInsets get pageEdgeInsets => EdgeInsets.symmetric(horizontal: pageMargin);
 
   EdgeInsets get panelEdgeInsets => EdgeInsets.all(panelPadding);
 
@@ -283,8 +273,10 @@ class SemanticSpacing {
 
   EdgeInsets get alertEdgeInsets => EdgeInsets.all(alertPadding);
 
-  EdgeInsets get listItemEdgeInsets =>
-      EdgeInsets.symmetric(horizontal: listItemHPadding, vertical: listItemVPadding);
+  EdgeInsets get listItemEdgeInsets => EdgeInsets.symmetric(
+    horizontal: listItemHPadding,
+    vertical: listItemVPadding,
+  );
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -292,7 +284,6 @@ class SemanticSpacing {
 // ═══════════════════════════════════════════════════════════
 
 extension ThemeSpacingExtension on BuildContext {
-  SemanticSpacing get spacing => SemanticSpacing._(
-        _resolveScreenSize(MediaQuery.sizeOf(this).width),
-      );
+  SemanticSpacing get spacing =>
+      SemanticSpacing._(_resolveScreenSize(MediaQuery.sizeOf(this).width));
 }

@@ -60,7 +60,10 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
     final theme = context.theme;
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: context.spacing.gapXxl, vertical: context.spacing.gapXxl),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.spacing.gapXxl,
+        vertical: context.spacing.gapXxl,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),

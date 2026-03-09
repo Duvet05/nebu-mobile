@@ -113,10 +113,7 @@ class UserService {
 
     final response = await _apiService.delete<Map<String, dynamic>>(
       '/users/me',
-      data: {
-        'password': password,
-        if (reason != null) 'reason': reason,
-      },
+      data: {'password': password, if (reason != null) 'reason': reason},
     );
 
     _logger.d('Account deleted successfully');
