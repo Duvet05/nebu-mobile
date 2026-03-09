@@ -63,8 +63,8 @@ class AuthService {
   Future<AuthResponse> register({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
@@ -72,8 +72,8 @@ class AuthService {
         data: {
           'email': email,
           'password': password,
-          if (firstName != null) 'firstName': firstName,
-          if (lastName != null) 'lastName': lastName,
+          'firstName': firstName,
+          'lastName': lastName,
         },
       );
 
@@ -260,7 +260,10 @@ class AuthService {
   // Email Verification
   Future<bool> verifyEmail(String token) async {
     try {
-      await _dio.post<void>('/auth/verify-email', data: {'token': token});
+      await _dio.post<void>(
+        '/auth/verify-email',
+        queryParameters: {'token': token},
+      );
       return true;
     } on Exception {
       return false;

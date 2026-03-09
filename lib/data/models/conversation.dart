@@ -21,39 +21,28 @@ abstract class Conversation with _$Conversation {
       _$ConversationFromJson(json);
 }
 
+/// A conversation memory returned by the backend vector-memory endpoints.
+/// Maps to: GET /vector-memory/memories/:toyId/recent
+///           POST /vector-memory/memories/search
 @freezed
 abstract class MemoryEntry with _$MemoryEntry {
   const factory MemoryEntry({
-    required String id,
-    required String content,
-    required String category,
-    required DateTime createdAt,
-    double? relevanceScore,
-    String? toyId,
-    String? userId,
-    String? sessionId,
-    Map<String, dynamic>? metadata,
+    required String sessionId,
+    required String summary,
+    double? relevance,
+    @Default({}) Map<String, dynamic> metadata,
   }) = _MemoryEntry;
 
   factory MemoryEntry.fromJson(Map<String, dynamic> json) =>
       _$MemoryEntryFromJson(json);
 }
 
-@freezed
-abstract class ConversationInsight with _$ConversationInsight {
-  const factory ConversationInsight({
-    required String id,
-    required String type,
-    required String summary,
-    required DateTime createdAt,
-    String? toyId,
-    String? userId,
-    List<String>? topics,
-    Map<String, dynamic>? emotionAnalysis,
-    int? messageCount,
-    int? sessionCount,
-  }) = _ConversationInsight;
-
-  factory ConversationInsight.fromJson(Map<String, dynamic> json) =>
-      _$ConversationInsightFromJson(json);
+/// Helper extension to extract typed metadata fields from MemoryEntry.
+extension MemoryEntryMetadata on MemoryEntry {
+  String? get toyId => metadata['toyId'] as String?;
+  String? get topics => metadata['topics'] as String?;
+  String? get emotion => metadata['emotion'] as String?;
+  int? get duration => metadata['duration'] as int?;
+  int? get messageCount => metadata['messageCount'] as int?;
+  String? get timestamp => metadata['timestamp'] as String?;
 }

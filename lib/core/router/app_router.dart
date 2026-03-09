@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -227,8 +228,8 @@ class AppRouter {
         final toy = state.extra as Toy?;
         if (toy == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: const Center(child: Text('Toy data is missing or invalid.')),
+            appBar: AppBar(title: Text('common.error'.tr())),
+            body: Center(child: Text('common.invalid_data'.tr())),
           );
         }
         return ToySettingsScreen(toy: toy);
@@ -240,8 +241,8 @@ class AppRouter {
         final toy = state.extra as Toy?;
         if (toy == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: const Center(child: Text('Toy data is missing or invalid.')),
+            appBar: AppBar(title: Text('common.error'.tr())),
+            body: Center(child: Text('common.invalid_data'.tr())),
           );
         }
         return ToyMemoryScreen(toy: toy);
@@ -253,8 +254,8 @@ class AppRouter {
         final toy = state.extra as Toy?;
         if (toy == null) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Error')),
-            body: const Center(child: Text('Toy data is missing or invalid.')),
+            appBar: AppBar(title: Text('common.error'.tr())),
+            body: Center(child: Text('common.invalid_data'.tr())),
           );
         }
         return WalkieTalkieScreen(toy: toy);

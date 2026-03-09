@@ -10,18 +10,11 @@ final memoryServiceProvider = Provider<MemoryService>((ref) {
   return MemoryService(apiService: apiService, logger: logger);
 });
 
-/// Memories for a specific toy
+/// Recent memories for a specific toy
 final toyMemoriesProvider =
     FutureProvider.family<List<MemoryEntry>, String>((ref, toyId) async {
   final service = ref.watch(memoryServiceProvider);
-  return service.getToyMemories(toyId: toyId);
-});
-
-/// Insights for a specific toy
-final toyInsightsProvider =
-    FutureProvider.family<List<ConversationInsight>, String>((ref, toyId) async {
-  final service = ref.watch(memoryServiceProvider);
-  return service.getToyInsights(toyId: toyId);
+  return service.getRecentMemories(toyId: toyId);
 });
 
 /// Memory search
@@ -29,11 +22,11 @@ class MemorySearchNotifier extends Notifier<AsyncValue<List<MemoryEntry>>> {
   @override
   AsyncValue<List<MemoryEntry>> build() => const AsyncValue.data([]);
 
-  Future<void> search({required String query, String? toyId}) async {
+  Future<void> search({required String query, required String toyId}) async {
     state = const AsyncValue<List<MemoryEntry>>.loading();
     final service = ref.read(memoryServiceProvider);
     state = await AsyncValue.guard(
-      () => service.searchMemory(query: query, toyId: toyId),
+      () => service.searchMemories(toyId: toyId, query: query),
     );
   }
 

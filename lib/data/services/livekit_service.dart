@@ -200,8 +200,8 @@ class LiveKitService {
         '${mute ? "Muting" : "Unmuting"} participant $identity in $roomName',
       );
       await _apiService.post<dynamic>(
-        '/livekit/rooms/$roomName/participants/$identity/mute',
-        data: {'mute': mute},
+        '/livekit/rooms/$roomName/mute/$identity',
+        data: {'muteAudio': mute},
       );
       _logger.d(
         'Participant $identity ${mute ? "muted" : "unmuted"} successfully',

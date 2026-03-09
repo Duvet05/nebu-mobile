@@ -440,7 +440,13 @@
     "unknown_model": "Modelo Desconocido",
     "unknown": "Desconocido",
     "audio_controls": "Controles de Audio",
-    "save_changes": "Guardar Cambios"
+    "save_changes": "Guardar Cambios",
+    "personality": "Personalidad",
+    "personality_current": "Personalidad actual",
+    "personality_none": "Sin personalidad asignada",
+    "personality_change": "Cambiar Personalidad",
+    "personality_updated": "Personalidad actualizada",
+    "personality_error": "No se pudo actualizar la personalidad"
   },
   "child_profile": {
     "title": "Perfil del Niño",
@@ -609,7 +615,9 @@
     "continue": "Continuar",
     "yes": "Sí",
     "no": "No",
-    "error_generic": "Algo salió mal. Intenta de nuevo."
+    "error_generic": "Algo salió mal. Intenta de nuevo.",
+    "error": "Error",
+    "invalid_data": "Los datos requeridos faltan o son inválidos."
   },
   "memory": {
     "title": "Memoria del Juguete",

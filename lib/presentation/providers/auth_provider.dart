@@ -104,8 +104,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> register({
     required String email,
     required String password,
-    String? firstName,
-    String? lastName,
+    required String firstName,
+    required String lastName,
   }) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {

@@ -11,83 +11,49 @@ class MemoryService {
   final ApiService _apiService;
   final Logger _logger;
 
-  // ─── Memory (Vector Store) ───
+  // ─── Recent Memories ───
 
-  /// Search memory for relevant context
-  Future<List<MemoryEntry>> searchMemory({
-    required String query,
-    String? toyId,
-    int limit = 10,
-  }) async {
-    _logger.d('Searching memory: "$query"');
-    final response = await _apiService.get<dynamic>(
-      '/agent/memory/search',
-      queryParameters: {
-        'query': query,
-        'limit': '$limit',
-        if (toyId != null) 'toyId': toyId,
-      },
-    );
-
-    return _parseMemoryList(response);
-  }
-
-  /// Get all memories for a toy
-  Future<List<MemoryEntry>> getToyMemories({
+  /// Get recent conversation memories for a toy.
+  /// Backend: GET /vector-memory/memories/:toyId/recent?limit=N
+  Future<List<MemoryEntry>> getRecentMemories({
     required String toyId,
-    int page = 1,
     int limit = 20,
   }) async {
-    _logger.d('Fetching memories for toy: $toyId');
+    _logger.d('Fetching recent memories for toy: $toyId');
     final response = await _apiService.get<dynamic>(
-      '/agent/memory',
-      queryParameters: {
+      '/vector-memory/memories/$toyId/recent',
+      queryParameters: {'limit': '$limit'},
+    );
+
+    return _parseMemoryList(response);
+  }
+
+  // ─── Semantic Search ───
+
+  /// Search conversation memories using vector similarity.
+  /// Backend: POST /vector-memory/memories/search
+  Future<List<MemoryEntry>> searchMemories({
+    required String toyId,
+    required String query,
+    int limit = 5,
+    int daysBack = 30,
+  }) async {
+    _logger.d('Searching memories: "$query" for toy: $toyId');
+    final response = await _apiService.post<dynamic>(
+      '/vector-memory/memories/search',
+      data: {
         'toyId': toyId,
-        'page': '$page',
-        'limit': '$limit',
+        'query': query,
+        'limit': limit,
+        'daysBack': daysBack,
       },
     );
 
     return _parseMemoryList(response);
   }
 
-  /// Delete a specific memory
-  Future<void> deleteMemory(String memoryId) async {
-    _logger.d('Deleting memory: $memoryId');
-    await _apiService.delete<dynamic>('/agent/memory/$memoryId');
-  }
+  // ─── Parsing ───
 
-  // ─── Insights ───
-
-  /// Get conversation insights for a toy
-  Future<List<ConversationInsight>> getToyInsights({
-    required String toyId,
-  }) async {
-    _logger.d('Fetching insights for toy: $toyId');
-    final response = await _apiService.get<dynamic>(
-      '/agent/insights',
-      queryParameters: {'toyId': toyId},
-    );
-
-    if (response is List) {
-      return response
-          .cast<Map<String, dynamic>>()
-          .map(ConversationInsight.fromJson)
-          .toList();
-    }
-    if (response is Map<String, dynamic>) {
-      final data = response['insights'] ?? response['data'];
-      if (data is List) {
-        return data
-            .cast<Map<String, dynamic>>()
-            .map(ConversationInsight.fromJson)
-            .toList();
-      }
-    }
-    return [];
-  }
-
-  /// Parses memory entries from various backend response shapes.
   List<MemoryEntry> _parseMemoryList(Object? response) {
     if (response is List) {
       return response
