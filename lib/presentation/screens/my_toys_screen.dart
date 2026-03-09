@@ -111,7 +111,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         child: Padding(
           padding: EdgeInsets.fromLTRB(
             context.spacing.pageMargin,
-            12,
+            context.spacing.paragraphBottomMarginSm,
             context.spacing.pageMargin,
             context.spacing.pageMargin,
           ),
@@ -128,7 +128,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     borderRadius: context.radius.checkbox,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: context.spacing.panelPadding),
                 // Header: icon + name + status on one row
                 Row(
                   children: [
@@ -185,9 +185,9 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 ),
                 // Pending warning
                 if (isPending) ...[
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.spacing.alertPadding),
                   Container(
-                    padding: const EdgeInsets.all(12),
+                    padding: EdgeInsets.all(context.spacing.paragraphBottomMarginSm),
                     decoration: BoxDecoration(
                       color: context.colors.warning.withValues(alpha: 0.08),
                       borderRadius: context.radius.tile,
@@ -218,10 +218,10 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 ],
                 // Toy details
                 if (_hasAnyDetail(toy)) ...[
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.spacing.panelPadding),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(14),
+                    padding: EdgeInsets.all(context.spacing.alertPadding),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.onSurface.withValues(
                         alpha: 0.03,
@@ -273,7 +273,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     ),
                   ),
                 ],
-                const SizedBox(height: 20),
+                SizedBox(height: context.spacing.panelPadding),
                 // Action buttons
                 // TODO(design-system): migrate to CustomButton when it supports custom colors
                 SizedBox(
@@ -291,7 +291,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primary,
                       foregroundColor: this.context.colors.textOnFilled,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: this.context.spacing.alertPadding),
                       shape: RoundedRectangleBorder(
                         borderRadius: this.context.radius.tile,
                       ),
@@ -300,7 +300,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                     label: Text('toys.configure'.tr()),
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: context.spacing.paragraphBottomMarginSm),
                 // TODO(design-system): migrate to CustomButton when it supports custom colors
                 SizedBox(
                   width: double.infinity,
@@ -316,7 +316,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                       side: BorderSide(
                         color: this.context.colors.error.withValues(alpha: 0.4),
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      padding: EdgeInsets.symmetric(vertical: this.context.spacing.alertPadding),
                       shape: RoundedRectangleBorder(
                         borderRadius: this.context.radius.tile,
                       ),
@@ -459,7 +459,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       borderRadius: context.radius.panel,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(context.spacing.panelPadding),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -491,14 +491,14 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 color: context.colors.primary.withValues(alpha: 0.5),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: context.spacing.alertPadding),
             Text(
               'toys.setup_new_toy'.tr(),
               style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.spacing.labelBottomMargin),
             Text(
               'toys.add_more_hint'.tr(),
               textAlign: TextAlign.center,
@@ -573,7 +573,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: context.colors.textOnFilled,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.paragraphBottomMarginSm),
             shape: RoundedRectangleBorder(borderRadius: context.radius.button),
           ),
         ),
@@ -590,7 +590,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         margin: EdgeInsets.only(
           bottom: context.spacing.paragraphBottomMarginSm,
         ),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.spacing.alertPadding),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: context.radius.panel,
@@ -621,7 +621,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                       borderRadius: context.radius.checkbox,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: context.spacing.labelBottomMargin),
                   Container(
                     width: 80,
                     height: 12,
@@ -674,9 +674,9 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: context.colors.textOnFilled,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.spacing.panelPadding,
+                    vertical: context.spacing.paragraphBottomMarginSm,
                   ),
                 ),
               ),
@@ -728,7 +728,7 @@ class _ToyCard extends StatelessWidget {
           onTap: onTap,
           borderRadius: context.radius.panel,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.spacing.alertPadding),
             child: Column(
               children: [
                 Row(
@@ -792,7 +792,7 @@ class _ToyCard extends StatelessWidget {
                 ),
                 // Quick action buttons for online toys
                 if (isOnline) ...[
-                  const SizedBox(height: 12),
+                  SizedBox(height: context.spacing.paragraphBottomMarginSm),
                   Row(
                     children: [
                       Expanded(
@@ -806,7 +806,7 @@ class _ToyCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: context.spacing.labelBottomMargin),
                       Expanded(
                         child: _QuickActionButton(
                           icon: Icons.psychology,
@@ -818,7 +818,7 @@ class _ToyCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: context.spacing.labelBottomMargin),
                       Expanded(
                         child: _QuickActionButton(
                           icon: Icons.settings,
@@ -835,10 +835,10 @@ class _ToyCard extends StatelessWidget {
                 ],
                 // Configure prompt for pending toys
                 if (isPending) ...[
-                  const SizedBox(height: 10),
+                  SizedBox(height: context.spacing.paragraphBottomMarginSm),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: EdgeInsets.symmetric(vertical: context.spacing.paragraphBottomMarginSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.06),
                       borderRadius: context.radius.tile,
@@ -851,7 +851,7 @@ class _ToyCard extends StatelessWidget {
                           size: 16,
                           color: accentColor,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: context.spacing.labelBottomMargin),
                         Text(
                           'toys.configure'.tr(),
                           style: context.textTheme.labelMedium?.copyWith(
@@ -865,7 +865,7 @@ class _ToyCard extends StatelessWidget {
                 ],
                 // Last connected time for offline toys
                 if (!isOnline && !isPending && toy.lastConnected != null) ...[
-                  const SizedBox(height: 8),
+                  SizedBox(height: context.spacing.labelBottomMargin),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -920,7 +920,7 @@ class _QuickActionButton extends StatelessWidget {
     onTap: onTap,
     borderRadius: context.radius.tile,
     child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.paragraphBottomMarginSm, vertical: context.spacing.labelBottomMargin),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: context.radius.tile,

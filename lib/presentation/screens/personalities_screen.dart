@@ -58,10 +58,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
             scrollDirection: Axis.horizontal,
             padding: EdgeInsets.symmetric(
               horizontal: context.spacing.alertPadding,
-              vertical: 8,
+              vertical: context.spacing.labelBottomMargin,
             ),
             itemCount: PersonalityCategories.values.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            separatorBuilder: (_, _) => SizedBox(width: context.spacing.labelBottomMargin),
             itemBuilder: (context, index) {
               final cat = PersonalityCategories.values[index];
               final isSelected = _selectedCategory == cat;
@@ -127,13 +127,13 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                 size: 64,
                 color: theme.colorScheme.error,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: context.spacing.alertPadding),
               Text(
                 'personalities.error_loading'.tr(),
                 style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: context.spacing.alertPadding),
               CustomButton(
                 text: 'common.retry'.tr(),
                 onPressed: () => ref.invalidate(personalitiesProvider),
@@ -174,7 +174,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     child: Container(
                       width: 40,
                       height: 4,
-                      margin: const EdgeInsets.only(bottom: 16),
+                      margin: EdgeInsets.only(bottom: context.spacing.alertPadding),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.onSurfaceVariant.withValues(
                           alpha: 0.3,
@@ -196,7 +196,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                           size: 28,
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: context.spacing.alertPadding),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +233,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.spacing.panelPadding),
 
                   // Description
                   Text(
@@ -245,9 +245,9 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
 
                   // Greeting
                   if (personality.greeting != null) ...[
-                    const SizedBox(height: 20),
+                    SizedBox(height: context.spacing.panelPadding),
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(context.spacing.alertPadding),
                       decoration: BoxDecoration(
                         color: catColor.withValues(alpha: 0.08),
                         borderRadius: context.radius.tile,
@@ -263,7 +263,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             color: catColor,
                             size: 20,
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: context.spacing.paragraphBottomMarginSm),
                           Expanded(
                             child: Text(
                               personality.greeting!,
@@ -279,14 +279,14 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
 
                   // Settings
                   if (personality.settings != null) ...[
-                    const SizedBox(height: 20),
+                    SizedBox(height: context.spacing.panelPadding),
                     Text(
                       'personalities.settings'.tr(),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    SizedBox(height: context.spacing.paragraphBottomMarginSm),
                     _buildSettingRow(
                       theme,
                       Icons.record_voice_over,
@@ -313,7 +313,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     ),
                   ],
 
-                  const SizedBox(height: 24),
+                  SizedBox(height: context.spacing.panelPadding),
 
                   // Action buttons
                   Row(
@@ -334,7 +334,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                           variant: ButtonVariant.outline,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: context.spacing.paragraphBottomMarginSm),
                       Expanded(
                         child: CustomButton(
                           text: 'personalities.select'.tr(),
@@ -345,7 +345,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                                   ctx,
                                   personality,
                                   setModalState,
-                                  (v) => isAssigning = v,
+                                  ({required value}) => isAssigning = value,
                                 ),
                           icon: Icons.check_circle_outline,
                         ),
@@ -353,7 +353,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.spacing.alertPadding),
                 ],
               ),
             ),
@@ -369,11 +369,11 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     String label,
     String value,
   ) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
+    padding: EdgeInsets.symmetric(vertical: context.spacing.labelBottomMargin),
     child: Row(
       children: [
         Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
-        const SizedBox(width: 8),
+        SizedBox(width: context.spacing.labelBottomMargin),
         Text(label, style: theme.textTheme.bodyMedium),
         const Spacer(),
         Text(
@@ -542,7 +542,7 @@ class _PersonalityCard extends StatelessWidget {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.spacing.alertPadding),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -555,7 +555,7 @@ class _PersonalityCard extends StatelessWidget {
                 size: 30,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: context.spacing.paragraphBottomMarginSm),
             Text(
               personality.name,
               textAlign: TextAlign.center,
@@ -581,7 +581,7 @@ class _PersonalityCard extends StatelessWidget {
                   ),
                 ),
               ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.spacing.labelBottomMargin),
             Text(
               personality.description,
               textAlign: TextAlign.center,

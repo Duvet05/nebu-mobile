@@ -12,6 +12,7 @@ import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/personality_provider.dart';
 import '../providers/toy_provider.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/esp32_audio_controls.dart';
 
@@ -401,20 +402,17 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                       ),
                     ),
                     SizedBox(height: context.spacing.titleBottomMarginSm),
-                    // TODO(design-system): migrate to CustomButton when it supports custom colors
-                    ElevatedButton.icon(
+                    CustomButton(
+                      text: 'walkie_talkie.open_button'.tr(),
+                      icon: Icons.record_voice_over,
+                      isFullWidth: true,
+                      height: 48,
                       onPressed: _currentToy.iotDeviceId != null
                           ? () => context.push(
                               AppRoutes.walkieTalkie.path,
                               extra: _currentToy,
                             )
                           : null,
-                      icon: const Icon(Icons.record_voice_over),
-                      label: Text('walkie_talkie.open_button'.tr()),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 48),
-                        backgroundColor: context.colors.primary,
-                      ),
                     ),
                     if (_currentToy.iotDeviceId == null)
                       Padding(
@@ -431,34 +429,22 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
                     SizedBox(height: context.spacing.paragraphBottomMargin),
 
-                    // TODO(design-system): migrate to CustomButton when it supports custom colors
-                    // Save Button
-                    ElevatedButton(
+                    CustomButton(
+                      text: 'toy_settings.save_changes'.tr(),
+                      isFullWidth: true,
+                      height: 48,
                       onPressed: _updateToySettings,
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 48),
-                        backgroundColor: context.colors.primary,
-                      ),
-                      child: Text('toy_settings.save_changes'.tr()),
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    // TODO(design-system): migrate to CustomButton when it supports custom colors
-                    // Remove Toy Button
-                    OutlinedButton.icon(
+                    CustomButton(
+                      text: 'toy_settings.remove_title'.tr(),
+                      icon: Icons.delete,
+                      variant: ButtonVariant.dangerOutline,
+                      isFullWidth: true,
+                      height: 48,
                       onPressed: _showDeleteConfirmation,
-                      icon: Icon(Icons.delete, color: context.colors.error),
-                      label: Text(
-                        'toy_settings.remove_title'.tr(),
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: context.colors.error,
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: context.colors.error),
-                        minimumSize: const Size(double.infinity, 48),
-                      ),
                     ),
                   ],
                 ),

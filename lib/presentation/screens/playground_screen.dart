@@ -150,7 +150,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
             child: Row(
               children: [
                 Icon(Icons.wifi_off, size: 16, color: context.colors.warning),
-                const SizedBox(width: 8),
+                SizedBox(width: context.spacing.labelBottomMargin),
                 Expanded(
                   child: Text(
                     'playground.local_mode_banner'.tr(),
@@ -214,7 +214,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
             prefixIcon: const Icon(Icons.psychology),
             border: OutlineInputBorder(borderRadius: context.radius.input),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                EdgeInsets.symmetric(horizontal: context.spacing.paragraphBottomMarginSm, vertical: context.spacing.labelBottomMargin),
           ),
           items: personalities
               .map((p) => DropdownMenuItem(
@@ -251,16 +251,16 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
               size: 80,
               color: context.colors.primary.withValues(alpha: 0.3),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: context.spacing.alertPadding),
             Text(
               'playground.empty_title'.tr(),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.spacing.labelBottomMargin),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48),
+              padding: EdgeInsets.symmetric(horizontal: context.spacing.largePageBottomMargin),
               child: Text(
                 'playground.empty_message'.tr(),
                 textAlign: TextAlign.center,
@@ -280,11 +280,11 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: EdgeInsets.only(
-          bottom: 8,
-          left: isUser ? 48 : 0,
-          right: isUser ? 0 : 48,
+          bottom: context.spacing.labelBottomMargin,
+          left: isUser ? context.spacing.largePageBottomMargin : 0,
+          right: isUser ? 0 : context.spacing.largePageBottomMargin,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: context.spacing.alertPadding, vertical: context.spacing.paragraphBottomMarginSm),
         decoration: BoxDecoration(
           color: isUser
               ? context.colors.primary
@@ -327,8 +327,8 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
   Widget _buildTypingIndicator(ThemeData theme) => Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          margin: const EdgeInsets.only(right: 48, bottom: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          margin: EdgeInsets.only(right: context.spacing.largePageBottomMargin, bottom: context.spacing.labelBottomMargin),
+          padding: EdgeInsets.symmetric(horizontal: context.spacing.alertPadding, vertical: context.spacing.paragraphBottomMarginSm),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest,
             borderRadius: const BorderRadius.only(
@@ -374,16 +374,16 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
                     border: OutlineInputBorder(
                       borderRadius: context.radius.bottomSheet,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: context.spacing.alertPadding,
+                      vertical: context.spacing.paragraphBottomMarginSm,
                     ),
                   ),
                   textInputAction: TextInputAction.send,
                   onSubmitted: (_) => _sendMessage(),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: context.spacing.labelBottomMargin),
               IconButton.filled(
                 onPressed:
                     _selectedPersonality != null && !_isSending

@@ -434,18 +434,18 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                             child: Column(
                               children: [
                                 _buildQuickActions(theme),
-                                const SizedBox(height: 12),
+                                SizedBox(height: context.spacing.gapLg),
                                 _buildHotspotHint(),
-                                const SizedBox(height: 16),
+                                SizedBox(height: context.spacing.gapXl),
                                 _buildSsidInput(theme),
-                                const SizedBox(height: 20),
+                                SizedBox(height: context.spacing.gapXxl),
                                 _buildPasswordInput(theme),
                               ],
                             ),
                           ),
                         ),
 
-                        const SizedBox(height: 16),
+                        SizedBox(height: context.spacing.gapXl),
 
                         SetupPrimaryButton(
                           text: 'setup.wifi.connect_button'.tr(),
@@ -496,7 +496,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         color: context.theme.colorScheme.onSurfaceVariant.withValues(
             alpha: 0.7),
       ),
-      const SizedBox(width: 6),
+      SizedBox(width: context.spacing.gapSm),
       Expanded(
         child: Text(
           'setup.wifi.hotspot_hint'.tr(),
@@ -638,7 +638,7 @@ class _QuickActionButton extends StatelessWidget {
         child: Column(
           children: [
             Icon(icon, color: context.colors.primary, size: 28),
-            const SizedBox(height: 4),
+            SizedBox(height: context.spacing.gapXs),
             Text(
               label,
               style: theme.textTheme.labelMedium?.copyWith(

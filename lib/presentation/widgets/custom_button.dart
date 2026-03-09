@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 
-enum ButtonVariant { primary, secondary, outline, text }
+enum ButtonVariant { primary, secondary, outline, text, danger, dangerOutline }
 
 class CustomButton extends StatelessWidget {
   const CustomButton({
@@ -15,6 +15,7 @@ class CustomButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height,
+    this.borderRadius,
   });
   final String text;
   final VoidCallback? onPressed;
@@ -24,10 +25,16 @@ class CustomButton extends StatelessWidget {
   final IconData? icon;
   final double? width;
   final double? height;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.theme.colorScheme;
+    final effectiveRadius = borderRadius ?? context.radius.panel;
+
+    final spinnerColor = variant == ButtonVariant.dangerOutline
+        ? context.colors.error
+        : context.colors.textOnFilled;
 
     final Widget buttonChild = Row(
       mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
@@ -39,7 +46,7 @@ class CustomButton extends StatelessWidget {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(context.colors.textOnFilled),
+              valueColor: AlwaysStoppedAnimation<Color>(spinnerColor),
             ),
           )
         else ...[
@@ -63,7 +70,7 @@ class CustomButton extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: context.radius.panel,
+            borderRadius: effectiveRadius,
             boxShadow: onPressed != null && !isLoading
                 ? [
                     BoxShadow(
@@ -81,7 +88,7 @@ class CustomButton extends StatelessWidget {
               foregroundColor: context.colors.textOnFilled,
               shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(
-                borderRadius: context.radius.panel,
+                borderRadius: effectiveRadius,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
@@ -100,7 +107,7 @@ class CustomButton extends StatelessWidget {
               foregroundColor: colorScheme.primary,
               elevation: 2,
               shape: RoundedRectangleBorder(
-                borderRadius: context.radius.panel,
+                borderRadius: effectiveRadius,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
@@ -121,7 +128,7 @@ class CustomButton extends StatelessWidget {
                 width: 2,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: context.radius.panel,
+                borderRadius: effectiveRadius,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
@@ -138,9 +145,61 @@ class CustomButton extends StatelessWidget {
             style: TextButton.styleFrom(
               foregroundColor: colorScheme.primary,
               shape: RoundedRectangleBorder(
-                borderRadius: context.radius.panel,
+                borderRadius: effectiveRadius,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            ),
+            child: buttonChild,
+          ),
+        );
+
+      case ButtonVariant.danger:
+        return Container(
+          width: buttonWidth,
+          height: buttonHeight,
+          decoration: BoxDecoration(
+            color: context.colors.error,
+            borderRadius: effectiveRadius,
+            boxShadow: onPressed != null && !isLoading
+                ? [
+                    BoxShadow(
+                      color: context.colors.error.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
+          ),
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: context.colors.textOnFilled,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: effectiveRadius,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            ),
+            child: buttonChild,
+          ),
+        );
+
+      case ButtonVariant.dangerOutline:
+        return SizedBox(
+          width: buttonWidth,
+          height: buttonHeight,
+          child: OutlinedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: context.colors.error,
+              side: BorderSide(
+                color: context.colors.error,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: effectiveRadius,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             ),
             child: buttonChild,
           ),

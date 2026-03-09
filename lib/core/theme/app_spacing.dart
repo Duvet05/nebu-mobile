@@ -102,6 +102,25 @@ class AppSpacing {
   static const double snackbarBottomSpaceSm = 80;
   static const double snackbarBottomSpaceDf = 80;
   static const double snackbarBottomSpaceLg = 80;
+
+  // --- Generic gaps (flat: same across screen sizes) ---
+  static const double gapXxs = 2;
+  static const double gapXs = 4;
+  static const double gapSm = 6;
+  static const double gapMd = 8;
+
+  // --- Generic gaps (responsive) ---
+  static const double gapLgSm = 10;
+  static const double gapLgDf = 12;
+  static const double gapLgLg = 16;
+
+  static const double gapXlSm = 14;
+  static const double gapXlDf = 16;
+  static const double gapXlLg = 20;
+
+  static const double gapXxlSm = 20;
+  static const double gapXxlDf = 24;
+  static const double gapXxlLg = 32;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -226,6 +245,27 @@ class SemanticSpacing {
         AppSpacing.snackbarBottomSpaceSm,
         AppSpacing.snackbarBottomSpaceDf,
         AppSpacing.snackbarBottomSpaceLg,
+      );
+
+  // --- Generic gaps ---
+  double get gapXxs => AppSpacing.gapXxs;
+  double get gapXs => AppSpacing.gapXs;
+  double get gapSm => AppSpacing.gapSm;
+  double get gapMd => AppSpacing.gapMd;
+  double get gapLg => _resolve(
+        AppSpacing.gapLgSm,
+        AppSpacing.gapLgDf,
+        AppSpacing.gapLgLg,
+      );
+  double get gapXl => _resolve(
+        AppSpacing.gapXlSm,
+        AppSpacing.gapXlDf,
+        AppSpacing.gapXlLg,
+      );
+  double get gapXxl => _resolve(
+        AppSpacing.gapXxlSm,
+        AppSpacing.gapXxlDf,
+        AppSpacing.gapXxlLg,
       );
 
   // ═══════════════════════════════════════════════════════════

@@ -178,7 +178,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           content: Row(
             children: [
               Icon(Icons.check_circle, color: context.colors.textOnFilled, size: 20),
-              const SizedBox(width: 12),
+              SizedBox(width: context.spacing.gapLg),
               Text('setup.connection.connected_to'.tr(args: [device.platformName])),
             ],
           ),
@@ -201,7 +201,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           content: Row(
             children: [
               Icon(Icons.error_outline, color: context.colors.textOnFilled, size: 20),
-              const SizedBox(width: 12),
+              SizedBox(width: context.spacing.gapLg),
               Expanded(child: Text('setup.connection.connection_failed'.tr())),
             ],
           ),
@@ -502,14 +502,14 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: context.spacing.gapXxl),
           Text(
             'setup.connection.looking_for_devices'.tr(),
             style: textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.spacing.gapMd),
           Text(
             'setup.connection.make_sure_on'.tr(),
             style: textTheme.bodyLarge?.copyWith(

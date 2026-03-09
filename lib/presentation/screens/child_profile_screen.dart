@@ -53,13 +53,13 @@ class ChildProfileScreen extends ConsumerWidget {
           'child_profile.no_data_title'.tr(),
           style: context.textTheme.headlineSmall,
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: context.spacing.paragraphBottomMarginSm),
         Text(
           'child_profile.no_data_subtitle'.tr(),
           textAlign: TextAlign.center,
           style: context.textTheme.bodyLarge?.copyWith(color: context.colors.grey500),
         ),
-        const SizedBox(height: 30),
+        SizedBox(height: context.spacing.paragraphBottomMargin),
         CustomButton(
           text: 'child_profile.setup_profile'.tr(),
           onPressed: () => context.push(AppRoutes.toyNameSetup.path),
@@ -111,7 +111,7 @@ class ChildProfileScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 30),
+          SizedBox(height: context.spacing.paragraphBottomMargin),
           const Divider(),
           _buildSectionTitle('child_profile.personality'.tr(), context),
           Wrap(
