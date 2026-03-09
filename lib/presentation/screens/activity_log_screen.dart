@@ -107,7 +107,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
                 ),
                 SizedBox(height: context.spacing.sectionTitleBottomMargin),
                 Text(
-                  'activity.error_loading'.tr(),
+                  'activity_log.error_loading'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -126,7 +126,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
                     ),
                   ),
                   child: SelectableText(
-                    state.error!,
+                    state.error!.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onErrorContainer,
                     ),

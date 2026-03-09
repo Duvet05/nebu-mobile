@@ -295,7 +295,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                 context.spacing.alertPadding,
                 context.spacing.alertPadding +
                     MediaQuery.of(context).padding.bottom +
-                    24,
+                    context.spacing.panelPadding,
               ),
               child: Form(
                 key: _formKey,

@@ -86,7 +86,7 @@ class ActivityNotifier extends Notifier<ActivityState> {
         currentPage: page,
       );
     } on Exception catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoading: false, error: _mapErrorMessage(e));
     }
   }
 
@@ -139,7 +139,7 @@ class ActivityNotifier extends Notifier<ActivityState> {
 
       return true;
     } on Exception catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(error: _mapErrorMessage(e));
       return false;
     }
   }
@@ -150,9 +150,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
       final stats = await _activityService.getActivityStats(userId);
       state = state.copyWith(stats: stats);
     } on Exception catch (e) {
-      state = state.copyWith(error: e.toString());
+      state = state.copyWith(error: _mapErrorMessage(e));
     }
   }
+
+  /// Map exceptions to user-friendly i18n keys
+  String _mapErrorMessage(Exception e) => 'activity_log.error_loading';
 
   /// Refrescar actividades (pull to refresh)
   Future<void> refresh({

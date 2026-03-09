@@ -41,8 +41,7 @@ class ConnectionStatusIndicator extends StatelessWidget {
             SizedBox(width: context.spacing.gapMd),
             Text(
               statusText,
-              style: TextStyle(
-                fontSize: 14,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: dotColor,
               ),
@@ -54,7 +53,9 @@ class ConnectionStatusIndicator extends StatelessWidget {
           isRemoteConnected
               ? 'walkie_talkie.toy_connected'.tr()
               : 'walkie_talkie.waiting_for_toy'.tr(),
-          style: TextStyle(fontSize: 12, color: context.colors.grey400),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: context.colors.grey400,
+          ),
         ),
       ],
     );

@@ -81,9 +81,9 @@ class DeviceService {
       _logger.i('${device.platformName} battery level is $batteryLevel%');
 
       return batteryLevel;
-    } on Exception catch (e) {
-      _logger.e('Failed to get battery level for ${device.platformName}: $e');
-      return -1;
+    } on Exception catch (e, st) {
+      _logger.e('Failed to get battery level for ${device.platformName}: $e', error: e, stackTrace: st);
+      rethrow;
     }
   }
 }

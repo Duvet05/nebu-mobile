@@ -324,7 +324,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
             onPressed: () => Navigator.of(context).pop(false),
             child: Text('setup.wifi.keep_waiting'.tr()),
           ),
-          ElevatedButton(
+          TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text('setup.wifi.continue_anyway'.tr()),
           ),
@@ -518,8 +518,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   Widget _buildQuickActions(ThemeData theme) => Wrap(
     alignment: WrapAlignment.spaceEvenly,
-    spacing: 8,
-    runSpacing: 8,
+    spacing: context.spacing.gapMd,
+    runSpacing: context.spacing.gapMd,
     children: [
       _QuickActionButton(
         icon: Icons.qr_code_scanner,

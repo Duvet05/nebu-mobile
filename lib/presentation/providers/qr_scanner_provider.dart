@@ -25,12 +25,10 @@ class QRScannerState {
 
 class QRScannerNotifier extends Notifier<QRScannerState> {
   @override
-  QRScannerState build() {
-    return QRScannerState(
+  QRScannerState build() => QRScannerState(
       scannedCode: '',
       isProcessing: false,
     );
-  }
 
   void handleQRCode(String? code, BuildContext context) {
     if (code == null || code.isEmpty || state.isProcessing) {

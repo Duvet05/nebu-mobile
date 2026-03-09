@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/google_signin_provider.dart';
@@ -385,7 +386,7 @@ void _showResetPasswordDialog(
                       return;
                     }
 
-                    if (password.length < 8) {
+                    if (password.length < ValidationRules.passwordMinLength) {
                       setDialogState(() {
                         errorText = 'auth.reset_password_too_short'.tr();
                       });

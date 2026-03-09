@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -95,7 +96,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: AppRouter._getRoutes(),
     errorBuilder: (context, state) =>
-        Scaffold(body: Center(child: Text('Error: ${state.error}'))),
+        Scaffold(body: Center(child: Text('errors.route_not_found'.tr()))),
   );
 });
 

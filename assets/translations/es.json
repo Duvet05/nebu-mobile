@@ -307,7 +307,8 @@
     "sleep": "Dormir",
     "wake": "Despertar",
     "chat": "Chat",
-    "error_type": "Error"
+    "error_type": "Error",
+    "error_loading": "No se pudieron cargar las actividades. Intenta de nuevo."
   },
   "notifications": {
     "title": "Notificaciones",
@@ -750,7 +751,13 @@
     "type_delete_to_confirm": "Escribe DELETE para confirmar:",
     "incorrect_confirmation": "Texto incorrecto. Debes escribir DELETE exactamente",
     "enter_password": "Ingresa tu contraseña",
-    "password_required": "La contraseña es obligatoria"
+    "password_required": "La contraseña es obligatoria",
+    "delete_hint": "DELETE",
+    "device_android": "Dispositivo Android",
+    "device_web": "Navegador Web",
+    "location_placeholder": "Lima, Perú",
+    "just_now": "Ahora mismo",
+    "days_ago": "Hace {} días"
   },
   "privacy_policy": {
     "title": "Política de Privacidad",
@@ -864,5 +871,8 @@
   },
   "setup_progress": {
     "step_of": "Paso {} de {}"
+  },
+  "errors": {
+    "route_not_found": "Página no encontrada"
   }
 }

@@ -248,12 +248,7 @@ class WiFiService {
       return result;
     } on Exception catch (e) {
       _logger.e('Error sending WiFi credentials to ESP32: $e');
-      final result = WiFiConnectionResult(
-        success: false,
-        message: 'Failed to configure ESP32 WiFi: $e',
-      );
-      _connectionController.add(result);
-      return result;
+      rethrow;
     }
   }
 

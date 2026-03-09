@@ -249,8 +249,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     trailing: Chip(
       label: Text(
         granted ? 'privacy.granted'.tr() : 'privacy.denied'.tr(),
-        style: TextStyle(
-          fontSize: 12,
+        style: context.textTheme.labelSmall?.copyWith(
           color: granted ? context.colors.success : context.colors.warning,
         ),
       ),
@@ -308,16 +307,16 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildLoginHistoryItem(
-                  'Android Device',
-                  'Lima, Peru',
-                  'Just now',
+                  'privacy.device_android'.tr(),
+                  'privacy.location_placeholder'.tr(),
+                  'privacy.just_now'.tr(),
                   true,
                 ),
                 const Divider(),
                 _buildLoginHistoryItem(
-                  'Web Browser',
-                  'Lima, Peru',
-                  '2 days ago',
+                  'privacy.device_web'.tr(),
+                  'privacy.location_placeholder'.tr(),
+                  'privacy.days_ago'.tr(args: ['2']),
                   false,
                 ),
               ],
@@ -438,9 +437,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
             TextField(
               controller: confirmController,
-              decoration: const InputDecoration(
-                hintText: 'DELETE',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: 'privacy.delete_hint'.tr(),
+                border: const OutlineInputBorder(),
               ),
             ),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),

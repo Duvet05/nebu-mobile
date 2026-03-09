@@ -272,7 +272,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     );
     final existing = prefs.getString(StorageKeys.localToys);
     final List<dynamic> toyList =
-        existing != null ? json.decode(existing) as List<dynamic> : []
+        (existing != null ? json.decode(existing) as List<dynamic> : [])
           ..add(toy.toJson());
     await prefs.setString(StorageKeys.localToys, json.encode(toyList));
     ref.read(loggerProvider).d('Local toy saved: ${toy.name}');

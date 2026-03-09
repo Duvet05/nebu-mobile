@@ -216,7 +216,8 @@
     "sleep": "Sleep",
     "wake": "Wake",
     "chat": "Chat",
-    "error_type": "Error"
+    "error_type": "Error",
+    "error_loading": "Could not load activities. Please try again."
   },
   "notifications": {
     "title": "Notifications",
@@ -559,7 +560,13 @@
     "type_delete_to_confirm": "Type DELETE to confirm:",
     "incorrect_confirmation": "Incorrect text. You must type DELETE exactly",
     "enter_password": "Enter your password",
-    "password_required": "Password is required"
+    "password_required": "Password is required",
+    "delete_hint": "DELETE",
+    "device_android": "Android Device",
+    "device_web": "Web Browser",
+    "location_placeholder": "Lima, Peru",
+    "just_now": "Just now",
+    "days_ago": "{} days ago"
   },
   "privacy_policy": {
     "title": "Privacy Policy",
@@ -673,5 +680,8 @@
   },
   "setup_progress": {
     "step_of": "Step {} of {}"
+  },
+  "errors": {
+    "route_not_found": "Page not found"
   }
 }

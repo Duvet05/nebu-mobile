@@ -188,7 +188,9 @@ class AuthService {
     try {
       final refreshToken = await getRefreshToken();
       if (refreshToken == null) {
-        throw Exception('No refresh token available');
+        _logger.w('No refresh token available, logging out');
+        await logout();
+        return null;
       }
 
       final response = await _dio.post<Map<String, dynamic>>(
@@ -198,7 +200,9 @@ class AuthService {
 
       final newAccessToken = response.data?['accessToken'] as String?;
       if (newAccessToken == null) {
-        throw Exception('No access token in refresh response');
+        _logger.w('No access token in refresh response, logging out');
+        await logout();
+        return null;
       }
       await _secureStorage.write(
         key: StorageKeys.accessToken,
@@ -206,8 +210,15 @@ class AuthService {
       );
 
       return newAccessToken;
-    } on Exception {
-      await logout();
+    } on DioException catch (e) {
+      // Only logout on auth errors (401/403), not transient network issues
+      final statusCode = e.response?.statusCode;
+      if (statusCode == 401 || statusCode == 403) {
+        _logger.w('Refresh token rejected ($statusCode), logging out');
+        await logout();
+      } else {
+        _logger.w('Transient error during token refresh: $e');
+      }
       return null;
     }
   }
@@ -239,7 +250,8 @@ class AuthService {
     try {
       await _dio.post<void>('/auth/forgot-password', data: {'email': email});
       return true;
-    } on Exception {
+    } on DioException catch (e) {
+      _logger.e('Password reset request failed: ${e.message}');
       return false;
     }
   }
@@ -254,7 +266,8 @@ class AuthService {
         data: {'token': token, 'newPassword': newPassword},
       );
       return true;
-    } on Exception {
+    } on DioException catch (e) {
+      _logger.e('Password reset failed: ${e.message}');
       return false;
     }
   }

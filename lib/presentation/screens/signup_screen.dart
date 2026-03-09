@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
@@ -203,7 +204,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'auth.password_required'.tr();
                           }
-                          if (value.length < 8) {
+                          if (value.length < ValidationRules.passwordMinLength) {
                             return 'auth.password_short'.tr();
                           }
                           return null;
