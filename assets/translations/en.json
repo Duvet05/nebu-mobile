@@ -350,20 +350,6 @@
     "timeline_delivered": "Delivered",
     "quantity": "{0}x"
   },
-  "iot_dashboard": {
-    "title": "My Devices",
-    "my_devices": "My Devices",
-    "online": "Online",
-    "offline": "Offline",
-    "add_more_devices": "Add more devices to get started"
-  },
-  "my_toys": {
-    "title": "My Toys",
-    "my_devices": "My Devices",
-    "online": "Online",
-    "offline": "Offline",
-    "add_more_devices": "Add more devices to get started"
-  },
   "toys": {
     "title": "My Toys",
     "my_toys": "My Toys",

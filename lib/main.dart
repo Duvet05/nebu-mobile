@@ -43,9 +43,8 @@ void main() async {
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('es')],
       path: 'assets/translations',
-        fallbackLocale: const Locale('en'), H
-
-        child: const ProviderScope(child: NebuApp()),
+      fallbackLocale: const Locale('en'),
+      child: const ProviderScope(child: NebuApp()),
     ),
   );
 }

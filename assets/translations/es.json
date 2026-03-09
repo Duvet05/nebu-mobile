@@ -350,20 +350,6 @@
     "timeline_delivered": "Entregado",
     "quantity": "{0}x"
   },
-  "iot_dashboard": {
-    "title": "Mis Dispositivos",
-    "my_devices": "Mis Dispositivos",
-    "online": "En Línea",
-    "offline": "Desconectado",
-    "add_more_devices": "Agrega más dispositivos para comenzar"
-  },
-  "my_toys": {
-    "title": "Mis Juguetes",
-    "my_devices": "Mis Dispositivos",
-    "online": "En Línea",
-    "offline": "Desconectado",
-    "add_more_devices": "Agrega más dispositivos para comenzar"
-  },
   "toys": {
     "title": "Mis Juguetes",
     "my_toys": "Mis Juguetes",
@@ -433,6 +419,13 @@
     "title": "Escáner QR",
     "coming_soon": "Escáner QR - Próximamente",
     "scan_hint": "Posiciona el código QR dentro del marco para escanearlo",
+    "scanned": "Escaneado",
+    "unrecognized_format": "Formato QR no reconocido",
+    "scan_again": "Escanear de nuevo",
+    "toy_assigned": "Juguete Asignado",
+    "toy_assigned_desc": "El juguete {0} ha sido asignado a tu cuenta",
+    "done": "Listo",
+    "assignment_failed": "Asignación Fallida",
     "invalid_wifi_qr": "Código QR de WiFi inválido",
     "wifi_loaded": "Credenciales WiFi cargadas desde QR",
     "wifi_name_error": "No se pudo obtener el nombre del WiFi",
