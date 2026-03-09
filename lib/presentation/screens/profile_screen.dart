@@ -21,7 +21,7 @@ class ProfileScreen extends ConsumerWidget {
     final themeAsync = ref.watch(themeProvider);
     final themeState = themeAsync.value;
     final isDark = themeState?.isDarkMode ?? false;
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

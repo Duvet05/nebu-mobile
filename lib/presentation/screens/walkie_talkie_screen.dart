@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/walkie_talkie_provider.dart';
 import '../widgets/connection_status_indicator.dart';
@@ -28,12 +29,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
   Future<void> _initSession() async {
     final micStatus = await Permission.microphone.request();
     if (!micStatus.isGranted && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('walkie_talkie.mic_permission_required'.tr()),
-          backgroundColor: context.colors.error,
-        ),
-      );
+      context.showErrorSnackBar('walkie_talkie.mic_permission_required'.tr());
       return;
     }
     await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);

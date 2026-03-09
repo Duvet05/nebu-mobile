@@ -12,7 +12,7 @@ class IoTDevicesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final iotDevicesState = ref.watch(iotDevicesProvider);
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(

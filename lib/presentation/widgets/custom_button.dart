@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../core/theme/app_colors.dart';
 
 enum ButtonVariant { primary, secondary, outline }
@@ -26,7 +27,7 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     final Widget buttonChild = Row(
       mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,

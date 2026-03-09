@@ -67,7 +67,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.value;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     if (user == null) {
       return Scaffold(

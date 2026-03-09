@@ -24,7 +24,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final personalitiesAsync = ref.watch(personalitiesProvider);
 
     return Scaffold(
@@ -144,7 +144,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
       );
 
   void _showDetailModal(BuildContext context, Personality personality) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final catColor = _getCategoryColor(context, personality.category ?? '');
 
     showModalBottomSheet<void>(
@@ -470,7 +470,7 @@ class _PersonalityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final catColor = _getCategoryColor(context, personality.category ?? '');
 
     return InkWell(

@@ -25,7 +25,7 @@ class SettingsScreen extends ConsumerWidget {
     final languageAsync = ref.watch(languageProvider);
     final themeState = themeAsync.value;
     final languageState = languageAsync.value;
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -259,7 +259,7 @@ void _showHelpDialog(BuildContext context) {
 Widget _buildHelpOption(IconData icon, String title, String subtitle) =>
     Builder(
       builder: (context) {
-        final theme = Theme.of(context);
+        final theme = context.theme;
         return Row(
           children: [
             Icon(icon, size: 20),

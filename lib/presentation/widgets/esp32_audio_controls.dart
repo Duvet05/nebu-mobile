@@ -44,7 +44,7 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                 Icon(
                   Icons.volume_down,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: context.theme.colorScheme.onSurfaceVariant,
                 ),
                 Expanded(
                   child: Slider(
@@ -83,14 +83,14 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                 Icon(
                   Icons.volume_up,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: context.theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: 45,
                   child: Text(
                     '${_localVolume.toInt()}%',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: context.theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.end,
@@ -107,13 +107,13 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                 Icon(
                   isMuted ? Icons.volume_off : Icons.volume_up,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: context.theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     isMuted ? 'audio_controls.muted'.tr() : 'audio_controls.unmuted'.tr(),
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: context.theme.textTheme.bodyMedium,
                   ),
                 ),
                 Switch(
@@ -154,14 +154,14 @@ class _ESP32AudioControlsState extends ConsumerState<ESP32AudioControls> {
                       height: 16,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: context.theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'audio_controls.updating'.tr(),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.primary,
+                      style: context.theme.textTheme.bodySmall?.copyWith(
+                        color: context.theme.colorScheme.primary,
                       ),
                     ),
                   ],

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 
 class NotificationsScreen extends ConsumerStatefulWidget {
@@ -54,20 +55,16 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       if (!mounted) {
         return;
       }
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
-          backgroundColor: context.colors.error,
-        ),
-      );
+      setState(() => _isLoading = false);ontext.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
+  }
   }
 
   @override
-  Widget build(BuildContext context) {inal theme = context.theme;
+  Widget build(BuildContext context) {
+    final theme = context.theme;
 
-    ffinal filteredNotifications = _filter == 'all'
+    final filteredNotifications = _filter == 'all'
         ? _notifications
         : _notifications.where((n) => n.type == _filter).toList();
 
@@ -191,9 +188,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         }
       });
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('notifications.marked_all_read'.tr())),
-    );
+    context.showInfoSnackBar('notifications.marked_all_read'.tr());
   }
 
   Future<void> _handleNotificationTap(_Notification notification) async {
@@ -231,9 +226,10 @@ class _NotificationCard extends StatelessWidget {
   final VoidCallback onDismiss;
 
   @override
-  Widget build(BuildContext context) {inal theme = context.theme;
+  Widget build(BuildContext context) {
+    final theme = context.theme;
 
-    rreturn Dismissible(
+    return Dismissible(
       key: Key(notification.id),
       direction: DismissDirection.endToStart,
       onDismissed: (_) => onDismiss(),

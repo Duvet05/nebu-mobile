@@ -11,7 +11,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(title: Text('privacy_policy.title'.tr()), elevation: 0),

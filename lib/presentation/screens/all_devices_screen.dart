@@ -58,7 +58,7 @@ class _AllDevicesScreenState extends ConsumerState<AllDevicesScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(

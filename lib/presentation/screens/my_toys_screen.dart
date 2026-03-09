@@ -248,7 +248,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     final themeAsync = ref.watch(themeProvider);
     final themeState = themeAsync.value;
     final isDark = themeState?.isDarkMode ?? false;
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final toysAsync = ref.watch(toyProvider);
 
     // Handle errors

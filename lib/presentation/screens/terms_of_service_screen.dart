@@ -11,7 +11,7 @@ class TermsOfServiceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(title: Text('terms.title'.tr()), elevation: 0),

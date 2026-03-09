@@ -27,7 +27,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(title: Text('privacy.title'.tr()), elevation: 0),

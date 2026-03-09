@@ -181,7 +181,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     final colorScheme = theme.colorScheme;
 

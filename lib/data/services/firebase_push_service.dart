@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:logger/logger.dart';
 
 import 'api_service.dart';

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/toy_provider.dart';
 import '../widgets/esp32_audio_controls.dart';
@@ -72,21 +73,11 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
           );
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toy_settings.update_success'.tr()),
-            backgroundColor: context.colors.success,
-          ),
-        );
+        context.showSuccessSnackBar('toy_settings.update_success'.tr());
       }
     } on Exception {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toy_settings.update_error'.tr()),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar('toy_settings.update_error'.tr());
       }
     } finally {
       if (mounted) {
@@ -102,54 +93,32 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       await ref.read(toyProvider.notifier).deleteToy(_currentToy.id);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toy_settings.remove_success'.tr()),
-            backgroundColor: context.colors.success,
-          ),
-        );
+        context.showSuccessSnackBar('toy_settings.remove_success'.tr());
         context.pop();
       }
     } on Exception {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toy_settings.remove_error'.tr()),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar('toy_settings.remove_error'.tr());
         setState(() => _isLoading = false);
       }
     }
   }
 
-  void _showDeleteConfirmation() {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('toy_settings.remove_title'.tr()),
-        content: Text('toy_settings.remove_confirm'.tr(args: [_currentToy.name])),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _deleteToy();
-            },
-            style: TextButton.styleFrom(foregroundColor: context.colors.error),
-            child: Text('common.delete'.tr()),
-          ),
-        ],
-      ),
+  Future<void> _showDeleteConfirmation() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'toy_settings.remove_title'.tr(),
+      content: 'toy_settings.remove_confirm'.tr(args: [_currentToy.name]),
+      destructive: true,
     );
+    if (confirmed) {
+      await _deleteToy();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(title: Text('toy_settings.title'.tr())),

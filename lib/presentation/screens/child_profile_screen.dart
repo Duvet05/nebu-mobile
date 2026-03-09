@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../providers/api_provider.dart';
 
@@ -176,37 +177,18 @@ class ChildProfileScreen extends ConsumerWidget {
         ),
       );
 
-  void _confirmDelete(
+  Future<void> _confirmDelete(
     BuildContext context,
     LocalChildDataService service,
-    ColorScheme colorScheme,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('child_profile.confirm_deletion_title'.tr()),
-        content: Text(
-          'child_profile.confirm_deletion_message'.tr(),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('common.cancel'.tr()),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: Text('common.delete'.tr(), style: TextStyle(color: colorScheme.error)),
-            onPressed: () async {
-              await service.clearChildData();
-              if (!context.mounted) {
-                return;
-              }
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
+    ColorScheme colorScheme,) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'child_profile.confirm_deletion_title'.tr(),
+      content: 'child_profile.confirm_deletion_message'.tr(),
+      destructive: true,
     );
+    if (confirmed) {
+      await service.clearChildData();
+    }
   }
 }

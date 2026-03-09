@@ -46,7 +46,7 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(title: Text('orders.title'.tr()), elevation: 0),
@@ -104,7 +104,7 @@ class _OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final total = order.totalPrice;
 
     return Card(
@@ -284,7 +284,7 @@ class _OrderDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final total = order.totalPrice;
 
     return DraggableScrollableSheet(
@@ -398,7 +398,7 @@ class _OrderDetailsSheet extends StatelessWidget {
   }
 
   Widget _buildStatusTimeline(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final upperStatus = order.status.toUpperCase();
     final statusOrder = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED'];
     final currentIndex = statusOrder.indexOf(upperStatus);
@@ -445,7 +445,7 @@ class _OrderDetailsSheet extends StatelessWidget {
     bool isFirst = false,
     bool isLast = false,
   }) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     return Row(
     children: [
       Column(

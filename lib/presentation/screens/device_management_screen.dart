@@ -42,7 +42,7 @@ class _DeviceManagementScreenState extends ConsumerState<DeviceManagementScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final toysAsync = ref.watch(toyProvider);
 
     return Scaffold(

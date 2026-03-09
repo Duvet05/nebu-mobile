@@ -75,7 +75,7 @@ class _MemoriesTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final memoriesAsync = ref.watch(toyMemoriesProvider(toyId));
 
     return memoriesAsync.when(
@@ -130,7 +130,7 @@ class _MemoryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final catColor = _getCategoryColor(context, memory.category);
     final catIcon = _getCategoryIcon(memory.category);
 
@@ -276,7 +276,7 @@ class _InsightsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final insightsAsync = ref.watch(toyInsightsProvider(toyId));
 
     return insightsAsync.when(
@@ -328,7 +328,7 @@ class _InsightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Card(
       margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
@@ -489,7 +489,7 @@ class _SearchTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final AsyncValue<List<MemoryEntry>> searchResults =
         ref.watch(memorySearchProvider);
 

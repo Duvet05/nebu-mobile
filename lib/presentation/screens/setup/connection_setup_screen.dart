@@ -250,7 +250,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         backgroundColor: Colors.transparent,
         isScrollControlled: true,
         builder: (context) {
-          final textTheme = Theme.of(context).textTheme;
+          final textTheme = context.theme.textTheme;
 
           return Container(
             decoration: BoxDecoration(
@@ -355,8 +355,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
     final canProceed = _selectedDevice != null;
 
     return Scaffold(
@@ -464,8 +464,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Widget _buildScanningView() {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Center(
       child: Column(
@@ -522,8 +522,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Widget _buildEmptyState() {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Center(
       child: Column(
@@ -563,8 +563,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Widget _buildDevicesList() {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +630,7 @@ class _BackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -690,7 +690,7 @@ class _PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return GestureDetector(
       onTap: isLoading ? null : onPressed,
@@ -758,8 +758,8 @@ class _DeviceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -886,7 +886,7 @@ class _BottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Container(
       decoration: BoxDecoration(
@@ -988,7 +988,7 @@ class _OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return GestureDetector(
       onTap: onTap,
