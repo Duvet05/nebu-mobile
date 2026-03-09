@@ -45,9 +45,6 @@ dependencies:
   mobile_scanner: ^7.1.2
   image_picker: ^1.0.7
 
-  # Audio
-  record: ^6.1.2
-
   # LiveKit (WebRTC)
   livekit_client: ^2.4.3
 
@@ -66,8 +63,6 @@ dependencies:
   url_launcher: ^6.3.0
 
   # UI Helpers
-  flutter_svg: ^2.0.10+1
-  google_fonts: ^6.3.2
   package_info_plus: ^9.0.0
   easy_logger: ^0.0.2
 dev_dependencies:
@@ -96,7 +91,6 @@ flutter:
     # Solo se usa en debug/development
     - assets/images/
     - assets/translations/
-    - assets/icon_flow.svg
 
 flutter_launcher_icons:
   android: true

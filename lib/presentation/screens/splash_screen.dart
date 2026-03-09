@@ -3,9 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
@@ -128,14 +126,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 opacity: _iconOpacityAnimation.value,
                 child: Transform.scale(
                   scale: _iconScaleAnimation.value,
-                  child: SvgPicture.asset(
-                    'assets/icon_flow.svg',
-                    width: 120,
-                    height: 120,
-                    colorFilter: ColorFilter.mode(
-                      context.colors.textOnFilled,
-                      BlendMode.srcIn,
-                    ),
+                  child: Icon(
+                    Icons.smart_toy,
+                    size: 120,
+                    color: context.colors.textOnFilled,
                   ),
                 ),
               ),
@@ -152,8 +146,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   opacity: _textOpacityAnimation.value,
                   child: Text(
                     'splash.app_name'.tr(),
-                    style: GoogleFonts.poppins(
-                      textStyle: context.theme.textTheme.displayLarge,
+                    style: context.theme.textTheme.displayLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: context.colors.textOnFilled,
                       letterSpacing: 6,
@@ -181,8 +174,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 opacity: _textOpacityAnimation.value,
                 child: Text(
                   'splash.powered_by'.tr(),
-                  style: GoogleFonts.poppins(
-                    textStyle: context.theme.textTheme.bodyLarge,
+                  style: context.theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.w300,
                     color: context.colors.textOnFilled.withValues(alpha: 0.85),
                     letterSpacing: 2,
