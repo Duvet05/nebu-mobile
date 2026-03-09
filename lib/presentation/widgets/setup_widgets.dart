@@ -5,14 +5,23 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 
 class SetupBackButton extends StatelessWidget {
-  const SetupBackButton({super.key});
+  const SetupBackButton({this.previousRoute, super.key});
+
+  final String? previousRoute;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return GestureDetector(
-      onTap: () => context.pop(),
+      onTap: () {
+        final route = previousRoute;
+        if (route != null) {
+          context.go(route);
+        } else {
+          context.pop();
+        }
+      },
       child: Container(
         width: 44,
         height: 44,
@@ -60,17 +69,19 @@ class SetupStepIndicator extends StatelessWidget {
 class SetupHeader extends StatelessWidget {
   const SetupHeader({
     required this.currentStep, required this.totalSteps, super.key,
+    this.previousRoute,
   });
   final int currentStep;
   final int totalSteps;
+  final String? previousRoute;
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         child: Row(
           children: [
-            const SetupBackButton(),
-            const Spacer(),
+        SetupBackButton(previousRoute: previousRoute),
+        const Spacer(),
             SetupStepIndicator(current: currentStep, total: totalSteps),
             const Spacer(),
             const SizedBox(width: 44),

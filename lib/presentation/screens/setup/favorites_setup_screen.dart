@@ -37,7 +37,9 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SetupHeader(currentStep: 7, totalSteps: 7),
+            SetupHeader(currentStep: 7,
+                totalSteps: 7,
+                previousRoute: AppRoutes.voiceSetup.path),
 
             // Content
             Expanded(

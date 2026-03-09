@@ -49,7 +49,9 @@ class _PersonalitySetupScreenState extends State<PersonalitySetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SetupHeader(currentStep: 5, totalSteps: 7),
+            SetupHeader(currentStep: 5,
+                totalSteps: 7,
+                previousRoute: AppRoutes.ageSetup.path),
 
             // Content
             Expanded(

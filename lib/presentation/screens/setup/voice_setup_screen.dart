@@ -49,7 +49,9 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SetupHeader(currentStep: 6, totalSteps: 7),
+            SetupHeader(currentStep: 6,
+                totalSteps: 7,
+                previousRoute: AppRoutes.personalitySetup.path),
 
             // Content
             Expanded(

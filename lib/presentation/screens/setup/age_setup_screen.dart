@@ -33,7 +33,9 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const SetupHeader(currentStep: 4, totalSteps: 7),
+            SetupHeader(currentStep: 4,
+                totalSteps: 7,
+                previousRoute: AppRoutes.toyNameSetup.path),
 
             // Content
             Expanded(
