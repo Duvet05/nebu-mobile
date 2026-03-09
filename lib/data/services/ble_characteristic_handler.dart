@@ -31,8 +31,8 @@ class BleCharacteristicHandler {
   bool get supportsNotify => _characteristic?.properties.notify ?? false;
   bool get supportsRead => _characteristic?.properties.read ?? false;
   bool get supportsWrite =>
-      _characteristic?.properties.write == true ||
-      _characteristic?.properties.writeWithoutResponse == true;
+      _characteristic?.properties.write ?? false ||
+      _characteristic?.properties.writeWithoutResponse ?? false;
 
   /// Discover this characteristic from a BLE service.
   /// Throws if not found and [optional] is false.
