@@ -553,7 +553,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 6),
+            SizedBox(width: context.spacing.gapSm),
           ],
           Text(
             value,

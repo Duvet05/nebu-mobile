@@ -220,7 +220,7 @@ class _MemoryCard extends StatelessWidget {
                           size: 14,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: context.spacing.gapXs),
                         Text(
                           'memory.messages_count'.tr(
                             args: ['${memory.messageCount}'],

@@ -9,6 +9,7 @@ import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../widgets/custom_button.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -244,47 +245,20 @@ class ProfileScreen extends ConsumerWidget {
               SizedBox(height: context.spacing.panelPadding),
 
               // Logout Button
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: context.radius.tile,
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.colors.error.withValues(alpha: isDark ? 0.4 : 0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                // TODO(design-system): migrate to CustomButton when it supports custom colors
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final shouldLogout = await _showLogoutDialog(context);
-                      if (shouldLogout ?? false) {
-                        await ref.read(authProvider.notifier).logout();
-                        if (context.mounted) {
-                          context.go(AppRoutes.welcome.path);
-                        }
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.colors.error,
-                      foregroundColor: context.colors.textOnFilled,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: context.radius.tile,
-                      ),
-                    ),
-                    child: Text(
-                      'profile.logout'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: context.colors.textOnFilled,
-                      ),
-                    ),
-                  ),
-                ),
+              CustomButton(
+                text: 'profile.logout'.tr(),
+                variant: ButtonVariant.danger,
+                isFullWidth: true,
+                height: 54,
+                onPressed: () async {
+                  final shouldLogout = await _showLogoutDialog(context);
+                  if (shouldLogout ?? false) {
+                    await ref.read(authProvider.notifier).logout();
+                    if (context.mounted) {
+                      context.go(AppRoutes.welcome.path);
+                    }
+                  }
+                },
               ),
 
               SizedBox(height: context.spacing.panelPadding),

@@ -125,10 +125,7 @@ class TermsOfServiceScreen extends ConsumerWidget {
               child: CustomButton(
                 text: 'terms.delete_button'.tr(),
                 onPressed: () async {
-                  await _openExternalLink(
-                    context,
-                    Config.deleteAccountUrl,
-                  );
+                  await _openExternalLink(context, Config.deleteAccountUrl);
                 },
                 icon: Icons.person_off_outlined,
                 variant: ButtonVariant.text,
@@ -197,7 +194,7 @@ class TermsOfServiceScreen extends ConsumerWidget {
                         Icons.info_outline,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: context.spacing.gapLg),
                       Expanded(
                         child: Text(
                           'terms.contact_info'.tr(),
@@ -209,9 +206,19 @@ class TermsOfServiceScreen extends ConsumerWidget {
                     ],
                   ),
                   SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                  _buildContactRow(theme, Icons.email, 'legal@nebu.ai'),
+                  _buildContactRow(
+                    context,
+                    theme,
+                    Icons.email,
+                    'legal@nebu.ai',
+                  ),
                   SizedBox(height: context.spacing.titleBottomMarginSm),
-                  _buildContactRow(theme, Icons.language, 'www.nebu.ai'),
+                  _buildContactRow(
+                    context,
+                    theme,
+                    Icons.language,
+                    'www.nebu.ai',
+                  ),
                 ],
               ),
             ),
@@ -223,26 +230,27 @@ class TermsOfServiceScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, ThemeData theme, String title, String content) =>
-      Padding(
-        padding: EdgeInsets.only(bottom: context.spacing.sectionTitleBottomMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: context.spacing.titleBottomMarginSm),
-            Text(
-              content,
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
-            ),
-          ],
+  Widget _buildSection(
+    BuildContext context,
+    ThemeData theme,
+    String title,
+    String content,
+  ) => Padding(
+    padding: EdgeInsets.only(bottom: context.spacing.sectionTitleBottomMargin),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-      );
+        SizedBox(height: context.spacing.titleBottomMarginSm),
+        Text(content, style: theme.textTheme.bodyMedium?.copyWith(height: 1.5)),
+      ],
+    ),
+  );
 
   Widget _buildBulletPoint(ThemeData theme, String text) => Padding(
     padding: const EdgeInsets.only(left: 16, bottom: 8),
@@ -264,16 +272,21 @@ class TermsOfServiceScreen extends ConsumerWidget {
     final uri = Uri.parse(url);
     final success = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!success && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('profile.link_error'.tr())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('profile.link_error'.tr())));
     }
   }
 
-  Widget _buildContactRow(ThemeData theme, IconData icon, String text) => Row(
+  Widget _buildContactRow(
+    BuildContext context,
+    ThemeData theme,
+    IconData icon,
+    String text,
+  ) => Row(
     children: [
       Icon(icon, size: 18, color: theme.colorScheme.primary),
-      const SizedBox(width: 8),
+      SizedBox(width: context.spacing.gapMd),
       Text(text, style: theme.textTheme.bodyMedium),
     ],
   );

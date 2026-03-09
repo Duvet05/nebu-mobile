@@ -315,7 +315,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                         ),
                       ),
 
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.spacing.gapXl),
 
                       // Next button
                       GestureDetector(

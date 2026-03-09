@@ -38,7 +38,7 @@ class ConnectionStatusIndicator extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: context.spacing.gapMd),
             Text(
               statusText,
               style: TextStyle(
@@ -49,7 +49,7 @@ class ConnectionStatusIndicator extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: context.spacing.gapXs),
         Text(
           isRemoteConnected
               ? 'walkie_talkie.toy_connected'.tr()

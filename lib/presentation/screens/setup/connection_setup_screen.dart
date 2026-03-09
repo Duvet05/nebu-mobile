@@ -542,14 +542,14 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               color: colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: context.spacing.gapXxl),
           Text(
             'setup.connection.ready_to_connect'.tr(),
             style: textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.spacing.gapMd),
           Text(
             'setup.connection.start_scan_hint'.tr(),
             style: textTheme.bodyLarge?.copyWith(
@@ -578,7 +578,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: context.spacing.gapMd),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
@@ -595,7 +595,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: context.spacing.gapXl),
         Expanded(
           child: ListView.builder(
             itemCount: _scanResults.length,
@@ -809,7 +809,7 @@ class _DeviceCard extends StatelessWidget {
                       size: 24,
                     ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: context.spacing.gapXl),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -823,7 +823,7 @@ class _DeviceCard extends StatelessWidget {
                           : colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: context.spacing.gapXs),
                   Row(
                     children: [
                       Icon(
@@ -831,7 +831,7 @@ class _DeviceCard extends StatelessWidget {
                         size: 14,
                         color: colorScheme.onSurfaceVariant,
                       ),
-                      const SizedBox(width: 4),
+                      SizedBox(width: context.spacing.gapXs),
                       Text(
                         '$signal dBm',
                         style: textTheme.bodySmall?.copyWith(
@@ -905,7 +905,7 @@ class _BottomSheet extends StatelessWidget {
               borderRadius: context.radius.checkbox,
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: context.spacing.gapXxl),
           Container(
             width: 64,
             height: 64,
@@ -915,7 +915,7 @@ class _BottomSheet extends StatelessWidget {
             ),
             child: Icon(icon, color: iconColor, size: 32),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: context.spacing.gapXxl),
           Text(
             title,
             style: textTheme.headlineSmall?.copyWith(
@@ -923,7 +923,7 @@ class _BottomSheet extends StatelessWidget {
               color: context.colors.textNormal,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.spacing.gapMd),
           Text(
             description,
             textAlign: TextAlign.center,
@@ -932,7 +932,7 @@ class _BottomSheet extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: context.spacing.gapXxl),
           GestureDetector(
             onTap: primaryOnPressed,
             child: Container(
@@ -952,7 +952,7 @@ class _BottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: context.spacing.gapLg),
           GestureDetector(
             onTap: secondaryOnPressed,
             child: Padding(
@@ -1022,7 +1022,7 @@ class _OptionCard extends StatelessWidget {
                 size: 22,
               ),
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: context.spacing.gapXl),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1036,7 +1036,7 @@ class _OptionCard extends StatelessWidget {
                           : context.colors.primary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: context.spacing.gapXxs),
                   Text(
                     description,
                     style: textTheme.bodySmall?.copyWith(

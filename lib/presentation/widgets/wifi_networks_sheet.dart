@@ -85,7 +85,7 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: context.spacing.gapXxl),
           if (_isLoading)
             const Center(
               child: Padding(
@@ -103,12 +103,12 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
                     color: context.colors.error,
                     size: 48,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.spacing.gapXl),
                   Text(
                     'setup.wifi.scan_error'.tr(),
                     style: theme.textTheme.titleMedium,
                   ),
-                  const SizedBox(height: 24),
+                  SizedBox(height: context.spacing.gapXxl),
                   CustomButton(
                     text: 'common.retry'.tr(),
                     onPressed: _scanNetworks,
@@ -149,7 +149,7 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
                 },
               ),
             ),
-          const SizedBox(height: 16),
+          SizedBox(height: context.spacing.gapXl),
           CustomButton(
             text: 'common.cancel'.tr(),
             onPressed: () => Navigator.of(context).pop(),

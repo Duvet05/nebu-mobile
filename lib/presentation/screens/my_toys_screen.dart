@@ -11,6 +11,7 @@ import '../../data/models/toy.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/toy_provider.dart';
+import '../widgets/custom_button.dart';
 
 class MyToysScreen extends ConsumerStatefulWidget {
   const MyToysScreen({super.key});
@@ -275,64 +276,35 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 ],
                 SizedBox(height: context.spacing.panelPadding),
                 // Action buttons
-                // TODO(design-system): migrate to CustomButton when it supports custom colors
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: _isDeletingToy
-                        ? null
-                        : () {
-                            Navigator.pop(context);
-                            this.context.push(
-                              AppRoutes.toySettings.path,
-                              extra: toy,
-                            );
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primary,
-                      foregroundColor: this.context.colors.textOnFilled,
-                      padding: EdgeInsets.symmetric(vertical: this.context.spacing.alertPadding),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: this.context.radius.tile,
-                      ),
-                    ),
-                    icon: const Icon(Icons.settings, size: 20),
-                    label: Text('toys.configure'.tr()),
-                  ),
+                CustomButton(
+                  text: 'toys.configure'.tr(),
+                  icon: Icons.settings,
+                  isFullWidth: true,
+                  borderRadius: this.context.radius.tile,
+                  onPressed: _isDeletingToy
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          this.context.push(
+                            AppRoutes.toySettings.path,
+                            extra: toy,
+                          );
+                        },
                 ),
                 SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                // TODO(design-system): migrate to CustomButton when it supports custom colors
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: _isDeletingToy
-                        ? null
-                        : () {
-                            Navigator.pop(context);
-                            _deleteToy(toy);
-                          },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: this.context.colors.error,
-                      side: BorderSide(
-                        color: this.context.colors.error.withValues(alpha: 0.4),
-                      ),
-                      padding: EdgeInsets.symmetric(vertical: this.context.spacing.alertPadding),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: this.context.radius.tile,
-                      ),
-                    ),
-                    icon: _isDeletingToy
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: this.context.colors.error,
-                            ),
-                          )
-                        : const Icon(Icons.delete_outline, size: 20),
-                    label: Text('toys.remove'.tr()),
-                  ),
+                CustomButton(
+                  text: 'toys.remove'.tr(),
+                  icon: Icons.delete_outline,
+                  variant: ButtonVariant.dangerOutline,
+                  isFullWidth: true,
+                  isLoading: _isDeletingToy,
+                  borderRadius: this.context.radius.tile,
+                  onPressed: _isDeletingToy
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          _deleteToy(toy);
+                        },
                 ),
               ],
             ),
@@ -565,17 +537,11 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMargin),
-        // TODO(design-system): migrate to CustomButton when it supports custom colors
-        ElevatedButton.icon(
+        CustomButton(
+          text: 'toys.setup_new_toy'.tr(),
+          icon: Icons.add,
+          borderRadius: context.radius.button,
           onPressed: () => _addNewToy(context),
-          icon: const Icon(Icons.add),
-          label: Text('toys.setup_new_toy'.tr()),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: context.colors.textOnFilled,
-            padding: EdgeInsets.symmetric(horizontal: context.spacing.panelPadding, vertical: context.spacing.paragraphBottomMarginSm),
-            shape: RoundedRectangleBorder(borderRadius: context.radius.button),
-          ),
         ),
       ],
     ),
@@ -666,19 +632,10 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: context.spacing.panelPadding),
-              // TODO(design-system): migrate to CustomButton when it supports custom colors
-              ElevatedButton.icon(
+              CustomButton(
+                text: 'common.retry'.tr(),
+                icon: Icons.refresh,
                 onPressed: _loadToys,
-                icon: const Icon(Icons.refresh),
-                label: Text('common.retry'.tr()),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: context.colors.textOnFilled,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.spacing.panelPadding,
-                    vertical: context.spacing.paragraphBottomMarginSm,
-                  ),
-                ),
               ),
             ],
           ),

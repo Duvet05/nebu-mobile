@@ -231,7 +231,7 @@ class _KnowledgeCard extends StatelessWidget {
                 if (entry.verified) ...[
                   SizedBox(width: context.spacing.labelBottomMargin),
                   Icon(Icons.verified, size: 16, color: context.colors.success),
-                  const SizedBox(width: 4),
+                  SizedBox(width: context.spacing.gapXs),
                   Text(
                     'knowledge.verified'.tr(),
                     style: theme.textTheme.labelSmall?.copyWith(

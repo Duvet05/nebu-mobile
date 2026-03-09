@@ -34,7 +34,8 @@ class ChildProfileScreen extends ConsumerWidget {
           return _buildChildProfileState(context, service, colorScheme);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) => Center(child: Text('child_profile.error_generic'.tr())),
+        error: (_, _) =>
+            Center(child: Text('child_profile.error_generic'.tr())),
       ),
     );
   }
@@ -57,7 +58,9 @@ class ChildProfileScreen extends ConsumerWidget {
         Text(
           'child_profile.no_data_subtitle'.tr(),
           textAlign: TextAlign.center,
-          style: context.textTheme.bodyLarge?.copyWith(color: context.colors.grey500),
+          style: context.textTheme.bodyLarge?.copyWith(
+            color: context.colors.grey500,
+          ),
         ),
         SizedBox(height: context.spacing.paragraphBottomMargin),
         CustomButton(
@@ -92,21 +95,23 @@ class ChildProfileScreen extends ConsumerWidget {
                   child: Text(
                     childName.isNotEmpty ? childName[0].toUpperCase() : '?',
                     style: context.theme.textTheme.headlineLarge?.copyWith(
-                          color: colorScheme.primary,
-                        ),
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
                 SizedBox(height: context.spacing.paragraphBottomMarginSm),
                 Text(
                   childName,
                   style: context.theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 if (childAge != null)
                   Text(
                     'child_profile.age'.tr(args: [childAge]),
-                    style: context.textTheme.bodyLarge?.copyWith(color: context.colors.grey500),
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: context.colors.grey500,
+                    ),
                   ),
               ],
             ),
@@ -145,7 +150,7 @@ class ChildProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildSectionTitle(String title, BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 16),
+    padding: EdgeInsets.symmetric(vertical: context.spacing.alertPadding),
     child: Text(
       title,
       style: context.textTheme.titleMedium?.copyWith(
@@ -172,7 +177,8 @@ class ChildProfileScreen extends ConsumerWidget {
   Future<void> _confirmDelete(
     BuildContext context,
     LocalChildDataService service,
-    ColorScheme colorScheme,) async {
+    ColorScheme colorScheme,
+  ) async {
     final confirmed = await showConfirmDialog(
       context,
       title: 'child_profile.confirm_deletion_title'.tr(),

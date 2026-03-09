@@ -131,7 +131,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                             : colorScheme.onSurfaceVariant,
                                       ),
                                     ),
-                                    const SizedBox(width: 16),
+                                    SizedBox(width: context.spacing.gapXl),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -147,7 +147,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                                   : colorScheme.onSurface,
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
+                                          SizedBox(height: context.spacing.gapXs),
                                           Text(
                                             (voice['description'] as String)
                                                 .tr(),

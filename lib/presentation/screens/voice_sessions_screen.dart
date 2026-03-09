@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/voice_session.dart';
 import '../providers/voice_session_provider.dart';
+import '../widgets/custom_button.dart';
 
 class VoiceSessionsScreen extends ConsumerWidget {
   const VoiceSessionsScreen({super.key});
@@ -129,13 +130,13 @@ class VoiceSessionsScreen extends ConsumerWidget {
         SizedBox(height: context.spacing.panelPadding),
         Text('voice_history.error'.tr()),
         SizedBox(height: context.spacing.panelPadding),
-        ElevatedButton.icon(
+        CustomButton(
+          text: 'common.retry'.tr(),
+          icon: Icons.refresh,
           onPressed: () {
             ref.invalidate(voiceMetricsProvider);
             ref.invalidate(userVoiceSessionsProvider);
           },
-          icon: const Icon(Icons.refresh),
-          label: Text('common.retry'.tr()),
         ),
       ],
     ),
@@ -294,7 +295,7 @@ class _SessionCard extends ConsumerWidget {
                 size: 14,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(width: 2),
+              SizedBox(width: context.spacing.gapXxs),
               Text(
                 _formatSessionDuration(session.durationSeconds!),
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -509,7 +510,7 @@ class _ConversationBubble extends StatelessWidget {
           children: [
             Text(conversation.content, style: theme.textTheme.bodySmall),
             if (conversation.createdAt != null) ...[
-              const SizedBox(height: 2),
+              SizedBox(height: context.spacing.gapXxs),
               Text(
                 _formatTime(conversation.createdAt!),
                 style: theme.textTheme.labelSmall?.copyWith(

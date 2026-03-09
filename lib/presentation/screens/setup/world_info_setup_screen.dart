@@ -137,14 +137,14 @@ class WorldInfoSetupScreen extends ConsumerWidget {
                       Icons.check_circle,
                       'setup.world_info.device_connected'.tr(),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: context.spacing.gapXl),
                     _buildFeatureSummary(
                       context,
                       theme,
                       Icons.check_circle,
                       'setup.world_info.profile_configured'.tr(),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: context.spacing.gapXl),
                     _buildFeatureSummary(
                       context,
                       theme,
@@ -177,7 +177,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: context.colors.primary, size: 24),
-          const SizedBox(width: 12),
+          SizedBox(width: context.spacing.gapLg),
           Text(
             text,
             style: theme.textTheme.bodyLarge?.copyWith(

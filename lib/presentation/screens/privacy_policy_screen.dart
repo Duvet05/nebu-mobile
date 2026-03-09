@@ -169,7 +169,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Icon(Icons.email, color: theme.colorScheme.primary),
-                  const SizedBox(width: 12),
+                  SizedBox(width: context.spacing.gapLg),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +178,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                           'privacy_policy.email_label'.tr(),
                           style: theme.textTheme.labelSmall,
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: context.spacing.gapXs),
                         Text(
                           'privacy@nebu.ai',
                           style: theme.textTheme.bodyMedium?.copyWith(

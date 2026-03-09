@@ -131,7 +131,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                                           : colorScheme.onSurfaceVariant,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: context.spacing.gapLg),
                                   Text(
                                     (category['label'] as String).tr(),
                                     style:
