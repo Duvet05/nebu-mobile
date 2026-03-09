@@ -13,9 +13,6 @@
 -keep class org.webrtc.** { *; }
 -keep class livekit.** { *; }
 
-# ML Kit (mobile_scanner)
--keep class com.google.mlkit.** { *; }
-
 # Google Sign-In
 -keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.common.** { *; }
