@@ -85,3 +85,4 @@ doc/api/
 .fvm/
 /.claude/
 /CLAUDE.md
+/service-account.json
