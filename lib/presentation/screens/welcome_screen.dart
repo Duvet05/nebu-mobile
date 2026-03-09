@@ -86,20 +86,20 @@ class WelcomeScreen extends StatelessWidget {
                 SizedBox(height: context.spacing.paragraphBottomMargin),
 
                 // Continuar sin cuenta
-                GestureDetector(
-                  onTap: () => context.push(AppRoutes.connectionSetup.path),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: context.spacing.paragraphBottomMarginSm,
-                    ),
-                    child: Text(
-                      'welcome.continue_without_account'.tr(),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: context.colors.textOnFilled.withValues(
-                          alpha: 0.7,
-                        ),
-                        fontWeight: FontWeight.w500,
+                TextButton(
+                  onPressed: () =>
+                      context.push(AppRoutes.connectionSetup.path),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 48),
+                    foregroundColor: context.colors.textOnFilled,
+                  ),
+                  child: Text(
+                    'welcome.continue_without_account'.tr(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: context.colors.textOnFilled.withValues(
+                        alpha: 0.7,
                       ),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

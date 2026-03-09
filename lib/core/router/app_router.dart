@@ -80,7 +80,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       // 3. After logout: redirect to welcome if no user and no local toys
-      if (user == null && !isAuthPage && !hasToys) {
+      //    Allow setup routes so "continue without account" works
+      final isSetupPage = path.startsWith('/setup/');
+      if (user == null && !isAuthPage && !isSetupPage && !hasToys) {
         return AppRoutes.welcome.path;
       }
 
