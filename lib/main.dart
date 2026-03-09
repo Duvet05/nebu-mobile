@@ -1,15 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_logger/easy_logger.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 import 'core/config/config.dart';
 import 'core/config/config_loader.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/providers/theme_provider.dart';
+
+final _logger = Logger();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +20,7 @@ void main() async {
   try {
     await Firebase.initializeApp();
   } on Exception catch (e) {
-    if (kDebugMode) {
-      debugPrint('Firebase init failed (may not be configured yet): $e');
-    }
+    _logger.w('Firebase init failed (may not be configured yet): $e');
   }
 
   // Initialize Easy Localization (only show warnings and errors)
@@ -31,10 +31,8 @@ void main() async {
   try {
     await ConfigLoader.initialize();
   } on Exception catch (e) {
-    if (kDebugMode) {
-      debugPrint('Error loading configuration: $e');
-      debugPrint('Make sure .env exists (copy from .env.example)');
-    }
+    _logger.w('Error loading configuration: $e');
+    _logger.w('Make sure .env exists (copy from .env.example)');
     // En desarrollo, podemos continuar con valores por defecto
     // En producción, esto fallará si no hay dart-define
   }

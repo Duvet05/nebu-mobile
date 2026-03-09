@@ -41,7 +41,7 @@ class _PersonalitySetupScreenState extends State<PersonalitySetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final canProceed = _selectedPersonality != null;
 

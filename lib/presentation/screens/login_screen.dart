@@ -184,7 +184,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     SizedBox(height: context.spacing.paragraphBottomMarginSm),
                     Text(
                       errorText!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      style: context.theme.textTheme.bodySmall?.copyWith(
                             color: context.colors.error,
                           ),
                     ),
@@ -291,8 +291,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = context.theme.textTheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,

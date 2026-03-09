@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/personality.dart';
 import '../../data/models/toy.dart';
 import '../providers/personality_provider.dart';
@@ -19,17 +20,7 @@ class PersonalitiesScreen extends ConsumerStatefulWidget {
 }
 
 class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
-  String _selectedCategory = 'all';
-
-  static const _categories = [
-    'all',
-    'educativo',
-    'entretenimiento',
-    'companero',
-    'creativo',
-    'aventura',
-    'bienestar',
-  ];
+  String _selectedCategory = PersonalityCategories.all;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +45,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     List<Personality> personalities,
     ThemeData theme,
   ) {
-    final filtered = _selectedCategory == 'all'
+    final filtered = _selectedCategory == PersonalityCategories.all
         ? personalities
         : personalities
             .where((p) =>
@@ -72,10 +63,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               horizontal: context.spacing.alertPadding,
               vertical: 8,
             ),
-            itemCount: _categories.length,
+            itemCount: PersonalityCategories.values.length,
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
-              final cat = _categories[index];
+              final cat = PersonalityCategories.values[index];
               final isSelected = _selectedCategory == cat;
               return FilterChip(
                 label: Text(
@@ -379,9 +370,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     if (toys.isEmpty) {
       Navigator.pop(ctx);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('personalities.no_toys'.tr())),
-        );
+        context.showInfoSnackBar('personalities.no_toys'.tr());
       }
       return;
     }

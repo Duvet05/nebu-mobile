@@ -41,7 +41,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final canProceed = _selectedVoice != null;
 

@@ -1,6 +1,8 @@
-import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 
 import 'config.dart';
+
+final _logger = Logger();
 
 /// Helper para cargar configuración
 abstract final class ConfigLoader {
@@ -15,7 +17,7 @@ abstract final class ConfigLoader {
 
     // Mostrar info de debug en desarrollo
     if (Config.enableDebugLogs) {
-      debugPrint(Config.getDebugInfo());
+      _logger.d(Config.getDebugInfo());
     }
   }
 }

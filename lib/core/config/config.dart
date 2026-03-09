@@ -52,7 +52,9 @@ abstract final class Config {
   // ============================================
   // LiveKit
   // ============================================
-  static String get livekitUrl => '';
+  static String get livekitUrl => isDevelopment
+      ? 'ws://localhost:7880'
+      : 'wss://livekit-demo.livekit.cloud';
   static String get livekitApiKey => '';
   static String get livekitApiSecret => '';
 

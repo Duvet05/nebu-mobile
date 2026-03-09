@@ -1,5 +1,4 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 import 'api_service.dart';
@@ -68,11 +67,9 @@ class FirebasePushService {
   void _setupForegroundHandler() {
     FirebaseMessaging.onMessage.listen((message) {
       _logger.d('Foreground message: ${message.messageId}');
-      if (kDebugMode) {
-        debugPrint('Notification title: ${message.notification?.title}');
-        debugPrint('Notification body: ${message.notification?.body}');
-        debugPrint('Data: ${message.data}');
-      }
+      _logger.d('Notification title: ${message.notification?.title}');
+      _logger.d('Notification body: ${message.notification?.body}');
+      _logger.d('Data: ${message.data}');
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {

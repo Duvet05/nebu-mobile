@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 
 import '../../data/models/toy.dart';
 import '../../data/services/api_service.dart';
@@ -9,6 +10,8 @@ import '../../data/services/livekit_service.dart';
 import '../../data/services/voice_session_service.dart';
 import 'api_provider.dart';
 import 'auth_provider.dart';
+
+final _logger = Logger();
 
 enum WalkieTalkiePhase { idle, connecting, connected, error, disconnecting }
 
@@ -205,16 +208,22 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
 
     try {
       await _liveKitService.setMicrophoneEnabled(enabled: false);
-    } on Exception catch (_) {}
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic during cleanup: $e');
+    }
 
     try {
       await _liveKitService.disconnect();
-    } on Exception catch (_) {}
+    } on Exception catch (e) {
+      _logger.w('Failed to disconnect LiveKit during cleanup: $e');
+    }
 
     if (state.sessionId != null) {
       try {
         await _voiceSessionService.endSession(state.sessionId!);
-      } on Exception catch (_) {}
+      } on Exception catch (e) {
+        _logger.w('Failed to end voice session during cleanup: $e');
+      }
     }
 
     _cleanup();

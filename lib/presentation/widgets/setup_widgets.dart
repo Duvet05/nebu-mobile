@@ -11,7 +11,7 @@ class SetupBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     return GestureDetector(
       onTap: () {
@@ -119,9 +119,7 @@ class SetupPrimaryButton extends StatelessWidget {
                 )
               : null,
           color: effectiveEnabled
-              ? null
-              : Theme.of(context)
-                  .colorScheme
+              ? null context.theme..colorScheme
                   .surfaceContainerHighest
                   .withValues(alpha: 0.5),
           borderRadius: context.radius.panel,
@@ -149,10 +147,10 @@ class SetupPrimaryButton extends StatelessWidget {
                 )
               : Text(
                   text,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: context.theme.textTheme.titleMedium?.copyWith(
                         color: effectiveEnabled
                             ? context.colors.textOnFilled
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                            : context.theme.colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
@@ -173,8 +171,8 @@ class SetupSkipButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             'setup.connection.skip_setup'.tr(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+            style: context.theme.textTheme.bodyMedium?.copyWith(
+              color: context.theme.colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
           ),

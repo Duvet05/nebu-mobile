@@ -81,13 +81,18 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
     final category = personality.category?.toLowerCase() ?? '';
 
     return switch (category) {
-      'educativo' => 'playground.response_educativo'.tr(args: [userMessage]),
-      'entretenimiento' =>
+      PersonalityCategories.educativo =>
+          'playground.response_educativo'.tr(args: [userMessage]),
+      PersonalityCategories.entretenimiento =>
         'playground.response_entretenimiento'.tr(args: [userMessage]),
-      'companero' => 'playground.response_companero'.tr(args: [userMessage]),
-      'creativo' => 'playground.response_creativo'.tr(args: [userMessage]),
-      'aventura' => 'playground.response_aventura'.tr(args: [userMessage]),
-      'bienestar' => 'playground.response_bienestar'.tr(args: [userMessage]),
+      PersonalityCategories.companero =>
+          'playground.response_companero'.tr(args: [userMessage]),
+      PersonalityCategories.creativo =>
+          'playground.response_creativo'.tr(args: [userMessage]),
+      PersonalityCategories.aventura =>
+          'playground.response_aventura'.tr(args: [userMessage]),
+      PersonalityCategories.bienestar =>
+          'playground.response_bienestar'.tr(args: [userMessage]),
       _ => 'playground.response_default'.tr(args: [personality.name]),
     };
   }

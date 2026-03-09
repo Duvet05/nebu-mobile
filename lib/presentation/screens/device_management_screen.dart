@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/toy_provider.dart';
 
@@ -30,15 +31,11 @@ class _DeviceManagementScreenState extends ConsumerState<DeviceManagementScreen>
     try {
       await ref.read(toyProvider.notifier).deleteToy(toyId);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('device_management.remove_success'.tr())),
-        );
+        context.showInfoSnackBar('device_management.remove_success'.tr());
       }
     } on Exception {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('device_management.remove_error'.tr())),
-        );
+        context.showInfoSnackBar('device_management.remove_error'.tr());
       }
     }
   }
@@ -199,28 +196,16 @@ class _DeviceCard extends StatelessWidget {
         ),
         trailing: IconButton(
           icon: Icon(Icons.delete_outline, color: context.colors.error),
-          onPressed: () {
-            showDialog<void>(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('device_management.remove_title'.tr()),
-                content: Text('device_management.remove_confirm'.tr(args: [toy.name])),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text('common.cancel'.tr()),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onDelete();
-                    },
-                    style: TextButton.styleFrom(foregroundColor: context.colors.error),
-                    child: Text('common.delete'.tr()),
-                  ),
-                ],
-              ),
+          onPressed: () async {
+            final confirmed = await showConfirmDialog(
+              context,
+              title: 'device_management.remove_title'.tr(),
+              content: 'device_management.remove_confirm'.tr(args: [toy.name]),
+              destructive: true,
             );
+            if (confirmed) {
+              onDelete();
+            }
           },
         ),
       ),

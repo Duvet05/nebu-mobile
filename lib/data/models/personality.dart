@@ -35,3 +35,22 @@ abstract class Personality with _$Personality {
   factory Personality.fromJson(Map<String, dynamic> json) =>
       _$PersonalityFromJson(json);
 }
+
+abstract final class PersonalityCategories {
+  static const all = 'all';
+  static const educativo = 'educativo';
+  static const entretenimiento = 'entretenimiento';
+  static const companero = 'companero';
+  static const creativo = 'creativo';
+  static const aventura = 'aventura';
+  static const bienestar = 'bienestar';
+  static const values = [
+    all,
+    educativo,
+    entretenimiento,
+    companero,
+    creativo,
+    aventura,
+    bienestar
+  ];
+}

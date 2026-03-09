@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/toy_status_helper.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
@@ -47,27 +49,14 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
   }
 
   Future<void> _deleteToy(Toy toy) async {
-    // Show confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('toys.delete_title'.tr()),
-        content: Text('toys.delete_confirm'.tr(args: [toy.name])),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('common.cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: context.colors.error),
-            child: Text('common.delete'.tr()),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'toys.delete_title'.tr(),
+      content: 'toys.delete_confirm'.tr(args: [toy.name]),
+      destructive: true,
     );
 
-    if (confirmed != true || !mounted) {
+    if (!confirmed || !mounted) {
       return;
     }
 
@@ -78,41 +67,20 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         await ref.read(toyProvider.notifier).deleteToy(toy.id);
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toys.deleted_success'.tr(args: [toy.name])),
-            backgroundColor: context.colors.success,
-          ),
-        );
+        context.showSuccessSnackBar(
+            'toys.deleted_success'.tr(args: [toy.name]));
       }
     } on Exception {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toys.delete_error'.tr()),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar('toys.delete_error'.tr());
       }
     }
   }
 
   void _showToyDetails(Toy toy, ThemeData theme, bool isDark) {
-    final isOnline = toy.status == ToyStatus.active;
     final isPending = toy.status == ToyStatus.pending;
-
-    Color statusColor;
-    String statusText;
-    if (isPending) {
-      statusColor = context.colors.warning;
-      statusText = 'toys.pending'.tr();
-    } else if (isOnline) {
-      statusColor = context.colors.success;
-      statusText = 'toys.online'.tr();
-    } else {
-      statusColor = context.colors.error;
-      statusText = 'toys.offline'.tr();
-    }
+    final statusColor = toy.status.color(context);
+    final statusText = toy.status.label();
 
     showModalBottomSheet<void>(
       context: context,
@@ -286,12 +254,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     // Handle errors
     ref.listen(toyProvider, (previous, next) {
       if (next.hasError && !next.isLoading) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('toys.error_loading'.tr()),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar('toys.error_loading'.tr());
       }
     });
 
@@ -523,19 +486,8 @@ class _ToyCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isOnline = toy.status == ToyStatus.active;
     final isPending = toy.status == ToyStatus.pending;
-
-    Color accentColor;
-    String badgeText;
-    if (isPending) {
-      accentColor = context.colors.warning;
-      badgeText = 'toys.pending'.tr();
-    } else if (isOnline) {
-      accentColor = context.colors.success;
-      badgeText = 'toys.online'.tr();
-    } else {
-      accentColor = context.colors.error;
-      badgeText = 'toys.offline'.tr();
-    }
+    final accentColor = toy.status.color(context);
+    final badgeText = toy.status.label();
 
     return Container(
       margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),

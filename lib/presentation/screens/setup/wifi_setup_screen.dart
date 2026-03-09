@@ -2,7 +2,6 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +23,8 @@ class WifiSetupScreen extends ConsumerStatefulWidget {
   ConsumerState<WifiSetupScreen> createState() => _WifiSetupScreenState();
 }
 
+final _logger = logger.Logger();
+
 class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   final _ssidController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -35,9 +36,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   final _networkInfo = NetworkInfo();
 
   void _log(String message) {
-    if (kDebugMode) {
-      debugPrint(message);
-    }
+    _logger.d(message);
   }
 
   @override
@@ -455,7 +454,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return PopScope(
       canPop: !_isConnecting,
@@ -590,14 +589,16 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       Icon(
         Icons.info_outline,
         size: 14,
-        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+        color: context.theme.colorScheme.onSurfaceVariant.withValues(
+            alpha: 0.7),
       ),
       const SizedBox(width: 6),
       Expanded(
         child: Text(
           'setup.wifi.hotspot_hint'.tr(),
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          style: context.theme.textTheme.bodySmall?.copyWith(
+            color: context.theme.colorScheme.onSurfaceVariant.withValues(
+                alpha: 0.7),
           ),
         ),
       ),
@@ -744,7 +745,7 @@ class _QuickActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final colorScheme = theme.colorScheme;
     return InkWell(
       onTap: onPressed,
@@ -822,7 +823,7 @@ class _WifiNetworksSheetState extends State<_WifiNetworksSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),

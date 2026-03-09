@@ -25,7 +25,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final canProceed = _selectedAge != null;
 

@@ -42,7 +42,7 @@ class AuthTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return TextFormField(
       controller: controller,
@@ -57,7 +57,7 @@ class AuthTextField extends StatelessWidget {
         hintStyle: textTheme.bodyMedium?.copyWith(color: context.colors.grey500),
         labelStyle: textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
+          color: context.theme.colorScheme.primary,
           fontWeight: FontWeight.w500,
         ),
         prefixIcon: Icon(
@@ -87,7 +87,8 @@ class AuthTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: context.radius.panel,
-          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
+          borderSide: BorderSide(
+              color: context.theme.colorScheme.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: context.radius.panel,
@@ -115,7 +116,7 @@ class AuthPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Material(
       color: Colors.transparent,
@@ -173,7 +174,7 @@ class AuthGoogleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Material(
       color: Colors.transparent,
@@ -221,7 +222,7 @@ class AuthOrDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Row(
       children: [
@@ -248,7 +249,7 @@ class AuthErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Container(
       padding: EdgeInsets.all(context.spacing.alertPadding),

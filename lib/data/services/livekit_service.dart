@@ -83,11 +83,7 @@ class LiveKitService {
       _setStatus(LiveKitConnectionStatus.connecting);
 
       // Usar servidor local en desarrollo, demo server como fallback
-      final serverUrl =
-          config.serverUrl ??
-          (Config.isDevelopment
-              ? 'ws://localhost:7880'
-              : 'wss://livekit-demo.livekit.cloud');
+      final serverUrl = config.serverUrl ?? Config.livekitUrl;
 
       final roomName = config.roomName;
       final participantName = config.participantName;

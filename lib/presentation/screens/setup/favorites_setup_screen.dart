@@ -29,7 +29,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final canProceed = _selectedFavorites.length >= 2;
 
