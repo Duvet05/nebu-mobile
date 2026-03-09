@@ -37,24 +37,18 @@ abstract final class Config {
   // Backend API
   // ============================================
   /// URL del API - Valores por defecto seguros para producción y desarrollo
-  static String get apiBaseUrl => isProduction
-      ? 'https://api.flow-telligence.com/api/v1' // URL de producción
-      : 'http://localhost:3001/api/v1'; // URL de desarrollo local
+  static String get apiBaseUrl => 'https://api.flow-telligence.com/api/v1';
 
   static String get apiKey => '';
   static String get wsUrl => '';
 
   /// URL del WebSocket en producción
-  static String get wsBaseUrl => isProduction
-      ? 'wss://api.flow-telligence.com/api/v1'
-      : 'ws://localhost:3001/api/v1';
+  static String get wsBaseUrl => 'wss://api.flow-telligence.com/api/v1';
 
   // ============================================
   // LiveKit
   // ============================================
-  static String get livekitUrl => isDevelopment
-      ? 'ws://localhost:7880'
-      : 'wss://livekit-demo.livekit.cloud';
+  static String get livekitUrl => 'wss://livekit-demo.livekit.cloud';
   static String get livekitApiKey => '';
   static String get livekitApiSecret => '';
 

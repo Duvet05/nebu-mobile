@@ -20,7 +20,7 @@ abstract class PersonalitySettings with _$PersonalitySettings {
 abstract class Personality with _$Personality {
   const factory Personality({
     required String id,
-    required String name,
+    @JsonKey(name: 'display_name') required String name,
     required String description,
     String? prompt,
     String? greeting,

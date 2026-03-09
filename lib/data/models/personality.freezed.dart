@@ -287,7 +287,7 @@ as String?,
 /// @nodoc
 mixin _$Personality {
 
- String get id; String get name; String get description; String? get prompt; String? get greeting; String? get category; PersonalitySettings? get settings; String? get imageUrl; bool get isActive; DateTime? get createdAt; DateTime? get updatedAt;
+ String get id;@JsonKey(name: 'display_name') String get name; String get description; String? get prompt; String? get greeting; String? get category; PersonalitySettings? get settings; String? get imageUrl; bool get isActive; DateTime? get createdAt; DateTime? get updatedAt;
 /// Create a copy of Personality
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -320,7 +320,7 @@ abstract mixin class $PersonalityCopyWith<$Res>  {
   factory $PersonalityCopyWith(Personality value, $Res Function(Personality) _then) = _$PersonalityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String description, String? prompt, String? greeting, String? category, PersonalitySettings? settings, String? imageUrl, bool isActive, DateTime? createdAt, DateTime? updatedAt
+ String id,@JsonKey(name: 'display_name') String name, String description, String? prompt, String? greeting, String? category, PersonalitySettings? settings, String? imageUrl, bool isActive, DateTime? createdAt, DateTime? updatedAt
 });
 
 
@@ -447,7 +447,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'display_name')  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Personality() when $default != null:
 return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greeting,_that.category,_that.settings,_that.imageUrl,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -468,7 +468,7 @@ return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greetin
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'display_name')  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Personality():
 return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greeting,_that.category,_that.settings,_that.imageUrl,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -488,7 +488,7 @@ return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greetin
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'display_name')  String name,  String description,  String? prompt,  String? greeting,  String? category,  PersonalitySettings? settings,  String? imageUrl,  bool isActive,  DateTime? createdAt,  DateTime? updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Personality() when $default != null:
 return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greeting,_that.category,_that.settings,_that.imageUrl,_that.isActive,_that.createdAt,_that.updatedAt);case _:
@@ -503,11 +503,11 @@ return $default(_that.id,_that.name,_that.description,_that.prompt,_that.greetin
 @JsonSerializable()
 
 class _Personality implements Personality {
-  const _Personality({required this.id, required this.name, required this.description, this.prompt, this.greeting, this.category, this.settings, this.imageUrl, this.isActive = true, this.createdAt, this.updatedAt});
+  const _Personality({required this.id, @JsonKey(name: 'display_name') required this.name, required this.description, this.prompt, this.greeting, this.category, this.settings, this.imageUrl, this.isActive = true, this.createdAt, this.updatedAt});
   factory _Personality.fromJson(Map<String, dynamic> json) => _$PersonalityFromJson(json);
 
 @override final  String id;
-@override final  String name;
+@override@JsonKey(name: 'display_name') final  String name;
 @override final  String description;
 @override final  String? prompt;
 @override final  String? greeting;
@@ -551,7 +551,7 @@ abstract mixin class _$PersonalityCopyWith<$Res> implements $PersonalityCopyWith
   factory _$PersonalityCopyWith(_Personality value, $Res Function(_Personality) _then) = __$PersonalityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String description, String? prompt, String? greeting, String? category, PersonalitySettings? settings, String? imageUrl, bool isActive, DateTime? createdAt, DateTime? updatedAt
+ String id,@JsonKey(name: 'display_name') String name, String description, String? prompt, String? greeting, String? category, PersonalitySettings? settings, String? imageUrl, bool isActive, DateTime? createdAt, DateTime? updatedAt
 });
 
 

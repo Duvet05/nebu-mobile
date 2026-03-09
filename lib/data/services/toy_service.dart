@@ -147,6 +147,9 @@ class ToyService {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
   }) async {
     _logger.d('Updating toy: $id');
     final response = await _apiService.patch<Map<String, dynamic>>(
@@ -160,6 +163,10 @@ class ToyService {
         if (capabilities != null) 'capabilities': capabilities,
         if (settings != null) 'settings': settings,
         if (notes != null) 'notes': notes,
+        if (prompt != null) 'prompt': prompt,
+        if (personalityProfile != null)
+          'personalityProfile': personalityProfile,
+        if (greeting != null) 'greeting': greeting,
       },
     );
     _logger.d('Toy updated successfully');

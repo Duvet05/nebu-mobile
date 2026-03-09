@@ -1,34 +1,35 @@
+import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-import 'api_service.dart';
+import '../../core/config/config.dart';
 
-/// Service for checking backend health and connectivity
+/// Service for checking backend health and connectivity.
+/// Uses Dio directly (not ApiService) because /health lives at the server
+/// root, outside the /api/v1 prefix.
 class HealthService {
   HealthService({
-    required ApiService apiService,
     required Logger logger,
-  })  : _apiService = apiService,
-        _logger = logger;
+  }) : _logger = logger;
 
-  final ApiService _apiService;
   final Logger _logger;
 
+  /// Base server URL without the /api/v1 prefix
+  String get _serverUrl {
+    final apiUrl = Config.apiBaseUrl;
+    final prefixIndex = apiUrl.indexOf('/api/v1');
+    return prefixIndex != -1 ? apiUrl.substring(0, prefixIndex) : apiUrl;
+  }
+
   /// Check backend health status
-  /// Returns the full health check response from the backend
+  /// Hits GET /health at the server root (no /api/v1 prefix)
   Future<Map<String, dynamic>> checkHealth() async {
-    try {
-      _logger.i('Checking backend health...');
-
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/health',
-      );
-
-      _logger.i('Backend health check successful: ${response['status']}');
-      return response;
-    } on Exception catch (e) {
-      _logger.e('Health check failed: $e');
-      rethrow;
-    }
+    _logger.i('Checking backend health at $_serverUrl/health');
+    final response = await Dio().get<Map<String, dynamic>>(
+      '$_serverUrl/health',
+    );
+    final data = response.data!;
+    _logger.i('Backend health check successful: ${data['status']}');
+    return data;
   }
 
   /// Check if backend is ready

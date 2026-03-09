@@ -121,18 +121,12 @@
     },
     "personality": {
       "title": "Elige la Personalidad",
-      "subtitle": "Selecciona el tipo de personalidad de tu juguete",
-      "friendly": "Amigable",
-      "friendly_desc": "Cálido, cariñoso y siempre feliz de ayudar",
-      "playful": "Juguetón",
-      "playful_desc": "Divertido, energético y le encanta jugar",
-      "curious": "Curioso",
-      "curious_desc": "Le encanta aprender y hacer preguntas",
-      "calm": "Tranquilo",
-      "calm_desc": "Pacífico, paciente y relajante",
-      "wise": "Sabio",
-      "wise_desc": "Reflexivo y con conocimiento",
-      "next": "Siguiente"
+      "subtitle": "Selecciona cómo será la personalidad de tu Nebu",
+      "loading": "Cargando personalidades...",
+      "error_loading": "No pudimos cargar las personalidades",
+      "empty": "No hay personalidades disponibles",
+      "next": "Siguiente",
+      "default_selected": "Personalidad predeterminada seleccionada"
     },
     "voice": {
       "title": "Selecciona la Voz",

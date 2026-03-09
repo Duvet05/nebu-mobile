@@ -25,7 +25,7 @@ Map<String, dynamic> _$PersonalitySettingsToJson(
 
 _Personality _$PersonalityFromJson(Map<String, dynamic> json) => _Personality(
   id: json['id'] as String,
-  name: json['name'] as String,
+  name: json['display_name'] as String,
   description: json['description'] as String,
   prompt: json['prompt'] as String?,
   greeting: json['greeting'] as String?,
@@ -46,7 +46,7 @@ _Personality _$PersonalityFromJson(Map<String, dynamic> json) => _Personality(
 Map<String, dynamic> _$PersonalityToJson(_Personality instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
+      'display_name': instance.name,
       'description': instance.description,
       'prompt': instance.prompt,
       'greeting': instance.greeting,

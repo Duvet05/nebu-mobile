@@ -7,6 +7,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
+import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
 import '../../providers/toy_provider.dart';
 import '../../widgets/setup_widgets.dart';
@@ -18,12 +19,31 @@ class WorldInfoSetupScreen extends ConsumerWidget {
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
     );
+    final logger = ref.read(loggerProvider);
 
     final deviceRegistered =
         prefs.getBool(StorageKeys.setupDeviceRegistered) ?? false;
+    final personalityId = prefs.getString(StorageKeys.setupPersonalityId);
 
-    if (!deviceRegistered) {
-      // Device was NOT registered in backend — save as local toy with pending status
+    if (deviceRegistered) {
+      // Toy was registered at step 3 — PATCH it with personality if selected
+      if (personalityId != null && personalityId.isNotEmpty) {
+        try {
+          final toys = ref.read(toyProvider).value ?? [];
+          if (toys.isNotEmpty) {
+            await ref.read(toyProvider.notifier).updateToy(
+                  id: toys.last.id,
+                  personalityProfile: personalityId,
+                );
+            logger.d('Personality $personalityId applied to toy');
+          }
+        } on Exception catch (e) {
+          logger.e('Failed to apply personality to toy: $e');
+          // Non-blocking — toy was created, personality can be set later
+        }
+      }
+    } else {
+      // Device was NOT registered — save as local toy with pending status
       final toyName =
           prefs.getString(StorageKeys.setupToyName) ?? 'My Nebu';
 
@@ -33,6 +53,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         status: ToyStatus.pending,
         model: 'Nebu',
         manufacturer: 'NEBU',
+        personalityProfile: personalityId,
         createdAt: DateTime.now(),
       );
 
@@ -41,6 +62,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
 
     // Clean up temporary setup flags
     await prefs.remove(StorageKeys.setupDeviceRegistered);
+    await prefs.remove(StorageKeys.setupPersonalityId);
     await prefs.setBool(StorageKeys.setupCompleted, true);
 
     if (context.mounted) {

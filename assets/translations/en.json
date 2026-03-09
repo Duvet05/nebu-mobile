@@ -121,18 +121,12 @@
     },
     "personality": {
       "title": "Choose Personality",
-      "subtitle": "Select your toy's personality type",
-      "friendly": "Friendly",
-      "friendly_desc": "Warm, caring and always happy to help",
-      "playful": "Playful",
-      "playful_desc": "Fun, energetic and loves to play games",
-      "curious": "Curious",
-      "curious_desc": "Loves to learn and ask questions",
-      "calm": "Calm",
-      "calm_desc": "Peaceful, patient and soothing",
-      "wise": "Wise",
-      "wise_desc": "Thoughtful and knowledgeable",
-      "next": "Next"
+      "subtitle": "Select how your Nebu's personality will be",
+      "loading": "Loading personalities...",
+      "error_loading": "We couldn't load the personalities",
+      "empty": "No personalities available",
+      "next": "Next",
+      "default_selected": "Default personality selected"
     },
     "voice": {
       "title": "Select Voice",

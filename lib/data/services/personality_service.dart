@@ -49,7 +49,7 @@ class PersonalityService {
     _logger.d('Assigning personality $personalityId to toy $toyId');
     await _apiService.patch<dynamic>(
       '/toys/$toyId',
-      data: {'personalityId': personalityId},
+      data: {'personalityProfile': personalityId},
     );
   }
 }

@@ -179,6 +179,9 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     Map<String, dynamic>? capabilities,
     Map<String, dynamic>? settings,
     String? notes,
+    String? prompt,
+    String? personalityProfile,
+    String? greeting,
   }) async {
     try {
       final updatedToy = await _toyService.updateToy(
@@ -191,6 +194,9 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         capabilities: capabilities,
         settings: settings,
         notes: notes,
+        prompt: prompt,
+        personalityProfile: personalityProfile,
+        greeting: greeting,
       );
 
       ref.read(loggerProvider).d('Toy updated: ${updatedToy.name}');
