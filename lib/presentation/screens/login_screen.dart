@@ -37,7 +37,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleEmailLogin() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     await ref
         .read(authProvider.notifier)
@@ -215,7 +217,9 @@ void _showForgotPasswordDialog(
                 ? null
                 : () async {
                     final email = emailController.text.trim();
-                    if (email.isEmpty) return;
+                    if (email.isEmpty) {
+                      return;
+                    }
 
                     setDialogState(() => isLoading = true);
 
@@ -224,7 +228,9 @@ void _showForgotPasswordDialog(
                           .read(authProvider.notifier)
                           .requestPasswordReset(email);
 
-                      if (!ctx.mounted) return;
+                      if (!ctx.mounted) {
+                      return;
+                    }
                       Navigator.pop(ctx);
 
                       if (success) {
@@ -335,7 +341,9 @@ void _showResetPasswordDialog(
                     final password = passwordController.text;
                     final confirm = confirmController.text;
 
-                    if (token.isEmpty || password.isEmpty) return;
+                    if (token.isEmpty || password.isEmpty) {
+                      return;
+                    }
 
                     final passwordError =
                         ValidationRules.validatePassword(password);
@@ -363,7 +371,9 @@ void _showResetPasswordDialog(
                           .read(authProvider.notifier)
                           .resetPassword(token: token, newPassword: password);
 
-                      if (!ctx.mounted) return;
+                      if (!ctx.mounted) {
+                        return;
+                      }
 
                       if (success) {
                         Navigator.pop(ctx);

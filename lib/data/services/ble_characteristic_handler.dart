@@ -31,8 +31,8 @@ class BleCharacteristicHandler {
   bool get supportsNotify => _characteristic?.properties.notify ?? false;
   bool get supportsRead => _characteristic?.properties.read ?? false;
   bool get supportsWrite =>
-      _characteristic?.properties.write ?? false ||
-      _characteristic?.properties.writeWithoutResponse ?? false;
+      (_characteristic?.properties.write ?? false) ||
+      (_characteristic?.properties.writeWithoutResponse ?? false);
 
   /// Discover this characteristic from a BLE service.
   /// Throws if not found and [optional] is false.
@@ -55,7 +55,9 @@ class BleCharacteristicHandler {
 
   /// Subscribe to notifications. Calls [onData] with raw bytes.
   Future<void> subscribe(void Function(List<int> value) onData) async {
-    if (_characteristic == null || !supportsNotify) return;
+    if (_characteristic == null || !supportsNotify) {
+      return;
+    }
 
     await _characteristic!.setNotifyValue(true);
     _subscription = _characteristic!.lastValueStream.listen(
@@ -67,7 +69,9 @@ class BleCharacteristicHandler {
 
   /// Read raw bytes from the characteristic.
   Future<List<int>> readBytes() async {
-    if (_characteristic == null || !supportsRead) return [];
+    if (_characteristic == null || !supportsRead) {
+      return [];
+    }
 
     return _bluetoothService.readCharacteristic(_characteristic!);
   }
@@ -75,14 +79,18 @@ class BleCharacteristicHandler {
   /// Read and decode as UTF-8 string.
   Future<String?> readString() async {
     final bytes = await readBytes();
-    if (bytes.isEmpty) return null;
+    if (bytes.isEmpty) {
+      return null;
+    }
     return utf8.decode(bytes, allowMalformed: true).trim();
   }
 
   /// Read a single uint8 value.
   Future<int?> readUint8() async {
     final bytes = await readBytes();
-    if (bytes.isEmpty) return null;
+    if (bytes.isEmpty) {
+      return null;
+    }
     return bytes[0];
   }
 

@@ -17,7 +17,9 @@ Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
 
     await ref.read(authProvider.notifier).loginWithGoogle(idToken);
   } on GoogleSignInException catch (e) {
-    if (e.code == GoogleSignInExceptionCode.canceled) return;
+    if (e.code == GoogleSignInExceptionCode.canceled) {
+      return;
+    }
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

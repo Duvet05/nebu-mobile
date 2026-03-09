@@ -206,7 +206,9 @@ class ESP32WifiConfigService {
   /// Read current WiFi connection status.
   Future<ESP32WifiStatus> readWifiStatus() async {
     final raw = await _status.readString();
-    if (raw == null) return ESP32WifiStatus.idle;
+    if (raw == null) {
+      return ESP32WifiStatus.idle;
+    }
 
     final status = ESP32WifiStatus.fromString(raw);
     _logger.d('[STATUS] WiFi status: $status');
@@ -216,7 +218,9 @@ class ESP32WifiConfigService {
   /// Read the device ID from the ESP32.
   Future<String?> readDeviceId() async {
     final id = await _deviceIdChar.readString();
-    if (id == null) return null;
+    if (id == null) {
+      return null;
+    }
 
     _currentDeviceId = id;
     await _prefs.setString(StorageKeys.currentDeviceId, id);
@@ -237,7 +241,9 @@ class ESP32WifiConfigService {
 
   /// Set ESP32 volume (0-100).
   Future<bool> setVolume(int value) async {
-    if (!_volumeChar.isAvailable || value < 0 || value > 100) return false;
+    if (!_volumeChar.isAvailable || value < 0 || value > 100) {
+      return false;
+    }
 
     try {
       await _volumeChar.writeUint8(value);
@@ -253,13 +259,17 @@ class ESP32WifiConfigService {
   /// Read current volume from ESP32.
   Future<int?> readVolume() async {
     final value = await _volumeChar.readUint8();
-    if (value != null) _currentVolume = value;
+    if (value != null) {
+      _currentVolume = value;
+    }
     return value;
   }
 
   /// Set ESP32 mute state.
   Future<bool> setMute({required bool mute}) async {
-    if (!_muteChar.isAvailable) return false;
+    if (!_muteChar.isAvailable) {
+      return false;
+    }
 
     try {
       await _muteChar.writeUint8(mute ? 1 : 0);
@@ -275,7 +285,9 @@ class ESP32WifiConfigService {
   /// Read current mute state from ESP32.
   Future<bool?> readMute() async {
     final value = await _muteChar.readUint8();
-    if (value != null) _currentMute = value != 0;
+    if (value != null) {
+      _currentMute = value != 0;
+    }
     return _currentMute;
   }
 
@@ -306,7 +318,9 @@ class ESP32WifiConfigService {
       [_ssid, _password, _status, _deviceIdChar, _volumeChar, _muteChar];
 
   void _onStatusNotification(List<int> value) {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      return;
+    }
     final status = ESP32WifiStatus.fromString(
       utf8.decode(value, allowMalformed: true).trim(),
     );
@@ -315,7 +329,9 @@ class ESP32WifiConfigService {
   }
 
   void _onDeviceIdNotification(List<int> value) {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      return;
+    }
     final id = utf8.decode(value, allowMalformed: true).trim();
     _currentDeviceId = id;
     _prefs.setString(StorageKeys.currentDeviceId, id);
@@ -323,12 +339,16 @@ class ESP32WifiConfigService {
   }
 
   void _onVolumeNotification(List<int> value) {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      return;
+    }
     _currentVolume = value[0];
   }
 
   void _onMuteNotification(List<int> value) {
-    if (value.isEmpty) return;
+    if (value.isEmpty) {
+      return;
+    }
     _currentMute = value[0] != 0;
   }
 }
