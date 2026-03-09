@@ -432,7 +432,9 @@ class _BouncingDotState extends State<_BouncingDot>
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
     Future.delayed(Duration(milliseconds: widget.delay), () {
-      if (mounted) _controller.repeat(reverse: true);
+      if (mounted) {
+        _controller.repeat(reverse: true);
+      }
     });
   }
 

@@ -246,8 +246,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   }
 
   Future<void> _connectToWifi() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_isConnecting) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    if (_isConnecting) {
+      return;
+    }
 
     final messenger = ScaffoldMessenger.of(context);
     final colors = context.colors;
@@ -271,7 +275,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         );
 
         _timeoutTimer = Timer(_kConnectionTimeout, () {
-          if (_isConnecting && mounted) _showTimeoutDialog();
+          if (_isConnecting && mounted) {
+            _showTimeoutDialog();
+          }
         });
       } else {
         throw Exception(result.message);
@@ -357,7 +363,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     return PopScope(
       canPop: !_isConnecting,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
+        if (didPop) {
+          return;
+        }
 
         if (_isConnecting && context.mounted) {
           final shouldPop = await showDialog<bool>(

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../models/iot_device.dart';
@@ -21,135 +20,105 @@ class IoTService {
     DeviceType? deviceType,
     String? location,
   }) async {
-    try {
-      _logger.i('Fetching all IoT devices...');
+    _logger.i('Fetching all IoT devices...');
 
-      final queryParameters = <String, dynamic>{};
-      if (userId != null) {
-        queryParameters['userId'] = userId;
-      }
-      if (status != null) {
-        queryParameters['status'] = status.name;
-      }
-      if (deviceType != null) {
-        queryParameters['deviceType'] = deviceType.name;
-      }
-      if (location != null) {
-        queryParameters['location'] = location;
-      }
-
-      final response = await _apiService.get<List<dynamic>>(
-        '/iot/devices',
-        queryParameters: queryParameters,
-      );
-
-      final devices = response
-          .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
-          .toList();
-
-      _logger.i('Fetched ${devices.length} devices');
-      return devices;
-    } on DioException catch (e) {
-      _logger.e('Failed to fetch devices: ${e.message}');
-      rethrow;
+    final queryParameters = <String, dynamic>{};
+    if (userId != null) {
+      queryParameters['userId'] = userId;
     }
+    if (status != null) {
+      queryParameters['status'] = status.name;
+    }
+    if (deviceType != null) {
+      queryParameters['deviceType'] = deviceType.name;
+    }
+    if (location != null) {
+      queryParameters['location'] = location;
+    }
+
+    final response = await _apiService.get<List<dynamic>>(
+      '/iot/devices',
+      queryParameters: queryParameters,
+    );
+
+    final devices = response
+        .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
+        .toList();
+
+    _logger.i('Fetched ${devices.length} devices');
+    return devices;
   }
 
   /// Get devices by user ID
   Future<List<IoTDevice>> getDevicesByUser(String userId) async {
-    try {
-      _logger.i('Fetching devices for user: $userId');
+    _logger.i('Fetching devices for user: $userId');
 
-      final response = await _apiService.get<List<dynamic>>(
-        '/iot/devices/user/$userId',
-      );
+    final response = await _apiService.get<List<dynamic>>(
+      '/iot/devices/user/$userId',
+    );
 
-      final devices = response
-          .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
-          .toList();
+    final devices = response
+        .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
+        .toList();
 
-      _logger.i('Fetched ${devices.length} devices for user $userId');
-      return devices;
-    } on DioException catch (e) {
-      _logger.e('Failed to fetch user devices: ${e.message}');
-      rethrow;
-    }
+    _logger.i('Fetched ${devices.length} devices for user $userId');
+    return devices;
   }
 
   /// Get online devices
   Future<List<IoTDevice>> getOnlineDevices() async {
-    try {
-      _logger.i('Fetching online devices...');
+    _logger.i('Fetching online devices...');
 
-      final response = await _apiService.get<List<dynamic>>(
-        '/iot/devices/online',
-      );
+    final response = await _apiService.get<List<dynamic>>(
+      '/iot/devices/online',
+    );
 
-      final devices = response
-          .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
-          .toList();
+    final devices = response
+        .map((json) => IoTDevice.fromJson(json as Map<String, dynamic>))
+        .toList();
 
-      _logger.i('Fetched ${devices.length} online devices');
-      return devices;
-    } on DioException catch (e) {
-      _logger.e('Failed to fetch online devices: ${e.message}');
-      rethrow;
-    }
+    _logger.i('Fetched ${devices.length} online devices');
+    return devices;
   }
 
   /// Get a specific device by ID
   Future<IoTDevice> getDevice(String deviceId) async {
-    try {
-      _logger.i('Fetching device: $deviceId');
+    _logger.i('Fetching device: $deviceId');
 
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/iot/devices/$deviceId',
-      );
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/iot/devices/$deviceId',
+    );
 
-      final device = IoTDevice.fromJson(response);
-      _logger.i('Fetched device: ${device.name}');
-      return device;
-    } on DioException catch (e) {
-      _logger.e('Failed to fetch device: ${e.message}');
-      rethrow;
-    }
+    final device = IoTDevice.fromJson(response);
+    _logger.i('Fetched device: ${device.name}');
+    return device;
   }
 
   /// Get device metrics
   Future<IoTMetrics> getMetrics() async {
-    try {
-      _logger.i('Fetching device metrics...');
+    _logger.i('Fetching device metrics...');
 
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/iot/devices/metrics',
-      );
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/iot/devices/metrics',
+    );
 
-      final metrics = IoTMetrics.fromJson(response);
-      _logger.i('Fetched device metrics');
-      return metrics;
-    } on DioException catch (e) {
-      _logger.e('Failed to fetch metrics: ${e.message}');
-      rethrow;
-    }
+    final metrics = IoTMetrics.fromJson(response);
+    _logger.i('Fetched device metrics');
+    return metrics;
   }
 
   /// Create a new IoT device
   Future<IoTDevice> createDevice(CreateIoTDeviceDto deviceDto) async {
-    try {
-      _logger.i('Creating new device: ${deviceDto.name}');
+    _logger.i('Creating new device: ${deviceDto.name}');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/iot/devices',
-        data: deviceDto.toJson(),
-      );
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/iot/devices',
+      data: deviceDto.toJson(),
+    );
 
-      final device = IoTDevice.fromJson(response);
-      _logger.i('Created device: ${device.id}');
-      return device;
-    } on DioException catch (e) {
-      _logger.e('Failed to create device: ${e.message}');
-      rethrow;
-    }
+    final device = IoTDevice.fromJson(response);
+    _logger.i('Created device: ${device.id}');
+    return device;
   }
 
   /// Update an existing device
@@ -157,21 +126,16 @@ class IoTService {
     String deviceId,
     UpdateIoTDeviceDto updateDto,
   ) async {
-    try {
-      _logger.i('Updating device: $deviceId');
+    _logger.i('Updating device: $deviceId');
 
-      final response = await _apiService.patch<Map<String, dynamic>>(
-        '/iot/devices/$deviceId',
-        data: updateDto.toJson(),
-      );
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/iot/devices/$deviceId',
+      data: updateDto.toJson(),
+    );
 
-      final device = IoTDevice.fromJson(response);
-      _logger.i('Updated device: ${device.id}');
-      return device;
-    } on DioException catch (e) {
-      _logger.e('Failed to update device: ${e.message}');
-      rethrow;
-    }
+    final device = IoTDevice.fromJson(response);
+    _logger.i('Updated device: ${device.id}');
+    return device;
   }
 
   /// Update device status
@@ -179,21 +143,16 @@ class IoTService {
     String deviceId,
     DeviceStatus status,
   ) async {
-    try {
-      _logger.i('Updating device status: $deviceId -> ${status.name}');
+    _logger.i('Updating device status: $deviceId -> ${status.name}');
 
-      final response = await _apiService.patch<Map<String, dynamic>>(
-        '/iot/devices/$deviceId/status',
-        data: {'status': status.name},
-      );
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/iot/devices/$deviceId/status',
+      data: {'status': status.name},
+    );
 
-      final device = IoTDevice.fromJson(response);
-      _logger.i('Updated device status: ${device.id}');
-      return device;
-    } on DioException catch (e) {
-      _logger.e('Failed to update device status: ${e.message}');
-      rethrow;
-    }
+    final device = IoTDevice.fromJson(response);
+    _logger.i('Updated device status: ${device.id}');
+    return device;
   }
 
   /// Update sensor data
@@ -204,65 +163,48 @@ class IoTService {
     int? batteryLevel,
     int? signalStrength,
   }) async {
-    try {
-      _logger.i('Updating sensor data for device: $deviceId');
+    _logger.i('Updating sensor data for device: $deviceId');
 
-      final data = <String, dynamic>{};
-      if (temperature != null) {
-        data['temperature'] = temperature;
-      }
-      if (humidity != null) {
-        data['humidity'] = humidity;
-      }
-      if (batteryLevel != null) {
-        data['batteryLevel'] = batteryLevel;
-      }
-      if (signalStrength != null) {
-        data['signalStrength'] = signalStrength;
-      }
-
-      final response = await _apiService.patch<Map<String, dynamic>>(
-        '/iot/devices/$deviceId/sensor-data',
-        data: data,
-      );
-
-      final device = IoTDevice.fromJson(response);
-      _logger.i('Updated sensor data for device: ${device.id}');
-      return device;
-    } on DioException catch (e) {
-      _logger.e('Failed to update sensor data: ${e.message}');
-      rethrow;
+    final data = <String, dynamic>{};
+    if (temperature != null) {
+      data['temperature'] = temperature;
     }
+    if (humidity != null) {
+      data['humidity'] = humidity;
+    }
+    if (batteryLevel != null) {
+      data['batteryLevel'] = batteryLevel;
+    }
+    if (signalStrength != null) {
+      data['signalStrength'] = signalStrength;
+    }
+
+    final response = await _apiService.patch<Map<String, dynamic>>(
+      '/iot/devices/$deviceId/sensor-data',
+      data: data,
+    );
+
+    final device = IoTDevice.fromJson(response);
+    _logger.i('Updated sensor data for device: ${device.id}');
+    return device;
   }
 
   /// Delete a device
   Future<void> deleteDevice(String deviceId) async {
-    try {
-      _logger.i('Deleting device: $deviceId');
-
-      await _apiService.delete<void>('/iot/devices/$deviceId');
-
-      _logger.i('Deleted device: $deviceId');
-    } on DioException catch (e) {
-      _logger.e('Failed to delete device: ${e.message}');
-      rethrow;
-    }
+    _logger.i('Deleting device: $deviceId');
+    await _apiService.delete<void>('/iot/devices/$deviceId');
+    _logger.i('Deleted device: $deviceId');
   }
 
   /// Generate LiveKit token for device
   Future<Map<String, dynamic>> generateLiveKitToken(String deviceId) async {
-    try {
-      _logger.i('Generating LiveKit token for device: $deviceId');
+    _logger.i('Generating LiveKit token for device: $deviceId');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/iot/devices/$deviceId/livekit-token',
-      );
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/iot/devices/$deviceId/livekit-token',
+    );
 
-      _logger.i('Generated LiveKit token for device: $deviceId');
-      return response;
-    } on DioException catch (e) {
-      _logger.e('Failed to generate LiveKit token: ${e.message}');
-      rethrow;
-    }
+    _logger.i('Generated LiveKit token for device: $deviceId');
+    return response;
   }
 }

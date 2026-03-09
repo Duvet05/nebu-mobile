@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../models/user_setup.dart';
@@ -20,52 +19,32 @@ class UserSetupService {
     required NotificationSettings notifications,
     required VoiceSettings voice,
   }) async {
-    try {
-      _logger.d('Saving setup for user: $userId');
+    _logger.d('Saving setup for user: $userId');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/users/$userId/setup',
-        data: {
-          'profile': profile.toJson(),
-          'preferences': preferences.toJson(),
-          'notifications': notifications.toJson(),
-          'voice': voice.toJson(),
-        },
-      );
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/users/$userId/setup',
+      data: {
+        'profile': profile.toJson(),
+        'preferences': preferences.toJson(),
+        'notifications': notifications.toJson(),
+        'voice': voice.toJson(),
+      },
+    );
 
-      _logger.d('Setup saved successfully');
-      return SetupResponse.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error saving setup: ${e.message}');
-      throw Exception('Error al guardar configuración: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error saving setup: $e');
-      throw Exception('Error inesperado al guardar configuración');
-    }
+    _logger.d('Setup saved successfully');
+    return SetupResponse.fromJson(response);
   }
 
   /// Get setup configuration
   Future<UserSetup> getSetup(String userId) async {
-    try {
-      _logger.d('Fetching setup for user: $userId');
+    _logger.d('Fetching setup for user: $userId');
 
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/users/$userId/setup',
-      );
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/users/$userId/setup',
+    );
 
-      _logger.d('Setup fetched successfully');
-      return UserSetup.fromJson(response);
-    } on DioException catch (e) {
-      _logger.e('Error fetching setup: ${e.message}');
-      if (e.response?.statusCode == 404) {
-        // Setup not found, return default
-        throw Exception('Configuración no encontrada');
-      }
-      throw Exception('Error al obtener configuración: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error fetching setup: $e');
-      throw Exception('Error inesperado al obtener configuración');
-    }
+    _logger.d('Setup fetched successfully');
+    return UserSetup.fromJson(response);
   }
 
   /// Update user preferences
@@ -77,27 +56,19 @@ class UserSetupService {
     bool? autoSave,
     bool? analytics,
   }) async {
-    try {
-      _logger.d('Updating preferences for user: $userId');
+    _logger.d('Updating preferences for user: $userId');
 
-      await _apiService.patch<Map<String, dynamic>>(
-        '/users/$userId/preferences',
-        data: {
-          if (language != null) 'language': language,
-          if (theme != null) 'theme': theme,
-          if (hapticFeedback != null) 'hapticFeedback': hapticFeedback,
-          if (autoSave != null) 'autoSave': autoSave,
-          if (analytics != null) 'analytics': analytics,
-        },
-      );
+    await _apiService.patch<Map<String, dynamic>>(
+      '/users/$userId/preferences',
+      data: {
+        if (language != null) 'language': language,
+        if (theme != null) 'theme': theme,
+        if (hapticFeedback != null) 'hapticFeedback': hapticFeedback,
+        if (autoSave != null) 'autoSave': autoSave,
+        if (analytics != null) 'analytics': analytics,
+      },
+    );
 
-      _logger.d('Preferences updated successfully');
-    } on DioException catch (e) {
-      _logger.e('Error updating preferences: ${e.message}');
-      throw Exception('Error al actualizar preferencias: ${e.message}');
-    } on Exception catch (e) {
-      _logger.e('Unexpected error updating preferences: $e');
-      throw Exception('Error inesperado al actualizar preferencias');
-    }
+    _logger.d('Preferences updated successfully');
   }
 }

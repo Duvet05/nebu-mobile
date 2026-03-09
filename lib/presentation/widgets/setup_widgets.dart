@@ -104,33 +104,37 @@ class SetupPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveEnabled = isEnabled && !isLoading;
+    final gradient = effectiveEnabled
+        ? LinearGradient(
+            colors: [
+              context.colors.primary100,
+              context.colors.primary,
+            ],
+          )
+        : null;
+    final bgColor = effectiveEnabled
+        ? null
+        : context.theme.colorScheme.surfaceContainerHighest
+            .withValues(alpha: 0.5);
+    final shadow = effectiveEnabled
+        ? [
+            BoxShadow(
+              color: context.colors.primary.withValues(alpha: 0.3),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ]
+        : null;
 
     return GestureDetector(
       onTap: effectiveEnabled ? onPressed : null,
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          gradient: effectiveEnabled
-              ? LinearGradient(
-                  colors: [
-                    context.colors.primary100,
-                    context.colors.primary,
-                  ],
-              : : null,
-          color: effectiveEnabled
-              ? null
-              : context.theme.colorScheme.surfaceContainerHighest
-              .withValues(alpha: 0.5),
+          gradient: gradient,
+          color: bgColor,
           borderRadius: context.radius.panel,
-          boxShadow: effectiveEnabled
-              ? [
-                  BoxShadow(
-                    color: context.colors.primary.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
-              : null,
+          boxShadow: shadow,
         ),
         child: Center(
           child: isLoading
@@ -146,12 +150,12 @@ class SetupPrimaryButton extends StatelessWidget {
                 )
               : Text(
                   text,
-            style: context.theme.textTheme.titleMedium?.copyWith(
-              color: effectiveEnabled
-                  ? context.colors.textOnFilled
-                  : context.theme.colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
-            ),
+                  style: context.theme.textTheme.titleMedium?.copyWith(
+                    color: effectiveEnabled
+                        ? context.colors.textOnFilled
+                        : context.theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
         ),
       ),

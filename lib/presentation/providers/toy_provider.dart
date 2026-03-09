@@ -244,10 +244,12 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     );
     final existing = prefs.getString(StorageKeys.localToys);
     final List<dynamic> toyList =
-        existing != null ? json.decode(existing) as List<dynamic> : [];
-    toyList.add(toy.toJson());
+        existing != null ? json.decode(existing) as List<dynamic> : []
+      ..add(toy.toJson());
     await prefs.setString(StorageKeys.localToys, json.encode(toyList));
-    ref.read(loggerProvider).d('Local toy saved: ${toy.name}');
+    ref
+        .read(loggerProvider)
+        .d('Local toy saved: ${toy.name}');
 
     final currentState = state.value ?? [];
     state = AsyncValue.data([...currentState, toy]);
@@ -282,12 +284,14 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       return;
     }
 
-    final List<dynamic> toyList = json.decode(stored) as List<dynamic>;
-    toyList.removeWhere(
-      (e) => (e as Map<String, dynamic>)['id'] == id,
-    );
+    final List<dynamic> toyList = json.decode(stored) as List<dynamic>
+      ..removeWhere(
+        (e) => (e as Map<String, dynamic>)['id'] == id,
+      );
     await prefs.setString(StorageKeys.localToys, json.encode(toyList));
-    ref.read(loggerProvider).d('Local toy removed: $id');
+    ref
+        .read(loggerProvider)
+        .d('Local toy removed: $id');
 
     final currentState = state.value ?? [];
     state = AsyncValue.data(

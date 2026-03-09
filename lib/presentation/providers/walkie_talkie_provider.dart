@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../../data/models/toy.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/livekit_service.dart';
@@ -138,20 +138,15 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         sessionId: sessionId,
         roomName: roomName,
       );
-    } on DioException catch (e) {
-      // Handle specific backend errors
-      final statusCode = e.response?.statusCode;
-      final String errorKey;
-      if (statusCode == 400) {
-        errorKey = 'toy_not_connected';
-      } else if (statusCode == 404) {
-        errorKey = 'no_iot_device';
-      } else {
-        errorKey = 'connection_failed';
-      }
+    } on NotFoundException {
       state = state.copyWith(
         phase: WalkieTalkiePhase.error,
-        error: errorKey,
+        error: 'no_iot_device',
+      );
+    } on ValidationException {
+      state = state.copyWith(
+        phase: WalkieTalkiePhase.error,
+        error: 'toy_not_connected',
       );
     } on Exception catch (e) {
       state = state.copyWith(
