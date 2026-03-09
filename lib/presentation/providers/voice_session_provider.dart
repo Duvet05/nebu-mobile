@@ -4,8 +4,12 @@ import '../../data/models/voice_session.dart';
 import 'api_provider.dart';
 import 'auth_provider.dart';
 
-/// Voice session metrics
+/// Voice session metrics (requires auth)
 final voiceMetricsProvider = FutureProvider<VoiceMetrics>((ref) async {
+  final user = ref.watch(authProvider).value;
+  if (user == null) {
+    return const VoiceMetrics();
+  }
   final service = ref.watch(voiceSessionServiceProvider);
   return service.getMetrics();
 });
