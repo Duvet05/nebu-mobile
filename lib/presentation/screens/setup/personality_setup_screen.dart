@@ -49,9 +49,7 @@ class _PersonalitySetupScreenState extends State<PersonalitySetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            SetupHeader(currentStep: 5,
-                totalSteps: 7,
-                previousRoute: AppRoutes.ageSetup.path),
+            const SetupHeader(currentStep: 5, totalSteps: 7),
 
             // Content
             Expanded(
@@ -195,7 +193,7 @@ class _PersonalitySetupScreenState extends State<PersonalitySetupScreen> {
                     SetupPrimaryButton(
                       text: 'common.next'.tr(),
                       isEnabled: canProceed,
-                      onPressed: () => context.go(AppRoutes.voiceSetup.path),
+                      onPressed: () => context.push(AppRoutes.voiceSetup.path),
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),

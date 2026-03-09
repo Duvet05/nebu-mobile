@@ -37,9 +37,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            SetupHeader(currentStep: 7,
-                totalSteps: 7,
-                previousRoute: AppRoutes.voiceSetup.path),
+            const SetupHeader(currentStep: 7, totalSteps: 7),
 
             // Content
             Expanded(
@@ -160,7 +158,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                           : 'setup.favorites.select_at_least'.tr(),
                       isEnabled: canProceed,
                       onPressed: () =>
-                          context.go(AppRoutes.worldInfoSetup.path),
+                          context.push(AppRoutes.worldInfoSetup.path),
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),

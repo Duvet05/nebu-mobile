@@ -57,9 +57,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       body: SafeArea(
         child: Column(
           children: [
-            SetupHeader(currentStep: 7,
-                totalSteps: 7,
-                previousRoute: AppRoutes.favoritesSetup.path),
+            const SetupHeader(currentStep: 7, totalSteps: 7),
 
             // Content
             Expanded(

@@ -33,9 +33,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            SetupHeader(currentStep: 4,
-                totalSteps: 7,
-                previousRoute: AppRoutes.toyNameSetup.path),
+            const SetupHeader(currentStep: 4, totalSteps: 7),
 
             // Content
             Expanded(
@@ -156,7 +154,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                       text: 'common.next'.tr(),
                       isEnabled: canProceed,
                       onPressed: () =>
-                          context.go(AppRoutes.personalitySetup.path),
+                          context.push(AppRoutes.personalitySetup.path),
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),

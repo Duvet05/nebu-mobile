@@ -49,9 +49,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            SetupHeader(currentStep: 6,
-                totalSteps: 7,
-                previousRoute: AppRoutes.personalitySetup.path),
+            const SetupHeader(currentStep: 6, totalSteps: 7),
 
             // Content
             Expanded(
@@ -192,7 +190,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                       text: 'common.next'.tr(),
                       isEnabled: canProceed,
                       onPressed: () =>
-                          context.go(AppRoutes.favoritesSetup.path),
+                          context.push(AppRoutes.favoritesSetup.path),
                     ),
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
