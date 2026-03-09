@@ -46,7 +46,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(walkieTalkieProvider);
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return PopScope(
       canPop: false,
@@ -186,7 +186,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
         SizedBox(height: context.spacing.paragraphBottomMarginSm),
         Text(
           translationKey.tr(),
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: context.theme.textTheme.bodyLarge?.copyWith(
                 color: context.colors.error,
               ),
           textAlign: TextAlign.center,

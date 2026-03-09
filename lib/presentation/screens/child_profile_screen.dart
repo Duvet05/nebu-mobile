@@ -14,7 +14,7 @@ class ChildProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localChildDataService = ref.watch(localChildDataServiceProvider);
-    final colorScheme = Theme.of(context).colorScheme;
+    final colorScheme = context.theme.colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -93,7 +93,7 @@ class ChildProfileScreen extends ConsumerWidget {
                   backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
                   child: Text(
                     childName.isNotEmpty ? childName[0].toUpperCase() : '?',
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                    style: context.theme.textTheme.headlineLarge?.copyWith(
                           color: colorScheme.primary,
                         ),
                   ),
@@ -101,7 +101,7 @@ class ChildProfileScreen extends ConsumerWidget {
                 SizedBox(height: context.spacing.paragraphBottomMarginSm),
                 Text(
                   childName,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  style: context.theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                 ),

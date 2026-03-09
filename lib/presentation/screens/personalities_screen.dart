@@ -383,22 +383,14 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               personalityId: personality.id,
             );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('personalities.assigned_success'.tr(
-                args: [personality.name, toys.first.name],
-              )),
-            ),
-          );
+          context.showInfoSnackBar('personalities.assigned_success'.tr(
+            args: [personality.name, toys.first.name],
+          ));
         }
       } on Exception catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(e.toString().replaceFirst('Exception: ', '')),
-              backgroundColor: context.colors.error,
-            ),
-          );
+          context.showErrorSnackBar(
+              e.toString().replaceFirst('Exception: ', ''));
         }
       }
       return;
@@ -434,22 +426,13 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
             personalityId: personality.id,
           );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('personalities.assigned_success'.tr(
-              args: [personality.name, ''],
-            )),
-          ),
-        );
+        context.showInfoSnackBar('personalities.assigned_success'.tr(
+          args: [personality.name, ''],
+        ));
       }
     } on Exception catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
       }
     }
   }

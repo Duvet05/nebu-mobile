@@ -74,7 +74,7 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
               SizedBox(height: context.spacing.titleBottomMarginSm),
               Text(
                 code,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: context.theme.textTheme.bodySmall?.copyWith(
                       fontFamily: 'monospace',
                     ),
               ),

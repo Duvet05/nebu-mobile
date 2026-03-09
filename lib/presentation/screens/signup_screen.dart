@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
@@ -80,7 +81,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
-    final textTheme = Theme.of(context).textTheme;
+    final textTheme = context.theme.textTheme;
 
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,

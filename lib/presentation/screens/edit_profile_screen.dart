@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -53,18 +54,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       if (mounted) {
         context.pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('profile.update_success'.tr())),
-        );
+        context.showInfoSnackBar('profile.update_success'.tr());
       }
     } on Exception catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
-            backgroundColor: context.colors.error,
-          ),
-        );
+        context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
       }
     }
   }

@@ -16,7 +16,7 @@ class QRScannerScreen extends ConsumerStatefulWidget {
 class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final state = ref.watch(qrScannerProvider);
     final notifier = ref.read(qrScannerProvider.notifier);
 

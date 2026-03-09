@@ -65,10 +65,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) {inal theme = context.theme;
 
-    final filteredNotifications = _filter == 'all'
+    ffinal filteredNotifications = _filter == 'all'
         ? _notifications
         : _notifications.where((n) => n.type == _filter).toList();
 
@@ -232,10 +231,9 @@ class _NotificationCard extends StatelessWidget {
   final VoidCallback onDismiss;
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) {inal theme = context.theme;
 
-    return Dismissible(
+    rreturn Dismissible(
       key: Key(notification.id),
       direction: DismissDirection.endToStart,
       onDismissed: (_) => onDismiss(),

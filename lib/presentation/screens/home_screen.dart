@@ -15,7 +15,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final user = ref.watch(authProvider).value;
     final greeting = user?.name != null
         ? 'home.greeting_name'.tr(args: [user!.name!])
@@ -211,7 +211,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildActiveToysList(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final connectedDevices = ref.watch(connectedDevicesProvider);
 
     return connectedDevices.when(
@@ -343,7 +343,7 @@ class _DeviceBatteryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
     final batteryLevel = ref.watch(batteryLevelProvider(device));
 
     return Container(
@@ -465,7 +465,7 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return InkWell(
       onTap: onTap,

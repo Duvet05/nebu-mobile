@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 
@@ -274,9 +275,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('privacy.download_started'.tr())),
-              );
+              context.showInfoSnackBar('privacy.download_started'.tr());
             },
             child: Text('privacy.download'.tr()),
           ),
@@ -401,22 +400,13 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('privacy.account_deleted_success'.tr())),
-      );
+      context.showInfoSnackBar('privacy.account_deleted_success'.tr());
       context.go(AppRoutes.welcome.path);
     } on Exception catch (e) {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString().replaceFirst('Exception: ', ''),
-          ),
-          backgroundColor: context.colors.error,
-        ),
-      );
+      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
     }
   }
 

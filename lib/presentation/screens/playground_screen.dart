@@ -111,7 +111,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = context.theme;
 
     return Scaffold(
       appBar: AppBar(
@@ -447,7 +447,7 @@ class _BouncingDotState extends State<_BouncingDot>
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: context.theme.colorScheme.onSurfaceVariant,
               shape: BoxShape.circle,
             ),
           ),
