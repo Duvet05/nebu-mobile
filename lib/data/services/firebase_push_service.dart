@@ -12,8 +12,13 @@ class FirebasePushService {
   final Logger _logger;
   final ApiService _apiService;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  bool _initialized = false;
 
   Future<void> initialize() async {
+    if (_initialized) {
+      return;
+    }
+    _initialized = true;
     final settings = await _messaging.requestPermission();
     _logger.d('Notification permission: ${settings.authorizationStatus}');
 
