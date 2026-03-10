@@ -114,14 +114,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 trailing: const Icon(Icons.chevron_right),
                 onTap: _showDownloadDataDialog,
               ),
-              const Divider(),
-              ListTile(
-                leading: Icon(Icons.history, color: theme.colorScheme.primary),
-                title: Text('privacy.login_history'.tr()),
-                subtitle: Text('privacy.login_history_desc'.tr()),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _showLoginHistoryDialog,
-              ),
             ],
           ),
 
@@ -275,67 +267,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       ),
     );
   }
-
-  void _showLoginHistoryDialog() {
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('privacy.login_history'.tr()),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildLoginHistoryItem(
-                  'privacy.device_android'.tr(),
-                  'privacy.location_placeholder'.tr(),
-                  'privacy.just_now'.tr(),
-                  true,
-                ),
-                const Divider(),
-                _buildLoginHistoryItem(
-                  'privacy.device_web'.tr(),
-                  'privacy.location_placeholder'.tr(),
-                  'privacy.days_ago'.tr(args: ['2']),
-                  false,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('privacy.close'.tr()),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginHistoryItem(
-    String device,
-    String location,
-    String time,
-    bool current,
-  ) => ListTile(
-    leading: Icon(
-      Icons.phone_android,
-      color: current ? context.colors.success : context.colors.grey400,
-    ),
-    title: Text(device),
-    subtitle: Text('$location • $time'),
-    trailing: current
-        ? Chip(
-            label: Text(
-              'privacy.current'.tr(),
-              style: context.textTheme.labelSmall,
-            ),
-            backgroundColor: context.colors.success.withValues(alpha: 0.1),
-          )
-        : null,
-  );
 
   void _showDeleteAccountDialog() {
     unawaited(

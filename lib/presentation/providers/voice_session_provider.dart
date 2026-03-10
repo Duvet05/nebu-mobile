@@ -27,6 +27,16 @@ final userVoiceSessionsProvider = FutureProvider<List<VoiceSession>>((
   return service.getUserSessions(user.id);
 });
 
+/// User limits and usage stats (requires auth)
+final userLimitsProvider = FutureProvider<UserLimits>((ref) async {
+  final user = ref.watch(authProvider).value;
+  if (user == null) {
+    return const UserLimits();
+  }
+  final service = ref.watch(voiceSessionServiceProvider);
+  return service.getUserLimits();
+});
+
 /// Conversations for a specific session (requires auth)
 final sessionConversationsProvider =
     FutureProvider.family<List<AiConversation>, String>((ref, sessionId) async {

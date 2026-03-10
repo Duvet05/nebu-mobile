@@ -99,7 +99,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 SizedBox(width: context.spacing.gapMd),
                 _buildFilterChip('toys', 'notifications.toys'.tr(), theme),
                 SizedBox(width: context.spacing.gapMd),
-                _buildFilterChip('orders', 'notifications.orders'.tr(), theme),
+                _buildFilterChip('limits', 'notifications.limits'.tr(), theme),
                 SizedBox(width: context.spacing.gapMd),
                 _buildFilterChip('system', 'notifications.system'.tr(), theme),
               ],
@@ -355,8 +355,8 @@ class _NotificationCard extends StatelessWidget {
     switch (type) {
       case 'toys':
         return Icons.smart_toy;
-      case 'orders':
-        return Icons.shopping_bag;
+      case 'limits':
+        return Icons.timer_outlined;
       case 'system':
         return Icons.info;
       default:
@@ -368,8 +368,8 @@ class _NotificationCard extends StatelessWidget {
     switch (type) {
       case 'toys':
         return context.colors.secondary;
-      case 'orders':
-        return context.colors.success;
+      case 'limits':
+        return context.colors.warning;
       case 'system':
         return context.colors.warning;
       default:

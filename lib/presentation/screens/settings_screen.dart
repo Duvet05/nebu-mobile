@@ -157,6 +157,18 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
+                      icon: Icons.timer_outlined,
+                      iconColor: context.colors.primary,
+                      title: 'limits.title'.tr(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: context.colors.grey400,
+                      ),
+                      onTap: () => context.push(AppRoutes.usageLimits.path),
+                    ),
+
+                    _SettingsTile(
+                      theme: theme,
                       icon: Icons.info_outline,
                       iconColor: context.colors.warning,
                       title: 'profile.about'.tr(),

@@ -15,7 +15,7 @@ enum AppRoutes {
   privacyPolicy('/privacy-policy'),
   termsOfService('/terms-of-service'),
   helpSupport('/help-support'),
-  orders('/orders'),
+  usageLimits('/usage-limits'),
   connectionSetup('/setup/connection'),
   toyNameSetup('/setup/toy-name'),
   wifiSetup('/setup/wifi'),

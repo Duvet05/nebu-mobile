@@ -71,6 +71,55 @@ abstract class VoiceMetrics with _$VoiceMetrics {
 }
 
 @freezed
+abstract class UserLimits with _$UserLimits {
+  const factory UserLimits({
+    @Default(VoiceLimits()) VoiceLimits voice,
+    @Default(SessionLimits()) SessionLimits session,
+    @Default(PaymentLimits()) PaymentLimits payments,
+  }) = _UserLimits;
+
+  factory UserLimits.fromJson(Map<String, dynamic> json) =>
+      _$UserLimitsFromJson(json);
+}
+
+@freezed
+abstract class VoiceLimits with _$VoiceLimits {
+  const factory VoiceLimits({
+    @Default(0) double dailyMinutesUsed,
+    @Default(60) double dailyMinutesLimit,
+    @Default(0) double monthlyMinutesUsed,
+    @Default(300) double monthlyMinutesLimit,
+    @Default(15) int maxSessionMinutes,
+  }) = _VoiceLimits;
+
+  factory VoiceLimits.fromJson(Map<String, dynamic> json) =>
+      _$VoiceLimitsFromJson(json);
+}
+
+@freezed
+abstract class SessionLimits with _$SessionLimits {
+  const factory SessionLimits({
+    @Default(3) int maxConcurrentSessions,
+    @Default('30m') String sessionTimeout,
+  }) = _SessionLimits;
+
+  factory SessionLimits.fromJson(Map<String, dynamic> json) =>
+      _$SessionLimitsFromJson(json);
+}
+
+@freezed
+abstract class PaymentLimits with _$PaymentLimits {
+  const factory PaymentLimits({
+    @Default(5) int minPurchaseAmount,
+    @Default(10000) int maxPurchaseAmount,
+    @Default('USD') String currency,
+  }) = _PaymentLimits;
+
+  factory PaymentLimits.fromJson(Map<String, dynamic> json) =>
+      _$PaymentLimitsFromJson(json);
+}
+
+@freezed
 abstract class KnowledgeEntry with _$KnowledgeEntry {
   const factory KnowledgeEntry({
     required String id,

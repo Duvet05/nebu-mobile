@@ -354,7 +354,7 @@ as DateTime?,
 /// @nodoc
 mixin _$CreateToyRequest {
 
- String? get deviceId; String? get macAddress; String get name; String? get model; String? get manufacturer; ToyStatus? get status; String? get firmwareVersion; Map<String, dynamic>? get capabilities; Map<String, dynamic>? get settings; String? get notes; String? get prompt; String? get personalityProfile; String? get greeting;
+ String get name; String? get deviceId; String? get macAddress; String? get model; String? get manufacturer; ToyStatus? get status; String? get firmwareVersion; Map<String, dynamic>? get capabilities; Map<String, dynamic>? get settings; String? get notes; String? get prompt; String? get personalityProfile; String? get greeting;
 /// Create a copy of CreateToyRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -367,16 +367,16 @@ $CreateToyRequestCopyWith<CreateToyRequest> get copyWith => _$CreateToyRequestCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateToyRequest&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.name, name) || other.name == name)&&(identical(other.model, model) || other.model == model)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.status, status) || other.status == status)&&(identical(other.firmwareVersion, firmwareVersion) || other.firmwareVersion == firmwareVersion)&&const DeepCollectionEquality().equals(other.capabilities, capabilities)&&const DeepCollectionEquality().equals(other.settings, settings)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.prompt, prompt) || other.prompt == prompt)&&(identical(other.personalityProfile, personalityProfile) || other.personalityProfile == personalityProfile)&&(identical(other.greeting, greeting) || other.greeting == greeting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateToyRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.model, model) || other.model == model)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.status, status) || other.status == status)&&(identical(other.firmwareVersion, firmwareVersion) || other.firmwareVersion == firmwareVersion)&&const DeepCollectionEquality().equals(other.capabilities, capabilities)&&const DeepCollectionEquality().equals(other.settings, settings)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.prompt, prompt) || other.prompt == prompt)&&(identical(other.personalityProfile, personalityProfile) || other.personalityProfile == personalityProfile)&&(identical(other.greeting, greeting) || other.greeting == greeting));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,deviceId,macAddress,name,model,manufacturer,status,firmwareVersion,const DeepCollectionEquality().hash(capabilities),const DeepCollectionEquality().hash(settings),notes,prompt,personalityProfile,greeting);
+int get hashCode => Object.hash(runtimeType,name,deviceId,macAddress,model,manufacturer,status,firmwareVersion,const DeepCollectionEquality().hash(capabilities),const DeepCollectionEquality().hash(settings),notes,prompt,personalityProfile,greeting);
 
 @override
 String toString() {
-  return 'CreateToyRequest(deviceId: $deviceId, macAddress: $macAddress, name: $name, model: $model, manufacturer: $manufacturer, status: $status, firmwareVersion: $firmwareVersion, capabilities: $capabilities, settings: $settings, notes: $notes, prompt: $prompt, personalityProfile: $personalityProfile, greeting: $greeting)';
+  return 'CreateToyRequest(name: $name, deviceId: $deviceId, macAddress: $macAddress, model: $model, manufacturer: $manufacturer, status: $status, firmwareVersion: $firmwareVersion, capabilities: $capabilities, settings: $settings, notes: $notes, prompt: $prompt, personalityProfile: $personalityProfile, greeting: $greeting)';
 }
 
 
@@ -387,7 +387,7 @@ abstract mixin class $CreateToyRequestCopyWith<$Res>  {
   factory $CreateToyRequestCopyWith(CreateToyRequest value, $Res Function(CreateToyRequest) _then) = _$CreateToyRequestCopyWithImpl;
 @useResult
 $Res call({
- String? deviceId, String? macAddress, String name, String? model, String? manufacturer, ToyStatus? status, String? firmwareVersion, Map<String, dynamic>? capabilities, Map<String, dynamic>? settings, String? notes, String? prompt, String? personalityProfile, String? greeting
+ String name, String? deviceId, String? macAddress, String? model, String? manufacturer, ToyStatus? status, String? firmwareVersion, Map<String, dynamic>? capabilities, Map<String, dynamic>? settings, String? notes, String? prompt, String? personalityProfile, String? greeting
 });
 
 
@@ -404,12 +404,12 @@ class _$CreateToyRequestCopyWithImpl<$Res>
 
 /// Create a copy of CreateToyRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? deviceId = freezed,Object? macAddress = freezed,Object? name = null,Object? model = freezed,Object? manufacturer = freezed,Object? status = freezed,Object? firmwareVersion = freezed,Object? capabilities = freezed,Object? settings = freezed,Object? notes = freezed,Object? prompt = freezed,Object? personalityProfile = freezed,Object? greeting = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? deviceId = freezed,Object? macAddress = freezed,Object? model = freezed,Object? manufacturer = freezed,Object? status = freezed,Object? firmwareVersion = freezed,Object? capabilities = freezed,Object? settings = freezed,Object? notes = freezed,Object? prompt = freezed,Object? personalityProfile = freezed,Object? greeting = freezed,}) {
   return _then(_self.copyWith(
-deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String?,macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
-as String?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,model: freezed == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
+as String?,model: freezed == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
 as String?,manufacturer: freezed == manufacturer ? _self.manufacturer : manufacturer // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ToyStatus?,firmwareVersion: freezed == firmwareVersion ? _self.firmwareVersion : firmwareVersion // ignore: cast_nullable_to_non_nullable
@@ -504,10 +504,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? deviceId,  String? macAddress,  String name,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String? deviceId,  String? macAddress,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CreateToyRequest() when $default != null:
-return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
+return $default(_that.name,_that.deviceId,_that.macAddress,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
   return orElse();
 
 }
@@ -525,10 +525,10 @@ return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.man
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? deviceId,  String? macAddress,  String name,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String? deviceId,  String? macAddress,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)  $default,) {final _that = this;
 switch (_that) {
 case _CreateToyRequest():
-return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
+return $default(_that.name,_that.deviceId,_that.macAddress,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -545,10 +545,10 @@ return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.man
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? deviceId,  String? macAddress,  String name,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String? deviceId,  String? macAddress,  String? model,  String? manufacturer,  ToyStatus? status,  String? firmwareVersion,  Map<String, dynamic>? capabilities,  Map<String, dynamic>? settings,  String? notes,  String? prompt,  String? personalityProfile,  String? greeting)?  $default,) {final _that = this;
 switch (_that) {
 case _CreateToyRequest() when $default != null:
-return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
+return $default(_that.name,_that.deviceId,_that.macAddress,_that.model,_that.manufacturer,_that.status,_that.firmwareVersion,_that.capabilities,_that.settings,_that.notes,_that.prompt,_that.personalityProfile,_that.greeting);case _:
   return null;
 
 }
@@ -560,12 +560,12 @@ return $default(_that.deviceId,_that.macAddress,_that.name,_that.model,_that.man
 @JsonSerializable()
 
 class _CreateToyRequest implements CreateToyRequest {
-  const _CreateToyRequest({this.deviceId, this.macAddress, required this.name, this.model, this.manufacturer, this.status, this.firmwareVersion, final  Map<String, dynamic>? capabilities, final  Map<String, dynamic>? settings, this.notes, this.prompt, this.personalityProfile, this.greeting}): _capabilities = capabilities,_settings = settings;
+  const _CreateToyRequest({required this.name, this.deviceId, this.macAddress, this.model, this.manufacturer, this.status, this.firmwareVersion, final  Map<String, dynamic>? capabilities, final  Map<String, dynamic>? settings, this.notes, this.prompt, this.personalityProfile, this.greeting}): _capabilities = capabilities,_settings = settings;
   factory _CreateToyRequest.fromJson(Map<String, dynamic> json) => _$CreateToyRequestFromJson(json);
 
+@override final  String name;
 @override final  String? deviceId;
 @override final  String? macAddress;
-@override final  String name;
 @override final  String? model;
 @override final  String? manufacturer;
 @override final  ToyStatus? status;
@@ -606,16 +606,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateToyRequest&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.name, name) || other.name == name)&&(identical(other.model, model) || other.model == model)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.status, status) || other.status == status)&&(identical(other.firmwareVersion, firmwareVersion) || other.firmwareVersion == firmwareVersion)&&const DeepCollectionEquality().equals(other._capabilities, _capabilities)&&const DeepCollectionEquality().equals(other._settings, _settings)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.prompt, prompt) || other.prompt == prompt)&&(identical(other.personalityProfile, personalityProfile) || other.personalityProfile == personalityProfile)&&(identical(other.greeting, greeting) || other.greeting == greeting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreateToyRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.model, model) || other.model == model)&&(identical(other.manufacturer, manufacturer) || other.manufacturer == manufacturer)&&(identical(other.status, status) || other.status == status)&&(identical(other.firmwareVersion, firmwareVersion) || other.firmwareVersion == firmwareVersion)&&const DeepCollectionEquality().equals(other._capabilities, _capabilities)&&const DeepCollectionEquality().equals(other._settings, _settings)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.prompt, prompt) || other.prompt == prompt)&&(identical(other.personalityProfile, personalityProfile) || other.personalityProfile == personalityProfile)&&(identical(other.greeting, greeting) || other.greeting == greeting));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,deviceId,macAddress,name,model,manufacturer,status,firmwareVersion,const DeepCollectionEquality().hash(_capabilities),const DeepCollectionEquality().hash(_settings),notes,prompt,personalityProfile,greeting);
+int get hashCode => Object.hash(runtimeType,name,deviceId,macAddress,model,manufacturer,status,firmwareVersion,const DeepCollectionEquality().hash(_capabilities),const DeepCollectionEquality().hash(_settings),notes,prompt,personalityProfile,greeting);
 
 @override
 String toString() {
-  return 'CreateToyRequest(deviceId: $deviceId, macAddress: $macAddress, name: $name, model: $model, manufacturer: $manufacturer, status: $status, firmwareVersion: $firmwareVersion, capabilities: $capabilities, settings: $settings, notes: $notes, prompt: $prompt, personalityProfile: $personalityProfile, greeting: $greeting)';
+  return 'CreateToyRequest(name: $name, deviceId: $deviceId, macAddress: $macAddress, model: $model, manufacturer: $manufacturer, status: $status, firmwareVersion: $firmwareVersion, capabilities: $capabilities, settings: $settings, notes: $notes, prompt: $prompt, personalityProfile: $personalityProfile, greeting: $greeting)';
 }
 
 
@@ -626,7 +626,7 @@ abstract mixin class _$CreateToyRequestCopyWith<$Res> implements $CreateToyReque
   factory _$CreateToyRequestCopyWith(_CreateToyRequest value, $Res Function(_CreateToyRequest) _then) = __$CreateToyRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String? deviceId, String? macAddress, String name, String? model, String? manufacturer, ToyStatus? status, String? firmwareVersion, Map<String, dynamic>? capabilities, Map<String, dynamic>? settings, String? notes, String? prompt, String? personalityProfile, String? greeting
+ String name, String? deviceId, String? macAddress, String? model, String? manufacturer, ToyStatus? status, String? firmwareVersion, Map<String, dynamic>? capabilities, Map<String, dynamic>? settings, String? notes, String? prompt, String? personalityProfile, String? greeting
 });
 
 
@@ -643,12 +643,12 @@ class __$CreateToyRequestCopyWithImpl<$Res>
 
 /// Create a copy of CreateToyRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? deviceId = freezed,Object? macAddress = freezed,Object? name = null,Object? model = freezed,Object? manufacturer = freezed,Object? status = freezed,Object? firmwareVersion = freezed,Object? capabilities = freezed,Object? settings = freezed,Object? notes = freezed,Object? prompt = freezed,Object? personalityProfile = freezed,Object? greeting = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? deviceId = freezed,Object? macAddress = freezed,Object? model = freezed,Object? manufacturer = freezed,Object? status = freezed,Object? firmwareVersion = freezed,Object? capabilities = freezed,Object? settings = freezed,Object? notes = freezed,Object? prompt = freezed,Object? personalityProfile = freezed,Object? greeting = freezed,}) {
   return _then(_CreateToyRequest(
-deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
+name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
 as String?,macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
-as String?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
-as String,model: freezed == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
+as String?,model: freezed == model ? _self.model : model // ignore: cast_nullable_to_non_nullable
 as String?,manufacturer: freezed == manufacturer ? _self.manufacturer : manufacturer // ignore: cast_nullable_to_non_nullable
 as String?,status: freezed == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ToyStatus?,firmwareVersion: freezed == firmwareVersion ? _self.firmwareVersion : firmwareVersion // ignore: cast_nullable_to_non_nullable
@@ -669,7 +669,7 @@ as String?,
 /// @nodoc
 mixin _$AssignToyRequest {
 
- String? get macAddress; String? get deviceId; String get userId; String? get toyName;
+ String get userId; String? get macAddress; String? get deviceId; String? get toyName;
 /// Create a copy of AssignToyRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -682,16 +682,16 @@ $AssignToyRequestCopyWith<AssignToyRequest> get copyWith => _$AssignToyRequestCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AssignToyRequest&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyName, toyName) || other.toyName == toyName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AssignToyRequest&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.toyName, toyName) || other.toyName == toyName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,macAddress,deviceId,userId,toyName);
+int get hashCode => Object.hash(runtimeType,userId,macAddress,deviceId,toyName);
 
 @override
 String toString() {
-  return 'AssignToyRequest(macAddress: $macAddress, deviceId: $deviceId, userId: $userId, toyName: $toyName)';
+  return 'AssignToyRequest(userId: $userId, macAddress: $macAddress, deviceId: $deviceId, toyName: $toyName)';
 }
 
 
@@ -702,7 +702,7 @@ abstract mixin class $AssignToyRequestCopyWith<$Res>  {
   factory $AssignToyRequestCopyWith(AssignToyRequest value, $Res Function(AssignToyRequest) _then) = _$AssignToyRequestCopyWithImpl;
 @useResult
 $Res call({
- String? macAddress, String? deviceId, String userId, String? toyName
+ String userId, String? macAddress, String? deviceId, String? toyName
 });
 
 
@@ -719,12 +719,12 @@ class _$AssignToyRequestCopyWithImpl<$Res>
 
 /// Create a copy of AssignToyRequest
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? macAddress = freezed,Object? deviceId = freezed,Object? userId = null,Object? toyName = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? userId = null,Object? macAddress = freezed,Object? deviceId = freezed,Object? toyName = freezed,}) {
   return _then(_self.copyWith(
-macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
 as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
-as String?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,toyName: freezed == toyName ? _self.toyName : toyName // ignore: cast_nullable_to_non_nullable
+as String?,toyName: freezed == toyName ? _self.toyName : toyName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -810,10 +810,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? macAddress,  String? deviceId,  String userId,  String? toyName)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String userId,  String? macAddress,  String? deviceId,  String? toyName)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AssignToyRequest() when $default != null:
-return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case _:
+return $default(_that.userId,_that.macAddress,_that.deviceId,_that.toyName);case _:
   return orElse();
 
 }
@@ -831,10 +831,10 @@ return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? macAddress,  String? deviceId,  String userId,  String? toyName)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String userId,  String? macAddress,  String? deviceId,  String? toyName)  $default,) {final _that = this;
 switch (_that) {
 case _AssignToyRequest():
-return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case _:
+return $default(_that.userId,_that.macAddress,_that.deviceId,_that.toyName);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -851,10 +851,10 @@ return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? macAddress,  String? deviceId,  String userId,  String? toyName)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String userId,  String? macAddress,  String? deviceId,  String? toyName)?  $default,) {final _that = this;
 switch (_that) {
 case _AssignToyRequest() when $default != null:
-return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case _:
+return $default(_that.userId,_that.macAddress,_that.deviceId,_that.toyName);case _:
   return null;
 
 }
@@ -866,12 +866,12 @@ return $default(_that.macAddress,_that.deviceId,_that.userId,_that.toyName);case
 @JsonSerializable()
 
 class _AssignToyRequest implements AssignToyRequest {
-  const _AssignToyRequest({this.macAddress, this.deviceId, required this.userId, this.toyName});
+  const _AssignToyRequest({required this.userId, this.macAddress, this.deviceId, this.toyName});
   factory _AssignToyRequest.fromJson(Map<String, dynamic> json) => _$AssignToyRequestFromJson(json);
 
+@override final  String userId;
 @override final  String? macAddress;
 @override final  String? deviceId;
-@override final  String userId;
 @override final  String? toyName;
 
 /// Create a copy of AssignToyRequest
@@ -887,16 +887,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AssignToyRequest&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyName, toyName) || other.toyName == toyName));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AssignToyRequest&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.macAddress, macAddress) || other.macAddress == macAddress)&&(identical(other.deviceId, deviceId) || other.deviceId == deviceId)&&(identical(other.toyName, toyName) || other.toyName == toyName));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,macAddress,deviceId,userId,toyName);
+int get hashCode => Object.hash(runtimeType,userId,macAddress,deviceId,toyName);
 
 @override
 String toString() {
-  return 'AssignToyRequest(macAddress: $macAddress, deviceId: $deviceId, userId: $userId, toyName: $toyName)';
+  return 'AssignToyRequest(userId: $userId, macAddress: $macAddress, deviceId: $deviceId, toyName: $toyName)';
 }
 
 
@@ -907,7 +907,7 @@ abstract mixin class _$AssignToyRequestCopyWith<$Res> implements $AssignToyReque
   factory _$AssignToyRequestCopyWith(_AssignToyRequest value, $Res Function(_AssignToyRequest) _then) = __$AssignToyRequestCopyWithImpl;
 @override @useResult
 $Res call({
- String? macAddress, String? deviceId, String userId, String? toyName
+ String userId, String? macAddress, String? deviceId, String? toyName
 });
 
 
@@ -924,12 +924,12 @@ class __$AssignToyRequestCopyWithImpl<$Res>
 
 /// Create a copy of AssignToyRequest
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? macAddress = freezed,Object? deviceId = freezed,Object? userId = null,Object? toyName = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? userId = null,Object? macAddress = freezed,Object? deviceId = freezed,Object? toyName = freezed,}) {
   return _then(_AssignToyRequest(
-macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
+userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,macAddress: freezed == macAddress ? _self.macAddress : macAddress // ignore: cast_nullable_to_non_nullable
 as String?,deviceId: freezed == deviceId ? _self.deviceId : deviceId // ignore: cast_nullable_to_non_nullable
-as String?,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as String,toyName: freezed == toyName ? _self.toyName : toyName // ignore: cast_nullable_to_non_nullable
+as String?,toyName: freezed == toyName ? _self.toyName : toyName // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

@@ -137,18 +137,14 @@ class ProfileScreen extends ConsumerWidget {
                   Divider(height: 1, indent: 56, color: theme.dividerColor),
                   _SettingsTile(
                     theme: theme,
-                    icon: Icons.receipt_long_outlined,
-                    title: 'profile.your_orders'.tr(),
+                    icon: Icons.timer_outlined,
+                    title: 'profile.usage_limits'.tr(),
                     trailing: Icon(
                       Icons.chevron_right,
                       color: context.colors.grey400,
                     ),
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('profile.orders_coming_soon'.tr()),
-                        ),
-                      );
+                      context.push(AppRoutes.usageLimits.path);
                     },
                   ),
                   Divider(height: 1, indent: 56, color: theme.dividerColor),

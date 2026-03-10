@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VoiceSession {
 
- String get id; String? get userId; String? get toyId; String? get roomName; String get status; String get language; DateTime get startedAt; DateTime? get endedAt; int? get durationSeconds; int get messageCount; String? get summary;@JsonKey(fromJson: _topicsFromJson) List<String>? get topics; String? get emotion; Map<String, dynamic>? get metadata;
+ String get id; String get status; DateTime get startedAt; String? get userId; String? get toyId; String? get roomName; String get language; DateTime? get endedAt; int? get durationSeconds; int get messageCount; String? get summary;@JsonKey(fromJson: _topicsFromJson) List<String>? get topics; String? get emotion; Map<String, dynamic>? get metadata;
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $VoiceSessionCopyWith<VoiceSession> get copyWith => _$VoiceSessionCopyWithImpl<V
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.status, status) || other.status == status)&&(identical(other.language, language) || other.language == language)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other.topics, topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other.topics, topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other.metadata, metadata));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,toyId,roomName,status,language,startedAt,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(topics),emotion,const DeepCollectionEquality().hash(metadata));
+int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(topics),emotion,const DeepCollectionEquality().hash(metadata));
 
 @override
 String toString() {
-  return 'VoiceSession(id: $id, userId: $userId, toyId: $toyId, roomName: $roomName, status: $status, language: $language, startedAt: $startedAt, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
+  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $VoiceSessionCopyWith<$Res>  {
   factory $VoiceSessionCopyWith(VoiceSession value, $Res Function(VoiceSession) _then) = _$VoiceSessionCopyWithImpl;
 @useResult
 $Res call({
- String id, String? userId, String? toyId, String? roomName, String status, String language, DateTime startedAt, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
+ String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
 });
 
 
@@ -65,16 +65,16 @@ class _$VoiceSessionCopyWithImpl<$Res>
 
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? status = null,Object? language = null,Object? startedAt = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
+as DateTime,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String?,toyId: freezed == toyId ? _self.toyId : toyId // ignore: cast_nullable_to_non_nullable
 as String?,roomName: freezed == roomName ? _self.roomName : roomName // ignore: cast_nullable_to_non_nullable
-as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
-as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
+as String?,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
+as String,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,durationSeconds: freezed == durationSeconds ? _self.durationSeconds : durationSeconds // ignore: cast_nullable_to_non_nullable
 as int?,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
 as int,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
@@ -166,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? userId,  String? toyId,  String? roomName,  String status,  String language,  DateTime startedAt,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VoiceSession() when $default != null:
-return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_that.language,_that.startedAt,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
   return orElse();
 
 }
@@ -187,10 +187,10 @@ return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? userId,  String? toyId,  String? roomName,  String status,  String language,  DateTime startedAt,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
 switch (_that) {
 case _VoiceSession():
-return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_that.language,_that.startedAt,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +207,10 @@ return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? userId,  String? toyId,  String? roomName,  String status,  String language,  DateTime startedAt,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
 switch (_that) {
 case _VoiceSession() when $default != null:
-return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_that.language,_that.startedAt,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
   return null;
 
 }
@@ -222,16 +222,16 @@ return $default(_that.id,_that.userId,_that.toyId,_that.roomName,_that.status,_t
 @JsonSerializable()
 
 class _VoiceSession implements VoiceSession {
-  const _VoiceSession({required this.id, this.userId, this.toyId, this.roomName, required this.status, this.language = 'es', required this.startedAt, this.endedAt, this.durationSeconds, this.messageCount = 0, this.summary, @JsonKey(fromJson: _topicsFromJson) final  List<String>? topics, this.emotion, final  Map<String, dynamic>? metadata}): _topics = topics,_metadata = metadata;
+  const _VoiceSession({required this.id, required this.status, required this.startedAt, this.userId, this.toyId, this.roomName, this.language = 'es', this.endedAt, this.durationSeconds, this.messageCount = 0, this.summary, @JsonKey(fromJson: _topicsFromJson) final  List<String>? topics, this.emotion, final  Map<String, dynamic>? metadata}): _topics = topics,_metadata = metadata;
   factory _VoiceSession.fromJson(Map<String, dynamic> json) => _$VoiceSessionFromJson(json);
 
 @override final  String id;
+@override final  String status;
+@override final  DateTime startedAt;
 @override final  String? userId;
 @override final  String? toyId;
 @override final  String? roomName;
-@override final  String status;
 @override@JsonKey() final  String language;
-@override final  DateTime startedAt;
 @override final  DateTime? endedAt;
 @override final  int? durationSeconds;
 @override@JsonKey() final  int messageCount;
@@ -269,16 +269,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.status, status) || other.status == status)&&(identical(other.language, language) || other.language == language)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._topics, _topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._topics, _topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,toyId,roomName,status,language,startedAt,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(_topics),emotion,const DeepCollectionEquality().hash(_metadata));
+int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(_topics),emotion,const DeepCollectionEquality().hash(_metadata));
 
 @override
 String toString() {
-  return 'VoiceSession(id: $id, userId: $userId, toyId: $toyId, roomName: $roomName, status: $status, language: $language, startedAt: $startedAt, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
+  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
 }
 
 
@@ -289,7 +289,7 @@ abstract mixin class _$VoiceSessionCopyWith<$Res> implements $VoiceSessionCopyWi
   factory _$VoiceSessionCopyWith(_VoiceSession value, $Res Function(_VoiceSession) _then) = __$VoiceSessionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? userId, String? toyId, String? roomName, String status, String language, DateTime startedAt, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
+ String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
 });
 
 
@@ -306,16 +306,16 @@ class __$VoiceSessionCopyWithImpl<$Res>
 
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? status = null,Object? language = null,Object? startedAt = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
   return _then(_VoiceSession(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
+as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
+as DateTime,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String?,toyId: freezed == toyId ? _self.toyId : toyId // ignore: cast_nullable_to_non_nullable
 as String?,roomName: freezed == roomName ? _self.roomName : roomName // ignore: cast_nullable_to_non_nullable
-as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as String,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
-as String,startedAt: null == startedAt ? _self.startedAt : startedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
+as String?,language: null == language ? _self.language : language // ignore: cast_nullable_to_non_nullable
+as String,endedAt: freezed == endedAt ? _self.endedAt : endedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,durationSeconds: freezed == durationSeconds ? _self.durationSeconds : durationSeconds // ignore: cast_nullable_to_non_nullable
 as int?,messageCount: null == messageCount ? _self.messageCount : messageCount // ignore: cast_nullable_to_non_nullable
 as int,summary: freezed == summary ? _self.summary : summary // ignore: cast_nullable_to_non_nullable
@@ -879,6 +879,1139 @@ as int,averageSessionDuration: null == averageSessionDuration ? _self.averageSes
 as double,totalTokensUsed: null == totalTokensUsed ? _self.totalTokensUsed : totalTokensUsed // ignore: cast_nullable_to_non_nullable
 as int,totalCost: null == totalCost ? _self.totalCost : totalCost // ignore: cast_nullable_to_non_nullable
 as double,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$UserLimits {
+
+ VoiceLimits get voice; SessionLimits get session; PaymentLimits get payments;
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UserLimitsCopyWith<UserLimits> get copyWith => _$UserLimitsCopyWithImpl<UserLimits>(this as UserLimits, _$identity);
+
+  /// Serializes this UserLimits to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserLimits&&(identical(other.voice, voice) || other.voice == voice)&&(identical(other.session, session) || other.session == session)&&(identical(other.payments, payments) || other.payments == payments));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,voice,session,payments);
+
+@override
+String toString() {
+  return 'UserLimits(voice: $voice, session: $session, payments: $payments)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $UserLimitsCopyWith<$Res>  {
+  factory $UserLimitsCopyWith(UserLimits value, $Res Function(UserLimits) _then) = _$UserLimitsCopyWithImpl;
+@useResult
+$Res call({
+ VoiceLimits voice, SessionLimits session, PaymentLimits payments
+});
+
+
+$VoiceLimitsCopyWith<$Res> get voice;$SessionLimitsCopyWith<$Res> get session;$PaymentLimitsCopyWith<$Res> get payments;
+
+}
+/// @nodoc
+class _$UserLimitsCopyWithImpl<$Res>
+    implements $UserLimitsCopyWith<$Res> {
+  _$UserLimitsCopyWithImpl(this._self, this._then);
+
+  final UserLimits _self;
+  final $Res Function(UserLimits) _then;
+
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? voice = null,Object? session = null,Object? payments = null,}) {
+  return _then(_self.copyWith(
+voice: null == voice ? _self.voice : voice // ignore: cast_nullable_to_non_nullable
+as VoiceLimits,session: null == session ? _self.session : session // ignore: cast_nullable_to_non_nullable
+as SessionLimits,payments: null == payments ? _self.payments : payments // ignore: cast_nullable_to_non_nullable
+as PaymentLimits,
+  ));
+}
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$VoiceLimitsCopyWith<$Res> get voice {
+  
+  return $VoiceLimitsCopyWith<$Res>(_self.voice, (value) {
+    return _then(_self.copyWith(voice: value));
+  });
+}/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SessionLimitsCopyWith<$Res> get session {
+  
+  return $SessionLimitsCopyWith<$Res>(_self.session, (value) {
+    return _then(_self.copyWith(session: value));
+  });
+}/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PaymentLimitsCopyWith<$Res> get payments {
+  
+  return $PaymentLimitsCopyWith<$Res>(_self.payments, (value) {
+    return _then(_self.copyWith(payments: value));
+  });
+}
+}
+
+
+/// Adds pattern-matching-related methods to [UserLimits].
+extension UserLimitsPatterns on UserLimits {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _UserLimits value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _UserLimits() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _UserLimits value)  $default,){
+final _that = this;
+switch (_that) {
+case _UserLimits():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _UserLimits value)?  $default,){
+final _that = this;
+switch (_that) {
+case _UserLimits() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( VoiceLimits voice,  SessionLimits session,  PaymentLimits payments)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _UserLimits() when $default != null:
+return $default(_that.voice,_that.session,_that.payments);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( VoiceLimits voice,  SessionLimits session,  PaymentLimits payments)  $default,) {final _that = this;
+switch (_that) {
+case _UserLimits():
+return $default(_that.voice,_that.session,_that.payments);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( VoiceLimits voice,  SessionLimits session,  PaymentLimits payments)?  $default,) {final _that = this;
+switch (_that) {
+case _UserLimits() when $default != null:
+return $default(_that.voice,_that.session,_that.payments);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _UserLimits implements UserLimits {
+  const _UserLimits({this.voice = const VoiceLimits(), this.session = const SessionLimits(), this.payments = const PaymentLimits()});
+  factory _UserLimits.fromJson(Map<String, dynamic> json) => _$UserLimitsFromJson(json);
+
+@override@JsonKey() final  VoiceLimits voice;
+@override@JsonKey() final  SessionLimits session;
+@override@JsonKey() final  PaymentLimits payments;
+
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$UserLimitsCopyWith<_UserLimits> get copyWith => __$UserLimitsCopyWithImpl<_UserLimits>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$UserLimitsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserLimits&&(identical(other.voice, voice) || other.voice == voice)&&(identical(other.session, session) || other.session == session)&&(identical(other.payments, payments) || other.payments == payments));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,voice,session,payments);
+
+@override
+String toString() {
+  return 'UserLimits(voice: $voice, session: $session, payments: $payments)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$UserLimitsCopyWith<$Res> implements $UserLimitsCopyWith<$Res> {
+  factory _$UserLimitsCopyWith(_UserLimits value, $Res Function(_UserLimits) _then) = __$UserLimitsCopyWithImpl;
+@override @useResult
+$Res call({
+ VoiceLimits voice, SessionLimits session, PaymentLimits payments
+});
+
+
+@override $VoiceLimitsCopyWith<$Res> get voice;@override $SessionLimitsCopyWith<$Res> get session;@override $PaymentLimitsCopyWith<$Res> get payments;
+
+}
+/// @nodoc
+class __$UserLimitsCopyWithImpl<$Res>
+    implements _$UserLimitsCopyWith<$Res> {
+  __$UserLimitsCopyWithImpl(this._self, this._then);
+
+  final _UserLimits _self;
+  final $Res Function(_UserLimits) _then;
+
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? voice = null,Object? session = null,Object? payments = null,}) {
+  return _then(_UserLimits(
+voice: null == voice ? _self.voice : voice // ignore: cast_nullable_to_non_nullable
+as VoiceLimits,session: null == session ? _self.session : session // ignore: cast_nullable_to_non_nullable
+as SessionLimits,payments: null == payments ? _self.payments : payments // ignore: cast_nullable_to_non_nullable
+as PaymentLimits,
+  ));
+}
+
+/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$VoiceLimitsCopyWith<$Res> get voice {
+  
+  return $VoiceLimitsCopyWith<$Res>(_self.voice, (value) {
+    return _then(_self.copyWith(voice: value));
+  });
+}/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$SessionLimitsCopyWith<$Res> get session {
+  
+  return $SessionLimitsCopyWith<$Res>(_self.session, (value) {
+    return _then(_self.copyWith(session: value));
+  });
+}/// Create a copy of UserLimits
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$PaymentLimitsCopyWith<$Res> get payments {
+  
+  return $PaymentLimitsCopyWith<$Res>(_self.payments, (value) {
+    return _then(_self.copyWith(payments: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$VoiceLimits {
+
+ double get dailyMinutesUsed; double get dailyMinutesLimit; double get monthlyMinutesUsed; double get monthlyMinutesLimit; int get maxSessionMinutes;
+/// Create a copy of VoiceLimits
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$VoiceLimitsCopyWith<VoiceLimits> get copyWith => _$VoiceLimitsCopyWithImpl<VoiceLimits>(this as VoiceLimits, _$identity);
+
+  /// Serializes this VoiceLimits to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes);
+
+@override
+String toString() {
+  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $VoiceLimitsCopyWith<$Res>  {
+  factory $VoiceLimitsCopyWith(VoiceLimits value, $Res Function(VoiceLimits) _then) = _$VoiceLimitsCopyWithImpl;
+@useResult
+$Res call({
+ double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes
+});
+
+
+
+
+}
+/// @nodoc
+class _$VoiceLimitsCopyWithImpl<$Res>
+    implements $VoiceLimitsCopyWith<$Res> {
+  _$VoiceLimitsCopyWithImpl(this._self, this._then);
+
+  final VoiceLimits _self;
+  final $Res Function(VoiceLimits) _then;
+
+/// Create a copy of VoiceLimits
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,}) {
+  return _then(_self.copyWith(
+dailyMinutesUsed: null == dailyMinutesUsed ? _self.dailyMinutesUsed : dailyMinutesUsed // ignore: cast_nullable_to_non_nullable
+as double,dailyMinutesLimit: null == dailyMinutesLimit ? _self.dailyMinutesLimit : dailyMinutesLimit // ignore: cast_nullable_to_non_nullable
+as double,monthlyMinutesUsed: null == monthlyMinutesUsed ? _self.monthlyMinutesUsed : monthlyMinutesUsed // ignore: cast_nullable_to_non_nullable
+as double,monthlyMinutesLimit: null == monthlyMinutesLimit ? _self.monthlyMinutesLimit : monthlyMinutesLimit // ignore: cast_nullable_to_non_nullable
+as double,maxSessionMinutes: null == maxSessionMinutes ? _self.maxSessionMinutes : maxSessionMinutes // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [VoiceLimits].
+extension VoiceLimitsPatterns on VoiceLimits {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _VoiceLimits value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _VoiceLimits() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _VoiceLimits value)  $default,){
+final _that = this;
+switch (_that) {
+case _VoiceLimits():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _VoiceLimits value)?  $default,){
+final _that = this;
+switch (_that) {
+case _VoiceLimits() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _VoiceLimits() when $default != null:
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)  $default,) {final _that = this;
+switch (_that) {
+case _VoiceLimits():
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)?  $default,) {final _that = this;
+switch (_that) {
+case _VoiceLimits() when $default != null:
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _VoiceLimits implements VoiceLimits {
+  const _VoiceLimits({this.dailyMinutesUsed = 0, this.dailyMinutesLimit = 60, this.monthlyMinutesUsed = 0, this.monthlyMinutesLimit = 300, this.maxSessionMinutes = 15});
+  factory _VoiceLimits.fromJson(Map<String, dynamic> json) => _$VoiceLimitsFromJson(json);
+
+@override@JsonKey() final  double dailyMinutesUsed;
+@override@JsonKey() final  double dailyMinutesLimit;
+@override@JsonKey() final  double monthlyMinutesUsed;
+@override@JsonKey() final  double monthlyMinutesLimit;
+@override@JsonKey() final  int maxSessionMinutes;
+
+/// Create a copy of VoiceLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$VoiceLimitsCopyWith<_VoiceLimits> get copyWith => __$VoiceLimitsCopyWithImpl<_VoiceLimits>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$VoiceLimitsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes);
+
+@override
+String toString() {
+  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$VoiceLimitsCopyWith<$Res> implements $VoiceLimitsCopyWith<$Res> {
+  factory _$VoiceLimitsCopyWith(_VoiceLimits value, $Res Function(_VoiceLimits) _then) = __$VoiceLimitsCopyWithImpl;
+@override @useResult
+$Res call({
+ double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes
+});
+
+
+
+
+}
+/// @nodoc
+class __$VoiceLimitsCopyWithImpl<$Res>
+    implements _$VoiceLimitsCopyWith<$Res> {
+  __$VoiceLimitsCopyWithImpl(this._self, this._then);
+
+  final _VoiceLimits _self;
+  final $Res Function(_VoiceLimits) _then;
+
+/// Create a copy of VoiceLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,}) {
+  return _then(_VoiceLimits(
+dailyMinutesUsed: null == dailyMinutesUsed ? _self.dailyMinutesUsed : dailyMinutesUsed // ignore: cast_nullable_to_non_nullable
+as double,dailyMinutesLimit: null == dailyMinutesLimit ? _self.dailyMinutesLimit : dailyMinutesLimit // ignore: cast_nullable_to_non_nullable
+as double,monthlyMinutesUsed: null == monthlyMinutesUsed ? _self.monthlyMinutesUsed : monthlyMinutesUsed // ignore: cast_nullable_to_non_nullable
+as double,monthlyMinutesLimit: null == monthlyMinutesLimit ? _self.monthlyMinutesLimit : monthlyMinutesLimit // ignore: cast_nullable_to_non_nullable
+as double,maxSessionMinutes: null == maxSessionMinutes ? _self.maxSessionMinutes : maxSessionMinutes // ignore: cast_nullable_to_non_nullable
+as int,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$SessionLimits {
+
+ int get maxConcurrentSessions; String get sessionTimeout;
+/// Create a copy of SessionLimits
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SessionLimitsCopyWith<SessionLimits> get copyWith => _$SessionLimitsCopyWithImpl<SessionLimits>(this as SessionLimits, _$identity);
+
+  /// Serializes this SessionLimits to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SessionLimits&&(identical(other.maxConcurrentSessions, maxConcurrentSessions) || other.maxConcurrentSessions == maxConcurrentSessions)&&(identical(other.sessionTimeout, sessionTimeout) || other.sessionTimeout == sessionTimeout));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,maxConcurrentSessions,sessionTimeout);
+
+@override
+String toString() {
+  return 'SessionLimits(maxConcurrentSessions: $maxConcurrentSessions, sessionTimeout: $sessionTimeout)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $SessionLimitsCopyWith<$Res>  {
+  factory $SessionLimitsCopyWith(SessionLimits value, $Res Function(SessionLimits) _then) = _$SessionLimitsCopyWithImpl;
+@useResult
+$Res call({
+ int maxConcurrentSessions, String sessionTimeout
+});
+
+
+
+
+}
+/// @nodoc
+class _$SessionLimitsCopyWithImpl<$Res>
+    implements $SessionLimitsCopyWith<$Res> {
+  _$SessionLimitsCopyWithImpl(this._self, this._then);
+
+  final SessionLimits _self;
+  final $Res Function(SessionLimits) _then;
+
+/// Create a copy of SessionLimits
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? maxConcurrentSessions = null,Object? sessionTimeout = null,}) {
+  return _then(_self.copyWith(
+maxConcurrentSessions: null == maxConcurrentSessions ? _self.maxConcurrentSessions : maxConcurrentSessions // ignore: cast_nullable_to_non_nullable
+as int,sessionTimeout: null == sessionTimeout ? _self.sessionTimeout : sessionTimeout // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [SessionLimits].
+extension SessionLimitsPatterns on SessionLimits {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SessionLimits value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _SessionLimits() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SessionLimits value)  $default,){
+final _that = this;
+switch (_that) {
+case _SessionLimits():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SessionLimits value)?  $default,){
+final _that = this;
+switch (_that) {
+case _SessionLimits() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int maxConcurrentSessions,  String sessionTimeout)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _SessionLimits() when $default != null:
+return $default(_that.maxConcurrentSessions,_that.sessionTimeout);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int maxConcurrentSessions,  String sessionTimeout)  $default,) {final _that = this;
+switch (_that) {
+case _SessionLimits():
+return $default(_that.maxConcurrentSessions,_that.sessionTimeout);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int maxConcurrentSessions,  String sessionTimeout)?  $default,) {final _that = this;
+switch (_that) {
+case _SessionLimits() when $default != null:
+return $default(_that.maxConcurrentSessions,_that.sessionTimeout);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _SessionLimits implements SessionLimits {
+  const _SessionLimits({this.maxConcurrentSessions = 3, this.sessionTimeout = '30m'});
+  factory _SessionLimits.fromJson(Map<String, dynamic> json) => _$SessionLimitsFromJson(json);
+
+@override@JsonKey() final  int maxConcurrentSessions;
+@override@JsonKey() final  String sessionTimeout;
+
+/// Create a copy of SessionLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$SessionLimitsCopyWith<_SessionLimits> get copyWith => __$SessionLimitsCopyWithImpl<_SessionLimits>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$SessionLimitsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SessionLimits&&(identical(other.maxConcurrentSessions, maxConcurrentSessions) || other.maxConcurrentSessions == maxConcurrentSessions)&&(identical(other.sessionTimeout, sessionTimeout) || other.sessionTimeout == sessionTimeout));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,maxConcurrentSessions,sessionTimeout);
+
+@override
+String toString() {
+  return 'SessionLimits(maxConcurrentSessions: $maxConcurrentSessions, sessionTimeout: $sessionTimeout)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$SessionLimitsCopyWith<$Res> implements $SessionLimitsCopyWith<$Res> {
+  factory _$SessionLimitsCopyWith(_SessionLimits value, $Res Function(_SessionLimits) _then) = __$SessionLimitsCopyWithImpl;
+@override @useResult
+$Res call({
+ int maxConcurrentSessions, String sessionTimeout
+});
+
+
+
+
+}
+/// @nodoc
+class __$SessionLimitsCopyWithImpl<$Res>
+    implements _$SessionLimitsCopyWith<$Res> {
+  __$SessionLimitsCopyWithImpl(this._self, this._then);
+
+  final _SessionLimits _self;
+  final $Res Function(_SessionLimits) _then;
+
+/// Create a copy of SessionLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? maxConcurrentSessions = null,Object? sessionTimeout = null,}) {
+  return _then(_SessionLimits(
+maxConcurrentSessions: null == maxConcurrentSessions ? _self.maxConcurrentSessions : maxConcurrentSessions // ignore: cast_nullable_to_non_nullable
+as int,sessionTimeout: null == sessionTimeout ? _self.sessionTimeout : sessionTimeout // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$PaymentLimits {
+
+ int get minPurchaseAmount; int get maxPurchaseAmount; String get currency;
+/// Create a copy of PaymentLimits
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$PaymentLimitsCopyWith<PaymentLimits> get copyWith => _$PaymentLimitsCopyWithImpl<PaymentLimits>(this as PaymentLimits, _$identity);
+
+  /// Serializes this PaymentLimits to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaymentLimits&&(identical(other.minPurchaseAmount, minPurchaseAmount) || other.minPurchaseAmount == minPurchaseAmount)&&(identical(other.maxPurchaseAmount, maxPurchaseAmount) || other.maxPurchaseAmount == maxPurchaseAmount)&&(identical(other.currency, currency) || other.currency == currency));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,minPurchaseAmount,maxPurchaseAmount,currency);
+
+@override
+String toString() {
+  return 'PaymentLimits(minPurchaseAmount: $minPurchaseAmount, maxPurchaseAmount: $maxPurchaseAmount, currency: $currency)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $PaymentLimitsCopyWith<$Res>  {
+  factory $PaymentLimitsCopyWith(PaymentLimits value, $Res Function(PaymentLimits) _then) = _$PaymentLimitsCopyWithImpl;
+@useResult
+$Res call({
+ int minPurchaseAmount, int maxPurchaseAmount, String currency
+});
+
+
+
+
+}
+/// @nodoc
+class _$PaymentLimitsCopyWithImpl<$Res>
+    implements $PaymentLimitsCopyWith<$Res> {
+  _$PaymentLimitsCopyWithImpl(this._self, this._then);
+
+  final PaymentLimits _self;
+  final $Res Function(PaymentLimits) _then;
+
+/// Create a copy of PaymentLimits
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? minPurchaseAmount = null,Object? maxPurchaseAmount = null,Object? currency = null,}) {
+  return _then(_self.copyWith(
+minPurchaseAmount: null == minPurchaseAmount ? _self.minPurchaseAmount : minPurchaseAmount // ignore: cast_nullable_to_non_nullable
+as int,maxPurchaseAmount: null == maxPurchaseAmount ? _self.maxPurchaseAmount : maxPurchaseAmount // ignore: cast_nullable_to_non_nullable
+as int,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [PaymentLimits].
+extension PaymentLimitsPatterns on PaymentLimits {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PaymentLimits value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _PaymentLimits() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PaymentLimits value)  $default,){
+final _that = this;
+switch (_that) {
+case _PaymentLimits():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PaymentLimits value)?  $default,){
+final _that = this;
+switch (_that) {
+case _PaymentLimits() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int minPurchaseAmount,  int maxPurchaseAmount,  String currency)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _PaymentLimits() when $default != null:
+return $default(_that.minPurchaseAmount,_that.maxPurchaseAmount,_that.currency);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int minPurchaseAmount,  int maxPurchaseAmount,  String currency)  $default,) {final _that = this;
+switch (_that) {
+case _PaymentLimits():
+return $default(_that.minPurchaseAmount,_that.maxPurchaseAmount,_that.currency);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int minPurchaseAmount,  int maxPurchaseAmount,  String currency)?  $default,) {final _that = this;
+switch (_that) {
+case _PaymentLimits() when $default != null:
+return $default(_that.minPurchaseAmount,_that.maxPurchaseAmount,_that.currency);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _PaymentLimits implements PaymentLimits {
+  const _PaymentLimits({this.minPurchaseAmount = 5, this.maxPurchaseAmount = 10000, this.currency = 'USD'});
+  factory _PaymentLimits.fromJson(Map<String, dynamic> json) => _$PaymentLimitsFromJson(json);
+
+@override@JsonKey() final  int minPurchaseAmount;
+@override@JsonKey() final  int maxPurchaseAmount;
+@override@JsonKey() final  String currency;
+
+/// Create a copy of PaymentLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PaymentLimitsCopyWith<_PaymentLimits> get copyWith => __$PaymentLimitsCopyWithImpl<_PaymentLimits>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$PaymentLimitsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaymentLimits&&(identical(other.minPurchaseAmount, minPurchaseAmount) || other.minPurchaseAmount == minPurchaseAmount)&&(identical(other.maxPurchaseAmount, maxPurchaseAmount) || other.maxPurchaseAmount == maxPurchaseAmount)&&(identical(other.currency, currency) || other.currency == currency));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,minPurchaseAmount,maxPurchaseAmount,currency);
+
+@override
+String toString() {
+  return 'PaymentLimits(minPurchaseAmount: $minPurchaseAmount, maxPurchaseAmount: $maxPurchaseAmount, currency: $currency)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PaymentLimitsCopyWith<$Res> implements $PaymentLimitsCopyWith<$Res> {
+  factory _$PaymentLimitsCopyWith(_PaymentLimits value, $Res Function(_PaymentLimits) _then) = __$PaymentLimitsCopyWithImpl;
+@override @useResult
+$Res call({
+ int minPurchaseAmount, int maxPurchaseAmount, String currency
+});
+
+
+
+
+}
+/// @nodoc
+class __$PaymentLimitsCopyWithImpl<$Res>
+    implements _$PaymentLimitsCopyWith<$Res> {
+  __$PaymentLimitsCopyWithImpl(this._self, this._then);
+
+  final _PaymentLimits _self;
+  final $Res Function(_PaymentLimits) _then;
+
+/// Create a copy of PaymentLimits
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? minPurchaseAmount = null,Object? maxPurchaseAmount = null,Object? currency = null,}) {
+  return _then(_PaymentLimits(
+minPurchaseAmount: null == minPurchaseAmount ? _self.minPurchaseAmount : minPurchaseAmount // ignore: cast_nullable_to_non_nullable
+as int,maxPurchaseAmount: null == maxPurchaseAmount ? _self.maxPurchaseAmount : maxPurchaseAmount // ignore: cast_nullable_to_non_nullable
+as int,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

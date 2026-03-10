@@ -18,7 +18,6 @@ import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
 import '../../presentation/screens/notifications_screen.dart';
-import '../../presentation/screens/orders_screen.dart';
 import '../../presentation/screens/personalities_screen.dart';
 import '../../presentation/screens/playground_screen.dart';
 import '../../presentation/screens/privacy_policy_screen.dart';
@@ -39,6 +38,7 @@ import '../../presentation/screens/splash_screen.dart';
 import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_memory_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
+import '../../presentation/screens/usage_limits_screen.dart';
 import '../../presentation/screens/voice_sessions_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
@@ -93,7 +93,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 4. Security: Check if route requires a real account
       final needsAccount = [
         AppRoutes.editProfile.path,
-        AppRoutes.orders.path,
+        AppRoutes.usageLimits.path,
         AppRoutes.notifications.path,
         AppRoutes.privacySettings.path,
       ].contains(path);
@@ -179,8 +179,8 @@ class AppRouter {
       builder: (_, _) => const TermsOfServiceScreen(),
     ),
     GoRoute(
-      path: AppRoutes.orders.path,
-      builder: (_, _) => const OrdersScreen(),
+      path: AppRoutes.usageLimits.path,
+      builder: (_, _) => const UsageLimitsScreen(),
     ),
     GoRoute(
       path: AppRoutes.notifications.path,

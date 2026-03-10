@@ -75,9 +75,9 @@ const _$ToyStatusEnumMap = {
 
 _CreateToyRequest _$CreateToyRequestFromJson(Map<String, dynamic> json) =>
     _CreateToyRequest(
+      name: json['name'] as String,
       deviceId: json['deviceId'] as String?,
       macAddress: json['macAddress'] as String?,
-      name: json['name'] as String,
       model: json['model'] as String?,
       manufacturer: json['manufacturer'] as String?,
       status: $enumDecodeNullable(_$ToyStatusEnumMap, json['status']),
@@ -92,9 +92,9 @@ _CreateToyRequest _$CreateToyRequestFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$CreateToyRequestToJson(_CreateToyRequest instance) =>
     <String, dynamic>{
+      'name': instance.name,
       'deviceId': instance.deviceId,
       'macAddress': instance.macAddress,
-      'name': instance.name,
       'model': instance.model,
       'manufacturer': instance.manufacturer,
       'status': _$ToyStatusEnumMap[instance.status],
@@ -109,17 +109,17 @@ Map<String, dynamic> _$CreateToyRequestToJson(_CreateToyRequest instance) =>
 
 _AssignToyRequest _$AssignToyRequestFromJson(Map<String, dynamic> json) =>
     _AssignToyRequest(
+      userId: json['userId'] as String,
       macAddress: json['macAddress'] as String?,
       deviceId: json['deviceId'] as String?,
-      userId: json['userId'] as String,
       toyName: json['toyName'] as String?,
     );
 
 Map<String, dynamic> _$AssignToyRequestToJson(_AssignToyRequest instance) =>
     <String, dynamic>{
+      'userId': instance.userId,
       'macAddress': instance.macAddress,
       'deviceId': instance.deviceId,
-      'userId': instance.userId,
       'toyName': instance.toyName,
     };
 

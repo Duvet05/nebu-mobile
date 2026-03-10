@@ -57,6 +57,16 @@ class VoiceSessionService {
     return VoiceMetrics.fromJson(response);
   }
 
+  /// Get usage stats and limits for the current user.
+  /// Backend: GET /users/me/limits
+  Future<UserLimits> getUserLimits() async {
+    _logger.d('Fetching user limits');
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/users/me/limits',
+    );
+    return UserLimits.fromJson(response);
+  }
+
   /// Create a new voice session.
   /// Backend: POST /voice/sessions
   Future<VoiceSession> createSession({
