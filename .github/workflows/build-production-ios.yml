@@ -1,4 +1,4 @@
-name: Build iOS Production
+name: Build iOS
 
 on:
   push:
@@ -8,52 +8,26 @@ on:
 
 jobs:
   build-ios:
-    name: Build iOS IPA
+    name: Build iOS (no-codesign)
     runs-on: macos-latest
-    
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.6'
-          channel: 'stable'
+          channel: stable
           cache: true
-      
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install
-      
-      - name: Create .env file
-        run: touch .env
 
-      - name: Get dependencies
-        run: flutter pub get
-      
-      - name: Build iOS (no-codesign)
-        env:
-          API_URL: ${{ secrets.PROD_API_URL }}
-          API_KEY: ${{ secrets.PROD_API_KEY }}
-          WS_URL: ${{ secrets.PROD_WS_URL }}
-        run: |
-          flutter build ios \
-            --dart-define=ENV=production \
-            --dart-define=API_URL=$API_URL \
-            --dart-define=API_KEY=$API_KEY \
-            --dart-define=WS_URL=$WS_URL \
-            --dart-define=ENABLE_DEBUG_LOGS=false \
-            --dart-define=ENABLE_CRASH_REPORTING=true \
-            --obfuscate \
-            --split-debug-info=build/debug-info \
-            --release \
-            --no-codesign
-      
-      # Para firma automática, necesitas configurar certificados
-      # Ver: https://docs.github.com/en/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development
-      
+      - run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
       - name: Upload iOS build
         uses: actions/upload-artifact@v4
         with:
