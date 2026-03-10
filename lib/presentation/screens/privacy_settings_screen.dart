@@ -161,7 +161,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 ),
                 title: Text(
                   'privacy.delete_account'.tr(),
-                  style: TextStyle(color: context.colors.error),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: context.colors.error,
+                  ),
                 ),
                 subtitle: Text('privacy.delete_account_desc'.tr()),
                 trailing: Icon(
@@ -275,7 +277,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
         builder: (context) => AlertDialog(
           title: Text(
             'privacy.delete_account'.tr(),
-            style: TextStyle(color: context.colors.error),
+            style: context.textTheme.titleLarge?.copyWith(
+              color: context.colors.error,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,

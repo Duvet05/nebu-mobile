@@ -267,7 +267,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                 textCapitalization: TextCapitalization.words,
                                 decoration: InputDecoration(
                                   hintText: 'setup.toy_name.hint'.tr(),
-                                  hintStyle: TextStyle(
+                                  hintStyle: theme.textTheme.titleMedium?.copyWith(
                                     color: colorScheme.onSurfaceVariant
                                         .withValues(alpha: 0.5),
                                   ),

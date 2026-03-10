@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors.dart';
 
 class AppTheme {
@@ -57,83 +59,94 @@ class AppTheme {
   static TextTheme get _lightTextTheme => _getTextTheme(onBackgroundLight);
   static TextTheme get _darkTextTheme => _getTextTheme(onBackgroundDark);
 
-  static TextTheme _getTextTheme(Color textColor) => TextTheme(
-    displayLarge: TextStyle(
-      fontSize: 57,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    displayMedium: TextStyle(
-      fontSize: 45,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    displaySmall: TextStyle(
-      fontSize: 36,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    headlineLarge: TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.w600,
-      color: textColor,
-    ),
-    headlineMedium: TextStyle(
-      fontSize: 28,
-      fontWeight: FontWeight.w600,
-      color: textColor,
-    ),
-    headlineSmall: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.w600,
-      color: textColor,
-    ),
-    titleLarge: TextStyle(
-      fontSize: 22,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-    titleMedium: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-    titleSmall: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    bodySmall: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-      color: textColor,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-    labelMedium: TextStyle(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-    labelSmall: TextStyle(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-      color: textColor,
-    ),
-  );
+  /// Funnel Display for display/headline/title, Manrope for body/label.
+  static TextTheme _getTextTheme(Color textColor) {
+    final display = GoogleFonts.funnelDisplayTextTheme();
+    final body = GoogleFonts.manropeTextTheme();
+
+    return TextTheme(
+      // Display — Funnel Display
+      displayLarge: display.displayLarge!.copyWith(
+        fontSize: 57,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      displayMedium: display.displayMedium!.copyWith(
+        fontSize: 45,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      displaySmall: display.displaySmall!.copyWith(
+        fontSize: 36,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      // Headline — Funnel Display
+      headlineLarge: display.headlineLarge!.copyWith(
+        fontSize: 32,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      headlineMedium: display.headlineMedium!.copyWith(
+        fontSize: 28,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      headlineSmall: display.headlineSmall!.copyWith(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: textColor,
+      ),
+      // Title — Funnel Display
+      titleLarge: display.titleLarge!.copyWith(
+        fontSize: 22,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      titleMedium: display.titleMedium!.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      titleSmall: display.titleSmall!.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      // Body — Manrope
+      bodyLarge: body.bodyLarge!.copyWith(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      bodyMedium: body.bodyMedium!.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      bodySmall: body.bodySmall!.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: textColor,
+      ),
+      // Label — Manrope
+      labelLarge: body.labelLarge!.copyWith(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      labelMedium: body.labelMedium!.copyWith(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+      labelSmall: body.labelSmall!.copyWith(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        color: textColor,
+      ),
+    );
+  }
 
   // ----------------- Main Themes -----------------
 
@@ -218,7 +231,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      textStyle: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   );
 
@@ -232,7 +245,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
       side: BorderSide(color: colorScheme.primary, width: 2),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      textStyle: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   );
 
@@ -262,7 +275,7 @@ class AppTheme {
       borderSide: BorderSide(color: colorScheme.error),
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
+    hintStyle: GoogleFonts.manrope(color: colorScheme.onSurface.withValues(alpha: 0.5)),
   );
 
   // ----------------- Decorations & Shadows -----------------

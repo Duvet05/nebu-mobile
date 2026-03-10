@@ -127,9 +127,7 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
           widget.isTalking
               ? 'walkie_talkie.talking'.tr()
               : 'walkie_talkie.hold_to_talk'.tr(),
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+          style: context.textTheme.titleMedium?.copyWith(
             color: widget.isTalking
                 ? context.colors.primary
                 : context.colors.grey400,

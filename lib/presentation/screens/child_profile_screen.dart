@@ -123,7 +123,7 @@ class ChildProfileScreen extends ConsumerWidget {
             spacing: 8,
             children: [
               if (childPersonality != null)
-                _buildInfoChip(childPersonality, Icons.psychology, colorScheme),
+                _buildInfoChip(childPersonality, Icons.psychology, colorScheme, context.theme),
             ],
           ),
           const Spacer(),
@@ -160,12 +160,12 @@ class ChildProfileScreen extends ConsumerWidget {
     ),
   );
 
-  Widget _buildInfoChip(String label, IconData icon, ColorScheme colorScheme) =>
+  Widget _buildInfoChip(String label, IconData icon, ColorScheme colorScheme, ThemeData theme) =>
       Chip(
         avatar: Icon(icon, color: colorScheme.primary, size: 18),
         label: Text(label),
         backgroundColor: colorScheme.primary.withValues(alpha: 0.08),
-        labelStyle: TextStyle(
+        labelStyle: theme.textTheme.labelMedium?.copyWith(
           color: colorScheme.primary,
           fontWeight: FontWeight.w600,
         ),

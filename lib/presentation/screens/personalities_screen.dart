@@ -75,7 +75,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                   cat,
                 ).withValues(alpha: 0.2),
                 checkmarkColor: _getCategoryColor(context, cat),
-                labelStyle: TextStyle(
+                labelStyle: theme.textTheme.labelMedium?.copyWith(
                   color: isSelected
                       ? _getCategoryColor(context, cat)
                       : theme.colorScheme.onSurface,
