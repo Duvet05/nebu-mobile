@@ -270,4 +270,18 @@ class AuthService {
       return false;
     }
   }
+
+  // Email Verification
+  Future<bool> resendVerification(String email) async {
+    try {
+      await _dio.post<void>(
+        '/auth/resend-verification',
+        data: {'email': email},
+      );
+      return true;
+    } on DioException catch (e) {
+      _logger.e('Resend verification failed: ${e.message}');
+      return false;
+    }
+  }
 }

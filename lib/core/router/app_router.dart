@@ -11,6 +11,7 @@ import '../../presentation/providers/toy_provider.dart';
 import '../../presentation/screens/activity_log_screen.dart';
 import '../../presentation/screens/child_profile_screen.dart';
 import '../../presentation/screens/edit_profile_screen.dart';
+import '../../presentation/screens/email_verification_screen.dart';
 import '../../presentation/screens/health_check_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/knowledge_search_screen.dart';
@@ -75,6 +76,20 @@ final routerProvider = Provider<GoRouter>((ref) {
           path == AppRoutes.login.path ||
           path == AppRoutes.signUp.path ||
           path == AppRoutes.welcome.path;
+
+      // 2a. Email verification gate
+      final isVerifyPage = path == AppRoutes.verifyEmail.path;
+      if (user != null && user.emailVerified == false) {
+        if (!isVerifyPage) {
+          return AppRoutes.verifyEmail.path;
+        }
+        return null;
+      }
+      if (user != null && isVerifyPage) {
+        // Already verified — leave verification screen
+        return hasToys ? AppRoutes.home.path : AppRoutes.connectionSetup.path;
+      }
+
       if (user != null && isAuthPage) {
         // No toys yet → setup flow (works for all auth methods)
         if (!hasToys) {
@@ -127,6 +142,10 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.signUp.path,
       builder: (_, _) => const SignUpScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.verifyEmail.path,
+      builder: (_, _) => const EmailVerificationScreen(),
     ),
 
     ShellRoute(

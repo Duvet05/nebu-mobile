@@ -29,6 +29,7 @@ enum AppRoutes {
   toyMemory('/toy-memory'),
   personalities('/personalities'),
   playground('/playground'),
+  verifyEmail('/verify-email'),
   healthCheck('/health-check'),
   knowledgeSearch('/knowledge-search'),
   voiceHistory('/voice-history'),
