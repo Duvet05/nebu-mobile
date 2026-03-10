@@ -249,7 +249,10 @@ class _PersonalitySetupScreenState
                     ),
                     SizedBox(height: context.spacing.labelBottomMargin),
                     Text(
-                      personality.description,
+                      personality.description.replaceAll(
+                        '{name}',
+                        personality.name,
+                      ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: isSelected
                             ? context.colors.primary.withValues(alpha: 0.7)

@@ -101,6 +101,8 @@
       "hint": "Ingresa un nombre",
       "validation_empty": "Por favor ingresa un nombre para tu juguete",
       "validation_short": "El nombre debe tener al menos 2 caracteres",
+      "validation_long": "El nombre debe tener menos de 50 caracteres",
+      "validation_inappropriate": "Por favor elige un nombre apropiado",
       "next": "Siguiente",
       "error_not_authenticated": "Necesitas iniciar sesión para registrar un juguete",
       "device_registered": "¡Juguete registrado exitosamente!",

@@ -76,6 +76,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           path == AppRoutes.signUp.path ||
           path == AppRoutes.welcome.path;
       if (user != null && isAuthPage) {
+        // New registration → send to setup flow for first toy
+        final notifier = ref.read(authProvider.notifier);
+        if (notifier.justRegistered) {
+          notifier.justRegistered = false;
+          return AppRoutes.connectionSetup.path;
+        }
         return AppRoutes.home.path;
       }
 

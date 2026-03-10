@@ -81,6 +81,8 @@
       "hint": "Enter a name",
       "validation_empty": "Please enter a name for your toy",
       "validation_short": "Name must be at least 2 characters",
+      "validation_long": "Name must be less than 50 characters",
+      "validation_inappropriate": "Please choose an appropriate name",
       "next": "Next",
       "device_registered": "Toy registered successfully!",
       "error_registering_device": "Could not register the toy. Please try again."

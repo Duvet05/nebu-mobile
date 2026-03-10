@@ -244,7 +244,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
 
                     // Description
                     Text(
-                      personality.description,
+                      personality.description.replaceAll(
+                        '{name}',
+                        personality.name,
+                      ),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
@@ -275,7 +278,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             ),
                             Expanded(
                               child: Text(
-                                personality.greeting!,
+                                personality.greeting!.replaceAll(
+                                  '{name}',
+                                  personality.name,
+                                ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontStyle: FontStyle.italic,
                                 ),
@@ -598,7 +604,10 @@ class _PersonalityCard extends StatelessWidget {
               ),
             SizedBox(height: context.spacing.labelBottomMargin),
             Text(
-              personality.description,
+              personality.description.replaceAll(
+                '{name}',
+                personality.name,
+              ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

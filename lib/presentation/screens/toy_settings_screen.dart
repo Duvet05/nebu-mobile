@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/toy_status_helper.dart';
 import '../../core/utils/ui_helpers.dart';
@@ -350,12 +351,8 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                       controller: _nameController,
                       hint: 'toy_settings.toy_name_hint'.tr(),
                       prefixIcon: const Icon(Icons.label),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'toy_settings.toy_name_required'.tr();
-                        }
-                        return null;
-                      },
+                      validator: (value) =>
+                          ValidationRules.validateToyName(value)?.tr(),
                     ),
 
                     SizedBox(height: context.spacing.panelPadding),

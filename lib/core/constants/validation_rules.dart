@@ -1,3 +1,5 @@
+import '../utils/content_filter.dart';
+
 /// Centralized validation rules for the app.
 /// Use these instead of hardcoding validation values in screens/services.
 abstract final class ValidationRules {
@@ -35,4 +37,21 @@ abstract final class ValidationRules {
   // --- Toy ---
   static const int toyNameMinLength = 2;
   static const int toyNameMaxLength = 50;
+
+  /// Returns null if valid, or an i18n error key if invalid.
+  static String? validateToyName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'setup.toy_name.validation_empty';
+    }
+    if (value.trim().length < toyNameMinLength) {
+      return 'setup.toy_name.validation_short';
+    }
+    if (value.trim().length > toyNameMaxLength) {
+      return 'setup.toy_name.validation_long';
+    }
+    if (ContentFilter.containsProfanity(value)) {
+      return 'setup.toy_name.validation_inappropriate';
+    }
+    return null;
+  }
 }

@@ -40,7 +40,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
 
   void _addGreeting(Personality personality) {
     final greeting =
-        personality.greeting ??
+        personality.greeting?.replaceAll('{name}', personality.name) ??
         'playground.default_greeting'.tr(args: [personality.name]);
     setState(() {
       _messages.add(

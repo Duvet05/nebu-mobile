@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/storage_keys.dart';
@@ -13,6 +14,9 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(
 );
 
 class AuthNotifier extends AsyncNotifier<User?> {
+  /// True after register() succeeds — router uses this to redirect to setup.
+  bool justRegistered = false;
+
   @override
   Future<User?> build() => _loadUserFromStorage();
 
@@ -24,7 +28,10 @@ class AuthNotifier extends AsyncNotifier<User?> {
             .watch(secureStorageProvider)
             .read(key: StorageKeys.user);
         if (userJson != null) {
-          return User.fromJson(json.decode(userJson) as Map<String, dynamic>);
+          final user =
+              User.fromJson(json.decode(userJson) as Map<String, dynamic>);
+          unawaited(ref.read(firebasePushServiceProvider).initialize());
+          return user;
         }
       }
     } on Exception catch (e, st) {
@@ -57,6 +64,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
     await ref.read(activityMigrationServiceProvider).migrateIfNeeded(user.id);
+    unawaited(ref.read(firebasePushServiceProvider).initialize());
   }
 
   void clearError() {
@@ -74,13 +82,19 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> register({
     required String email,
     required String password,
-  }) => _authenticate((s) async {
-    final r = await s.register(
-      email: email,
-      password: password,
-    );
-    return (success: r.success, user: r.user, error: r.error);
-  });
+  }) async {
+    justRegistered = true;
+    await _authenticate((s) async {
+      final r = await s.register(
+        email: email,
+        password: password,
+      );
+      return (success: r.success, user: r.user, error: r.error);
+    });
+    if (state.hasError) {
+      justRegistered = false;
+    }
+  }
 
   Future<void> loginWithGoogle(String token) => _authenticate((s) async {
     final r = await s.googleLogin(token);

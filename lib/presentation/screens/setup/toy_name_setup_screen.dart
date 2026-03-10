@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
+import '../../../core/constants/validation_rules.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
@@ -296,17 +297,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                     context.spacing.gapXxl,
                                   ),
                                 ),
-                                validator: (value) {
-                                  if (value == null || value.trim().isEmpty) {
-                                    return 'setup.toy_name.validation_empty'
-                                        .tr();
-                                  }
-                                  if (value.trim().length < 2) {
-                                    return 'setup.toy_name.validation_short'
-                                        .tr();
-                                  }
-                                  return null;
-                                },
+                                validator: (value) =>
+                                    ValidationRules.validateToyName(value)
+                                        ?.tr(),
                               ),
                             ],
                           ),
