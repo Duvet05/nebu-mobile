@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/voice_session.dart';
 import '../providers/voice_session_provider.dart';
 import '../widgets/custom_button.dart';
@@ -387,7 +388,7 @@ class _SessionDetail extends ConsumerWidget {
             children: [
               if (session.emotion != null)
                 Chip(
-                  avatar: Icon(_emotionIcon(session.emotion!), size: 16),
+                  avatar: Icon(emotionIcon(session.emotion!), size: 16),
                   label: Text(
                     session.emotion!,
                     style: theme.textTheme.labelSmall,
@@ -478,14 +479,6 @@ class _SessionDetail extends ConsumerWidget {
     );
   }
 
-  IconData _emotionIcon(String emotion) => switch (emotion.toLowerCase()) {
-    'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
-    'sad' || 'triste' => Icons.sentiment_dissatisfied,
-    'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
-    'curious' || 'curioso' => Icons.psychology,
-    'excited' || 'emocionado' => Icons.celebration,
-    _ => Icons.sentiment_neutral,
-  };
 }
 
 // ─── Conversation Bubble ───

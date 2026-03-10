@@ -21,6 +21,16 @@ extension SnackBarExtension on BuildContext {
   }
 }
 
+/// Shared emotion → icon mapping for voice session displays.
+IconData emotionIcon(String emotion) => switch (emotion.toLowerCase()) {
+  'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
+  'sad' || 'triste' => Icons.sentiment_dissatisfied,
+  'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
+  'curious' || 'curioso' => Icons.psychology,
+  'excited' || 'emocionado' => Icons.celebration,
+  _ => Icons.sentiment_neutral,
+};
+
 Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,

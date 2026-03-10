@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/voice_session.dart';
 import '../providers/voice_session_provider.dart';
 
@@ -257,7 +258,7 @@ class _EmotionBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_emotionIcon(emotion), size: 14),
+          Icon(emotionIcon(emotion), size: 14),
           SizedBox(width: context.spacing.gapXs),
           Text(
             '$emotion ($count)',
@@ -267,13 +268,4 @@ class _EmotionBadge extends StatelessWidget {
       ),
     );
   }
-
-  IconData _emotionIcon(String emotion) => switch (emotion.toLowerCase()) {
-    'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
-    'sad' || 'triste' => Icons.sentiment_dissatisfied,
-    'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
-    'curious' || 'curioso' => Icons.psychology,
-    'excited' || 'emocionado' => Icons.celebration,
-    _ => Icons.sentiment_neutral,
-  };
 }

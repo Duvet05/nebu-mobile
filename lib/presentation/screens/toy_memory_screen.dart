@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../../data/models/conversation.dart';
 import '../../data/models/toy.dart';
 import '../providers/memory_provider.dart';
@@ -142,7 +143,7 @@ class _MemoryCard extends StatelessWidget {
             CircleAvatar(
               radius: 20,
               backgroundColor: emotionColor.withValues(alpha: 0.15),
-              child: Icon(_emotionIcon(emotion), color: emotionColor, size: 20),
+              child: Icon(emotionIcon(emotion), color: emotionColor, size: 20),
             ),
             SizedBox(width: context.spacing.paragraphBottomMarginSm),
             Expanded(
@@ -264,14 +265,6 @@ class _MemoryCard extends StatelessWidget {
         _ => context.colors.primary,
       };
 
-  IconData _emotionIcon(String emotion) => switch (emotion.toLowerCase()) {
-    'happy' || 'feliz' || 'joy' => Icons.sentiment_very_satisfied,
-    'sad' || 'triste' => Icons.sentiment_dissatisfied,
-    'angry' || 'enojado' => Icons.sentiment_very_dissatisfied,
-    'curious' || 'curioso' => Icons.psychology,
-    'excited' || 'emocionado' => Icons.celebration,
-    _ => Icons.sentiment_neutral,
-  };
 
   String _formatTimestamp(String iso) {
     final date = DateTime.tryParse(iso);
