@@ -389,23 +389,24 @@ class _UsageLimitsCard extends StatelessWidget {
               ),
               SizedBox(height: context.spacing.paragraphBottomMarginSm),
 
-              // Max session info
-              Row(
+              // Footer info
+              Wrap(
+                spacing: context.spacing.paragraphBottomMarginSm,
+                runSpacing: context.spacing.gapSm,
                 children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    size: 18,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  SizedBox(width: context.spacing.gapMd),
-                  Text(
-                    'limits.max_session'.tr(
+                  _InfoChip(
+                    icon: Icons.timer_outlined,
+                    label: 'limits.max_session'.tr(
                       args: ['${voice.maxSessionMinutes}'],
                     ),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
                   ),
+                  if (voice.toyCount > 0)
+                    _InfoChip(
+                      icon: Icons.smart_toy,
+                      label: 'limits.toy_count'.tr(
+                        args: ['${voice.toyCount}'],
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -476,6 +477,28 @@ class _UsageBar extends StatelessWidget {
       ],
     );
   }
+}
+
+class _InfoChip extends StatelessWidget {
+  const _InfoChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 14, color: context.theme.colorScheme.onSurfaceVariant),
+      SizedBox(width: context.spacing.gapXs),
+      Text(
+        label,
+        style: context.theme.textTheme.bodySmall?.copyWith(
+          color: context.theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    ],
+  );
 }
 
 // ─── Error Card ───

@@ -262,6 +262,7 @@
     "monthly_usage": "This month",
     "minutes_of": "{} of {} min",
     "max_session": "Max {} min per session",
+    "toy_count": "{} toy(s) linked",
     "metrics_error": "Could not load usage data.",
     "sessions_error": "Could not load session data."
   },

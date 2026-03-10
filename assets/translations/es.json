@@ -352,6 +352,7 @@
     "monthly_usage": "Este mes",
     "minutes_of": "{} de {} min",
     "max_session": "Máx {} min por sesión",
+    "toy_count": "{} juguete(s) vinculados",
     "metrics_error": "No se pudo cargar datos de uso.",
     "sessions_error": "No se pudo cargar datos de sesiones."
   },

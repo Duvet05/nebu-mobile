@@ -90,6 +90,7 @@ abstract class VoiceLimits with _$VoiceLimits {
     @Default(0) double monthlyMinutesUsed,
     @Default(300) double monthlyMinutesLimit,
     @Default(15) int maxSessionMinutes,
+    @Default(0) int toyCount,
   }) = _VoiceLimits;
 
   factory VoiceLimits.fromJson(Map<String, dynamic> json) =>

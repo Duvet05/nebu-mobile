@@ -112,6 +112,7 @@ _VoiceLimits _$VoiceLimitsFromJson(Map<String, dynamic> json) => _VoiceLimits(
   monthlyMinutesUsed: (json['monthlyMinutesUsed'] as num?)?.toDouble() ?? 0,
   monthlyMinutesLimit: (json['monthlyMinutesLimit'] as num?)?.toDouble() ?? 300,
   maxSessionMinutes: (json['maxSessionMinutes'] as num?)?.toInt() ?? 15,
+  toyCount: (json['toyCount'] as num?)?.toInt() ?? 0,
 );
 
 Map<String, dynamic> _$VoiceLimitsToJson(_VoiceLimits instance) =>
@@ -121,6 +122,7 @@ Map<String, dynamic> _$VoiceLimitsToJson(_VoiceLimits instance) =>
       'monthlyMinutesUsed': instance.monthlyMinutesUsed,
       'monthlyMinutesLimit': instance.monthlyMinutesLimit,
       'maxSessionMinutes': instance.maxSessionMinutes,
+      'toyCount': instance.toyCount,
     };
 
 _SessionLimits _$SessionLimitsFromJson(Map<String, dynamic> json) =>

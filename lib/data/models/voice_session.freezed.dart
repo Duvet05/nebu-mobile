@@ -1212,7 +1212,7 @@ $PaymentLimitsCopyWith<$Res> get payments {
 /// @nodoc
 mixin _$VoiceLimits {
 
- double get dailyMinutesUsed; double get dailyMinutesLimit; double get monthlyMinutesUsed; double get monthlyMinutesLimit; int get maxSessionMinutes;
+ double get dailyMinutesUsed; double get dailyMinutesLimit; double get monthlyMinutesUsed; double get monthlyMinutesLimit; int get maxSessionMinutes; int get toyCount;
 /// Create a copy of VoiceLimits
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1225,16 +1225,16 @@ $VoiceLimitsCopyWith<VoiceLimits> get copyWith => _$VoiceLimitsCopyWithImpl<Voic
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes)&&(identical(other.toyCount, toyCount) || other.toyCount == toyCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes);
+int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes,toyCount);
 
 @override
 String toString() {
-  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes)';
+  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes, toyCount: $toyCount)';
 }
 
 
@@ -1245,7 +1245,7 @@ abstract mixin class $VoiceLimitsCopyWith<$Res>  {
   factory $VoiceLimitsCopyWith(VoiceLimits value, $Res Function(VoiceLimits) _then) = _$VoiceLimitsCopyWithImpl;
 @useResult
 $Res call({
- double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes
+ double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes, int toyCount
 });
 
 
@@ -1262,13 +1262,14 @@ class _$VoiceLimitsCopyWithImpl<$Res>
 
 /// Create a copy of VoiceLimits
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,Object? toyCount = null,}) {
   return _then(_self.copyWith(
 dailyMinutesUsed: null == dailyMinutesUsed ? _self.dailyMinutesUsed : dailyMinutesUsed // ignore: cast_nullable_to_non_nullable
 as double,dailyMinutesLimit: null == dailyMinutesLimit ? _self.dailyMinutesLimit : dailyMinutesLimit // ignore: cast_nullable_to_non_nullable
 as double,monthlyMinutesUsed: null == monthlyMinutesUsed ? _self.monthlyMinutesUsed : monthlyMinutesUsed // ignore: cast_nullable_to_non_nullable
 as double,monthlyMinutesLimit: null == monthlyMinutesLimit ? _self.monthlyMinutesLimit : monthlyMinutesLimit // ignore: cast_nullable_to_non_nullable
 as double,maxSessionMinutes: null == maxSessionMinutes ? _self.maxSessionMinutes : maxSessionMinutes // ignore: cast_nullable_to_non_nullable
+as int,toyCount: null == toyCount ? _self.toyCount : toyCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1354,10 +1355,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes,  int toyCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VoiceLimits() when $default != null:
-return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes,_that.toyCount);case _:
   return orElse();
 
 }
@@ -1375,10 +1376,10 @@ return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinu
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes,  int toyCount)  $default,) {final _that = this;
 switch (_that) {
 case _VoiceLimits():
-return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes,_that.toyCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1395,10 +1396,10 @@ return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinu
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double dailyMinutesUsed,  double dailyMinutesLimit,  double monthlyMinutesUsed,  double monthlyMinutesLimit,  int maxSessionMinutes,  int toyCount)?  $default,) {final _that = this;
 switch (_that) {
 case _VoiceLimits() when $default != null:
-return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes);case _:
+return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinutesUsed,_that.monthlyMinutesLimit,_that.maxSessionMinutes,_that.toyCount);case _:
   return null;
 
 }
@@ -1410,7 +1411,7 @@ return $default(_that.dailyMinutesUsed,_that.dailyMinutesLimit,_that.monthlyMinu
 @JsonSerializable()
 
 class _VoiceLimits implements VoiceLimits {
-  const _VoiceLimits({this.dailyMinutesUsed = 0, this.dailyMinutesLimit = 60, this.monthlyMinutesUsed = 0, this.monthlyMinutesLimit = 300, this.maxSessionMinutes = 15});
+  const _VoiceLimits({this.dailyMinutesUsed = 0, this.dailyMinutesLimit = 60, this.monthlyMinutesUsed = 0, this.monthlyMinutesLimit = 300, this.maxSessionMinutes = 15, this.toyCount = 0});
   factory _VoiceLimits.fromJson(Map<String, dynamic> json) => _$VoiceLimitsFromJson(json);
 
 @override@JsonKey() final  double dailyMinutesUsed;
@@ -1418,6 +1419,7 @@ class _VoiceLimits implements VoiceLimits {
 @override@JsonKey() final  double monthlyMinutesUsed;
 @override@JsonKey() final  double monthlyMinutesLimit;
 @override@JsonKey() final  int maxSessionMinutes;
+@override@JsonKey() final  int toyCount;
 
 /// Create a copy of VoiceLimits
 /// with the given fields replaced by the non-null parameter values.
@@ -1432,16 +1434,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceLimits&&(identical(other.dailyMinutesUsed, dailyMinutesUsed) || other.dailyMinutesUsed == dailyMinutesUsed)&&(identical(other.dailyMinutesLimit, dailyMinutesLimit) || other.dailyMinutesLimit == dailyMinutesLimit)&&(identical(other.monthlyMinutesUsed, monthlyMinutesUsed) || other.monthlyMinutesUsed == monthlyMinutesUsed)&&(identical(other.monthlyMinutesLimit, monthlyMinutesLimit) || other.monthlyMinutesLimit == monthlyMinutesLimit)&&(identical(other.maxSessionMinutes, maxSessionMinutes) || other.maxSessionMinutes == maxSessionMinutes)&&(identical(other.toyCount, toyCount) || other.toyCount == toyCount));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes);
+int get hashCode => Object.hash(runtimeType,dailyMinutesUsed,dailyMinutesLimit,monthlyMinutesUsed,monthlyMinutesLimit,maxSessionMinutes,toyCount);
 
 @override
 String toString() {
-  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes)';
+  return 'VoiceLimits(dailyMinutesUsed: $dailyMinutesUsed, dailyMinutesLimit: $dailyMinutesLimit, monthlyMinutesUsed: $monthlyMinutesUsed, monthlyMinutesLimit: $monthlyMinutesLimit, maxSessionMinutes: $maxSessionMinutes, toyCount: $toyCount)';
 }
 
 
@@ -1452,7 +1454,7 @@ abstract mixin class _$VoiceLimitsCopyWith<$Res> implements $VoiceLimitsCopyWith
   factory _$VoiceLimitsCopyWith(_VoiceLimits value, $Res Function(_VoiceLimits) _then) = __$VoiceLimitsCopyWithImpl;
 @override @useResult
 $Res call({
- double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes
+ double dailyMinutesUsed, double dailyMinutesLimit, double monthlyMinutesUsed, double monthlyMinutesLimit, int maxSessionMinutes, int toyCount
 });
 
 
@@ -1469,13 +1471,14 @@ class __$VoiceLimitsCopyWithImpl<$Res>
 
 /// Create a copy of VoiceLimits
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? dailyMinutesUsed = null,Object? dailyMinutesLimit = null,Object? monthlyMinutesUsed = null,Object? monthlyMinutesLimit = null,Object? maxSessionMinutes = null,Object? toyCount = null,}) {
   return _then(_VoiceLimits(
 dailyMinutesUsed: null == dailyMinutesUsed ? _self.dailyMinutesUsed : dailyMinutesUsed // ignore: cast_nullable_to_non_nullable
 as double,dailyMinutesLimit: null == dailyMinutesLimit ? _self.dailyMinutesLimit : dailyMinutesLimit // ignore: cast_nullable_to_non_nullable
 as double,monthlyMinutesUsed: null == monthlyMinutesUsed ? _self.monthlyMinutesUsed : monthlyMinutesUsed // ignore: cast_nullable_to_non_nullable
 as double,monthlyMinutesLimit: null == monthlyMinutesLimit ? _self.monthlyMinutesLimit : monthlyMinutesLimit // ignore: cast_nullable_to_non_nullable
 as double,maxSessionMinutes: null == maxSessionMinutes ? _self.maxSessionMinutes : maxSessionMinutes // ignore: cast_nullable_to_non_nullable
+as int,toyCount: null == toyCount ? _self.toyCount : toyCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
