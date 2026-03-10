@@ -486,56 +486,41 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     ),
   );
 
-  Widget _buildEmptyState(BuildContext context, ThemeData theme) => Container(
-    padding: EdgeInsets.all(context.spacing.paragraphBottomMargin),
-    decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [
-          context.colors.primary.withValues(alpha: 0.04),
-          context.colors.secondary.withValues(alpha: 0.05),
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      borderRadius: context.radius.panel,
-      border: Border.all(
-        color: theme.dividerColor.withValues(alpha: 0.3),
-        width: 2,
-      ),
-    ),
+  Widget _buildEmptyState(BuildContext context, ThemeData theme) => Center(
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          width: 100,
-          height: 100,
+          width: 150,
+          height: 150,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                context.colors.primary.withValues(alpha: 0.08),
-                context.colors.secondary.withValues(alpha: 0.08),
-              ],
-            ),
             shape: BoxShape.circle,
+            color: theme.colorScheme.surfaceContainerHighest,
           ),
           child: Icon(
             Icons.smart_toy_outlined,
-            size: 48,
-            color: context.colors.primary.withValues(alpha: 0.5),
+            size: 80,
+            color: context.colors.primary,
           ),
         ),
-        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        SizedBox(height: context.spacing.paragraphBottomMargin),
         Text(
           'toys.no_toys_title'.tr(),
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: theme.textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
-        SizedBox(height: context.spacing.titleBottomMarginSm),
-        Text(
-          'toys.no_toys_subtitle'.tr(),
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.largePageBottomMargin,
+          ),
+          child: Text(
+            'toys.no_toys_subtitle'.tr(),
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMargin),
