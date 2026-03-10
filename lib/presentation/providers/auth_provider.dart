@@ -14,9 +14,6 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(
 );
 
 class AuthNotifier extends AsyncNotifier<User?> {
-  /// True after register() succeeds — router uses this to redirect to setup.
-  bool justRegistered = false;
-
   @override
   Future<User?> build() => _loadUserFromStorage();
 
@@ -82,19 +79,13 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<void> register({
     required String email,
     required String password,
-  }) async {
-    justRegistered = true;
-    await _authenticate((s) async {
-      final r = await s.register(
-        email: email,
-        password: password,
-      );
-      return (success: r.success, user: r.user, error: r.error);
-    });
-    if (state.hasError) {
-      justRegistered = false;
-    }
-  }
+  }) => _authenticate((s) async {
+    final r = await s.register(
+      email: email,
+      password: password,
+    );
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
   Future<void> loginWithGoogle(String token) => _authenticate((s) async {
     final r = await s.googleLogin(token);
