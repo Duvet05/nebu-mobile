@@ -36,21 +36,12 @@ abstract class Personality with _$Personality {
       _$PersonalityFromJson(json);
 }
 
-abstract final class PersonalityCategories {
-  static const all = 'all';
-  static const educativo = 'educativo';
-  static const entretenimiento = 'entretenimiento';
-  static const companero = 'companero';
-  static const creativo = 'creativo';
-  static const aventura = 'aventura';
-  static const bienestar = 'bienestar';
-  static const values = [
-    all,
-    educativo,
-    entretenimiento,
-    companero,
-    creativo,
-    aventura,
-    bienestar,
-  ];
+extension PersonalityListX on List<Personality> {
+  /// Extracts unique categories from the personality list, sorted.
+  List<String> get uniqueCategories =>
+      map((p) => p.category?.toLowerCase())
+          .whereType<String>()
+          .toSet()
+          .toList()
+        ..sort();
 }

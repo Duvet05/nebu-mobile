@@ -681,7 +681,9 @@
     "category_companero": "Companero",
     "category_creativo": "Creativo",
     "category_aventura": "Aventura",
-    "category_bienestar": "Bienestar"
+    "category_bienestar": "Bienestar",
+    "category_cultural": "Cultural",
+    "category_general": "General"
   },
   "playground": {
     "title": "Playground",

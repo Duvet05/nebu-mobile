@@ -21,7 +21,8 @@ class PersonalitiesScreen extends ConsumerStatefulWidget {
 }
 
 class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
-  String _selectedCategory = PersonalityCategories.all;
+  static const _allFilter = 'all';
+  String _selectedCategory = _allFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,8 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     List<Personality> personalities,
     ThemeData theme,
   ) {
-    final filtered = _selectedCategory == PersonalityCategories.all
+    final categories = [_allFilter, ...personalities.uniqueCategories];
+    final filtered = _selectedCategory == _allFilter
         ? personalities
         : personalities
               .where((p) => p.category?.toLowerCase() == _selectedCategory)
@@ -51,7 +53,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
 
     return Column(
       children: [
-        // Category filter chips
+        // Category filter chips — derived from data
         SizedBox(
           height: 56,
           child: ListView.separated(
@@ -60,14 +62,14 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
               horizontal: context.spacing.alertPadding,
               vertical: context.spacing.labelBottomMargin,
             ),
-            itemCount: PersonalityCategories.values.length,
+            itemCount: categories.length,
             separatorBuilder: (_, _) =>
                 SizedBox(width: context.spacing.labelBottomMargin),
             itemBuilder: (context, index) {
-              final cat = PersonalityCategories.values[index];
+              final cat = categories[index];
               final isSelected = _selectedCategory == cat;
               return FilterChip(
-                label: Text('personalities.category_$cat'.tr()),
+                label: Text(_categoryLabel(cat)),
                 selected: isSelected,
                 onSelected: (_) => setState(() => _selectedCategory = cat),
                 selectedColor: _getCategoryColor(
@@ -510,27 +512,6 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     }
   }
 
-  Color _getCategoryColor(BuildContext context, String category) =>
-      switch (category.toLowerCase()) {
-        'educativo' => context.colors.primary,
-        'entretenimiento' => context.colors.secondary,
-        'companero' => context.colors.success,
-        'creativo' => context.colors.warning,
-        'aventura' => context.colors.error,
-        'bienestar' => context.colors.primary,
-        _ => context.colors.secondary,
-      };
-
-  IconData _getCategoryIcon(String category) =>
-      switch (category.toLowerCase()) {
-        'educativo' => Icons.school,
-        'entretenimiento' => Icons.theater_comedy,
-        'companero' => Icons.favorite,
-        'creativo' => Icons.palette,
-        'aventura' => Icons.explore,
-        'bienestar' => Icons.spa,
-        _ => Icons.psychology,
-      };
 }
 
 class _PersonalityCard extends StatelessWidget {
@@ -595,7 +576,7 @@ class _PersonalityCard extends StatelessWidget {
                   borderRadius: context.radius.tile,
                 ),
                 child: Text(
-                  'personalities.category_${personality.category}'.tr(),
+                  _categoryLabel(personality.category!),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: catColor,
                     fontWeight: FontWeight.w600,
@@ -620,26 +601,41 @@ class _PersonalityCard extends StatelessWidget {
       ),
     );
   }
-
-  Color _getCategoryColor(BuildContext context, String category) =>
-      switch (category.toLowerCase()) {
-        'educativo' => context.colors.primary,
-        'entretenimiento' => context.colors.secondary,
-        'companero' => context.colors.success,
-        'creativo' => context.colors.warning,
-        'aventura' => context.colors.error,
-        'bienestar' => context.colors.primary,
-        _ => context.colors.secondary,
-      };
-
-  IconData _getCategoryIcon(String category) =>
-      switch (category.toLowerCase()) {
-        'educativo' => Icons.school,
-        'entretenimiento' => Icons.theater_comedy,
-        'companero' => Icons.favorite,
-        'creativo' => Icons.palette,
-        'aventura' => Icons.explore,
-        'bienestar' => Icons.spa,
-        _ => Icons.psychology,
-      };
 }
+
+// ── Shared helpers ──────────────────────────────────────────────────────
+
+/// Translated label; falls back to capitalized category name.
+String _categoryLabel(String category) {
+  final key = 'personalities.category_$category';
+  final translated = key.tr();
+  return translated == key
+      ? category[0].toUpperCase() + category.substring(1)
+      : translated;
+}
+
+Color _getCategoryColor(BuildContext context, String category) =>
+    switch (category.toLowerCase()) {
+      'educativo' => context.colors.primary,
+      'entretenimiento' => context.colors.secondary,
+      'companero' => context.colors.success,
+      'creativo' => context.colors.warning,
+      'aventura' => context.colors.error,
+      'bienestar' => context.colors.primary,
+      'cultural' => context.colors.success,
+      'general' => context.colors.secondary,
+      _ => context.colors.secondary,
+    };
+
+IconData _getCategoryIcon(String category) =>
+    switch (category.toLowerCase()) {
+      'educativo' => Icons.school,
+      'entretenimiento' => Icons.theater_comedy,
+      'companero' => Icons.favorite,
+      'creativo' => Icons.palette,
+      'aventura' => Icons.explore,
+      'bienestar' => Icons.spa,
+      'cultural' => Icons.museum,
+      'general' => Icons.emoji_emotions,
+      _ => Icons.psychology,
+    };

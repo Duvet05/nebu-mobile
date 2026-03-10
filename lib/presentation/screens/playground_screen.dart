@@ -89,26 +89,12 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
   String _generateLocalResponse(String userMessage, Personality personality) {
     final category = personality.category?.toLowerCase() ?? '';
 
-    return switch (category) {
-      PersonalityCategories.educativo => 'playground.response_educativo'.tr(
-        args: [userMessage],
-      ),
-      PersonalityCategories.entretenimiento =>
-        'playground.response_entretenimiento'.tr(args: [userMessage]),
-      PersonalityCategories.companero => 'playground.response_companero'.tr(
-        args: [userMessage],
-      ),
-      PersonalityCategories.creativo => 'playground.response_creativo'.tr(
-        args: [userMessage],
-      ),
-      PersonalityCategories.aventura => 'playground.response_aventura'.tr(
-        args: [userMessage],
-      ),
-      PersonalityCategories.bienestar => 'playground.response_bienestar'.tr(
-        args: [userMessage],
-      ),
-      _ => 'playground.response_default'.tr(args: [personality.name]),
-    };
+    final key = 'playground.response_$category';
+    final translated = key.tr(args: [userMessage]);
+    // If no translation exists for this category, use default
+    return translated == key
+        ? 'playground.response_default'.tr(args: [personality.name])
+        : translated;
   }
 
   void _scrollToBottom() {
