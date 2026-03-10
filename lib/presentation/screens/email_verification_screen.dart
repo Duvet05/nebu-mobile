@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,25 +24,34 @@ class EmailVerificationScreen extends ConsumerStatefulWidget {
 class _EmailVerificationScreenState
     extends ConsumerState<EmailVerificationScreen> {
   bool _isResending = false;
-  bool _resendSuccess = false;
+  bool _isLoggingOut = false;
+  _ResendStatus _resendStatus = _ResendStatus.idle;
   int _cooldownSeconds = 0;
+  Timer? _cooldownTimer;
 
   String get _email =>
       widget.email ?? ref.read(authProvider).value?.email ?? '';
 
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    super.dispose();
+  }
+
   Future<void> _handleResend() async {
-    if (_isResending || _cooldownSeconds > 0 || _email.isEmpty) {
+    final email = _email;
+    if (_isResending || _cooldownSeconds > 0 || email.isEmpty) {
       return;
     }
 
     setState(() {
       _isResending = true;
-      _resendSuccess = false;
+      _resendStatus = _ResendStatus.idle;
     });
 
     final success = await ref
         .read(authProvider.notifier)
-        .resendVerification(_email);
+        .resendVerification(email);
 
     if (!mounted) {
       return;
@@ -48,7 +59,7 @@ class _EmailVerificationScreenState
 
     setState(() {
       _isResending = false;
-      _resendSuccess = success;
+      _resendStatus = success ? _ResendStatus.success : _ResendStatus.error;
       if (success) {
         _cooldownSeconds = 60;
       }
@@ -60,18 +71,24 @@ class _EmailVerificationScreenState
   }
 
   void _startCooldown() {
-    Future.delayed(const Duration(seconds: 1), () {
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted || _cooldownSeconds <= 0) {
+        timer.cancel();
         return;
       }
       setState(() => _cooldownSeconds--);
-      if (_cooldownSeconds > 0) {
-        _startCooldown();
+      if (_cooldownSeconds <= 0) {
+        timer.cancel();
       }
     });
   }
 
   Future<void> _handleLogout() async {
+    if (_isLoggingOut) {
+      return;
+    }
+    setState(() => _isLoggingOut = true);
     await ref.read(authProvider.notifier).logout();
     if (!mounted) {
       return;
@@ -94,19 +111,21 @@ class _EmailVerificationScreenState
               SizedBox(height: context.spacing.largePageBottomMargin),
 
               // Mail icon
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: context.theme.colorScheme.primary.withValues(
-                    alpha: 0.1,
+              ExcludeSemantics(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: context.theme.colorScheme.primary.withValues(
+                      alpha: 0.1,
+                    ),
+                    shape: BoxShape.circle,
                   ),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.mark_email_unread_outlined,
-                  size: 48,
-                  color: context.theme.colorScheme.primary,
+                  child: Icon(
+                    Icons.mark_email_unread_outlined,
+                    size: 48,
+                    color: context.theme.colorScheme.primary,
+                  ),
                 ),
               ),
 
@@ -126,18 +145,27 @@ class _EmailVerificationScreenState
               SizedBox(height: context.spacing.titleBottomMargin),
 
               // Subtitle with email
-              Text(
-                'auth.verify_email_subtitle'.tr(args: [email]),
-                style: textTheme.bodyLarge?.copyWith(
-                  color: context.colors.grey400,
+              if (email.isNotEmpty)
+                Text(
+                  'auth.verify_email_subtitle'.tr(args: [email]),
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: context.colors.grey400,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+              else
+                Text(
+                  'auth.verify_email_subtitle_no_email'.tr(),
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: context.colors.grey400,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
 
               SizedBox(height: context.spacing.largePageBottomMargin),
 
               // Success banner
-              if (_resendSuccess) ...[
+              if (_resendStatus == _ResendStatus.success) ...[
                 Container(
                   padding: EdgeInsets.all(context.spacing.alertPadding),
                   decoration: BoxDecoration(
@@ -168,6 +196,14 @@ class _EmailVerificationScreenState
                 SizedBox(height: context.spacing.titleBottomMargin),
               ],
 
+              // Error banner
+              if (_resendStatus == _ResendStatus.error) ...[
+                AuthErrorBanner(
+                  message: 'auth.verify_email_resend_error'.tr(),
+                ),
+                SizedBox(height: context.spacing.titleBottomMargin),
+              ],
+
               const Spacer(),
 
               // Resend button
@@ -186,6 +222,7 @@ class _EmailVerificationScreenState
               AuthSwitchLink(
                 prompt: 'auth.verify_email_wrong_email'.tr(),
                 action: 'auth.verify_email_logout'.tr(),
+                enabled: !_isLoggingOut,
                 onTap: _handleLogout,
               ),
 
@@ -197,3 +234,5 @@ class _EmailVerificationScreenState
     );
   }
 }
+
+enum _ResendStatus { idle, success, error }

@@ -64,22 +64,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       final path = state.matchedLocation;
       final hasToys = ref.read(hasLocalToysProvider).value ?? false;
 
-      // 1. Splash Logic
-      if (path == AppRoutes.splash.path) {
-        return (user != null || hasToys)
-            ? AppRoutes.home.path
-            : AppRoutes.welcome.path;
-      }
-
-      // 2. Public / Auth Routes
+      final isVerifyPage = path == AppRoutes.verifyEmail.path;
       final isAuthPage =
           path == AppRoutes.login.path ||
           path == AppRoutes.signUp.path ||
           path == AppRoutes.welcome.path;
 
-      // 2a. Email verification gate
-      final isVerifyPage = path == AppRoutes.verifyEmail.path;
-      if (user != null && user.emailVerified == false) {
+      // 1. Email verification gate (runs before splash to prevent bypass)
+      //    emailVerified != true catches both false and null (social login edge case)
+      if (user != null && user.emailVerified != true) {
         if (!isVerifyPage) {
           return AppRoutes.verifyEmail.path;
         }
@@ -90,6 +83,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         return hasToys ? AppRoutes.home.path : AppRoutes.connectionSetup.path;
       }
 
+      // 2. Splash Logic
+      if (path == AppRoutes.splash.path) {
+        return (user != null || hasToys)
+            ? AppRoutes.home.path
+            : AppRoutes.welcome.path;
+      }
+
+      // 3. Auth Routes
       if (user != null && isAuthPage) {
         // No toys yet → setup flow (works for all auth methods)
         if (!hasToys) {

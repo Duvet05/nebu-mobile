@@ -14,6 +14,7 @@ import '../widgets/auth_widgets.dart';
 const _pendingVerificationKeywords = [
   'verificación',
   'verification',
+  'verify',
   'pending',
   'pendiente',
 ];
@@ -69,10 +70,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       );
       if (isPendingVerification) {
         ref.read(authProvider.notifier).clearError();
-        context.go(
-          AppRoutes.verifyEmail.path,
-          extra: _identifierController.text.trim(),
-        );
+        // Only pass the identifier as email if it looks like an email address
+        final identifier = _identifierController.text.trim();
+        final email = identifier.contains('@') ? identifier : null;
+        context.go(AppRoutes.verifyEmail.path, extra: email);
       }
     }
   }

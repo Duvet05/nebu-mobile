@@ -123,50 +123,62 @@ class AuthPrimaryButton extends StatelessWidget {
   final bool isLoading;
   final VoidCallback? onPressed;
 
+  bool get _isEnabled => !isLoading && onPressed != null;
+
   @override
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: isLoading ? null : onPressed,
-        borderRadius: context.radius.panel,
-        child: Container(
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [context.colors.primary100, context.colors.primary],
-            ),
+    return Semantics(
+      button: true,
+      enabled: _isEnabled,
+      label: text,
+      child: Opacity(
+        opacity: _isEnabled ? 1.0 : 0.5,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _isEnabled ? onPressed : null,
             borderRadius: context.radius.panel,
-            boxShadow: [
-              BoxShadow(
-                color: context.colors.primary.withValues(alpha: 0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+            child: Container(
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [context.colors.primary100, context.colors.primary],
+                ),
+                borderRadius: context.radius.panel,
+                boxShadow: _isEnabled
+                    ? [
+                        BoxShadow(
+                          color: context.colors.primary.withValues(alpha: 0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ]
+                    : null,
               ),
-            ],
-          ),
-          child: Center(
-            child: isLoading
-                ? SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        context.colors.textOnFilled,
+              child: Center(
+                child: isLoading
+                    ? SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            context.colors.textOnFilled,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        text,
+                        style: textTheme.titleMedium?.copyWith(
+                          color: context.colors.textOnFilled,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.3,
+                        ),
                       ),
-                    ),
-                  )
-                : Text(
-                    text,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: context.colors.textOnFilled,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
+              ),
+            ),
           ),
         ),
       ),
