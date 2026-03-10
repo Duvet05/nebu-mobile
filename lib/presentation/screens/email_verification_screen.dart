@@ -9,7 +9,10 @@ import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
 class EmailVerificationScreen extends ConsumerStatefulWidget {
-  const EmailVerificationScreen({super.key});
+  const EmailVerificationScreen({this.email, super.key});
+
+  /// Email passed from login rejection (when user is null in auth state).
+  final String? email;
 
   @override
   ConsumerState<EmailVerificationScreen> createState() =>
@@ -22,13 +25,11 @@ class _EmailVerificationScreenState
   bool _resendSuccess = false;
   int _cooldownSeconds = 0;
 
-  Future<void> _handleResend() async {
-    if (_isResending || _cooldownSeconds > 0) {
-      return;
-    }
+  String get _email =>
+      widget.email ?? ref.read(authProvider).value?.email ?? '';
 
-    final user = ref.read(authProvider).value;
-    if (user == null) {
+  Future<void> _handleResend() async {
+    if (_isResending || _cooldownSeconds > 0 || _email.isEmpty) {
       return;
     }
 
@@ -39,7 +40,7 @@ class _EmailVerificationScreenState
 
     final success = await ref
         .read(authProvider.notifier)
-        .resendVerification(user.email);
+        .resendVerification(_email);
 
     if (!mounted) {
       return;
@@ -81,8 +82,7 @@ class _EmailVerificationScreenState
   @override
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
-    final user = ref.watch(authProvider).value;
-    final email = user?.email ?? '';
+    final email = _email;
 
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,

@@ -101,7 +101,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       // 3. After logout: redirect to welcome if no user and no local toys
       //    Allow setup routes so "continue without account" works
       final isSetupPage = path.startsWith('/setup/');
-      if (user == null && !isAuthPage && !isSetupPage && !hasToys) {
+      if (user == null &&
+          !isAuthPage &&
+          !isVerifyPage &&
+          !isSetupPage &&
+          !hasToys) {
         return AppRoutes.welcome.path;
       }
 
@@ -145,7 +149,8 @@ class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.verifyEmail.path,
-      builder: (_, _) => const EmailVerificationScreen(),
+      builder: (_, s) =>
+          EmailVerificationScreen(email: s.extra as String?),
     ),
 
     ShellRoute(

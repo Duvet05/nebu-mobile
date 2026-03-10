@@ -10,6 +10,14 @@ import '../../core/utils/google_auth_helper.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
+/// Keywords that indicate the backend rejected login due to pending email verification.
+const _pendingVerificationKeywords = [
+  'verificación',
+  'verification',
+  'pending',
+  'pendiente',
+];
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -47,6 +55,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           identifier: _identifierController.text.trim(),
           password: _passwordController.text,
         );
+
+    if (!mounted) {
+      return;
+    }
+
+    // If login failed due to pending email verification, redirect to verify screen
+    final auth = ref.read(authProvider);
+    if (auth.hasError && !auth.isLoading) {
+      final errorMsg = auth.error.toString().toLowerCase();
+      final isPendingVerification = _pendingVerificationKeywords.any(
+        errorMsg.contains,
+      );
+      if (isPendingVerification) {
+        ref.read(authProvider.notifier).clearError();
+        context.go(
+          AppRoutes.verifyEmail.path,
+          extra: _identifierController.text.trim(),
+        );
+      }
+    }
   }
 
   @override
