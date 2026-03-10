@@ -224,7 +224,13 @@
     "wake": "Wake",
     "chat": "Chat",
     "error_type": "Error",
-    "error_loading": "Could not load activities. Please try again."
+    "error_loading": "Could not load activities. Please try again.",
+    "insights_title": "Session Insights",
+    "insights_sessions": "{} sessions",
+    "insights_minutes": "{}min talking",
+    "insights_messages": "{} messages",
+    "insights_emotions": "Detected emotions",
+    "insights_topics": "Frequent topics"
   },
   "notifications": {
     "title": "Notifications",

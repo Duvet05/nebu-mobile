@@ -314,7 +314,13 @@
     "wake": "Despertar",
     "chat": "Chat",
     "error_type": "Error",
-    "error_loading": "No se pudieron cargar las actividades. Intenta de nuevo."
+    "error_loading": "No se pudieron cargar las actividades. Intenta de nuevo.",
+    "insights_title": "Resumen de Sesiones",
+    "insights_sessions": "{} sesiones",
+    "insights_minutes": "{}min hablando",
+    "insights_messages": "{} mensajes",
+    "insights_emotions": "Emociones detectadas",
+    "insights_topics": "Temas frecuentes"
   },
   "notifications": {
     "title": "Notificaciones",

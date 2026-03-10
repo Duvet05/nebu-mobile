@@ -7,6 +7,7 @@ import '../../data/models/activity.dart';
 import '../providers/activity_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/session_insights_card.dart';
 
 class ActivityLogScreen extends ConsumerStatefulWidget {
   const ActivityLogScreen({super.key});
@@ -163,14 +164,24 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       );
     }
 
+    // +1 for insights card at index 0
+    final itemCount =
+        1 + state.activities.length + (state.isLoading ? 1 : 0);
+
     return RefreshIndicator(
       onRefresh: _refreshActivities,
       child: ListView.builder(
         controller: _scrollController,
         padding: EdgeInsets.all(context.spacing.alertPadding),
-        itemCount: state.activities.length + (state.isLoading ? 1 : 0),
+        itemCount: itemCount,
         itemBuilder: (context, index) {
-          if (index >= state.activities.length) {
+          // Insights card at top
+          if (index == 0) {
+            return const SessionInsightsCard();
+          }
+
+          final activityIndex = index - 1;
+          if (activityIndex >= state.activities.length) {
             return Center(
               child: Padding(
                 padding: EdgeInsets.all(context.spacing.alertPadding),
@@ -179,7 +190,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
             );
           }
 
-          final activity = state.activities[index];
+          final activity = state.activities[activityIndex];
           return _buildActivityCard(context, activity, theme);
         },
       ),
