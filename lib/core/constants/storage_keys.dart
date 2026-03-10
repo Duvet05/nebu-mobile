@@ -42,4 +42,20 @@ class StorageKeys {
   // Activity Migration
   static const String localUserId = 'local_user_id';
   static const String activitiesMigrated = 'activities_migrated';
+
+  // Personality Cache
+  static const String personalitiesCache = 'personalities_cache';
+  static const String personalitiesCacheTs = 'personalities_cache_ts';
+
+  // Voice Metrics Cache
+  static const String voiceMetricsCache = 'voice_metrics_cache';
+  static const String voiceMetricsCacheTs = 'voice_metrics_cache_ts';
+
+  // Voice Sessions Cache
+  static const String voiceSessionsCache = 'voice_sessions_cache';
+  static const String voiceSessionsCacheTs = 'voice_sessions_cache_ts';
+
+  // User Limits Cache
+  static const String userLimitsCache = 'user_limits_cache';
+  static const String userLimitsCacheTs = 'user_limits_cache_ts';
 }
