@@ -49,7 +49,7 @@ class HealthService {
         '${Config.apiBaseUrl}/health/readiness',
       );
       return response.data?['status'] == 'ok';
-    } catch (e) {
+    } on Exception catch (e) {
       _logger.e('Readiness check failed: $e');
       return false;
     }
@@ -68,7 +68,7 @@ class HealthService {
         '${Config.apiBaseUrl}/health/liveness',
       );
       return response.data?['status'] == 'ok';
-    } catch (e) {
+    } on Exception catch (e) {
       _logger.e('Liveness check failed: $e');
       return false;
     }
@@ -93,7 +93,7 @@ class HealthService {
     }
 
     try {
-      final response = await _apiService!.get<Map<String, dynamic>>(
+      final response = await _apiService.get<Map<String, dynamic>>(
         '/health/details',
       );
       return HealthStatus.fromJson(response);
