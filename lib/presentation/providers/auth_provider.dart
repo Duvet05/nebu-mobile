@@ -8,7 +8,7 @@ import '../../data/services/activity_migration_service.dart';
 import '../../data/services/auth_service.dart';
 import 'api_provider.dart';
 
-export 'api_provider.dart' show sharedPreferencesProvider;
+export 'api_provider.dart' show sessionExpiredProvider, sharedPreferencesProvider;
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(
   AuthNotifier.new,
@@ -110,6 +110,12 @@ class AuthNotifier extends AsyncNotifier<User?> {
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
     state = AsyncValue.data(user);
+  }
+
+  /// Force logout without backend call — used when session expired.
+  Future<void> forceLogout() async {
+    await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    state = const AsyncValue.data(null);
   }
 
   Future<void> logout() async {

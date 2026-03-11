@@ -13,6 +13,7 @@ class ApiService {
     required Dio dio,
     required FlutterSecureStorage secureStorage,
     required Logger logger,
+    this.onSessionExpired,
   }) : _dio = dio,
        _secureStorage = secureStorage,
        _logger = logger {
@@ -22,6 +23,9 @@ class ApiService {
   final Dio _dio;
   final FlutterSecureStorage _secureStorage;
   final Logger _logger;
+
+  /// Called when token refresh fails — signals that the session is dead.
+  final void Function()? onSessionExpired;
 
   /// Completer used to serialize concurrent token refresh attempts.
   /// When non-null, a refresh is already in progress — other 401 handlers
@@ -76,6 +80,7 @@ class ApiService {
             } on Exception catch (e) {
               _logger.e('Token refresh failed, clearing session: $e');
               await _clearTokens();
+              onSessionExpired?.call();
             }
           }
 

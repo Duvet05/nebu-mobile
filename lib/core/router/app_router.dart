@@ -57,6 +57,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     })
     ..listen(setupSkippedProvider, (_, _) {
       authChange.value = ref.read(authProvider);
+    })
+    ..listen(sessionExpiredProvider, (_, expired) {
+      if (expired == true) {
+        ref.read(sessionExpiredProvider.notifier).reset();
+        ref.read(authProvider.notifier).forceLogout();
+      }
     });
 
   return GoRouter(

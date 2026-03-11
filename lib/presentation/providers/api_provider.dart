@@ -50,11 +50,32 @@ final loggerProvider = Provider<Logger>(
 
 // Service providers
 
+/// Set to true when the API detects an expired session (401 + refresh failure).
+final sessionExpiredProvider = NotifierProvider<SessionExpiredNotifier, bool>(
+  SessionExpiredNotifier.new,
+);
+
+class SessionExpiredNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void expire() => state = true;
+
+  void reset() => state = false;
+}
+
 final apiServiceProvider = Provider<ApiService>((ref) {
   final dio = ref.watch(dioProvider);
   final secureStorage = ref.watch(secureStorageProvider);
   final logger = ref.watch(loggerProvider);
-  return ApiService(dio: dio, secureStorage: secureStorage, logger: logger);
+  return ApiService(
+    dio: dio,
+    secureStorage: secureStorage,
+    logger: logger,
+    onSessionExpired: () {
+      ref.read(sessionExpiredProvider.notifier).expire();
+    },
+  );
 });
 
 final authServiceProvider = FutureProvider<AuthService>((ref) async {
