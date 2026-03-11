@@ -2,19 +2,24 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../core/config/config.dart';
+import 'api_service.dart';
 
 /// Service for checking backend health and connectivity.
-/// Uses Dio directly (not ApiService) because health does not require auth.
+/// Uses Dio directly for public endpoints and ApiService for authenticated ones.
 class HealthService {
-  HealthService({required Logger logger}) : _logger = logger;
+  HealthService({
+    required Logger logger,
+    ApiService? apiService,
+  })  : _logger = logger,
+        _apiService = apiService;
 
   final Logger _logger;
+  final ApiService? _apiService;
 
   /// Check backend health status
-  /// Hits GET /health at server root (NOT under /api/v1)
+  /// Hits GET /api/v1/health
   Future<Map<String, dynamic>> checkHealth() async {
-    final healthUrl = Config.apiBaseUrl.replaceAll('/api/v1', '');
-    _logger.i('Checking backend health at $healthUrl/health');
+    _logger.i('Checking backend health at ${Config.apiBaseUrl}/health');
     final dio = Dio(
       BaseOptions(
         connectTimeout: Config.healthTimeout,
@@ -22,7 +27,7 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ),
     );
-    final response = await dio.get<Map<String, dynamic>>('$healthUrl/health');
+    final response = await dio.get<Map<String, dynamic>>('${Config.apiBaseUrl}/health');
     final data = response.data;
     if (data == null) {
       throw Exception('Health endpoint returned empty response');
@@ -31,8 +36,37 @@ class HealthService {
     return data;
   }
 
+  /// Check backend readiness
+  /// Hits GET /api/v1/health/readiness
+  Future<bool> checkReadiness() async {
+    try {
+      final dio = Dio(BaseOptions(timeout: Config.healthTimeout));
+      final response = await dio.get<Map<String, dynamic>>(
+        '${Config.apiBaseUrl}/health/readiness',
+      );
+      return response.data?['status'] == 'ok';
+    } catch (e) {
+      _logger.e('Readiness check failed: $e');
+      return false;
+    }
+  }
+
+  /// Check backend liveness
+  /// Hits GET /api/v1/health/liveness
+  Future<bool> checkLiveness() async {
+    try {
+      final dio = Dio(BaseOptions(timeout: Config.healthTimeout));
+      final response = await dio.get<Map<String, dynamic>>(
+        '${Config.apiBaseUrl}/health/liveness',
+      );
+      return response.data?['status'] == 'ok';
+    } catch (e) {
+      _logger.e('Liveness check failed: $e');
+      return false;
+    }
+  }
+
   /// Check if backend is ready
-  /// Returns true if backend is ready, false otherwise
   Future<bool> isBackendReady() async {
     try {
       final response = await checkHealth();
@@ -44,9 +78,16 @@ class HealthService {
   }
 
   /// Get detailed health status with all checks
+  /// Hits GET /api/v1/health/details (Requires JWT)
   Future<HealthStatus> getDetailedHealthStatus() async {
+    if (_apiService == null) {
+      throw Exception('ApiService is required for detailed health checks');
+    }
+
     try {
-      final response = await checkHealth();
+      final response = await _apiService!.get<Map<String, dynamic>>(
+        '/health/details',
+      );
       return HealthStatus.fromJson(response);
     } on Exception catch (e) {
       _logger.e('Failed to get detailed health status: $e');

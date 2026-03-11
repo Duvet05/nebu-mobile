@@ -166,7 +166,8 @@ final localChildDataServiceProvider = FutureProvider<LocalChildDataService>((
 
 final healthServiceProvider = Provider<HealthService>((ref) {
   final logger = ref.watch(loggerProvider);
-  return HealthService(logger: logger);
+  final apiService = ref.watch(apiServiceProvider);
+  return HealthService(logger: logger, apiService: apiService);
 });
 
 final firebasePushServiceProvider = Provider<FirebasePushService>((ref) {
