@@ -268,6 +268,7 @@
   },
   "toys": {
     "title": "My Toys",
+    "my_active_toys": "My Active Toys",
     "add_toy": "Add Toy",
     "setup_new_toy": "Setup New Toy",
     "add_more_hint": "Connect more Nebu toys to enhance the experience!",

@@ -18,15 +18,19 @@ class FirebasePushService {
     if (_initialized) {
       return;
     }
-    _initialized = true;
-    final settings = await _messaging.requestPermission();
-    _logger.d('Notification permission: ${settings.authorizationStatus}');
+    try {
+      final settings = await _messaging.requestPermission();
+      _logger.d('Notification permission: ${settings.authorizationStatus}');
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional) {
-      await _registerToken();
-      _listenForTokenRefresh();
-      _setupForegroundHandler();
+      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional) {
+        await _registerToken();
+        _listenForTokenRefresh();
+        _setupForegroundHandler();
+      }
+      _initialized = true;
+    } on Exception catch (e) {
+      _logger.e('Push notification init failed: $e');
     }
   }
 

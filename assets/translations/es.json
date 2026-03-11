@@ -222,7 +222,7 @@
   },
   "home": {
     "title": "Inicio",
-    "my_active_toys": "Mis Juguetes Activos",
+    "my_active_toys": "Juguetes Activos",
     "welcome_back": "¡Bienvenido de nuevo!",
     "my_toys": "Mis Juguetes",
     "add_toy": "Agregar Juguete",
@@ -359,7 +359,7 @@
   "toys": {
     "title": "Mis Juguetes",
     "my_toys": "Mis Juguetes",
-    "my_active_toys": "Mis Juguetes Activos",
+    "my_active_toys": "Juguetes Activos",
     "add_toy": "Agregar Juguete",
     "setup_new_toy": "Configurar Nuevo Juguete",
     "add_more_hint": "¡Conecta más juguetes Nebu para mejorar la experiencia!",

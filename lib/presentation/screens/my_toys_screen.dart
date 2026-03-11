@@ -381,7 +381,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,
         title: Text(
-          'toys.title'.tr(),
+          'toys.my_active_toys'.tr(),
           style: theme.appBarTheme.titleTextStyle?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -420,7 +420,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
             ],
           ),
         ),
-        loading: () => _buildLoadingSkeleton(theme),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => _buildErrorState(theme),
       ),
     );
@@ -433,51 +433,31 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       borderRadius: context.radius.panel,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(context.spacing.panelPadding),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              context.colors.primary.withValues(alpha: 0.04),
-              context.colors.secondary.withValues(alpha: 0.05),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: context.radius.panel,
+        padding: EdgeInsets.symmetric(
+          horizontal: context.spacing.panelPadding,
+          vertical: context.spacing.alertPadding,
         ),
-        child: Column(
+        decoration: BoxDecoration(
+          color: context.colors.primary.withValues(alpha: 0.05),
+          borderRadius: context.radius.panel,
+          border: Border.all(
+            color: context.colors.primary.withValues(alpha: 0.15),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    context.colors.primary.withValues(alpha: 0.08),
-                    context.colors.secondary.withValues(alpha: 0.08),
-                  ],
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.smart_toy_outlined,
-                size: 36,
-                color: context.colors.primary.withValues(alpha: 0.5),
-              ),
+            Icon(
+              Icons.add,
+              size: 20,
+              color: context.colors.primary,
             ),
-            SizedBox(height: context.spacing.alertPadding),
+            SizedBox(width: context.spacing.gapMd),
             Text(
-              'toys.setup_new_toy'.tr(),
+              'toys.add_toy'.tr(),
               style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: context.spacing.labelBottomMargin),
-            Text(
-              'toys.add_more_hint'.tr(),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withAlpha(153),
+                fontWeight: FontWeight.w600,
+                color: context.colors.primary,
               ),
             ),
           ],
@@ -531,66 +511,6 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
           onPressed: () => _addNewToy(context),
         ),
       ],
-    ),
-  );
-
-  Widget _buildLoadingSkeleton(ThemeData theme) => ListView(
-    padding: EdgeInsets.all(context.spacing.alertPadding),
-    physics: const NeverScrollableScrollPhysics(),
-    children: List.generate(
-      3,
-      (_) => Container(
-        margin: EdgeInsets.only(
-          bottom: context.spacing.paragraphBottomMarginSm,
-        ),
-        padding: EdgeInsets.all(context.spacing.alertPadding),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: context.radius.panel,
-          border: Border.all(color: theme.dividerColor.withValues(alpha: 0.15)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-            ),
-            SizedBox(width: context.spacing.gapXl),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 120,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.08,
-                      ),
-                      borderRadius: context.radius.checkbox,
-                    ),
-                  ),
-                  SizedBox(height: context.spacing.labelBottomMargin),
-                  Container(
-                    width: 80,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.05,
-                      ),
-                      borderRadius: context.radius.checkbox,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     ),
   );
 

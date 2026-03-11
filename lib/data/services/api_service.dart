@@ -308,6 +308,10 @@ class ApiService {
     try {
       final response = await execute();
       final data = response.data;
+      // void returns (DELETE, POST with no body) — data is null, which is correct
+      if (null is T) {
+        return data as T;
+      }
       if (data is! T) {
         throw ServerException(
           'Unexpected response type: ${data.runtimeType}',

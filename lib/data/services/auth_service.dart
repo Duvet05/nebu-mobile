@@ -229,7 +229,7 @@ class AuthService {
     }
     await _secureStorage.delete(key: StorageKeys.accessToken);
     await _secureStorage.delete(key: StorageKeys.refreshToken);
-    await _prefs.remove(StorageKeys.user);
+    await _secureStorage.delete(key: StorageKeys.user);
   }
 
   Future<bool> isAuthenticated() async {
