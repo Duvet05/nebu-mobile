@@ -121,24 +121,34 @@ class AuthService {
     }
   }
 
-  /// Extract error message from backend response.
+  /// Map backend errorCode to i18n key, falling back to raw message.
   static String? _extractErrorMessage(DioException e) {
     final data = e.response?.data;
     if (data is Map<String, dynamic>) {
+      // Prefer errorCode → i18n key (locale-safe)
+      final errorCode = data['errorCode'] as String?;
+      final i18nKey = _errorCodeToKey(errorCode);
+      if (i18nKey != null) return i18nKey;
+
+      // Fallback: raw message/error field
       final message = data['message'];
-      if (message is String) {
-        return _cleanMessage(message);
-      }
-      if (message is List) {
-        return _cleanMessage(message.join(', '));
-      }
+      if (message is String) return _cleanMessage(message);
+      if (message is List) return _cleanMessage(message.join(', '));
       final error = data['error'];
-      if (error is String) {
-        return _cleanMessage(error);
-      }
+      if (error is String) return _cleanMessage(error);
     }
     return null;
   }
+
+  static String? _errorCodeToKey(String? code) => switch (code) {
+    'CONFLICT' => 'auth.error_conflict',
+    'UNAUTHORIZED' => 'auth.error_unauthorized',
+    'BAD_REQUEST' => 'auth.error_bad_request',
+    'NOT_FOUND' => 'auth.error_not_found',
+    'TOO_MANY_REQUESTS' => 'auth.error_too_many_requests',
+    'INTERNAL_SERVER_ERROR' => 'auth.error_server',
+    _ => null,
+  };
 
   /// Remove technical prefixes from backend error messages
   static String _cleanMessage(String msg) => msg
