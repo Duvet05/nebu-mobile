@@ -18,6 +18,7 @@ class FirebasePushService {
     if (_initialized) {
       return;
     }
+    _initialized = true;
     try {
       final settings = await _messaging.requestPermission();
       _logger.d('Notification permission: ${settings.authorizationStatus}');
@@ -28,9 +29,9 @@ class FirebasePushService {
         _listenForTokenRefresh();
         _setupForegroundHandler();
       }
-      _initialized = true;
     } on Exception catch (e) {
-      _logger.e('Push notification init failed: $e');
+      _initialized = false;
+      _logger.w('Push notification init failed (will retry): $e');
     }
   }
 
@@ -38,7 +39,7 @@ class FirebasePushService {
     try {
       return await _messaging.getToken();
     } on Exception catch (e) {
-      _logger.e('Error getting FCM token: $e');
+      _logger.w('Error getting FCM token: $e');
       return null;
     }
   }
@@ -54,7 +55,7 @@ class FirebasePushService {
         );
       }
     } on Exception catch (e) {
-      _logger.e('Error registering FCM token: $e');
+      _logger.w('Error registering FCM token: $e');
     }
   }
 
@@ -67,7 +68,7 @@ class FirebasePushService {
           data: {'token': token, 'platform': defaultTargetPlatform.name},
         );
       } on Exception catch (e) {
-        _logger.e('Error registering refreshed token: $e');
+        _logger.w('Error registering refreshed token: $e');
       }
     });
   }

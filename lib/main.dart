@@ -21,7 +21,7 @@ void main() async {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
-      } on Exception catch (e) {
+      } catch (e) {
         debugPrint('Firebase skip: $e');
       }
     }(),
@@ -32,7 +32,7 @@ void main() async {
               ? Config.googleWebClientId
               : null,
         );
-      } on Exception catch (e) {
+      } catch (e) {
         debugPrint('GoogleSignIn init skip: $e');
       }
     }(),

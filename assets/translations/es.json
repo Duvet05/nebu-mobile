@@ -339,7 +339,11 @@
     "just_now": "Ahora mismo",
     "minutes_ago": "Hace {}m",
     "hours_ago": "Hace {}h",
-    "days_ago": "Hace {}d"
+    "days_ago": "Hace {}d",
+    "error_loading": "No se pudieron cargar las notificaciones. Intenta de nuevo.",
+    "dismiss_error": "No se pudo eliminar la notificación.",
+    "deleted": "Notificación eliminada",
+    "date_format": "d 'de' MMM, yyyy"
   },
   "limits": {
     "title": "Uso y Límites",

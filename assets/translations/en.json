@@ -249,7 +249,11 @@
     "just_now": "Just now",
     "minutes_ago": "{}m ago",
     "hours_ago": "{}h ago",
-    "days_ago": "{}d ago"
+    "days_ago": "{}d ago",
+    "error_loading": "Could not load notifications. Please try again.",
+    "dismiss_error": "Could not delete notification.",
+    "deleted": "Notification deleted",
+    "date_format": "MMM d, yyyy"
   },
   "limits": {
     "title": "Usage & Limits",
