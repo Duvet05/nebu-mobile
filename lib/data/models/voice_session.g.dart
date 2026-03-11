@@ -24,6 +24,11 @@ _VoiceSession _$VoiceSessionFromJson(Map<String, dynamic> json) =>
       topics: _topicsFromJson(json['topics']),
       emotion: json['emotion'] as String?,
       metadata: json['metadata'] as Map<String, dynamic>?,
+      engagementStats: json['engagementStats'] == null
+          ? null
+          : EngagementStats.fromJson(
+              json['engagementStats'] as Map<String, dynamic>,
+            ),
     );
 
 Map<String, dynamic> _$VoiceSessionToJson(_VoiceSession instance) =>
@@ -42,6 +47,33 @@ Map<String, dynamic> _$VoiceSessionToJson(_VoiceSession instance) =>
       'topics': instance.topics,
       'emotion': instance.emotion,
       'metadata': instance.metadata,
+      'engagementStats': instance.engagementStats,
+    };
+
+_EngagementStats _$EngagementStatsFromJson(Map<String, dynamic> json) =>
+    _EngagementStats(
+      turnCount: (json['turnCount'] as num?)?.toInt() ?? 0,
+      mood: json['mood'] as String?,
+      rapport: json['rapport'] as String?,
+      factsTold: (json['factsTold'] as num?)?.toInt() ?? 0,
+      riddlesTold: (json['riddlesTold'] as num?)?.toInt() ?? 0,
+      favoriteCategory: json['favoriteCategory'] as String?,
+      sessionMinutes: (json['sessionMinutes'] as num?)?.toDouble() ?? 0,
+      cultureHype: (json['cultureHype'] as num?)?.toDouble() ?? 0,
+      profileId: json['profileId'] as String?,
+    );
+
+Map<String, dynamic> _$EngagementStatsToJson(_EngagementStats instance) =>
+    <String, dynamic>{
+      'turnCount': instance.turnCount,
+      'mood': instance.mood,
+      'rapport': instance.rapport,
+      'factsTold': instance.factsTold,
+      'riddlesTold': instance.riddlesTold,
+      'favoriteCategory': instance.favoriteCategory,
+      'sessionMinutes': instance.sessionMinutes,
+      'cultureHype': instance.cultureHype,
+      'profileId': instance.profileId,
     };
 
 _AiConversation _$AiConversationFromJson(Map<String, dynamic> json) =>

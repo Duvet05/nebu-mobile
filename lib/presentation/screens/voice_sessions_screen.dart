@@ -522,26 +522,26 @@ class _EngagementSection extends StatelessWidget {
               _EngagementChip(
                 icon: Icons.mood,
                 label: 'voice_history.mood'.tr(),
-                value: stats.mood!,
+                value: stats.mood,
               ),
             if (stats.rapport != null)
               _EngagementChip(
                 icon: Icons.handshake_outlined,
                 label: 'voice_history.rapport'.tr(),
-                value: stats.rapport!,
+                value: stats.rapport,
               ),
             _EngagementChip(
               icon: Icons.swap_horiz,
-              label: 'voice_history.turns'.tr(args: ['${stats.turnCount}']),
-              value: null,
+              label: 'voice_history.turns'.tr(
+                args: ['${stats.turnCount}'],
+              ),
             ),
             if (stats.sessionMinutes > 0)
               _EngagementChip(
                 icon: Icons.timer_outlined,
                 label: 'voice_history.session_minutes'.tr(
-                  args: ['${stats.sessionMinutes.toStringAsFixed(1)}'],
+                  args: [stats.sessionMinutes.toStringAsFixed(1)],
                 ),
-                value: null,
               ),
             if (stats.factsTold > 0)
               _EngagementChip(
@@ -549,7 +549,6 @@ class _EngagementSection extends StatelessWidget {
                 label: 'voice_history.facts_told'.tr(
                   args: ['${stats.factsTold}'],
                 ),
-                value: null,
               ),
             if (stats.riddlesTold > 0)
               _EngagementChip(
@@ -557,13 +556,12 @@ class _EngagementSection extends StatelessWidget {
                 label: 'voice_history.riddles_told'.tr(
                   args: ['${stats.riddlesTold}'],
                 ),
-                value: null,
               ),
             if (stats.favoriteCategory != null)
               _EngagementChip(
                 icon: Icons.category_outlined,
                 label: 'voice_history.favorite_category'.tr(),
-                value: stats.favoriteCategory!,
+                value: stats.favoriteCategory,
               ),
             if (stats.cultureHype > 0)
               _EngagementChip(
@@ -575,7 +573,7 @@ class _EngagementSection extends StatelessWidget {
               _EngagementChip(
                 icon: Icons.person_outline,
                 label: 'voice_history.profile'.tr(),
-                value: stats.profileId!,
+                value: stats.profileId,
               ),
           ],
         ),

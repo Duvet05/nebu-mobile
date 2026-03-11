@@ -104,7 +104,7 @@ class LiveKitService {
       return;
     }
 
-    _roomListener?.dispose();
+    unawaited(_roomListener?.dispose());
     _roomListener = _room!.createListener()
       ..on<RoomConnectedEvent>((event) {
         _logger.d('LiveKit room connected');
@@ -230,7 +230,7 @@ class LiveKitService {
 
   Future<void> disconnect() async {
     try {
-      _roomListener?.dispose();
+      await _roomListener?.dispose();
       _roomListener = null;
       await _room?.disconnect();
       _room = null;

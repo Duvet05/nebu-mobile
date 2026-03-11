@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VoiceSession {
 
- String get id; String get status; DateTime get startedAt; String? get userId; String? get toyId; String? get roomName; String get language; DateTime? get endedAt; int? get durationSeconds; int get messageCount; String? get summary;@JsonKey(fromJson: _topicsFromJson) List<String>? get topics; String? get emotion; Map<String, dynamic>? get metadata;
+ String get id; String get status; DateTime get startedAt; String? get userId; String? get toyId; String? get roomName; String get language; DateTime? get endedAt; int? get durationSeconds; int get messageCount; String? get summary;@JsonKey(fromJson: _topicsFromJson) List<String>? get topics; String? get emotion; Map<String, dynamic>? get metadata; EngagementStats? get engagementStats;
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $VoiceSessionCopyWith<VoiceSession> get copyWith => _$VoiceSessionCopyWithImpl<V
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other.topics, topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other.metadata, metadata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other.topics, topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other.metadata, metadata)&&(identical(other.engagementStats, engagementStats) || other.engagementStats == engagementStats));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(topics),emotion,const DeepCollectionEquality().hash(metadata));
+int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(topics),emotion,const DeepCollectionEquality().hash(metadata),engagementStats);
 
 @override
 String toString() {
-  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
+  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata, engagementStats: $engagementStats)';
 }
 
 
@@ -48,11 +48,11 @@ abstract mixin class $VoiceSessionCopyWith<$Res>  {
   factory $VoiceSessionCopyWith(VoiceSession value, $Res Function(VoiceSession) _then) = _$VoiceSessionCopyWithImpl;
 @useResult
 $Res call({
- String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
+ String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata, EngagementStats? engagementStats
 });
 
 
-
+$EngagementStatsCopyWith<$Res>? get engagementStats;
 
 }
 /// @nodoc
@@ -65,7 +65,7 @@ class _$VoiceSessionCopyWithImpl<$Res>
 
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,Object? engagementStats = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -81,10 +81,23 @@ as int,summary: freezed == summary ? _self.summary : summary // ignore: cast_nul
 as String?,topics: freezed == topics ? _self.topics : topics // ignore: cast_nullable_to_non_nullable
 as List<String>?,emotion: freezed == emotion ? _self.emotion : emotion // ignore: cast_nullable_to_non_nullable
 as String?,metadata: freezed == metadata ? _self.metadata : metadata // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,engagementStats: freezed == engagementStats ? _self.engagementStats : engagementStats // ignore: cast_nullable_to_non_nullable
+as EngagementStats?,
   ));
 }
+/// Create a copy of VoiceSession
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EngagementStatsCopyWith<$Res>? get engagementStats {
+    if (_self.engagementStats == null) {
+    return null;
+  }
 
+  return $EngagementStatsCopyWith<$Res>(_self.engagementStats!, (value) {
+    return _then(_self.copyWith(engagementStats: value));
+  });
+}
 }
 
 
@@ -166,10 +179,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata,  EngagementStats? engagementStats)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VoiceSession() when $default != null:
-return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata,_that.engagementStats);case _:
   return orElse();
 
 }
@@ -187,10 +200,10 @@ return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata,  EngagementStats? engagementStats)  $default,) {final _that = this;
 switch (_that) {
 case _VoiceSession():
-return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata,_that.engagementStats);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +220,10 @@ return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String status,  DateTime startedAt,  String? userId,  String? toyId,  String? roomName,  String language,  DateTime? endedAt,  int? durationSeconds,  int messageCount,  String? summary, @JsonKey(fromJson: _topicsFromJson)  List<String>? topics,  String? emotion,  Map<String, dynamic>? metadata,  EngagementStats? engagementStats)?  $default,) {final _that = this;
 switch (_that) {
 case _VoiceSession() when $default != null:
-return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata);case _:
+return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_that.roomName,_that.language,_that.endedAt,_that.durationSeconds,_that.messageCount,_that.summary,_that.topics,_that.emotion,_that.metadata,_that.engagementStats);case _:
   return null;
 
 }
@@ -222,7 +235,7 @@ return $default(_that.id,_that.status,_that.startedAt,_that.userId,_that.toyId,_
 @JsonSerializable()
 
 class _VoiceSession implements VoiceSession {
-  const _VoiceSession({required this.id, required this.status, required this.startedAt, this.userId, this.toyId, this.roomName, this.language = 'es', this.endedAt, this.durationSeconds, this.messageCount = 0, this.summary, @JsonKey(fromJson: _topicsFromJson) final  List<String>? topics, this.emotion, final  Map<String, dynamic>? metadata}): _topics = topics,_metadata = metadata;
+  const _VoiceSession({required this.id, required this.status, required this.startedAt, this.userId, this.toyId, this.roomName, this.language = 'es', this.endedAt, this.durationSeconds, this.messageCount = 0, this.summary, @JsonKey(fromJson: _topicsFromJson) final  List<String>? topics, this.emotion, final  Map<String, dynamic>? metadata, this.engagementStats}): _topics = topics,_metadata = metadata;
   factory _VoiceSession.fromJson(Map<String, dynamic> json) => _$VoiceSessionFromJson(json);
 
 @override final  String id;
@@ -255,6 +268,7 @@ class _VoiceSession implements VoiceSession {
   return EqualUnmodifiableMapView(value);
 }
 
+@override final  EngagementStats? engagementStats;
 
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
@@ -269,16 +283,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._topics, _topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VoiceSession&&(identical(other.id, id) || other.id == id)&&(identical(other.status, status) || other.status == status)&&(identical(other.startedAt, startedAt) || other.startedAt == startedAt)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.toyId, toyId) || other.toyId == toyId)&&(identical(other.roomName, roomName) || other.roomName == roomName)&&(identical(other.language, language) || other.language == language)&&(identical(other.endedAt, endedAt) || other.endedAt == endedAt)&&(identical(other.durationSeconds, durationSeconds) || other.durationSeconds == durationSeconds)&&(identical(other.messageCount, messageCount) || other.messageCount == messageCount)&&(identical(other.summary, summary) || other.summary == summary)&&const DeepCollectionEquality().equals(other._topics, _topics)&&(identical(other.emotion, emotion) || other.emotion == emotion)&&const DeepCollectionEquality().equals(other._metadata, _metadata)&&(identical(other.engagementStats, engagementStats) || other.engagementStats == engagementStats));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(_topics),emotion,const DeepCollectionEquality().hash(_metadata));
+int get hashCode => Object.hash(runtimeType,id,status,startedAt,userId,toyId,roomName,language,endedAt,durationSeconds,messageCount,summary,const DeepCollectionEquality().hash(_topics),emotion,const DeepCollectionEquality().hash(_metadata),engagementStats);
 
 @override
 String toString() {
-  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata)';
+  return 'VoiceSession(id: $id, status: $status, startedAt: $startedAt, userId: $userId, toyId: $toyId, roomName: $roomName, language: $language, endedAt: $endedAt, durationSeconds: $durationSeconds, messageCount: $messageCount, summary: $summary, topics: $topics, emotion: $emotion, metadata: $metadata, engagementStats: $engagementStats)';
 }
 
 
@@ -289,11 +303,11 @@ abstract mixin class _$VoiceSessionCopyWith<$Res> implements $VoiceSessionCopyWi
   factory _$VoiceSessionCopyWith(_VoiceSession value, $Res Function(_VoiceSession) _then) = __$VoiceSessionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata
+ String id, String status, DateTime startedAt, String? userId, String? toyId, String? roomName, String language, DateTime? endedAt, int? durationSeconds, int messageCount, String? summary,@JsonKey(fromJson: _topicsFromJson) List<String>? topics, String? emotion, Map<String, dynamic>? metadata, EngagementStats? engagementStats
 });
 
 
-
+@override $EngagementStatsCopyWith<$Res>? get engagementStats;
 
 }
 /// @nodoc
@@ -306,7 +320,7 @@ class __$VoiceSessionCopyWithImpl<$Res>
 
 /// Create a copy of VoiceSession
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? status = null,Object? startedAt = null,Object? userId = freezed,Object? toyId = freezed,Object? roomName = freezed,Object? language = null,Object? endedAt = freezed,Object? durationSeconds = freezed,Object? messageCount = null,Object? summary = freezed,Object? topics = freezed,Object? emotion = freezed,Object? metadata = freezed,Object? engagementStats = freezed,}) {
   return _then(_VoiceSession(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
@@ -322,7 +336,307 @@ as int,summary: freezed == summary ? _self.summary : summary // ignore: cast_nul
 as String?,topics: freezed == topics ? _self._topics : topics // ignore: cast_nullable_to_non_nullable
 as List<String>?,emotion: freezed == emotion ? _self.emotion : emotion // ignore: cast_nullable_to_non_nullable
 as String?,metadata: freezed == metadata ? _self._metadata : metadata // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,engagementStats: freezed == engagementStats ? _self.engagementStats : engagementStats // ignore: cast_nullable_to_non_nullable
+as EngagementStats?,
+  ));
+}
+
+/// Create a copy of VoiceSession
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$EngagementStatsCopyWith<$Res>? get engagementStats {
+    if (_self.engagementStats == null) {
+    return null;
+  }
+
+  return $EngagementStatsCopyWith<$Res>(_self.engagementStats!, (value) {
+    return _then(_self.copyWith(engagementStats: value));
+  });
+}
+}
+
+
+/// @nodoc
+mixin _$EngagementStats {
+
+ int get turnCount; String? get mood; String? get rapport; int get factsTold; int get riddlesTold; String? get favoriteCategory; double get sessionMinutes; double get cultureHype; String? get profileId;
+/// Create a copy of EngagementStats
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$EngagementStatsCopyWith<EngagementStats> get copyWith => _$EngagementStatsCopyWithImpl<EngagementStats>(this as EngagementStats, _$identity);
+
+  /// Serializes this EngagementStats to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EngagementStats&&(identical(other.turnCount, turnCount) || other.turnCount == turnCount)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.rapport, rapport) || other.rapport == rapport)&&(identical(other.factsTold, factsTold) || other.factsTold == factsTold)&&(identical(other.riddlesTold, riddlesTold) || other.riddlesTold == riddlesTold)&&(identical(other.favoriteCategory, favoriteCategory) || other.favoriteCategory == favoriteCategory)&&(identical(other.sessionMinutes, sessionMinutes) || other.sessionMinutes == sessionMinutes)&&(identical(other.cultureHype, cultureHype) || other.cultureHype == cultureHype)&&(identical(other.profileId, profileId) || other.profileId == profileId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,turnCount,mood,rapport,factsTold,riddlesTold,favoriteCategory,sessionMinutes,cultureHype,profileId);
+
+@override
+String toString() {
+  return 'EngagementStats(turnCount: $turnCount, mood: $mood, rapport: $rapport, factsTold: $factsTold, riddlesTold: $riddlesTold, favoriteCategory: $favoriteCategory, sessionMinutes: $sessionMinutes, cultureHype: $cultureHype, profileId: $profileId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $EngagementStatsCopyWith<$Res>  {
+  factory $EngagementStatsCopyWith(EngagementStats value, $Res Function(EngagementStats) _then) = _$EngagementStatsCopyWithImpl;
+@useResult
+$Res call({
+ int turnCount, String? mood, String? rapport, int factsTold, int riddlesTold, String? favoriteCategory, double sessionMinutes, double cultureHype, String? profileId
+});
+
+
+
+
+}
+/// @nodoc
+class _$EngagementStatsCopyWithImpl<$Res>
+    implements $EngagementStatsCopyWith<$Res> {
+  _$EngagementStatsCopyWithImpl(this._self, this._then);
+
+  final EngagementStats _self;
+  final $Res Function(EngagementStats) _then;
+
+/// Create a copy of EngagementStats
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? turnCount = null,Object? mood = freezed,Object? rapport = freezed,Object? factsTold = null,Object? riddlesTold = null,Object? favoriteCategory = freezed,Object? sessionMinutes = null,Object? cultureHype = null,Object? profileId = freezed,}) {
+  return _then(_self.copyWith(
+turnCount: null == turnCount ? _self.turnCount : turnCount // ignore: cast_nullable_to_non_nullable
+as int,mood: freezed == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
+as String?,rapport: freezed == rapport ? _self.rapport : rapport // ignore: cast_nullable_to_non_nullable
+as String?,factsTold: null == factsTold ? _self.factsTold : factsTold // ignore: cast_nullable_to_non_nullable
+as int,riddlesTold: null == riddlesTold ? _self.riddlesTold : riddlesTold // ignore: cast_nullable_to_non_nullable
+as int,favoriteCategory: freezed == favoriteCategory ? _self.favoriteCategory : favoriteCategory // ignore: cast_nullable_to_non_nullable
+as String?,sessionMinutes: null == sessionMinutes ? _self.sessionMinutes : sessionMinutes // ignore: cast_nullable_to_non_nullable
+as double,cultureHype: null == cultureHype ? _self.cultureHype : cultureHype // ignore: cast_nullable_to_non_nullable
+as double,profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [EngagementStats].
+extension EngagementStatsPatterns on EngagementStats {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _EngagementStats value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _EngagementStats() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _EngagementStats value)  $default,){
+final _that = this;
+switch (_that) {
+case _EngagementStats():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _EngagementStats value)?  $default,){
+final _that = this;
+switch (_that) {
+case _EngagementStats() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int turnCount,  String? mood,  String? rapport,  int factsTold,  int riddlesTold,  String? favoriteCategory,  double sessionMinutes,  double cultureHype,  String? profileId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _EngagementStats() when $default != null:
+return $default(_that.turnCount,_that.mood,_that.rapport,_that.factsTold,_that.riddlesTold,_that.favoriteCategory,_that.sessionMinutes,_that.cultureHype,_that.profileId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int turnCount,  String? mood,  String? rapport,  int factsTold,  int riddlesTold,  String? favoriteCategory,  double sessionMinutes,  double cultureHype,  String? profileId)  $default,) {final _that = this;
+switch (_that) {
+case _EngagementStats():
+return $default(_that.turnCount,_that.mood,_that.rapport,_that.factsTold,_that.riddlesTold,_that.favoriteCategory,_that.sessionMinutes,_that.cultureHype,_that.profileId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int turnCount,  String? mood,  String? rapport,  int factsTold,  int riddlesTold,  String? favoriteCategory,  double sessionMinutes,  double cultureHype,  String? profileId)?  $default,) {final _that = this;
+switch (_that) {
+case _EngagementStats() when $default != null:
+return $default(_that.turnCount,_that.mood,_that.rapport,_that.factsTold,_that.riddlesTold,_that.favoriteCategory,_that.sessionMinutes,_that.cultureHype,_that.profileId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _EngagementStats implements EngagementStats {
+  const _EngagementStats({this.turnCount = 0, this.mood, this.rapport, this.factsTold = 0, this.riddlesTold = 0, this.favoriteCategory, this.sessionMinutes = 0, this.cultureHype = 0, this.profileId});
+  factory _EngagementStats.fromJson(Map<String, dynamic> json) => _$EngagementStatsFromJson(json);
+
+@override@JsonKey() final  int turnCount;
+@override final  String? mood;
+@override final  String? rapport;
+@override@JsonKey() final  int factsTold;
+@override@JsonKey() final  int riddlesTold;
+@override final  String? favoriteCategory;
+@override@JsonKey() final  double sessionMinutes;
+@override@JsonKey() final  double cultureHype;
+@override final  String? profileId;
+
+/// Create a copy of EngagementStats
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$EngagementStatsCopyWith<_EngagementStats> get copyWith => __$EngagementStatsCopyWithImpl<_EngagementStats>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$EngagementStatsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EngagementStats&&(identical(other.turnCount, turnCount) || other.turnCount == turnCount)&&(identical(other.mood, mood) || other.mood == mood)&&(identical(other.rapport, rapport) || other.rapport == rapport)&&(identical(other.factsTold, factsTold) || other.factsTold == factsTold)&&(identical(other.riddlesTold, riddlesTold) || other.riddlesTold == riddlesTold)&&(identical(other.favoriteCategory, favoriteCategory) || other.favoriteCategory == favoriteCategory)&&(identical(other.sessionMinutes, sessionMinutes) || other.sessionMinutes == sessionMinutes)&&(identical(other.cultureHype, cultureHype) || other.cultureHype == cultureHype)&&(identical(other.profileId, profileId) || other.profileId == profileId));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,turnCount,mood,rapport,factsTold,riddlesTold,favoriteCategory,sessionMinutes,cultureHype,profileId);
+
+@override
+String toString() {
+  return 'EngagementStats(turnCount: $turnCount, mood: $mood, rapport: $rapport, factsTold: $factsTold, riddlesTold: $riddlesTold, favoriteCategory: $favoriteCategory, sessionMinutes: $sessionMinutes, cultureHype: $cultureHype, profileId: $profileId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$EngagementStatsCopyWith<$Res> implements $EngagementStatsCopyWith<$Res> {
+  factory _$EngagementStatsCopyWith(_EngagementStats value, $Res Function(_EngagementStats) _then) = __$EngagementStatsCopyWithImpl;
+@override @useResult
+$Res call({
+ int turnCount, String? mood, String? rapport, int factsTold, int riddlesTold, String? favoriteCategory, double sessionMinutes, double cultureHype, String? profileId
+});
+
+
+
+
+}
+/// @nodoc
+class __$EngagementStatsCopyWithImpl<$Res>
+    implements _$EngagementStatsCopyWith<$Res> {
+  __$EngagementStatsCopyWithImpl(this._self, this._then);
+
+  final _EngagementStats _self;
+  final $Res Function(_EngagementStats) _then;
+
+/// Create a copy of EngagementStats
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? turnCount = null,Object? mood = freezed,Object? rapport = freezed,Object? factsTold = null,Object? riddlesTold = null,Object? favoriteCategory = freezed,Object? sessionMinutes = null,Object? cultureHype = null,Object? profileId = freezed,}) {
+  return _then(_EngagementStats(
+turnCount: null == turnCount ? _self.turnCount : turnCount // ignore: cast_nullable_to_non_nullable
+as int,mood: freezed == mood ? _self.mood : mood // ignore: cast_nullable_to_non_nullable
+as String?,rapport: freezed == rapport ? _self.rapport : rapport // ignore: cast_nullable_to_non_nullable
+as String?,factsTold: null == factsTold ? _self.factsTold : factsTold // ignore: cast_nullable_to_non_nullable
+as int,riddlesTold: null == riddlesTold ? _self.riddlesTold : riddlesTold // ignore: cast_nullable_to_non_nullable
+as int,favoriteCategory: freezed == favoriteCategory ? _self.favoriteCategory : favoriteCategory // ignore: cast_nullable_to_non_nullable
+as String?,sessionMinutes: null == sessionMinutes ? _self.sessionMinutes : sessionMinutes // ignore: cast_nullable_to_non_nullable
+as double,cultureHype: null == cultureHype ? _self.cultureHype : cultureHype // ignore: cast_nullable_to_non_nullable
+as double,profileId: freezed == profileId ? _self.profileId : profileId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
