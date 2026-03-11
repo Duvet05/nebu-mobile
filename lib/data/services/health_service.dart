@@ -11,9 +11,10 @@ class HealthService {
   final Logger _logger;
 
   /// Check backend health status
-  /// Hits GET /api/v1/health
+  /// Hits GET /health at server root (NOT under /api/v1)
   Future<Map<String, dynamic>> checkHealth() async {
-    _logger.i('Checking backend health at ${Config.apiBaseUrl}/health');
+    final healthUrl = Config.apiBaseUrl.replaceAll('/api/v1', '');
+    _logger.i('Checking backend health at $healthUrl/health');
     final dio = Dio(
       BaseOptions(
         connectTimeout: Config.healthTimeout,
@@ -22,7 +23,7 @@ class HealthService {
       ),
     );
     final response = await dio.get<Map<String, dynamic>>(
-      '${Config.apiBaseUrl}/health',
+      '$healthUrl/health',
     );
     final data = response.data!;
     _logger.i('Backend health check successful: ${data['status']}');

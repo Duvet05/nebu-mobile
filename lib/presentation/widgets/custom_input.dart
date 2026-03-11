@@ -72,7 +72,7 @@ class _CustomInputState extends State<CustomInput> {
       ],
       TextFormField(
         controller: widget.controller,
-        initialValue: widget.initialValue,
+        initialValue: widget.controller == null ? widget.initialValue : null,
         onChanged: widget.onChanged,
         onEditingComplete: widget.onEditingComplete,
         validator: widget.validator,

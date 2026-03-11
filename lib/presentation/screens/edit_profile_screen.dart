@@ -58,6 +58,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       return;
     }
 
+    final firstNameError = ValidationRules.validateName(
+      _firstNameController.text,
+    );
+    if (firstNameError != null) {
+      context.showErrorSnackBar(firstNameError.tr());
+      return;
+    }
+
+    final lastNameError = ValidationRules.validateName(
+      _lastNameController.text,
+    );
+    if (lastNameError != null) {
+      context.showErrorSnackBar(lastNameError.tr());
+      return;
+    }
+
     setState(() => _isSaving = true);
 
     try {
@@ -74,8 +90,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       if (mounted) {
         context
-          ..pop()
-          ..showSuccessSnackBar('profile.update_success'.tr());
+          ..showSuccessSnackBar('profile.update_success'.tr())
+          ..pop();
       }
     } on Exception {
       if (mounted) {

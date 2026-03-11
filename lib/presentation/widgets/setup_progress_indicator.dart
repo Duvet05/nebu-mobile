@@ -13,7 +13,7 @@ class SetupProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = currentStep / totalSteps;
+    final progress = totalSteps > 0 ? currentStep / totalSteps : 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

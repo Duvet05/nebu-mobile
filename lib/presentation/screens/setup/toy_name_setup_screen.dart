@@ -41,6 +41,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
     );
+    if (!mounted) {
+      return;
+    }
     final savedName = prefs.getString(StorageKeys.setupToyName);
     if (savedName != null && savedName.isNotEmpty) {
       _controller.text = savedName;

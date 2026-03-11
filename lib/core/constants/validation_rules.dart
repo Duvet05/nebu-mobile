@@ -34,6 +34,30 @@ abstract final class ValidationRules {
   static const int wifiPasswordMinLength = 8;
   static const int wifiPasswordMaxLength = 63;
 
+  // --- Name (first / last) ---
+  static const int nameMinLength = 2;
+  static const int nameMaxLength = 50;
+
+  /// Only letters, spaces, hyphens, apostrophes (covers accented chars).
+  static final RegExp namePattern = RegExp(r"^[\p{L}\s'\-]+$", unicode: true);
+
+  /// Returns null if valid, or an i18n error key if invalid.
+  static String? validateName(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'profile.name_required';
+    }
+    if (value.trim().length < nameMinLength) {
+      return 'profile.name_short';
+    }
+    if (value.trim().length > nameMaxLength) {
+      return 'profile.name_long';
+    }
+    if (!namePattern.hasMatch(value.trim())) {
+      return 'profile.name_invalid_chars';
+    }
+    return null;
+  }
+
   // --- Toy ---
   static const int toyNameMinLength = 2;
   static const int toyNameMaxLength = 50;

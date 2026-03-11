@@ -49,21 +49,32 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authChange = ValueNotifier<AsyncValue<User?>>(
     const AsyncValue.loading(),
   );
-  ref.listen(authProvider, (_, next) => authChange.value = next);
+  ref
+    ..listen(authProvider, (_, next) => authChange.value = next)
+    // Re-assign current value to trigger refreshListenable
+    ..listen(hasLocalToysProvider, (_, _) {
+      authChange.value = ref.read(authProvider);
+    })
+    ..listen(setupSkippedProvider, (_, _) {
+      authChange.value = ref.read(authProvider);
+    });
 
   return GoRouter(
     initialLocation: AppRoutes.splash.path,
     refreshListenable: authChange,
     redirect: (context, state) {
       final auth = ref.read(authProvider);
-      if (auth.isLoading) {
+      final toysAsync = ref.read(hasLocalToysProvider);
+      final setupAsync = ref.read(setupSkippedProvider);
+      // Wait for all async providers to resolve before making redirect decisions
+      if (auth.isLoading || toysAsync.isLoading || setupAsync.isLoading) {
         return null;
       }
 
       final user = auth.value;
       final path = state.matchedLocation;
-      final hasToys = ref.read(hasLocalToysProvider).value ?? false;
-      final skippedSetup = ref.read(setupSkippedProvider).value ?? false;
+      final hasToys = toysAsync.value ?? false;
+      final skippedSetup = setupAsync.value ?? false;
 
       final isVerifyPage = path == AppRoutes.verifyEmail.path;
       final isAuthPage =

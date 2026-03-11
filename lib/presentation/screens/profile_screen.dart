@@ -38,10 +38,13 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(context.spacing.alertPadding),
-          child: Column(
-            children: [
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(context.spacing.alertPadding),
+                child: Column(
+                  children: [
               // Profile Header Card - Simplified and Clean
               Container(
                 width: double.infinity,
@@ -103,9 +106,9 @@ class ProfileScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // Settings Icon
+                    // Edit Profile Icon
                     IconButton(
-                      icon: const Icon(Icons.settings_outlined),
+                      icon: const Icon(Icons.edit_outlined),
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       onPressed: () {
                         context.push(AppRoutes.editProfile.path);
@@ -215,13 +218,44 @@ class ProfileScreen extends ConsumerWidget {
                       context.push(AppRoutes.privacySettings.path);
                     },
                   ),
+                  Divider(height: 1, indent: 56, color: theme.dividerColor),
+                  _SettingsTile(
+                    theme: theme,
+                    icon: Icons.description_outlined,
+                    title: 'privacy.terms_of_service'.tr(),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: context.colors.grey400,
+                    ),
+                    onTap: () {
+                      context.push(AppRoutes.termsOfService.path);
+                    },
+                  ),
+                  Divider(height: 1, indent: 56, color: theme.dividerColor),
+                  _SettingsTile(
+                    theme: theme,
+                    icon: Icons.policy_outlined,
+                    title: 'privacy.privacy_policy'.tr(),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: context.colors.grey400,
+                    ),
+                    onTap: () {
+                      context.push(AppRoutes.privacyPolicy.path);
+                    },
+                  ),
                 ],
               ),
 
-              SizedBox(height: context.spacing.panelPadding),
+                  ],
+                ),
+              ),
+            ),
 
-              // Logout Button
-              CustomButton(
+            // Logout Button — fixed at bottom
+            Padding(
+              padding: EdgeInsets.all(context.spacing.alertPadding),
+              child: CustomButton(
                 text: 'profile.logout'.tr(),
                 variant: ButtonVariant.danger,
                 isFullWidth: true,
@@ -236,10 +270,8 @@ class ProfileScreen extends ConsumerWidget {
                   }
                 },
               ),
-
-              SizedBox(height: context.spacing.panelPadding),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

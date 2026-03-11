@@ -29,8 +29,8 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       // Toy was registered at step 3 — PATCH it with personality if selected
       if (personalityId != null && personalityId.isNotEmpty) {
         try {
-          final toys = ref.read(toyProvider).value ?? [];
-          if (toys.isNotEmpty) {
+          final toys = ref.read(toyProvider).value;
+          if (toys != null && toys.isNotEmpty) {
             await ref
                 .read(toyProvider.notifier)
                 .updateToy(id: toys.last.id, personalityProfile: personalityId);

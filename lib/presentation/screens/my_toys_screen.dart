@@ -46,14 +46,16 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
       // Authenticated: load from backend, then merge local toys
       await notifier.loadMyToys();
       if (localToys.isNotEmpty) {
-        final current = ref.read(toyProvider).value ?? [];
-        // Avoid duplicates (local toy already synced to backend)
-        final localIds = localToys.map((t) => t.id).toSet();
-        final merged = [
-          ...current.where((t) => !localIds.contains(t.id)),
-          ...localToys,
-        ];
-        notifier.setToys(merged);
+        final current = ref.read(toyProvider).value;
+        if (current != null) {
+          // Avoid duplicates (local toy already synced to backend)
+          final localIds = localToys.map((t) => t.id).toSet();
+          final merged = [
+            ...current.where((t) => !localIds.contains(t.id)),
+            ...localToys,
+          ];
+          notifier.setToys(merged);
+        }
       }
     } else {
       // Unauthenticated: only local toys
