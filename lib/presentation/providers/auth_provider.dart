@@ -53,8 +53,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
         await _onAuthSuccess(response.user!);
         return response.user;
       }
-      final errorKey = response.error ?? 'auth.login_error';
-      throw Exception(errorKey.tr());
+      final error = response.error ?? 'auth.login_error';
+      // Translate if it's an i18n key (contains dots), otherwise show raw backend message
+      throw Exception(error.contains('.') ? error.tr() : error);
     });
   }
 

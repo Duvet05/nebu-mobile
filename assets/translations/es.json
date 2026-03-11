@@ -276,6 +276,7 @@
     "logout": "Cerrar Sesión",
     "logout_confirmation": "¿Estás seguro de que quieres cerrar sesión?",
     "update_success": "¡Perfil actualizado correctamente!",
+    "update_error": "No se pudo actualizar el perfil. Intenta de nuevo.",
     "user_not_found": "Usuario no encontrado",
     "avatar_camera": "Tomar Foto",
     "avatar_gallery": "Elegir de la Galería",

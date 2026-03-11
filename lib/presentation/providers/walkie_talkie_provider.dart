@@ -99,9 +99,12 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         data: {'toyId': toy.id},
       );
 
-      final token = tokenResponse['token'] as String;
-      final roomName = tokenResponse['roomName'] as String;
-      final serverUrl = tokenResponse['serverUrl'] as String;
+      final token = tokenResponse['token'] as String?;
+      final roomName = tokenResponse['roomName'] as String?;
+      final serverUrl = tokenResponse['serverUrl'] as String?;
+      if (token == null || roomName == null || serverUrl == null) {
+        throw Exception('walkie_talkie.missing_token_fields');
+      }
 
       // 2. Create voice session on backend
       final user = ref.read(authProvider).value;

@@ -59,12 +59,10 @@ final apiServiceProvider = Provider<ApiService>((ref) {
 
 final authServiceProvider = FutureProvider<AuthService>((ref) async {
   final dio = ref.watch(dioProvider);
-  final prefs = await ref.watch(sharedPreferencesProvider.future);
   final secureStorage = ref.watch(secureStorageProvider);
   final logger = ref.watch(loggerProvider);
   return AuthService(
     dio: dio,
-    prefs: prefs,
     secureStorage: secureStorage,
     logger: logger,
   );

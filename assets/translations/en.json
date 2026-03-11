@@ -195,6 +195,7 @@
     "logout": "Logout",
     "logout_confirmation": "Are you sure you want to logout?",
     "update_success": "Profile updated successfully!",
+    "update_error": "Could not update profile. Please try again.",
     "user_not_found": "User not found",
     "avatar_camera": "Take Photo",
     "avatar_gallery": "Choose from Gallery",

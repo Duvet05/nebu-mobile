@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/config/config.dart';
 import '../../core/constants/storage_keys.dart';
@@ -10,11 +9,9 @@ import '../models/user.dart';
 class AuthService {
   AuthService({
     required Dio dio,
-    required SharedPreferences prefs,
     required FlutterSecureStorage secureStorage,
     required Logger logger,
   }) : _dio = dio,
-       _prefs = prefs,
        _secureStorage = secureStorage,
        _logger = logger {
     _dio.options.baseUrl = Config.apiBaseUrl;
@@ -23,7 +20,6 @@ class AuthService {
     _dio.options.sendTimeout = Config.apiTimeout;
   }
   final Dio _dio;
-  final SharedPreferences _prefs;
   final FlutterSecureStorage _secureStorage;
   final Logger _logger;
 
@@ -95,18 +91,18 @@ class AuthService {
 
   // Social Authentication — single implementation for all providers
   Future<SocialAuthResult> googleLogin(String token) =>
-      _socialLogin('/auth/google', token, 'Google');
+      _socialLogin('/auth/google', token, 'auth.google_signin_failed_detail');
 
   Future<SocialAuthResult> facebookLogin(String token) =>
-      _socialLogin('/auth/facebook', token, 'Facebook');
+      _socialLogin('/auth/facebook', token, 'auth.login_error');
 
   Future<SocialAuthResult> appleLogin(String token) =>
-      _socialLogin('/auth/apple', token, 'Apple');
+      _socialLogin('/auth/apple', token, 'auth.login_error');
 
   Future<SocialAuthResult> _socialLogin(
     String endpoint,
     String token,
-    String providerName,
+    String fallbackErrorKey,
   ) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
@@ -124,12 +120,12 @@ class AuthService {
     } on DioException catch (e) {
       return SocialAuthResult(
         success: false,
-        error: _extractErrorMessage(e) ?? 'auth.google_signin_failed_detail',
+        error: _extractErrorMessage(e) ?? fallbackErrorKey,
       );
     } on Exception {
-      return const SocialAuthResult(
+      return SocialAuthResult(
         success: false,
-        error: 'auth.google_signin_failed_detail',
+        error: fallbackErrorKey,
       );
     }
   }

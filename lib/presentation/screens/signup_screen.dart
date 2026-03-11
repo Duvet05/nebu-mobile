@@ -54,6 +54,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final textTheme = context.theme.textTheme;
 
     ref.listen<AsyncValue<User?>>(authProvider, (prev, next) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _authError = next.hasError && !next.isLoading
             ? next.error.toString().replaceFirst('Exception: ', '')
@@ -119,7 +122,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'auth.email_required'.tr();
                           }
-                          if (!value.contains('@')) {
+                          if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                              .hasMatch(value)) {
                             return 'auth.email_invalid'.tr();
                           }
                           return null;

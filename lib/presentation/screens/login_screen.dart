@@ -146,8 +146,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onSuffixTap: () => setState(
                           () => _obscurePassword = !_obscurePassword,
                         ),
-                        validator: (v) =>
-                            ValidationRules.validatePassword(v)?.tr(),
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'auth.password_required'.tr()
+                            : null,
                       ),
                       Align(
                         alignment: Alignment.centerRight,

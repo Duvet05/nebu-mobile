@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/storage_keys.dart';
+import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
@@ -74,11 +75,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (mounted) {
         context
           ..pop()
-          ..showInfoSnackBar('profile.update_success'.tr());
+          ..showSuccessSnackBar('profile.update_success'.tr());
       }
-    } on Exception catch (e) {
+    } on Exception {
       if (mounted) {
-        context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+        context.showErrorSnackBar('profile.update_error'.tr());
       }
     } finally {
       if (mounted) {

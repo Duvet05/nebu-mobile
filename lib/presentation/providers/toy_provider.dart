@@ -144,10 +144,9 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
         newList[index] = updatedToy;
         state = AsyncValue.data(newList);
       }
-    } catch (e, st) {
+    } on Exception catch (e) {
+      // BLE status ping failure should NOT corrupt the entire toy list state
       ref.read(loggerProvider).e('Error updating toy status: $e');
-      state = AsyncValue.error(e, st);
-      rethrow;
     }
   }
 
