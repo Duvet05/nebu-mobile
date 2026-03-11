@@ -13,26 +13,30 @@ class SetupBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = context.theme.colorScheme;
 
-    return GestureDetector(
-      onTap: () {
-        final route = previousRoute;
-        if (route != null) {
-          context.go(route);
-        } else {
-          context.pop();
-        }
-      },
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: context.radius.tile,
-        ),
-        child: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 18,
-          color: colorScheme.onSurfaceVariant,
+    return Semantics(
+      button: true,
+      label: MaterialLocalizations.of(context).backButtonTooltip,
+      child: GestureDetector(
+        onTap: () {
+          final route = previousRoute;
+          if (route != null) {
+            context.go(route);
+          } else {
+            context.pop();
+          }
+        },
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: context.radius.tile,
+          ),
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ),
     );
@@ -133,37 +137,42 @@ class SetupPrimaryButton extends StatelessWidget {
           ]
         : null;
 
-    return GestureDetector(
-      onTap: effectiveEnabled ? onPressed : null,
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          gradient: gradient,
-          color: bgColor,
-          borderRadius: context.radius.panel,
-          boxShadow: shadow,
-        ),
-        child: Center(
-          child: isLoading
-              ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      context.colors.textOnFilled,
+    return Semantics(
+      button: true,
+      label: text,
+      enabled: effectiveEnabled,
+      child: GestureDetector(
+        onTap: effectiveEnabled ? onPressed : null,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            gradient: gradient,
+            color: bgColor,
+            borderRadius: context.radius.panel,
+            boxShadow: shadow,
+          ),
+          child: Center(
+            child: isLoading
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.colors.textOnFilled,
+                      ),
+                    ),
+                  )
+                : Text(
+                    text,
+                    style: context.theme.textTheme.titleMedium?.copyWith(
+                      color: effectiveEnabled
+                          ? context.colors.textOnFilled
+                          : context.theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                )
-              : Text(
-                  text,
-                  style: context.theme.textTheme.titleMedium?.copyWith(
-                    color: effectiveEnabled
-                        ? context.colors.textOnFilled
-                        : context.theme.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          ),
         ),
       ),
     );
@@ -175,15 +184,19 @@ class SetupSkipButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: Padding(
-      padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
-      child: Text(
-        'setup.connection.skip_setup'.tr(),
-        style: context.theme.textTheme.bodyMedium?.copyWith(
-          color: context.theme.colorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.w500,
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: 'setup.connection.skip_setup'.tr(),
+    child: GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+        child: Text(
+          'setup.connection.skip_setup'.tr(),
+          style: context.theme.textTheme.bodyMedium?.copyWith(
+            color: context.theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     ),

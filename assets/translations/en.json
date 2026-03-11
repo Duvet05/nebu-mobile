@@ -234,7 +234,8 @@
     "insights_minutes": "{}min talking",
     "insights_messages": "{} messages",
     "insights_emotions": "Detected emotions",
-    "insights_topics": "Frequent topics"
+    "insights_topics": "Frequent topics",
+    "date_format": "MMM d"
   },
   "notifications": {
     "title": "Notifications",
@@ -352,7 +353,8 @@
     "unassign_title": "Release Toy",
     "unassign_confirm": "Are you sure you want to release {}? It can be assigned to another user.",
     "unassign_success": "Toy released successfully",
-    "unassign_error": "Could not release the toy. Please try again."
+    "unassign_error": "Could not release the toy. Please try again.",
+    "device_id": "ID: {}"
   },
   "child_profile": {
     "title": "Child Profile",
@@ -360,6 +362,7 @@
     "no_data_title": "No profile yet",
     "no_data_subtitle": "Set up your child's profile so Nebu can personalize the experience!",
     "setup_profile": "Set Up Profile",
+    "default_name": "Child",
     "age": "Age: {}",
     "personality": "Personality",
     "delete_profile": "Delete Profile",
@@ -374,7 +377,22 @@
     "information": "Information",
     "memory_usage": "Memory Usage",
     "health_checks": "Health Checks",
-    "performance": "Performance"
+    "performance": "Performance",
+    "status_label": "Status",
+    "version": "Version",
+    "environment": "Environment",
+    "uptime": "Uptime",
+    "timestamp": "Timestamp",
+    "heap_used": "Heap Used",
+    "heap_total": "Heap Total",
+    "usage": "Usage",
+    "database": "Database",
+    "redis": "Redis",
+    "configuration": "Configuration",
+    "response_time": "Response Time",
+    "process_id": "Process ID",
+    "platform": "Platform",
+    "node_version": "Node Version"
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
@@ -717,7 +735,9 @@
     "clear_local_data_title": "Clear Local Data?",
     "clear_local_data_body": "This will delete all local toys, child profile data, setup preferences, and cached avatar. Your account, login, and language/theme settings will NOT be affected.",
     "clear_local_data_confirm": "Clear Data",
-    "clear_local_data_success": "Local data cleared successfully"
+    "clear_local_data_success": "Local data cleared successfully",
+    "language_english": "English",
+    "language_spanish": "Español"
   },
   "errors": {
     "route_not_found": "Page not found"

@@ -294,20 +294,24 @@ class AuthSwitchLink extends StatelessWidget {
           '$prompt ',
           style: textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
         ),
-        GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: enabled ? onTap : null,
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: context.spacing.labelBottomMargin,
-            ),
-            child: Text(
-              action,
-              style: textTheme.bodyMedium?.copyWith(
-                color: enabled
-                    ? context.theme.colorScheme.primary
-                    : context.colors.grey500,
-                fontWeight: FontWeight.w600,
+        Semantics(
+          button: true,
+          label: action,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: enabled ? onTap : null,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: context.spacing.labelBottomMargin,
+              ),
+              child: Text(
+                action,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: enabled
+                      ? context.theme.colorScheme.primary
+                      : context.colors.grey500,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ),

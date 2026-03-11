@@ -324,7 +324,8 @@
     "insights_minutes": "{}min hablando",
     "insights_messages": "{} mensajes",
     "insights_emotions": "Emociones detectadas",
-    "insights_topics": "Temas frecuentes"
+    "insights_topics": "Temas frecuentes",
+    "date_format": "d 'de' MMM"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -471,7 +472,8 @@
     "unassign_title": "Liberar Juguete",
     "unassign_confirm": "¿Estás seguro de que quieres liberar {}? Podrá ser asignado a otro usuario.",
     "unassign_success": "Juguete liberado correctamente",
-    "unassign_error": "No se pudo liberar el juguete. Intenta de nuevo."
+    "unassign_error": "No se pudo liberar el juguete. Intenta de nuevo.",
+    "device_id": "ID: {}"
   },
   "child_profile": {
     "title": "Perfil del Niño",
@@ -480,6 +482,7 @@
     "no_data_title": "Aún no hay perfil",
     "no_data_subtitle": "Configura el perfil de tu hijo para que Nebu personalice la experiencia!",
     "setup_profile": "Configurar Perfil",
+    "default_name": "Niño/a",
     "age": "Edad: {}",
     "personality": "Personalidad",
     "delete_profile": "Eliminar Perfil",
@@ -529,7 +532,22 @@
     "information": "Información",
     "memory_usage": "Uso de Memoria",
     "health_checks": "Verificaciones de Salud",
-    "performance": "Rendimiento"
+    "performance": "Rendimiento",
+    "status_label": "Estado",
+    "version": "Versión",
+    "environment": "Entorno",
+    "uptime": "Tiempo activo",
+    "timestamp": "Fecha y hora",
+    "heap_used": "Heap usado",
+    "heap_total": "Heap total",
+    "usage": "Uso",
+    "database": "Base de datos",
+    "redis": "Redis",
+    "configuration": "Configuración",
+    "response_time": "Tiempo de respuesta",
+    "process_id": "ID de proceso",
+    "platform": "Plataforma",
+    "node_version": "Versión de Node"
   },
   "walkie_talkie": {
     "title": "Walkie Talkie",
@@ -903,7 +921,9 @@
     "clear_local_data_title": "¿Borrar Datos Locales?",
     "clear_local_data_body": "Se eliminarán todos los juguetes locales, datos del perfil infantil, preferencias de configuración y avatar en caché. Tu cuenta, sesión e idioma/tema NO se verán afectados.",
     "clear_local_data_confirm": "Borrar Datos",
-    "clear_local_data_success": "Datos locales borrados exitosamente"
+    "clear_local_data_success": "Datos locales borrados exitosamente",
+    "language_english": "English",
+    "language_spanish": "Español"
   },
   "errors": {
     "route_not_found": "Página no encontrada"

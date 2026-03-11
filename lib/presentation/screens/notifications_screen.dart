@@ -22,6 +22,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   List<AppNotification> _notifications = [];
   bool _isLoading = true;
   bool _isBusy = false;
+  bool _isDismissing = false;
   String? _errorMessage;
 
   @override
@@ -82,7 +83,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           if (unreadCount > 0)
             CustomButton(
               text: 'notifications.mark_all_read'.tr(),
-              onPressed: _isBusy ? null : _markAllAsRead,
+              onPressed: (_isBusy || _isDismissing) ? null : _markAllAsRead,
               isLoading: _isBusy,
               variant: ButtonVariant.text,
               height: 48,
@@ -130,7 +131,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         final notification = filteredNotifications[index];
                         return _NotificationCard(
                           notification: notification,
-                          onTap: () => _handleNotificationTap(notification),
+                          onTap: notification.readAt != null
+                              ? null
+                              : () => _handleNotificationTap(notification),
                           onDismiss: () => _dismissNotification(notification),
                         );
                       },
@@ -243,7 +246,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Future<void> _handleNotificationTap(AppNotification notification) async {
-    if (_isBusy) return;
+    if (_isBusy || _isDismissing) return;
     if (notification.readAt != null) return;
     setState(() => _isBusy = true);
     final service = ref.read(notificationServiceProvider);
@@ -284,9 +287,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final index = _notifications.indexWhere((n) => n.id == notification.id);
     if (index == -1) return;
 
-    // Optimistic delete
+    // Optimistic delete — single setState to avoid torn state
     final backup = List<AppNotification>.from(_notifications);
     setState(() {
+      _isDismissing = true;
       _notifications = [
         ..._notifications.sublist(0, index),
         ..._notifications.sublist(index + 1),
@@ -297,17 +301,22 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     try {
       await service.deleteNotification(notification.id);
       if (!mounted) return;
+      setState(() => _isDismissing = false);
       context.showInfoSnackBar('notifications.deleted'.tr());
-    } on AppException catch (e) {
+    } on AppException catch (_) {
       if (!mounted) return;
-      setState(() => _notifications = backup);
+      setState(() {
+        _notifications = backup;
+        _isDismissing = false;
+      });
       context.showErrorSnackBar('notifications.dismiss_error'.tr());
-      debugPrint('Dismiss failed: ${e.message}');
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       if (!mounted) return;
-      setState(() => _notifications = backup);
+      setState(() {
+        _notifications = backup;
+        _isDismissing = false;
+      });
       context.showErrorSnackBar('notifications.dismiss_error'.tr());
-      debugPrint('Dismiss failed: $e');
     }
   }
 }
@@ -315,12 +324,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 class _NotificationCard extends StatelessWidget {
   const _NotificationCard({
     required this.notification,
-    required this.onTap,
+    this.onTap,
     required this.onDismiss,
   });
 
   final AppNotification notification;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Future<void> Function() onDismiss;
 
   @override
@@ -351,11 +360,11 @@ class _NotificationCard extends StatelessWidget {
             : theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: context.radius.tile,
-          side: BorderSide(
-            color: isRead
-                ? theme.colorScheme.outline.withValues(alpha: 0.0)
-                : theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
+          side: isRead
+              ? BorderSide.none
+              : BorderSide(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                ),
         ),
         child: InkWell(
           onTap: onTap,
@@ -399,6 +408,8 @@ class _NotificationCard extends StatelessWidget {
                                     ? FontWeight.normal
                                     : FontWeight.bold,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           if (!isRead)
