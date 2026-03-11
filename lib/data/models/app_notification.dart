@@ -9,8 +9,8 @@ abstract class AppNotification with _$AppNotification {
     required String id,
     required String title,
     required String message,
-    @Default('system') String type,
     required DateTime createdAt,
+    @Default('system') String type,
     DateTime? readAt,
   }) = _AppNotification;
 

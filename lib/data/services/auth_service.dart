@@ -128,14 +128,22 @@ class AuthService {
       // Prefer errorCode → i18n key (locale-safe)
       final errorCode = data['errorCode'] as String?;
       final i18nKey = _errorCodeToKey(errorCode);
-      if (i18nKey != null) return i18nKey;
+      if (i18nKey != null) {
+        return i18nKey;
+      }
 
       // Fallback: raw message/error field
       final message = data['message'];
-      if (message is String) return _cleanMessage(message);
-      if (message is List) return _cleanMessage(message.join(', '));
+      if (message is String) {
+        return _cleanMessage(message);
+      }
+      if (message is List) {
+        return _cleanMessage(message.join(', '));
+      }
       final error = data['error'];
-      if (error is String) return _cleanMessage(error);
+      if (error is String) {
+        return _cleanMessage(error);
+      }
     }
     return null;
   }

@@ -285,8 +285,12 @@ class ProfileScreen extends ConsumerWidget {
                     confirmText: 'profile.logout'.tr(),
                     destructive: true,
                   );
-                  if (!shouldLogout) return;
-                  if (!context.mounted) return;
+                  if (!shouldLogout) {
+                    return;
+                  }
+                  if (!context.mounted) {
+                    return;
+                  }
                   await ref.read(authProvider.notifier).logout();
                   if (context.mounted) {
                     context.go(AppRoutes.welcome.path);

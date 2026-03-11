@@ -215,7 +215,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   );
 
   Future<void> _markAllAsRead() async {
-    if (_isBusy) return;
+    if (_isBusy) {
+      return;
+    }
     setState(() => _isBusy = true);
     final service = ref.read(notificationServiceProvider);
     try {
@@ -246,8 +248,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Future<void> _handleNotificationTap(AppNotification notification) async {
-    if (_isBusy || _isDismissing) return;
-    if (notification.readAt != null) return;
+    if (_isBusy || _isDismissing) {
+      return;
+    }
+    if (notification.readAt != null) {
+      return;
+    }
     setState(() => _isBusy = true);
     final service = ref.read(notificationServiceProvider);
     try {
@@ -285,7 +291,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
   Future<void> _dismissNotification(AppNotification notification) async {
     final index = _notifications.indexWhere((n) => n.id == notification.id);
-    if (index == -1) return;
+    if (index == -1) {
+      return;
+    }
 
     // Optimistic delete — single setState to avoid torn state
     final backup = List<AppNotification>.from(_notifications);
@@ -300,18 +308,24 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     final service = ref.read(notificationServiceProvider);
     try {
       await service.deleteNotification(notification.id);
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() => _isDismissing = false);
       context.showInfoSnackBar('notifications.deleted'.tr());
     } on AppException catch (_) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _notifications = backup;
         _isDismissing = false;
       });
       context.showErrorSnackBar('notifications.dismiss_error'.tr());
     } on Exception catch (_) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _notifications = backup;
         _isDismissing = false;
@@ -324,8 +338,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 class _NotificationCard extends StatelessWidget {
   const _NotificationCard({
     required this.notification,
-    this.onTap,
     required this.onDismiss,
+    this.onTap,
   });
 
   final AppNotification notification;

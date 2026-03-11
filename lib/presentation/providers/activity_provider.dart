@@ -163,9 +163,15 @@ class ActivityNotifier extends Notifier<ActivityState> {
 
   /// Map exceptions to user-friendly i18n keys
   String _mapErrorMessage(Exception e) {
-    if (e is NetworkException) return 'errors.network';
-    if (e is AuthException) return 'errors.unauthorized';
-    if (e is ServerException) return 'errors.server';
+    if (e is NetworkException) {
+      return 'errors.network';
+    }
+    if (e is AuthException) {
+      return 'errors.unauthorized';
+    }
+    if (e is ServerException) {
+      return 'errors.server';
+    }
     return 'activity_log.error_loading';
   }
 

@@ -344,13 +344,14 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                   isSecondary: true,
                   onTap: () async {
                     final nav = GoRouter.of(context);
+                    final navigator = Navigator.of(context);
                     final prefs = await SharedPreferences.getInstance();
                     await prefs.setBool(StorageKeys.setupSkipped, true);
                     if (!mounted) {
                       return;
                     }
                     ref.invalidate(setupSkippedProvider);
-                    Navigator.pop(context);
+                    navigator.pop();
                     nav.go(AppRoutes.home.path);
                   },
                 ),

@@ -171,13 +171,14 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
           TextButton(
             onPressed: () async {
               final nav = GoRouter.of(context);
+              final navigator = Navigator.of(dialogContext);
               final prefs = await SharedPreferences.getInstance();
               await prefs.setBool(StorageKeys.setupSkipped, true);
               if (!mounted) {
                 return;
               }
               ref.invalidate(setupSkippedProvider);
-              Navigator.pop(dialogContext);
+              navigator.pop();
               nav.go(AppRoutes.home.path);
             },
             child: Text('setup.connection.skip_setup'.tr()),

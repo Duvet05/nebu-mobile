@@ -41,7 +41,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       Permission.location.isGranted,
       Permission.microphone.isGranted,
     ]);
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _permissions = {
         Permission.bluetooth: results[0],
