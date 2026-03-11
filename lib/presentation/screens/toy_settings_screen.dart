@@ -186,6 +186,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
         final colorScheme = theme.colorScheme;
 
         return SafeArea(
+          top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,7 +333,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                                 height: context.spacing.titleBottomMarginSm,
                               ),
                               Text(
-                                'ID: ${_currentToy.iotDeviceId}',
+                                'toy_settings.device_id'.tr(args: [_currentToy.iotDeviceId!]),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.disabledColor,
                                 ),

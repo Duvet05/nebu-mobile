@@ -35,7 +35,15 @@ class VoiceSessionsScreen extends ConsumerWidget {
                   padding: EdgeInsets.all(context.spacing.alertPadding),
                   child: const Center(child: CircularProgressIndicator()),
                 ),
-                error: (_, _) => const SizedBox.shrink(),
+                error: (_, _) => Padding(
+                  padding: EdgeInsets.all(context.spacing.alertPadding),
+                  child: Text(
+                    'limits.metrics_error'.tr(),
+                    style: context.theme.textTheme.bodyMedium?.copyWith(
+                      color: context.colors.error,
+                    ),
+                  ),
+                ),
               ),
             ),
 
@@ -463,9 +471,9 @@ class _SessionDetail extends ConsumerWidget {
                     .toList(),
               );
             },
-            loading: () => const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Center(child: CircularProgressIndicator()),
+            loading: () => Padding(
+              padding: EdgeInsets.symmetric(vertical: context.spacing.alertPadding),
+              child: const Center(child: CircularProgressIndicator()),
             ),
             error: (_, _) => Text(
               'voice_history.error_conversations'.tr(),

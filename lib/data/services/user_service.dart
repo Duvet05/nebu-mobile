@@ -104,7 +104,7 @@ class UserService {
     );
 
     _logger.d('Account deleted successfully');
-    return response['message'] as String? ?? 'Cuenta eliminada exitosamente';
+    return response['message'] as String? ?? 'Account deleted';
   }
 
   /// Eliminar datos personales (anonymize)
@@ -118,7 +118,6 @@ class UserService {
     );
 
     _logger.d('Personal data deleted successfully');
-    return response['message'] as String? ??
-        'Datos personales eliminados exitosamente';
+    return response['message'] as String? ?? 'Personal data deleted';
   }
 }

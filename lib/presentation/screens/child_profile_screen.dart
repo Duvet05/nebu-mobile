@@ -34,8 +34,20 @@ class ChildProfileScreen extends ConsumerWidget {
           return _buildChildProfileState(context, service, colorScheme);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, _) =>
-            Center(child: Text('child_profile.error_generic'.tr())),
+        error: (_, _) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('child_profile.error_generic'.tr()),
+              SizedBox(height: context.spacing.panelPadding),
+              CustomButton(
+                text: 'common.retry'.tr(),
+                onPressed: () => ref.invalidate(localChildDataServiceProvider),
+                variant: ButtonVariant.outline,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -77,7 +89,7 @@ class ChildProfileScreen extends ConsumerWidget {
     ColorScheme colorScheme,
   ) {
     final childData = service.getChildData();
-    final childName = childData['name'] ?? 'Child';
+    final childName = childData['name'] ?? 'child_profile.default_name'.tr();
     final childAge = childData['age'];
     final childPersonality = childData['personality'];
 
@@ -120,7 +132,7 @@ class ChildProfileScreen extends ConsumerWidget {
           const Divider(),
           _buildSectionTitle('child_profile.personality'.tr(), context),
           Wrap(
-            spacing: 8,
+            spacing: context.spacing.gapMd,
             children: [
               if (childPersonality != null)
                 _buildInfoChip(

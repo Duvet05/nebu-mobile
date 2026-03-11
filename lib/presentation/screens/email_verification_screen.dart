@@ -49,9 +49,12 @@ class _EmailVerificationScreenState
       _resendStatus = _ResendStatus.idle;
     });
 
-    final success = await ref
-        .read(authProvider.notifier)
-        .resendVerification(email);
+    bool success;
+    try {
+      success = await ref.read(authProvider.notifier).resendVerification(email);
+    } on Exception {
+      success = false;
+    }
 
     if (!mounted) {
       return;

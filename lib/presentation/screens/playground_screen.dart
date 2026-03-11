@@ -401,6 +401,7 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
                 ? _sendMessage
                 : null,
             icon: const Icon(Icons.send),
+            tooltip: 'playground.message_hint'.tr(),
           ),
         ],
       ),

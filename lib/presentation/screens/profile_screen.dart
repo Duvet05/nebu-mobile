@@ -313,6 +313,7 @@ class ProfileScreen extends ConsumerWidget {
           width: 64,
           height: 64,
           fit: BoxFit.cover,
+          semanticLabel: 'profile.title'.tr(),
         ),
       );
     }
@@ -324,6 +325,7 @@ class ProfileScreen extends ConsumerWidget {
           width: 64,
           height: 64,
           fit: BoxFit.cover,
+          semanticLabel: 'profile.title'.tr(),
           errorBuilder: (_, _, _) => _buildInitials(name, theme),
         ),
       );

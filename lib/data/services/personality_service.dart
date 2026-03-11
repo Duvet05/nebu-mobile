@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../models/personality.dart';
 import 'api_service.dart';
 
@@ -32,7 +33,13 @@ class PersonalityService {
       }
     }
 
-    return [];
+    _logger.e(
+      'getPersonalities: unexpected response shape: ${response.runtimeType}',
+    );
+    throw const ServerException(
+      'Unexpected response format from /agent/personalities',
+      statusCode: 500,
+    );
   }
 
   Future<void> assignPersonalityToToy({

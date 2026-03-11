@@ -226,42 +226,24 @@ class AuthService {
 
   // Password Reset
   Future<bool> requestPasswordReset(String email) async {
-    try {
-      await _dio.post<void>('/auth/forgot-password', data: {'email': email});
-      return true;
-    } on DioException catch (e) {
-      _logger.e('Password reset request failed: ${e.message}');
-      return false;
-    }
+    await _dio.post<void>('/auth/forgot-password', data: {'email': email});
+    return true;
   }
 
   Future<bool> resetPassword({
     required String token,
     required String newPassword,
   }) async {
-    try {
-      await _dio.post<void>(
-        '/auth/reset-password',
-        data: {'token': token, 'newPassword': newPassword},
-      );
-      return true;
-    } on DioException catch (e) {
-      _logger.e('Password reset failed: ${e.message}');
-      return false;
-    }
+    await _dio.post<void>(
+      '/auth/reset-password',
+      data: {'token': token, 'newPassword': newPassword},
+    );
+    return true;
   }
 
   // Email Verification
   Future<bool> resendVerification(String email) async {
-    try {
-      await _dio.post<void>(
-        '/auth/resend-verification',
-        data: {'email': email},
-      );
-      return true;
-    } on DioException catch (e) {
-      _logger.e('Resend verification failed: ${e.message}');
-      return false;
-    }
+    await _dio.post<void>('/auth/resend-verification', data: {'email': email});
+    return true;
   }
 }

@@ -67,7 +67,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       final toysAsync = ref.read(hasLocalToysProvider);
       final setupAsync = ref.read(setupSkippedProvider);
       // Wait for all async providers to resolve before making redirect decisions
-      if (auth.isLoading || toysAsync.isLoading || setupAsync.isLoading) {
+      if (auth.isLoading ||
+          toysAsync.isLoading ||
+          setupAsync.isLoading ||
+          toysAsync.hasError ||
+          setupAsync.hasError) {
         return null;
       }
 

@@ -29,12 +29,18 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
   }
 
   Future<void> _initSession() async {
-    final micStatus = await Permission.microphone.request();
-    if (!micStatus.isGranted && mounted) {
-      context.showErrorSnackBar('walkie_talkie.mic_permission_required'.tr());
-      return;
+    try {
+      final micStatus = await Permission.microphone.request();
+      if (!micStatus.isGranted && mounted) {
+        context.showErrorSnackBar('walkie_talkie.mic_permission_required'.tr());
+        return;
+      }
+      await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
+    } on Exception catch (e) {
+      if (mounted) {
+        context.showErrorSnackBar(e.toString());
+      }
     }
-    await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
   }
 
   Future<void> _endSession() async {

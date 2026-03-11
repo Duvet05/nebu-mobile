@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../../data/models/activity.dart';
 import '../../data/services/activity_service.dart';
 import 'api_provider.dart';
@@ -85,6 +86,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
         hasMore: hasMore,
         currentPage: page,
       );
+    } on NotFoundException {
+      state = state.copyWith(
+        activities: append ? state.activities : [],
+        isLoading: false,
+        hasMore: false,
+      );
     } on Exception catch (e) {
       state = state.copyWith(isLoading: false, error: _mapErrorMessage(e));
     }
@@ -155,7 +162,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
   }
 
   /// Map exceptions to user-friendly i18n keys
-  String _mapErrorMessage(Exception _) => 'activity_log.error_loading';
+  String _mapErrorMessage(Exception e) {
+    if (e is NetworkException) return 'errors.network';
+    if (e is AuthException) return 'errors.unauthorized';
+    if (e is ServerException) return 'errors.server';
+    return 'activity_log.error_loading';
+  }
 
   /// Refrescar actividades (pull to refresh)
   Future<void> refresh({

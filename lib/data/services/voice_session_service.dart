@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../models/voice_session.dart';
 import 'api_service.dart';
 
@@ -44,7 +45,13 @@ class VoiceSessionService {
           .map(AiConversation.fromJson)
           .toList();
     }
-    return [];
+    _logger.e(
+      'getSessionConversations: unexpected response shape: ${response.runtimeType}',
+    );
+    throw const ServerException(
+      'Unexpected response format from conversations API',
+      statusCode: 500,
+    );
   }
 
   /// Get session metrics/statistics.
@@ -113,6 +120,12 @@ class VoiceSessionService {
             .toList();
       }
     }
-    return [];
+    _logger.e(
+      '_parseSessionList: unexpected response shape: ${response.runtimeType}',
+    );
+    throw const ServerException(
+      'Unexpected response format from sessions API',
+      statusCode: 500,
+    );
   }
 }

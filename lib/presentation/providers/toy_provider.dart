@@ -83,9 +83,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       state = AsyncValue.data([...currentState, toy]);
 
       return toy;
-    } catch (e, st) {
+    } catch (e) {
       ref.read(loggerProvider).e('Error creating toy: $e');
-      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -113,9 +112,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       }
 
       return response;
-    } catch (e, st) {
+    } catch (e) {
       ref.read(loggerProvider).e('Error assigning toy: $e');
-      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -211,9 +209,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       }
 
       return updatedToy;
-    } catch (e, st) {
+    } catch (e) {
       ref.read(loggerProvider).e('Error updating toy: $e');
-      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -228,9 +225,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       state = AsyncValue.data(
         currentState.where((toy) => toy.id != id).toList(),
       );
-    } catch (e, st) {
+    } catch (e) {
       ref.read(loggerProvider).e('Error unassigning toy: $e');
-      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -245,9 +241,8 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       state = AsyncValue.data(
         currentState.where((toy) => toy.id != id).toList(),
       );
-    } catch (e, st) {
+    } catch (e) {
       ref.read(loggerProvider).e('Error deleting toy: $e');
-      state = AsyncValue.error(e, st);
       rethrow;
     }
   }

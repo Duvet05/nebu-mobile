@@ -284,13 +284,13 @@ class BluetoothService {
   }
 
   // Subscribe to characteristic notifications
-  StreamSubscription<List<int>> subscribeToCharacteristic(
+  Future<StreamSubscription<List<int>>> subscribeToCharacteristic(
     fbp.BluetoothCharacteristic characteristic,
     void Function(List<int>) onData,
-  ) {
+  ) async {
     try {
       _logger.d('Subscribing to characteristic: ${characteristic.uuid}');
-      characteristic.setNotifyValue(true);
+      await characteristic.setNotifyValue(true);
       return characteristic.lastValueStream.listen(onData);
     } on Exception catch (e) {
       _logger.e('Error subscribing to characteristic: $e');

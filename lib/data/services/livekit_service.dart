@@ -169,8 +169,11 @@ class LiveKitService {
       }
       return token;
     } on Exception catch (e) {
-      _logger.w('Failed to fetch token from server, using dev token: $e');
-      return _createDevToken(participantName, roomName);
+      if (Config.isDevelopment) {
+        _logger.w('Failed to fetch token from server, using dev token: $e');
+        return _createDevToken(participantName, roomName);
+      }
+      rethrow;
     }
   }
 

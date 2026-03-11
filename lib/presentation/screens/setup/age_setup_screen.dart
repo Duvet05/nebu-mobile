@@ -73,13 +73,17 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                             padding: EdgeInsets.only(
                               bottom: context.spacing.gapLg,
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedAge = age['label'] as String;
-                                });
-                              },
-                              child: Container(
+                            child: Semantics(
+                              button: true,
+                              label: (age['label'] as String).tr(),
+                              selected: isSelected,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedAge = age['label'] as String;
+                                  });
+                                },
+                                child: Container(
                                 padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
@@ -118,7 +122,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                             : colorScheme.onSurfaceVariant,
                                       ),
                                     ),
-                                    const SizedBox(width: 16),
+                                    SizedBox(width: context.spacing.gapXl),
                                     Expanded(
                                       child: Text(
                                         (age['label'] as String).tr(),
@@ -148,6 +152,7 @@ class _AgeSetupScreenState extends State<AgeSetupScreen> {
                                   ],
                                 ),
                               ),
+                            ),
                             ),
                           );
                         },

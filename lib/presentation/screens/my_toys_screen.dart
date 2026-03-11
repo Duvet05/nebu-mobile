@@ -106,8 +106,8 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: theme.colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      shape: RoundedRectangleBorder(
+        borderRadius: context.radius.bottomSheetTop,
       ),
       isScrollControlled: true,
       builder: (context) => SafeArea(
@@ -780,36 +780,40 @@ class _QuickActionButton extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    borderRadius: context.radius.tile,
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.spacing.paragraphBottomMarginSm,
-        vertical: context.spacing.labelBottomMargin,
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: context.radius.tile,
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: color),
-          SizedBox(width: context.spacing.gapSm),
-          Flexible(
-            child: Text(
-              label,
-              style: context.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: color,
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    label: label,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: context.radius.tile,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.spacing.paragraphBottomMarginSm,
+          vertical: context.spacing.labelBottomMargin,
+        ),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: context.radius.tile,
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            SizedBox(width: context.spacing.gapSm),
+            Flexible(
+              child: Text(
+                label,
+                style: context.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );

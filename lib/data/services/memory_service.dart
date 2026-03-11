@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../models/conversation.dart';
 import '../models/voice_session.dart';
 import 'api_service.dart';
@@ -92,10 +93,13 @@ class MemoryService {
             .toList();
       }
     }
-    _logger.w(
+    _logger.e(
       'searchKnowledge: unexpected response shape: ${response.runtimeType}',
     );
-    return [];
+    throw const ServerException(
+      'Unexpected response format from knowledge API',
+      statusCode: 500,
+    );
   }
 
   // ─── Parsing ───
@@ -117,9 +121,12 @@ class MemoryService {
             .toList();
       }
     }
-    _logger.w(
+    _logger.e(
       '_parseMemoryList: unexpected response shape: ${response.runtimeType}',
     );
-    return [];
+    throw const ServerException(
+      'Unexpected response format from memory API',
+      statusCode: 500,
+    );
   }
 }

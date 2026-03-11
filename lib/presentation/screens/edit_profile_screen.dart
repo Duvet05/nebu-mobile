@@ -108,6 +108,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
       builder: (ctx) => SafeArea(
+        top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -224,44 +225,48 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         child: Column(
           children: [
             // Avatar
-            GestureDetector(
-              onTap: _isUpdatingAvatar ? null : _showAvatarOptions,
-              child: Stack(
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: _isUpdatingAvatar
-                        ? const Center(child: CircularProgressIndicator())
-                        : _buildAvatarImage(
-                            localAvatar: localAvatar,
-                            networkAvatar: user.avatar,
-                            name: user.name,
-                            theme: theme,
-                          ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 32,
-                      height: 32,
+            Semantics(
+              button: true,
+              label: 'profile.avatar_camera'.tr(),
+              child: GestureDetector(
+                onTap: _isUpdatingAvatar ? null : _showAvatarOptions,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 96,
+                      height: 96,
                       decoration: BoxDecoration(
-                        color: colorScheme.primary,
+                        color: colorScheme.primary.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
-                        Icons.camera_alt,
-                        size: 16,
-                        color: colorScheme.onPrimary,
+                      child: _isUpdatingAvatar
+                          ? const Center(child: CircularProgressIndicator())
+                          : _buildAvatarImage(
+                              localAvatar: localAvatar,
+                              networkAvatar: user.avatar,
+                              name: user.name,
+                              theme: theme,
+                            ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.camera_alt,
+                          size: 16,
+                          color: colorScheme.onPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
@@ -308,6 +313,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           width: 96,
           height: 96,
           fit: BoxFit.cover,
+          semanticLabel: 'profile.edit_profile'.tr(),
         ),
       );
     }
@@ -319,6 +325,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           width: 96,
           height: 96,
           fit: BoxFit.cover,
+          semanticLabel: 'profile.edit_profile'.tr(),
           errorBuilder: (_, _, _) => _buildInitials(name, theme),
         ),
       );

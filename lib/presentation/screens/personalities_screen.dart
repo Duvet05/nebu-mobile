@@ -101,10 +101,10 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                 )
               : GridView.builder(
                   padding: EdgeInsets.all(context.spacing.alertPadding),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
+                    crossAxisSpacing: context.spacing.gapLg,
+                    mainAxisSpacing: context.spacing.gapLg,
                     childAspectRatio: 0.78,
                   ),
                   itemCount: filtered.length,
@@ -524,75 +524,79 @@ class _PersonalityCard extends StatelessWidget {
     final theme = context.theme;
     final catColor = _getCategoryColor(context, personality.category ?? '');
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: context.radius.panel,
-      child: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: context.radius.panel,
-          border: Border.all(color: catColor.withValues(alpha: 0.2)),
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.all(context.spacing.alertPadding),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: catColor.withValues(alpha: 0.12),
-              child: Icon(
-                _getCategoryIcon(personality.category ?? ''),
-                color: catColor,
-                size: 30,
+    return Semantics(
+      button: true,
+      label: personality.name,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: context.radius.panel,
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: context.radius.panel,
+            border: Border.all(color: catColor.withValues(alpha: 0.2)),
+            boxShadow: [
+              BoxShadow(
+                color: theme.shadowColor.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-            ),
-            SizedBox(height: context.spacing.paragraphBottomMarginSm),
-            Text(
-              personality.name,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+            ],
+          ),
+          padding: EdgeInsets.all(context.spacing.alertPadding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: catColor.withValues(alpha: 0.12),
+                child: Icon(
+                  _getCategoryIcon(personality.category ?? ''),
+                  color: catColor,
+                  size: 30,
+                ),
               ),
-            ),
-            SizedBox(height: context.spacing.gapXs),
-            if (personality.category != null)
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.spacing.gapMd,
-                  vertical: context.spacing.gapXxs,
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
+              Text(
+                personality.name,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                 ),
-                decoration: BoxDecoration(
-                  color: catColor.withValues(alpha: 0.1),
-                  borderRadius: context.radius.tile,
-                ),
-                child: Text(
-                  _categoryLabel(personality.category!),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: catColor,
-                    fontWeight: FontWeight.w600,
+              ),
+              SizedBox(height: context.spacing.gapXs),
+              if (personality.category != null)
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.spacing.gapMd,
+                    vertical: context.spacing.gapXxs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: catColor.withValues(alpha: 0.1),
+                    borderRadius: context.radius.tile,
+                  ),
+                  child: Text(
+                    _categoryLabel(personality.category!),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: catColor,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
+              SizedBox(height: context.spacing.labelBottomMargin),
+              Text(
+                personality.description.replaceAll('{name}', personality.name),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
-            SizedBox(height: context.spacing.labelBottomMargin),
-            Text(
-              personality.description.replaceAll('{name}', personality.name),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

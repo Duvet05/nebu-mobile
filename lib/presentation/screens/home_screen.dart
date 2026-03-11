@@ -297,7 +297,7 @@ class HomeScreen extends ConsumerWidget {
                 'home.no_toys_hint'.tr(),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withAlpha(153),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
@@ -448,33 +448,37 @@ class _QuickActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: context.radius.tile,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: context.spacing.paragraphBottomMarginSm,
-          horizontal: context.spacing.labelBottomMargin,
-        ),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
-          borderRadius: context.radius.tile,
-          border: Border.all(color: color.withValues(alpha: 0.2)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color),
-            SizedBox(height: context.spacing.labelBottomMargin),
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+    return Semantics(
+      button: true,
+      label: label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: context.radius.tile,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: context.spacing.paragraphBottomMarginSm,
+            horizontal: context.spacing.labelBottomMargin,
+          ),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.08),
+            borderRadius: context.radius.tile,
+            border: Border.all(color: color.withValues(alpha: 0.2)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color),
+              SizedBox(height: context.spacing.labelBottomMargin),
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
