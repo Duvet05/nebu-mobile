@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'core/config/config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'firebase_options.dart';
 import 'presentation/providers/theme_provider.dart';
 
 void main() async {
@@ -17,7 +18,9 @@ void main() async {
     EasyLocalization.ensureInitialized(),
     () async {
       try {
-        await Firebase.initializeApp();
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
       } on Exception catch (e) {
         debugPrint('Firebase skip: $e');
       }

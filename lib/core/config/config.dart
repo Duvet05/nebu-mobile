@@ -56,7 +56,8 @@ abstract final class Config {
   // ============================================
   // Social Auth
   // ============================================
-  static String get googleWebClientId => '';
+  static String get googleWebClientId =>
+      '874117365573-41585jcimi2t77j0bou38e1la0ke8jk6.apps.googleusercontent.com';
   static String get googleIosClientId => '';
   static String get facebookAppId => '';
 
