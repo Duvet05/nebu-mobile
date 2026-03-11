@@ -449,11 +449,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.add,
-              size: 20,
-              color: context.colors.primary,
-            ),
+            Icon(Icons.add, size: 20, color: context.colors.primary),
             SizedBox(width: context.spacing.gapMd),
             Text(
               'toys.add_toy'.tr(),

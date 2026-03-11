@@ -122,8 +122,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           if (value == null || value.isEmpty) {
                             return 'auth.email_required'.tr();
                           }
-                          if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                              .hasMatch(value)) {
+                          if (!RegExp(
+                            r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                          ).hasMatch(value)) {
                             return 'auth.email_invalid'.tr();
                           }
                           return null;

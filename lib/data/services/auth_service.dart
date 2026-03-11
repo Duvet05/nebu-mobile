@@ -49,10 +49,7 @@ class AuthService {
         error: _extractErrorMessage(e) ?? 'auth.invalid_credentials',
       );
     } on Exception {
-      return const AuthResponse(
-        success: false,
-        error: 'auth.login_error',
-      );
+      return const AuthResponse(success: false, error: 'auth.login_error');
     }
   }
 
@@ -63,10 +60,7 @@ class AuthService {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/register',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
       final authResponse = AuthResponse.fromBackend(response.data!);
@@ -123,10 +117,7 @@ class AuthService {
         error: _extractErrorMessage(e) ?? fallbackErrorKey,
       );
     } on Exception {
-      return SocialAuthResult(
-        success: false,
-        error: fallbackErrorKey,
-      );
+      return SocialAuthResult(success: false, error: fallbackErrorKey);
     }
   }
 

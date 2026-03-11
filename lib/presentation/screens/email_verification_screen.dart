@@ -198,9 +198,7 @@ class _EmailVerificationScreenState
 
               // Error banner
               if (_resendStatus == _ResendStatus.error) ...[
-                AuthErrorBanner(
-                  message: 'auth.verify_email_resend_error'.tr(),
-                ),
+                AuthErrorBanner(message: 'auth.verify_email_resend_error'.tr()),
                 SizedBox(height: context.spacing.titleBottomMargin),
               ],
 
@@ -209,8 +207,9 @@ class _EmailVerificationScreenState
               // Resend button
               AuthPrimaryButton(
                 text: _cooldownSeconds > 0
-                    ? 'auth.verify_email_resend_countdown'
-                        .tr(args: ['$_cooldownSeconds'])
+                    ? 'auth.verify_email_resend_countdown'.tr(
+                        args: ['$_cooldownSeconds'],
+                      )
                     : 'auth.verify_email_resend'.tr(),
                 isLoading: _isResending,
                 onPressed: _cooldownSeconds > 0 ? null : _handleResend,

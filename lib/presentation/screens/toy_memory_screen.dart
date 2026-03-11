@@ -265,7 +265,6 @@ class _MemoryCard extends StatelessWidget {
         _ => context.colors.primary,
       };
 
-
   String _formatTimestamp(String iso) {
     final date = DateTime.tryParse(iso);
     if (date == null) {

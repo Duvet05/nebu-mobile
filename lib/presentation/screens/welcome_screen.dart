@@ -87,8 +87,7 @@ class WelcomeScreen extends StatelessWidget {
 
                 // Continuar sin cuenta
                 TextButton(
-                  onPressed: () =>
-                      context.push(AppRoutes.connectionSetup.path),
+                  onPressed: () => context.push(AppRoutes.connectionSetup.path),
                   style: TextButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48),
                     foregroundColor: context.colors.textOnFilled,
@@ -96,9 +95,7 @@ class WelcomeScreen extends StatelessWidget {
                   child: Text(
                     'welcome.continue_without_account'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: context.colors.textOnFilled.withValues(
-                        alpha: 0.7,
-                      ),
+                      color: context.colors.textOnFilled.withValues(alpha: 0.7),
                       fontWeight: FontWeight.w500,
                     ),
                   ),

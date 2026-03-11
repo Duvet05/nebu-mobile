@@ -279,10 +279,11 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                 textCapitalization: TextCapitalization.words,
                                 decoration: InputDecoration(
                                   hintText: 'setup.toy_name.hint'.tr(),
-                                  hintStyle: theme.textTheme.titleMedium?.copyWith(
-                                    color: colorScheme.onSurfaceVariant
-                                        .withValues(alpha: 0.5),
-                                  ),
+                                  hintStyle: theme.textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: colorScheme.onSurfaceVariant
+                                            .withValues(alpha: 0.5),
+                                      ),
                                   filled: true,
                                   fillColor: colorScheme.surfaceContainerHighest
                                       .withValues(alpha: 0.3),
@@ -310,8 +311,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                   ),
                                 ),
                                 validator: (value) =>
-                                    ValidationRules.validateToyName(value)
-                                        ?.tr(),
+                                    ValidationRules.validateToyName(
+                                      value,
+                                    )?.tr(),
                               ),
                             ],
                           ),

@@ -230,8 +230,7 @@ class ESP32WifiConfigService {
   }
 
   /// Get locally saved device ID.
-  String? getSavedDeviceId() =>
-      _prefs.getString(StorageKeys.currentDeviceId);
+  String? getSavedDeviceId() => _prefs.getString(StorageKeys.currentDeviceId);
 
   /// Clear saved device ID.
   Future<void> clearSavedDeviceId() async {
@@ -314,8 +313,14 @@ class ESP32WifiConfigService {
 
   // -- Private helpers --
 
-  List<BleCharacteristicHandler> get _allHandlers =>
-      [_ssid, _password, _status, _deviceIdChar, _volumeChar, _muteChar];
+  List<BleCharacteristicHandler> get _allHandlers => [
+    _ssid,
+    _password,
+    _status,
+    _deviceIdChar,
+    _volumeChar,
+    _muteChar,
+  ];
 
   void _onStatusNotification(List<int> value) {
     if (value.isEmpty) {

@@ -10,7 +10,9 @@ abstract final class ValidationRules {
   static const int passwordMaxLength = 128;
 
   /// Backend requires at least one lowercase, one uppercase, and one digit.
-  static final RegExp passwordPattern = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)');
+  static final RegExp passwordPattern = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)',
+  );
 
   /// Returns null if valid, or an i18n error key if invalid.
   static String? validatePassword(String? value) {

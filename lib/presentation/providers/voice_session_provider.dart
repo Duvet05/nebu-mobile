@@ -51,9 +51,7 @@ class VoiceMetricsNotifier extends AsyncNotifier<VoiceMetrics> {
       return null;
     }
     try {
-      return VoiceMetrics.fromJson(
-        jsonDecode(raw) as Map<String, dynamic>,
-      );
+      return VoiceMetrics.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } on Exception {
       return null;
     }
@@ -251,9 +249,7 @@ class UserLimitsNotifier extends AsyncNotifier<UserLimits> {
       return null;
     }
     try {
-      return UserLimits.fromJson(
-        jsonDecode(raw) as Map<String, dynamic>,
-      );
+      return UserLimits.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } on Exception {
       return null;
     }

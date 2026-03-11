@@ -15,7 +15,10 @@ class NotificationService {
   Future<List<AppNotification>> getMyNotifications() async {
     _logger.d('Fetching my notifications');
     final response = await _apiService.get<List<dynamic>>('/notifications/my');
-    return response.cast<Map<String, dynamic>>().map(AppNotification.fromJson).toList();
+    return response
+        .cast<Map<String, dynamic>>()
+        .map(AppNotification.fromJson)
+        .toList();
   }
 
   /// Get unread notifications
@@ -24,15 +27,16 @@ class NotificationService {
     final response = await _apiService.get<List<dynamic>>(
       '/notifications/my/unread',
     );
-    return response.cast<Map<String, dynamic>>().map(AppNotification.fromJson).toList();
+    return response
+        .cast<Map<String, dynamic>>()
+        .map(AppNotification.fromJson)
+        .toList();
   }
 
   /// Mark a notification as read
   Future<void> markAsRead(String notificationId) async {
     _logger.d('Marking notification $notificationId as read');
-    await _apiService.patch<dynamic>(
-      '/notifications/$notificationId/read',
-    );
+    await _apiService.patch<dynamic>('/notifications/$notificationId/read');
   }
 
   /// Mark all notifications as read
@@ -44,8 +48,6 @@ class NotificationService {
   /// Delete a notification
   Future<void> deleteNotification(String notificationId) async {
     _logger.d('Deleting notification $notificationId');
-    await _apiService.delete<dynamic>(
-      '/notifications/$notificationId',
-    );
+    await _apiService.delete<dynamic>('/notifications/$notificationId');
   }
 }

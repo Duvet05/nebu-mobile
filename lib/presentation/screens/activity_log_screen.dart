@@ -165,8 +165,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     }
 
     // +1 for insights card at index 0
-    final itemCount =
-        1 + state.activities.length + (state.isLoading ? 1 : 0);
+    final itemCount = 1 + state.activities.length + (state.isLoading ? 1 : 0);
 
     return RefreshIndicator(
       onRefresh: _refreshActivities,

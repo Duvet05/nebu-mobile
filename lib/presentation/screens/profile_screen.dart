@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/edit_profile_screen.dart';
@@ -45,208 +46,224 @@ class ProfileScreen extends ConsumerWidget {
                 padding: EdgeInsets.all(context.spacing.alertPadding),
                 child: Column(
                   children: [
-              // Profile Header Card - Simplified and Clean
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.spacing.panelPadding,
-                  vertical: context.spacing.panelPadding,
-                ),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: context.radius.panel,
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.colors.textNormal.withValues(
-                        alpha: isDark ? 0.3 : 0.08,
-                      ),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    // Avatar
+                    // Profile Header Card - Simplified and Clean
                     Container(
-                      width: 64,
-                      height: 64,
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.spacing.panelPadding,
+                        vertical: context.spacing.panelPadding,
+                      ),
                       decoration: BoxDecoration(
-                        color: context.colors.primary.withValues(alpha: 0.1),
-                        shape: BoxShape.circle,
+                        color: theme.colorScheme.surface,
+                        borderRadius: context.radius.panel,
+                        boxShadow: [
+                          BoxShadow(
+                            color: context.colors.textNormal.withValues(
+                              alpha: isDark ? 0.3 : 0.08,
+                            ),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: _buildAvatar(
-                        localAvatar: localAvatar,
-                        networkAvatar: user?.avatar,
-                        name: user?.name,
-                        theme: theme,
-                      ),
-                    ),
-                    SizedBox(width: context.spacing.alertPadding),
-                    // Name and View Profile
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          Text(
-                            user?.name ?? 'profile.user'.tr(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onSurface,
+                          // Avatar
+                          Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: context.colors.primary.withValues(
+                                alpha: 0.1,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: _buildAvatar(
+                              localAvatar: localAvatar,
+                              networkAvatar: user?.avatar,
+                              name: user?.name,
+                              theme: theme,
                             ),
                           ),
-                          SizedBox(height: context.spacing.gapXs),
-                          Text(
-                            'profile.view_profile'.tr(),
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(
-                                alpha: 0.6,
-                              ),
+                          SizedBox(width: context.spacing.alertPadding),
+                          // Name and View Profile
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user?.name ?? 'profile.user'.tr(),
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                                SizedBox(height: context.spacing.gapXs),
+                                Text(
+                                  'profile.view_profile'.tr(),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              ],
                             ),
+                          ),
+                          // Edit Profile Icon
+                          IconButton(
+                            icon: const Icon(Icons.edit_outlined),
+                            color: theme.colorScheme.onSurface.withValues(
+                              alpha: 0.7,
+                            ),
+                            onPressed: () {
+                              context.push(AppRoutes.editProfile.path);
+                            },
                           ),
                         ],
                       ),
                     ),
-                    // Edit Profile Icon
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      onPressed: () {
-                        context.push(AppRoutes.editProfile.path);
-                      },
-                    ),
-                  ],
-                ),
-              ),
 
-              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+                    SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-              // Quick Access Items
-              _SettingsCard(
-                theme: theme,
-                isDark: isDark,
-                children: [
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.child_care,
-                    title: 'profile.child_profile'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.childProfile.path);
-                    },
-                  ),
-                  Divider(height: 1, indent: 56, color: theme.dividerColor),
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.timer_outlined,
-                    title: 'profile.usage_limits'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.usageLimits.path);
-                    },
-                  ),
-                  Divider(height: 1, indent: 56, color: theme.dividerColor),
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.notifications_outlined,
-                    title: 'profile.notifications'.tr(),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
+                    // Quick Access Items
+                    _SettingsCard(
+                      theme: theme,
+                      isDark: isDark,
                       children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: context.colors.error,
-                            shape: BoxShape.circle,
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.child_care,
+                          title: 'profile.child_profile'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
                           ),
+                          onTap: () {
+                            context.push(AppRoutes.childProfile.path);
+                          },
                         ),
-                        SizedBox(width: context.spacing.gapMd),
-                        Icon(
-                          Icons.chevron_right,
-                          color: context.colors.grey400,
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.timer_outlined,
+                          title: 'profile.usage_limits'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.usageLimits.path);
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.notifications_outlined,
+                          title: 'profile.notifications'.tr(),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: context.colors.error,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: context.spacing.gapMd),
+                              Icon(
+                                Icons.chevron_right,
+                                color: context.colors.grey400,
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.notifications.path);
+                          },
                         ),
                       ],
                     ),
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            'profile.notifications_coming_soon'.tr(),
+
+                    SizedBox(height: context.spacing.panelPadding),
+
+                    // Account Section
+                    _SettingsCard(
+                      theme: theme,
+                      isDark: isDark,
+                      children: [
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.person_outline,
+                          title: 'profile.edit_profile'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
                           ),
+                          onTap: () {
+                            context.push(AppRoutes.editProfile.path);
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-
-              SizedBox(height: context.spacing.panelPadding),
-
-              // Account Section
-              _SettingsCard(
-                theme: theme,
-                isDark: isDark,
-                children: [
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.person_outline,
-                    title: 'profile.edit_profile'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.privacy_tip_outlined,
+                          title: 'profile.privacy'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.privacySettings.path);
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.description_outlined,
+                          title: 'privacy.terms_of_service'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.termsOfService.path);
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.policy_outlined,
+                          title: 'privacy.privacy_policy'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.privacyPolicy.path);
+                          },
+                        ),
+                      ],
                     ),
-                    onTap: () {
-                      context.push(AppRoutes.editProfile.path);
-                    },
-                  ),
-                  Divider(height: 1, indent: 56, color: theme.dividerColor),
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.privacy_tip_outlined,
-                    title: 'profile.privacy'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.privacySettings.path);
-                    },
-                  ),
-                  Divider(height: 1, indent: 56, color: theme.dividerColor),
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.description_outlined,
-                    title: 'privacy.terms_of_service'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.termsOfService.path);
-                    },
-                  ),
-                  Divider(height: 1, indent: 56, color: theme.dividerColor),
-                  _SettingsTile(
-                    theme: theme,
-                    icon: Icons.policy_outlined,
-                    title: 'privacy.privacy_policy'.tr(),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: context.colors.grey400,
-                    ),
-                    onTap: () {
-                      context.push(AppRoutes.privacyPolicy.path);
-                    },
-                  ),
-                ],
-              ),
-
                   ],
                 ),
               ),
@@ -261,12 +278,18 @@ class ProfileScreen extends ConsumerWidget {
                 isFullWidth: true,
                 height: 54,
                 onPressed: () async {
-                  final shouldLogout = await _showLogoutDialog(context);
-                  if (shouldLogout ?? false) {
-                    await ref.read(authProvider.notifier).logout();
-                    if (context.mounted) {
-                      context.go(AppRoutes.welcome.path);
-                    }
+                  final shouldLogout = await showConfirmDialog(
+                    context,
+                    title: 'profile.logout'.tr(),
+                    content: 'profile.logout_confirmation'.tr(),
+                    confirmText: 'profile.logout'.tr(),
+                    destructive: true,
+                  );
+                  if (!shouldLogout) return;
+                  if (!context.mounted) return;
+                  await ref.read(authProvider.notifier).logout();
+                  if (context.mounted) {
+                    context.go(AppRoutes.welcome.path);
                   }
                 },
               ),
@@ -315,25 +338,6 @@ class ProfileScreen extends ConsumerWidget {
       style: theme.textTheme.headlineMedium?.copyWith(
         color: theme.colorScheme.primary,
       ),
-    ),
-  );
-
-  Future<bool?> _showLogoutDialog(BuildContext context) => showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('profile.logout'.tr()),
-      content: Text('profile.logout_confirmation'.tr()),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text('common.cancel'.tr()),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, true),
-          style: TextButton.styleFrom(foregroundColor: context.colors.error),
-          child: Text('profile.logout'.tr()),
-        ),
-      ],
     ),
   );
 }

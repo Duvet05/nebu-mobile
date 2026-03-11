@@ -2,8 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
+import '../../data/models/app_notification.dart';
 import '../providers/api_provider.dart';
 import '../widgets/custom_button.dart';
 
@@ -17,8 +19,10 @@ class NotificationsScreen extends ConsumerStatefulWidget {
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   String _filter = 'all';
-  List<_Notification> _notifications = [];
+  List<AppNotification> _notifications = [];
   bool _isLoading = true;
+  bool _isBusy = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -27,7 +31,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 
   Future<void> _loadNotifications() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
     try {
       final service = ref.read(notificationServiceProvider);
       final data = await service.getMyNotifications();
@@ -35,28 +42,25 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         return;
       }
       setState(() {
-        _notifications = data
-            .map(
-              (json) => _Notification(
-                id: json['id'] as String? ?? '',
-                title: json['title'] as String? ?? '',
-                message: json['message'] as String? ?? '',
-                type: json['type'] as String? ?? 'system',
-                timestamp:
-                    DateTime.tryParse(json['createdAt'] as String? ?? '') ??
-                    DateTime.now(),
-                isRead: json['readAt'] != null,
-              ),
-            )
-            .toList();
+        _notifications = data;
         _isLoading = false;
+      });
+    } on AppException catch (e) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.message;
       });
     } on Exception catch (e) {
       if (!mounted) {
         return;
       }
-      setState(() => _isLoading = false);
-      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString();
+      });
     }
   }
 
@@ -68,7 +72,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         ? _notifications
         : _notifications.where((n) => n.type == _filter).toList();
 
-    final unreadCount = _notifications.where((n) => !n.isRead).length;
+    final unreadCount = _notifications.where((n) => n.readAt == null).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -78,9 +82,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           if (unreadCount > 0)
             CustomButton(
               text: 'notifications.mark_all_read'.tr(),
-              onPressed: _markAllAsRead,
+              onPressed: _isBusy ? null : _markAllAsRead,
+              isLoading: _isBusy,
               variant: ButtonVariant.text,
-              height: 40,
+              height: 48,
             ),
         ],
       ),
@@ -110,6 +115,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
+                : _errorMessage != null
+                ? _buildErrorState(theme)
                 : filteredNotifications.isEmpty
                 ? _buildEmptyState(theme)
                 : RefreshIndicator(
@@ -177,7 +184,36 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     ),
   );
 
+  Widget _buildErrorState(ThemeData theme) => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.error_outline,
+          size: 100,
+          color: context.colors.error.withValues(alpha: 0.3),
+        ),
+        SizedBox(height: context.spacing.panelPadding),
+        Text(
+          'notifications.error_loading'.tr(),
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: context.spacing.panelPadding),
+        CustomButton(
+          text: 'common.retry'.tr(),
+          onPressed: _loadNotifications,
+          variant: ButtonVariant.outline,
+        ),
+      ],
+    ),
+  );
+
   Future<void> _markAllAsRead() async {
+    if (_isBusy) return;
+    setState(() => _isBusy = true);
     final service = ref.read(notificationServiceProvider);
     try {
       await service.markAllAsRead();
@@ -185,39 +221,94 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         return;
       }
       setState(() {
-        for (final n in _notifications) {
-          n.isRead = true;
-        }
+        _notifications = _notifications
+            .map((n) => n.copyWith(readAt: DateTime.now()))
+            .toList();
+        _isBusy = false;
       });
       context.showInfoSnackBar('notifications.marked_all_read'.tr());
+    } on AppException catch (e) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBusy = false);
+      context.showErrorSnackBar(e.message);
     } on Exception catch (e) {
       if (!mounted) {
         return;
       }
+      setState(() => _isBusy = false);
       context.showErrorSnackBar(e.toString());
     }
   }
 
-  Future<void> _handleNotificationTap(_Notification notification) async {
+  Future<void> _handleNotificationTap(AppNotification notification) async {
+    if (_isBusy) return;
+    if (notification.readAt != null) return;
+    setState(() => _isBusy = true);
     final service = ref.read(notificationServiceProvider);
-    await service.markAsRead(notification.id);
-    if (!mounted) {
-      return;
+    try {
+      await service.markAsRead(notification.id);
+      if (!mounted) {
+        return;
+      }
+      final index = _notifications.indexWhere((n) => n.id == notification.id);
+      if (index != -1) {
+        setState(() {
+          _notifications = [
+            ..._notifications.sublist(0, index),
+            _notifications[index].copyWith(readAt: DateTime.now()),
+            ..._notifications.sublist(index + 1),
+          ];
+          _isBusy = false;
+        });
+      } else {
+        setState(() => _isBusy = false);
+      }
+    } on AppException catch (e) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBusy = false);
+      context.showErrorSnackBar(e.message);
+    } on Exception catch (e) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _isBusy = false);
+      context.showErrorSnackBar(e.toString());
     }
-    setState(() {
-      notification.isRead = true;
-    });
   }
 
-  Future<void> _dismissNotification(_Notification notification) async {
-    final service = ref.read(notificationServiceProvider);
-    await service.deleteNotification(notification.id);
-    if (!mounted) {
-      return;
-    }
+  Future<void> _dismissNotification(AppNotification notification) async {
+    final index = _notifications.indexWhere((n) => n.id == notification.id);
+    if (index == -1) return;
+
+    // Optimistic delete
+    final backup = List<AppNotification>.from(_notifications);
     setState(() {
-      _notifications.remove(notification);
+      _notifications = [
+        ..._notifications.sublist(0, index),
+        ..._notifications.sublist(index + 1),
+      ];
     });
+
+    final service = ref.read(notificationServiceProvider);
+    try {
+      await service.deleteNotification(notification.id);
+      if (!mounted) return;
+      context.showInfoSnackBar('notifications.deleted'.tr());
+    } on AppException catch (e) {
+      if (!mounted) return;
+      setState(() => _notifications = backup);
+      context.showErrorSnackBar('notifications.dismiss_error'.tr());
+      debugPrint('Dismiss failed: ${e.message}');
+    } on Exception catch (e) {
+      if (!mounted) return;
+      setState(() => _notifications = backup);
+      context.showErrorSnackBar('notifications.dismiss_error'.tr());
+      debugPrint('Dismiss failed: $e');
+    }
   }
 }
 
@@ -228,13 +319,14 @@ class _NotificationCard extends StatelessWidget {
     required this.onDismiss,
   });
 
-  final _Notification notification;
+  final AppNotification notification;
   final VoidCallback onTap;
-  final VoidCallback onDismiss;
+  final Future<void> Function() onDismiss;
 
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    final isRead = notification.readAt != null;
 
     return Dismissible(
       key: Key(notification.id),
@@ -253,15 +345,15 @@ class _NotificationCard extends StatelessWidget {
         margin: EdgeInsets.only(
           bottom: context.spacing.paragraphBottomMarginSm,
         ),
-        elevation: notification.isRead ? 0 : 2,
-        color: notification.isRead
+        elevation: isRead ? 0 : 2,
+        color: isRead
             ? theme.colorScheme.surface
             : theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: context.radius.tile,
           side: BorderSide(
-            color: notification.isRead
-                ? Colors.transparent
+            color: isRead
+                ? theme.colorScheme.outline.withValues(alpha: 0.0)
                 : theme.colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
@@ -303,13 +395,13 @@ class _NotificationCard extends StatelessWidget {
                             child: Text(
                               notification.title,
                               style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: notification.isRead
+                                fontWeight: isRead
                                     ? FontWeight.normal
                                     : FontWeight.bold,
                               ),
                             ),
                           ),
-                          if (!notification.isRead)
+                          if (!isRead)
                             Container(
                               width: 8,
                               height: 8,
@@ -333,7 +425,7 @@ class _NotificationCard extends StatelessWidget {
                       ),
                       SizedBox(height: context.spacing.titleBottomMarginSm),
                       Text(
-                        _formatTimestamp(notification.timestamp),
+                        _formatTimestamp(notification.createdAt, context),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(
                             alpha: 0.5,
@@ -377,7 +469,7 @@ class _NotificationCard extends StatelessWidget {
     }
   }
 
-  String _formatTimestamp(DateTime timestamp) {
+  String _formatTimestamp(DateTime timestamp, BuildContext context) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
@@ -394,24 +486,10 @@ class _NotificationCard extends StatelessWidget {
     } else if (difference.inDays < 7) {
       return 'notifications.days_ago'.tr(args: [difference.inDays.toString()]);
     } else {
-      return DateFormat('MMM d, yyyy').format(timestamp);
+      return DateFormat(
+        'notifications.date_format'.tr(),
+        context.locale.languageCode,
+      ).format(timestamp);
     }
   }
-}
-
-class _Notification {
-  _Notification({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.type,
-    required this.timestamp,
-    required this.isRead,
-  });
-  final String id;
-  final String title;
-  final String message;
-  final String type;
-  final DateTime timestamp;
-  bool isRead;
 }

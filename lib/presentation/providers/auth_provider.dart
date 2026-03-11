@@ -26,8 +26,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
             .watch(secureStorageProvider)
             .read(key: StorageKeys.user);
         if (userJson != null) {
-          final user =
-              User.fromJson(json.decode(userJson) as Map<String, dynamic>);
+          final user = User.fromJson(
+            json.decode(userJson) as Map<String, dynamic>,
+          );
           unawaited(ref.read(firebasePushServiceProvider).initialize());
           return user;
         }
@@ -79,16 +80,11 @@ class AuthNotifier extends AsyncNotifier<User?> {
         return (success: r.success, user: r.user, error: r.error);
       });
 
-  Future<void> register({
-    required String email,
-    required String password,
-  }) => _authenticate((s) async {
-    final r = await s.register(
-      email: email,
-      password: password,
-    );
-    return (success: r.success, user: r.user, error: r.error);
-  });
+  Future<void> register({required String email, required String password}) =>
+      _authenticate((s) async {
+        final r = await s.register(email: email, password: password);
+        return (success: r.success, user: r.user, error: r.error);
+      });
 
   Future<void> loginWithGoogle(String token) => _authenticate((s) async {
     final r = await s.googleLogin(token);

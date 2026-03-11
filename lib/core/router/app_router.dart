@@ -163,8 +163,7 @@ class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.verifyEmail.path,
-      builder: (_, s) =>
-          EmailVerificationScreen(email: s.extra as String?),
+      builder: (_, s) => EmailVerificationScreen(email: s.extra as String?),
     ),
 
     ShellRoute(

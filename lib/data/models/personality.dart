@@ -39,9 +39,6 @@ abstract class Personality with _$Personality {
 extension PersonalityListX on List<Personality> {
   /// Extracts unique categories from the personality list, sorted.
   List<String> get uniqueCategories =>
-      map((p) => p.category?.toLowerCase())
-          .whereType<String>()
-          .toSet()
-          .toList()
+      map((p) => p.category?.toLowerCase()).whereType<String>().toSet().toList()
         ..sort();
 }

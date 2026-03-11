@@ -264,8 +264,9 @@ void _showForgotPasswordDialog(
                       return;
                     }
 
-                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                        .hasMatch(email)) {
+                    if (!RegExp(
+                      r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
+                    ).hasMatch(email)) {
                       setDialogState(
                         () => errorText = 'auth.email_invalid'.tr(),
                       );
@@ -291,8 +292,9 @@ void _showForgotPasswordDialog(
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text('auth.forgot_password_success'.tr()),
+                              content: Text(
+                                'auth.forgot_password_success'.tr(),
+                              ),
                             ),
                           );
                           _showResetPasswordDialog(context, ref, email);
@@ -399,8 +401,9 @@ void _showResetPasswordDialog(
                       return;
                     }
 
-                    final passwordError =
-                        ValidationRules.validatePassword(password);
+                    final passwordError = ValidationRules.validatePassword(
+                      password,
+                    );
                     if (passwordError != null) {
                       setDialogState(() {
                         errorText = passwordError.tr();
@@ -434,8 +437,7 @@ void _showResetPasswordDialog(
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content:
-                                  Text('auth.reset_password_success'.tr()),
+                              content: Text('auth.reset_password_success'.tr()),
                             ),
                           );
                         }

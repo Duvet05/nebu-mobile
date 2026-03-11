@@ -61,11 +61,7 @@ final authServiceProvider = FutureProvider<AuthService>((ref) async {
   final dio = ref.watch(dioProvider);
   final secureStorage = ref.watch(secureStorageProvider);
   final logger = ref.watch(loggerProvider);
-  return AuthService(
-    dio: dio,
-    secureStorage: secureStorage,
-    logger: logger,
-  );
+  return AuthService(dio: dio, secureStorage: secureStorage, logger: logger);
 });
 
 final bluetoothServiceProvider = Provider<BluetoothService>((ref) {
@@ -121,7 +117,6 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   final logger = ref.watch(loggerProvider);
   return NotificationService(apiService: apiService, logger: logger);
 });
-
 
 final voiceSessionServiceProvider = Provider<VoiceSessionService>((ref) {
   final apiService = ref.watch(apiServiceProvider);

@@ -51,11 +51,7 @@ class _InsightsContent extends StatelessWidget {
             // Header
             Row(
               children: [
-                Icon(
-                  Icons.insights,
-                  size: 20,
-                  color: context.colors.primary,
-                ),
+                Icon(Icons.insights, size: 20, color: context.colors.primary),
                 SizedBox(width: context.spacing.labelBottomMargin),
                 Text(
                   'activity_log.insights_title'.tr(),
@@ -112,9 +108,7 @@ class _InsightsContent extends StatelessWidget {
                 spacing: context.spacing.labelBottomMargin,
                 runSpacing: context.spacing.labelBottomMargin,
                 children: emotions.entries
-                    .map(
-                      (e) => _EmotionBadge(emotion: e.key, count: e.value),
-                    )
+                    .map((e) => _EmotionBadge(emotion: e.key, count: e.value))
                     .toList(),
               ),
             ],
@@ -260,10 +254,7 @@ class _EmotionBadge extends StatelessWidget {
         children: [
           Icon(emotionIcon(emotion), size: 14),
           SizedBox(width: context.spacing.gapXs),
-          Text(
-            '$emotion ($count)',
-            style: theme.textTheme.labelSmall,
-          ),
+          Text('$emotion ($count)', style: theme.textTheme.labelSmall),
         ],
       ),
     );

@@ -17,7 +17,8 @@ class UsageLimitsScreen extends ConsumerWidget {
     final sessionsAsync = ref.watch(userVoiceSessionsProvider);
     final limitsAsync = ref.watch(userLimitsProvider);
 
-    final isLoading = metricsAsync.isLoading ||
+    final isLoading =
+        metricsAsync.isLoading ||
         sessionsAsync.isLoading ||
         limitsAsync.isLoading;
 
@@ -37,16 +38,13 @@ class UsageLimitsScreen extends ConsumerWidget {
                   // Usage Summary Card
                   SliverToBoxAdapter(
                     child: metricsAsync.when(
-                      data: (metrics) =>
-                          _UsageSummaryCard(metrics: metrics),
+                      data: (metrics) => _UsageSummaryCard(metrics: metrics),
                       loading: () => const SizedBox.shrink(),
                       error: (_, _) => Padding(
-                        padding:
-                            EdgeInsets.all(context.spacing.alertPadding),
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
                         child: _ErrorCard(
                           message: 'limits.metrics_error'.tr(),
-                          onRetry: () =>
-                              ref.invalidate(voiceMetricsProvider),
+                          onRetry: () => ref.invalidate(voiceMetricsProvider),
                         ),
                       ),
                     ),
@@ -55,8 +53,7 @@ class UsageLimitsScreen extends ConsumerWidget {
                   // Voice Usage Limits Card
                   SliverToBoxAdapter(
                     child: limitsAsync.when(
-                      data: (limits) =>
-                          _UsageLimitsCard(voice: limits.voice),
+                      data: (limits) => _UsageLimitsCard(voice: limits.voice),
                       loading: () => const SizedBox.shrink(),
                       error: (_, _) => const SizedBox.shrink(),
                     ),
@@ -69,8 +66,7 @@ class UsageLimitsScreen extends ConsumerWidget {
                           _RecentActivityCard(sessions: sessions),
                       loading: () => const SizedBox.shrink(),
                       error: (_, _) => Padding(
-                        padding:
-                            EdgeInsets.all(context.spacing.alertPadding),
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
                         child: _ErrorCard(
                           message: 'limits.sessions_error'.tr(),
                           onRetry: () =>
@@ -211,13 +207,14 @@ class _RecentActivityCard extends StatelessWidget {
     final theme = context.theme;
     final now = DateTime.now();
     final weekAgo = now.subtract(const Duration(days: 7));
-    final thisWeek =
-        sessions.where((s) => s.startedAt.isAfter(weekAgo)).toList();
+    final thisWeek = sessions
+        .where((s) => s.startedAt.isAfter(weekAgo))
+        .toList();
 
     final avgMessages = sessions.isEmpty
         ? 0.0
         : sessions.fold<int>(0, (sum, s) => sum + s.messageCount) /
-            sessions.length;
+              sessions.length;
 
     final emotionCounts = <String, int>{};
     for (final s in sessions) {
@@ -411,9 +408,7 @@ class _UsageLimitsCard extends StatelessWidget {
                   if (voice.toyCount > 0)
                     _InfoChip(
                       icon: Icons.smart_toy,
-                      label: 'limits.toy_count'.tr(
-                        args: ['${voice.toyCount}'],
-                      ),
+                      label: 'limits.toy_count'.tr(args: ['${voice.toyCount}']),
                     ),
                 ],
               ),
@@ -445,8 +440,8 @@ class _UsageBar extends StatelessWidget {
     final color = ratio > 0.85
         ? context.colors.error
         : ratio > 0.6
-            ? context.colors.warning
-            : context.colors.success;
+        ? context.colors.warning
+        : context.colors.success;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -455,15 +450,10 @@ class _UsageBar extends StatelessWidget {
           children: [
             Icon(icon, size: 18, color: context.colors.primary),
             SizedBox(width: context.spacing.gapMd),
-            Expanded(
-              child: Text(label, style: theme.textTheme.bodyMedium),
-            ),
+            Expanded(child: Text(label, style: theme.textTheme.bodyMedium)),
             Text(
               'limits.minutes_of'.tr(
-                args: [
-                  used.toStringAsFixed(0),
-                  limit.toStringAsFixed(0),
-                ],
+                args: [used.toStringAsFixed(0), limit.toStringAsFixed(0)],
               ),
               style: theme.textTheme.labelSmall?.copyWith(
                 fontWeight: FontWeight.w600,

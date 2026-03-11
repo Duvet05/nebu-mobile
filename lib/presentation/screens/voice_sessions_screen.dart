@@ -478,7 +478,6 @@ class _SessionDetail extends ConsumerWidget {
       ),
     );
   }
-
 }
 
 // ─── Conversation Bubble ───

@@ -511,7 +511,6 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
       }
     }
   }
-
 }
 
 class _PersonalityCard extends StatelessWidget {
@@ -585,10 +584,7 @@ class _PersonalityCard extends StatelessWidget {
               ),
             SizedBox(height: context.spacing.labelBottomMargin),
             Text(
-              personality.description.replaceAll(
-                '{name}',
-                personality.name,
-              ),
+              personality.description.replaceAll('{name}', personality.name),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -627,15 +623,14 @@ Color _getCategoryColor(BuildContext context, String category) =>
       _ => context.colors.secondary,
     };
 
-IconData _getCategoryIcon(String category) =>
-    switch (category.toLowerCase()) {
-      'educativo' => Icons.school,
-      'entretenimiento' => Icons.theater_comedy,
-      'companero' => Icons.favorite,
-      'creativo' => Icons.palette,
-      'aventura' => Icons.explore,
-      'bienestar' => Icons.spa,
-      'cultural' => Icons.museum,
-      'general' => Icons.emoji_emotions,
-      _ => Icons.psychology,
-    };
+IconData _getCategoryIcon(String category) => switch (category.toLowerCase()) {
+  'educativo' => Icons.school,
+  'entretenimiento' => Icons.theater_comedy,
+  'companero' => Icons.favorite,
+  'creativo' => Icons.palette,
+  'aventura' => Icons.explore,
+  'bienestar' => Icons.spa,
+  'cultural' => Icons.museum,
+  'general' => Icons.emoji_emotions,
+  _ => Icons.psychology,
+};

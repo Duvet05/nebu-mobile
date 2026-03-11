@@ -22,9 +22,7 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ),
     );
-    final response = await dio.get<Map<String, dynamic>>(
-      '$healthUrl/health',
-    );
+    final response = await dio.get<Map<String, dynamic>>('$healthUrl/health');
     final data = response.data!;
     _logger.i('Backend health check successful: ${data['status']}');
     return data;

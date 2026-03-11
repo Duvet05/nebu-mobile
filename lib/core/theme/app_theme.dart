@@ -275,7 +275,9 @@ class AppTheme {
       borderSide: BorderSide(color: colorScheme.error),
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    hintStyle: GoogleFonts.manrope(color: colorScheme.onSurface.withValues(alpha: 0.5)),
+    hintStyle: GoogleFonts.manrope(
+      color: colorScheme.onSurface.withValues(alpha: 0.5),
+    ),
   );
 
   // ----------------- Decorations & Shadows -----------------
