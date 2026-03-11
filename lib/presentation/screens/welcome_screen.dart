@@ -120,29 +120,33 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: Colors.transparent,
-    child: InkWell(
-      onTap: onPressed,
-      borderRadius: context.radius.panel,
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: context.colors.bgPrimary,
-          borderRadius: context.radius.panel,
-          boxShadow: [
-            BoxShadow(
-              color: context.colors.textNormal.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: context.textTheme.bodyLarge?.copyWith(
-              color: context.colors.primary,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.3,
+    child: Semantics(
+      button: true,
+      label: text,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: context.radius.panel,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: context.colors.bgPrimary,
+            borderRadius: context.radius.panel,
+            boxShadow: [
+              BoxShadow(
+                color: context.colors.textNormal.withValues(alpha: 0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colors.primary,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
+              ),
             ),
           ),
         ),
@@ -160,26 +164,30 @@ class _SecondaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: Colors.transparent,
-    child: InkWell(
-      onTap: onPressed,
-      borderRadius: context.radius.panel,
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: context.colors.textOnFilled.withValues(alpha: 0.1),
-          borderRadius: context.radius.panel,
-          border: Border.all(
-            color: context.colors.textOnFilled.withValues(alpha: 0.4),
-            width: 1.5,
+    child: Semantics(
+      button: true,
+      label: text,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: context.radius.panel,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: context.colors.textOnFilled.withValues(alpha: 0.1),
+            borderRadius: context.radius.panel,
+            border: Border.all(
+              color: context.colors.textOnFilled.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
           ),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: context.textTheme.bodyLarge?.copyWith(
-              color: context.colors.textOnFilled.withValues(alpha: 0.95),
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.3,
+          child: Center(
+            child: Text(
+              text,
+              style: context.textTheme.bodyLarge?.copyWith(
+                color: context.colors.textOnFilled.withValues(alpha: 0.95),
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
+              ),
             ),
           ),
         ),

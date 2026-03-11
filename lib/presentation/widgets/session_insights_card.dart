@@ -23,7 +23,10 @@ class SessionInsightsCard extends ConsumerWidget {
         }
         return _InsightsContent(sessions: sessions);
       },
-      loading: () => const SizedBox.shrink(),
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Center(child: CircularProgressIndicator()),
+      ),
       error: (_, _) => const SizedBox.shrink(),
     );
   }

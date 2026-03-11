@@ -75,11 +75,17 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-          onTapDown: widget.isEnabled ? (_) => widget.onTalkStart() : null,
-          onTapUp: widget.isEnabled ? (_) => widget.onTalkEnd() : null,
-          onTapCancel: widget.isEnabled ? widget.onTalkEnd : null,
-          child: AnimatedBuilder(
+        Semantics(
+          button: true,
+          label: widget.isTalking
+              ? 'walkie_talkie.talking'.tr()
+              : 'walkie_talkie.hold_to_talk'.tr(),
+          enabled: widget.isEnabled,
+          child: GestureDetector(
+            onTapDown: widget.isEnabled ? (_) => widget.onTalkStart() : null,
+            onTapUp: widget.isEnabled ? (_) => widget.onTalkEnd() : null,
+            onTapCancel: widget.isEnabled ? widget.onTalkEnd : null,
+            child: AnimatedBuilder(
             animation: _pulseAnimation,
             builder: (context, child) {
               final scale = widget.isTalking ? _pulseAnimation.value : 1.0;
@@ -121,6 +127,7 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
               );
             },
           ),
+        ),
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
         Text(
