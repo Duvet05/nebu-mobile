@@ -40,7 +40,11 @@ class HealthService {
   /// Hits GET /api/v1/health/readiness
   Future<bool> checkReadiness() async {
     try {
-      final dio = Dio(BaseOptions(timeout: Config.healthTimeout));
+      final dio = Dio(BaseOptions(
+        connectTimeout: Config.healthTimeout,
+        receiveTimeout: Config.healthTimeout,
+        sendTimeout: Config.healthTimeout,
+      ));
       final response = await dio.get<Map<String, dynamic>>(
         '${Config.apiBaseUrl}/health/readiness',
       );
@@ -55,7 +59,11 @@ class HealthService {
   /// Hits GET /api/v1/health/liveness
   Future<bool> checkLiveness() async {
     try {
-      final dio = Dio(BaseOptions(timeout: Config.healthTimeout));
+      final dio = Dio(BaseOptions(
+        connectTimeout: Config.healthTimeout,
+        receiveTimeout: Config.healthTimeout,
+        sendTimeout: Config.healthTimeout,
+      ));
       final response = await dio.get<Map<String, dynamic>>(
         '${Config.apiBaseUrl}/health/liveness',
       );
