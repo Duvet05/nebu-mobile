@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../data/models/user.dart';
@@ -52,7 +53,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
         await _onAuthSuccess(response.user!);
         return response.user;
       }
-      throw Exception(response.error ?? 'Authentication failed');
+      final errorKey = response.error ?? 'auth.login_error';
+      throw Exception(errorKey.tr());
     });
   }
 
@@ -89,17 +91,21 @@ class AuthNotifier extends AsyncNotifier<User?> {
 
   Future<void> loginWithGoogle(String token) => _authenticate((s) async {
     final r = await s.googleLogin(token);
-    return (success: r.success, user: r.user, error: r.error);
+    // Google already verified the email — ensure router doesn't gate on emailVerified
+    final user = r.user?.copyWith(emailVerified: true);
+    return (success: r.success, user: user, error: r.error);
   });
 
   Future<void> loginWithFacebook(String token) => _authenticate((s) async {
     final r = await s.facebookLogin(token);
-    return (success: r.success, user: r.user, error: r.error);
+    final user = r.user?.copyWith(emailVerified: true);
+    return (success: r.success, user: user, error: r.error);
   });
 
   Future<void> loginWithApple(String token) => _authenticate((s) async {
     final r = await s.appleLogin(token);
-    return (success: r.success, user: r.user, error: r.error);
+    final user = r.user?.copyWith(emailVerified: true);
+    return (success: r.success, user: user, error: r.error);
   });
 
   Future<void> updateUser(User user) async {

@@ -9,6 +9,11 @@ import '../../presentation/providers/auth_provider.dart';
 Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
   try {
     final googleUser = await GoogleSignIn.instance.authenticate();
+
+    if (!context.mounted) {
+      return;
+    }
+
     final idToken = googleUser.authentication.idToken;
 
     if (idToken == null) {

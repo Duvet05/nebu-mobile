@@ -50,14 +50,12 @@ class AuthService {
     } on DioException catch (e) {
       return AuthResponse(
         success: false,
-        error:
-            _extractErrorMessage(e) ??
-            'Login failed. Please check your credentials.',
+        error: _extractErrorMessage(e) ?? 'auth.invalid_credentials',
       );
     } on Exception {
       return const AuthResponse(
         success: false,
-        error: 'An unexpected error occurred.',
+        error: 'auth.login_error',
       );
     }
   }
@@ -72,8 +70,6 @@ class AuthService {
         data: {
           'email': email,
           'password': password,
-          'firstName': 'Usuario',
-          'lastName': 'Nebu',
         },
       );
 
@@ -87,13 +83,12 @@ class AuthService {
     } on DioException catch (e) {
       return AuthResponse(
         success: false,
-        error:
-            _extractErrorMessage(e) ?? 'Registration failed. Please try again.',
+        error: _extractErrorMessage(e) ?? 'auth.registration_error',
       );
     } on Exception {
       return const AuthResponse(
         success: false,
-        error: 'An unexpected error occurred.',
+        error: 'auth.registration_error',
       );
     }
   }
@@ -129,14 +124,12 @@ class AuthService {
     } on DioException catch (e) {
       return SocialAuthResult(
         success: false,
-        error:
-            _extractErrorMessage(e) ??
-            '$providerName login failed. Please try again.',
+        error: _extractErrorMessage(e) ?? 'auth.google_signin_failed_detail',
       );
     } on Exception {
       return const SocialAuthResult(
         success: false,
-        error: 'An unexpected error occurred.',
+        error: 'auth.google_signin_failed_detail',
       );
     }
   }

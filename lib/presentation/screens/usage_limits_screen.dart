@@ -17,6 +17,10 @@ class UsageLimitsScreen extends ConsumerWidget {
     final sessionsAsync = ref.watch(userVoiceSessionsProvider);
     final limitsAsync = ref.watch(userLimitsProvider);
 
+    final isLoading = metricsAsync.isLoading ||
+        sessionsAsync.isLoading ||
+        limitsAsync.isLoading;
+
     return Scaffold(
       appBar: AppBar(title: Text('limits.title'.tr())),
       body: RefreshIndicator(
@@ -26,60 +30,64 @@ class UsageLimitsScreen extends ConsumerWidget {
             ..invalidate(userVoiceSessionsProvider)
             ..invalidate(userLimitsProvider);
         },
-        child: CustomScrollView(
-          slivers: [
-            // Usage Summary Card
-            SliverToBoxAdapter(
-              child: metricsAsync.when(
-                data: (metrics) => _UsageSummaryCard(metrics: metrics),
-                loading: () => Padding(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                error: (_, _) => Padding(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  child: _ErrorCard(
-                    message: 'limits.metrics_error'.tr(),
-                    onRetry: () => ref.invalidate(voiceMetricsProvider),
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : CustomScrollView(
+                slivers: [
+                  // Usage Summary Card
+                  SliverToBoxAdapter(
+                    child: metricsAsync.when(
+                      data: (metrics) =>
+                          _UsageSummaryCard(metrics: metrics),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => Padding(
+                        padding:
+                            EdgeInsets.all(context.spacing.alertPadding),
+                        child: _ErrorCard(
+                          message: 'limits.metrics_error'.tr(),
+                          onRetry: () =>
+                              ref.invalidate(voiceMetricsProvider),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
 
-            // Voice Usage Limits Card (real data from GET /users/me/limits)
-            SliverToBoxAdapter(
-              child: limitsAsync.when(
-                data: (limits) => _UsageLimitsCard(voice: limits.voice),
-                loading: () => const SizedBox.shrink(),
-                error: (_, _) => const SizedBox.shrink(),
-              ),
-            ),
-
-            // Recent Activity Card
-            SliverToBoxAdapter(
-              child: sessionsAsync.when(
-                data: (sessions) => _RecentActivityCard(sessions: sessions),
-                loading: () => Padding(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  child: const Center(child: CircularProgressIndicator()),
-                ),
-                error: (_, _) => Padding(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  child: _ErrorCard(
-                    message: 'limits.sessions_error'.tr(),
-                    onRetry: () =>
-                        ref.invalidate(userVoiceSessionsProvider),
+                  // Voice Usage Limits Card
+                  SliverToBoxAdapter(
+                    child: limitsAsync.when(
+                      data: (limits) =>
+                          _UsageLimitsCard(voice: limits.voice),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => const SizedBox.shrink(),
+                    ),
                   ),
-                ),
-              ),
-            ),
 
-            // Bottom spacing
-            SliverToBoxAdapter(
-              child: SizedBox(height: context.spacing.largePageBottomMargin),
-            ),
-          ],
-        ),
+                  // Recent Activity Card
+                  SliverToBoxAdapter(
+                    child: sessionsAsync.when(
+                      data: (sessions) =>
+                          _RecentActivityCard(sessions: sessions),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => Padding(
+                        padding:
+                            EdgeInsets.all(context.spacing.alertPadding),
+                        child: _ErrorCard(
+                          message: 'limits.sessions_error'.tr(),
+                          onRetry: () =>
+                              ref.invalidate(userVoiceSessionsProvider),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Bottom spacing
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: context.spacing.largePageBottomMargin,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
