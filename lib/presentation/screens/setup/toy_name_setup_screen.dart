@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
@@ -10,6 +11,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
+import '../../providers/toy_provider.dart';
 
 class ToyNameSetupScreen extends ConsumerStatefulWidget {
   const ToyNameSetupScreen({super.key});
@@ -155,18 +157,25 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
   void _showSkipSetupDialog() {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text('setup.connection.skip_dialog_title'.tr()),
         content: Text('setup.connection.skip_dialog_message'.tr()),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: Text('common.cancel'.tr()),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go(AppRoutes.home.path);
+            onPressed: () async {
+              final nav = GoRouter.of(context);
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool(StorageKeys.setupSkipped, true);
+              if (!mounted) {
+                return;
+              }
+              ref.invalidate(setupSkippedProvider);
+              Navigator.pop(dialogContext);
+              nav.go(AppRoutes.home.path);
             },
             child: Text('setup.connection.skip_setup'.tr()),
           ),

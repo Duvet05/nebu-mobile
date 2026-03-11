@@ -63,6 +63,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final user = auth.value;
       final path = state.matchedLocation;
       final hasToys = ref.read(hasLocalToysProvider).value ?? false;
+      final skippedSetup = ref.read(setupSkippedProvider).value ?? false;
 
       final isVerifyPage = path == AppRoutes.verifyEmail.path;
       final isAuthPage =
@@ -85,7 +86,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // 2. Splash Logic
       if (path == AppRoutes.splash.path) {
-        return (user != null || hasToys)
+        return (user != null || hasToys || skippedSetup)
             ? AppRoutes.home.path
             : AppRoutes.welcome.path;
       }
@@ -106,7 +107,8 @@ final routerProvider = Provider<GoRouter>((ref) {
           !isAuthPage &&
           !isVerifyPage &&
           !isSetupPage &&
-          !hasToys) {
+          !hasToys &&
+          !skippedSetup) {
         return AppRoutes.welcome.path;
       }
 

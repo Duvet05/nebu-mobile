@@ -327,3 +327,9 @@ final hasLocalToysProvider = FutureProvider<bool>((ref) async {
   final toysJson = prefs.getString(StorageKeys.localToys);
   return toysJson != null && toysJson != '[]' && toysJson.isNotEmpty;
 });
+
+/// Whether the user explicitly skipped setup to enter guest mode.
+final setupSkippedProvider = FutureProvider<bool>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getBool(StorageKeys.setupSkipped) ?? false;
+});

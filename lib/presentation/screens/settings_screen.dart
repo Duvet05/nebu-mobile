@@ -354,6 +354,7 @@ Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
     prefs.remove(StorageKeys.localChildPersonality),
     prefs.remove(StorageKeys.localCustomPrompt),
     // Setup wizard
+    prefs.remove(StorageKeys.setupSkipped),
     prefs.remove(StorageKeys.setupCompleted),
     prefs.remove(StorageKeys.setupCompletedLocally),
     prefs.remove(StorageKeys.setupToyName),

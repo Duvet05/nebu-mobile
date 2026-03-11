@@ -7,10 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/app_routes.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../providers/api_provider.dart';
+import '../../providers/toy_provider.dart';
 
 class ConnectionSetupScreen extends ConsumerStatefulWidget {
   const ConnectionSetupScreen({super.key});
@@ -339,9 +342,16 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                   title: 'setup.connection.skip_setup'.tr(),
                   description: 'setup.connection.skip_setup_desc'.tr(),
                   isSecondary: true,
-                  onTap: () {
+                  onTap: () async {
+                    final nav = GoRouter.of(context);
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool(StorageKeys.setupSkipped, true);
+                    if (!mounted) {
+                      return;
+                    }
+                    ref.invalidate(setupSkippedProvider);
                     Navigator.pop(context);
-                    context.go(AppRoutes.home.path);
+                    nav.go(AppRoutes.home.path);
                   },
                 ),
 

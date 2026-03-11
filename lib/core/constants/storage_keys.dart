@@ -32,6 +32,9 @@ class StorageKeys {
   // Setup Personality
   static const String setupPersonalityId = 'setup_personality_id';
 
+  // Guest Mode
+  static const String setupSkipped = 'setup_skipped';
+
   // Local Toys
   static const String localToys = 'local_toys';
   static const String setupDeviceRegistered = 'setup_device_registered';

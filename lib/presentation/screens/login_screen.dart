@@ -214,6 +214,7 @@ void _showForgotPasswordDialog(
 ) {
   final emailController = TextEditingController(text: initialEmail);
   var isLoading = false;
+  String? errorText;
 
   showDialog<void>(
     context: context,
@@ -234,6 +235,15 @@ void _showForgotPasswordDialog(
               prefixIcon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
             ),
+            if (errorText != null) ...[
+              SizedBox(height: ctx.spacing.labelBottomMargin),
+              Text(
+                errorText!,
+                style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(ctx).colorScheme.error,
+                ),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -247,10 +257,24 @@ void _showForgotPasswordDialog(
                 : () async {
                     final email = emailController.text.trim();
                     if (email.isEmpty) {
+                      setDialogState(
+                        () => errorText = 'auth.email_required'.tr(),
+                      );
                       return;
                     }
 
-                    setDialogState(() => isLoading = true);
+                    if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                        .hasMatch(email)) {
+                      setDialogState(
+                        () => errorText = 'auth.email_invalid'.tr(),
+                      );
+                      return;
+                    }
+
+                    setDialogState(() {
+                      isLoading = true;
+                      errorText = null;
+                    });
 
                     try {
                       final success = await ref
@@ -258,32 +282,32 @@ void _showForgotPasswordDialog(
                           .requestPasswordReset(email);
 
                       if (!ctx.mounted) {
-                      return;
-                    }
-                      Navigator.pop(ctx);
+                        return;
+                      }
 
                       if (success) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text('auth.forgot_password_success'.tr()),
-                          ),
-                        );
-                        _showResetPasswordDialog(ctx, ref, email);
+                        Navigator.pop(ctx);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('auth.forgot_password_success'.tr()),
+                            ),
+                          );
+                          _showResetPasswordDialog(context, ref, email);
+                        }
                       } else {
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text('auth.forgot_password_error'.tr()),
-                          ),
-                        );
+                        setDialogState(() {
+                          isLoading = false;
+                          errorText = 'auth.forgot_password_error'.tr();
+                        });
                       }
                     } on Exception {
                       if (ctx.mounted) {
-                        setDialogState(() => isLoading = false);
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text('auth.forgot_password_error'.tr()),
-                          ),
-                        );
+                        setDialogState(() {
+                          isLoading = false;
+                          errorText = 'auth.forgot_password_error'.tr();
+                        });
                       }
                     }
                   },
@@ -406,11 +430,14 @@ void _showResetPasswordDialog(
 
                       if (success) {
                         Navigator.pop(ctx);
-                        ScaffoldMessenger.of(ctx).showSnackBar(
-                          SnackBar(
-                            content: Text('auth.reset_password_success'.tr()),
-                          ),
-                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('auth.reset_password_success'.tr()),
+                            ),
+                          );
+                        }
                       } else {
                         setDialogState(() {
                           isLoading = false;
