@@ -666,19 +666,23 @@ class _BackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.theme.colorScheme;
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: context.radius.tile,
-        ),
-        child: Icon(
-          Icons.arrow_back_ios_new_rounded,
-          size: 18,
-          color: colorScheme.onSurfaceVariant,
+    return Semantics(
+      button: true,
+      label: MaterialLocalizations.of(context).backButtonTooltip,
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: context.radius.tile,
+          ),
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ),
     );
@@ -696,7 +700,7 @@ class _StepIndicator extends StatelessWidget {
     children: List.generate(totalSteps, (index) {
       final isActive = index < currentStep;
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 3),
+        margin: EdgeInsets.symmetric(horizontal: context.spacing.gapXxs),
         width: isActive ? 20 : 8,
         height: 8,
         decoration: BoxDecoration(
@@ -724,42 +728,46 @@ class _PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
 
-    return GestureDetector(
-      onTap: isLoading ? null : onPressed,
-      child: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [context.colors.primary100, context.colors.primary],
-          ),
-          borderRadius: context.radius.panel,
-          boxShadow: [
-            BoxShadow(
-              color: context.colors.primary.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
+    return Semantics(
+      button: true,
+      label: text,
+      child: GestureDetector(
+        onTap: isLoading ? null : onPressed,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [context.colors.primary100, context.colors.primary],
             ),
-          ],
-        ),
-        child: Center(
-          child: isLoading
-              ? SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      context.colors.textOnFilled,
+            borderRadius: context.radius.panel,
+            boxShadow: [
+              BoxShadow(
+                color: context.colors.primary.withValues(alpha: 0.3),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Center(
+            child: isLoading
+                ? SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        context.colors.textOnFilled,
+                      ),
+                    ),
+                  )
+                : Text(
+                    text,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: context.colors.textOnFilled,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                )
-              : Text(
-                  text,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: context.colors.textOnFilled,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+          ),
         ),
       ),
     );
@@ -926,7 +934,7 @@ class _BottomSheet extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: context.radius.bottomSheetTop,
         ),
         padding: EdgeInsets.all(context.spacing.gapXxl),
         child: Column(

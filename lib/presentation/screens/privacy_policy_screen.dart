@@ -109,7 +109,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
             ),
             SizedBox(height: context.spacing.titleBottomMarginSm),
             Wrap(
-              spacing: 12,
+              spacing: context.spacing.gapLg,
               children: [
                 CustomButton(
                   text: 'privacy_policy.delete_account_button'.tr(),

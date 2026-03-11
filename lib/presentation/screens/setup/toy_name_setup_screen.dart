@@ -206,21 +206,25 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
               ),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(
-                          alpha: 0.5,
+                  Semantics(
+                    button: true,
+                    label: MaterialLocalizations.of(context).backButtonTooltip,
+                    child: GestureDetector(
+                      onTap: () => context.pop(),
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.5,
+                          ),
+                          borderRadius: context.radius.tile,
                         ),
-                        borderRadius: context.radius.tile,
-                      ),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 18,
-                        color: colorScheme.onSurfaceVariant,
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ),
@@ -323,59 +327,63 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                       SizedBox(height: context.spacing.gapXl),
 
                       // Next button
-                      GestureDetector(
-                        onTap: _isRegistering
-                            ? null
-                            : () async {
-                                if (_formKey.currentState!.validate()) {
-                                  await _saveToyName();
-                                  final success =
-                                      await _registerDeviceIfNeeded();
-                                  if (success && context.mounted) {
-                                    await context.push(AppRoutes.ageSetup.path);
+                      Semantics(
+                        button: true,
+                        label: 'setup.toy_name.next'.tr(),
+                        child: GestureDetector(
+                          onTap: _isRegistering
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    await _saveToyName();
+                                    final success =
+                                        await _registerDeviceIfNeeded();
+                                    if (success && context.mounted) {
+                                      await context.push(AppRoutes.ageSetup.path);
+                                    }
                                   }
-                                }
-                              },
-                        child: Container(
-                          height: 56,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                context.colors.primary100,
-                                context.colors.primary,
+                                },
+                          child: Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  context.colors.primary100,
+                                  context.colors.primary,
+                                ],
+                              ),
+                              borderRadius: context.radius.panel,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: context.colors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
                               ],
                             ),
-                            borderRadius: context.radius.panel,
-                            boxShadow: [
-                              BoxShadow(
-                                color: context.colors.primary.withValues(
-                                  alpha: 0.3,
-                                ),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: _isRegistering
-                                ? SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        context.colors.textOnFilled,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    'setup.toy_name.next'.tr(),
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(
-                                          color: context.colors.textOnFilled,
-                                          fontWeight: FontWeight.w600,
+                            child: Center(
+                              child: _isRegistering
+                                  ? SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        valueColor: AlwaysStoppedAnimation<Color>(
+                                          context.colors.textOnFilled,
                                         ),
-                                  ),
+                                      ),
+                                    )
+                                  : Text(
+                                      'setup.toy_name.next'.tr(),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            color: context.colors.textOnFilled,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                            ),
                           ),
                         ),
                       ),
@@ -384,17 +392,21 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                         height: context.spacing.sectionTitleBottomMargin,
                       ),
 
-                      GestureDetector(
-                        onTap: _showSkipSetupDialog,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: context.spacing.gapMd,
-                          ),
-                          child: Text(
-                            'setup.connection.skip_setup'.tr(),
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w500,
+                      Semantics(
+                        button: true,
+                        label: 'setup.connection.skip_setup'.tr(),
+                        child: GestureDetector(
+                          onTap: _showSkipSetupDialog,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.spacing.gapMd,
+                            ),
+                            child: Text(
+                              'setup.connection.skip_setup'.tr(),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
@@ -417,7 +429,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
     children: List.generate(total, (index) {
       final isActive = index < current;
       return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 3),
+        margin: EdgeInsets.symmetric(horizontal: context.spacing.gapXxs),
         width: isActive ? 20 : 8,
         height: 8,
         decoration: BoxDecoration(

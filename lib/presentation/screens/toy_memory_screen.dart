@@ -190,8 +190,8 @@ class _MemoryCard extends StatelessWidget {
                   if (memory.topics != null && memory.topics!.isNotEmpty) ...[
                     SizedBox(height: context.spacing.labelBottomMargin),
                     Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
+                      spacing: context.spacing.gapSm,
+                      runSpacing: context.spacing.gapXs,
                       children: memory.topics!.split(',').map((topic) {
                         final trimmed = topic.trim();
                         if (trimmed.isEmpty) {
@@ -363,11 +363,22 @@ class _SearchTab extends ConsumerWidget {
             },
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (_, _) => Center(
-              child: Text(
-                'memory.search_error'.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'memory.search_error'.tr(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                  SizedBox(height: context.spacing.panelPadding),
+                  CustomButton(
+                    text: 'common.retry'.tr(),
+                    onPressed: () => ref.invalidate(memorySearchProvider),
+                    variant: ButtonVariant.outline,
+                  ),
+                ],
               ),
             ),
           ),

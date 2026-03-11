@@ -12,6 +12,7 @@ import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/custom_input.dart';
 
 class PrivacySettingsScreen extends ConsumerStatefulWidget {
   const PrivacySettingsScreen({super.key});
@@ -353,21 +354,15 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
           children: [
             Text('privacy.type_delete_to_confirm'.tr()),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            TextField(
+            CustomInput(
               controller: confirmController,
-              decoration: InputDecoration(
-                hintText: 'privacy.delete_hint'.tr(),
-                border: const OutlineInputBorder(),
-              ),
+              hint: 'privacy.delete_hint'.tr(),
             ),
             SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            TextField(
+            CustomInput(
               controller: passwordController,
+              hint: 'privacy.enter_password'.tr(),
               obscureText: true,
-              decoration: InputDecoration(
-                hintText: 'privacy.enter_password'.tr(),
-                border: const OutlineInputBorder(),
-              ),
             ),
           ],
         ),

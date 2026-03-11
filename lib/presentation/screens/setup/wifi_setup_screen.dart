@@ -456,23 +456,29 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                           height: context.spacing.sectionTitleBottomMargin,
                         ),
 
-                        GestureDetector(
-                          onTap: _isConnecting
-                              ? _cancelConnection
-                              : _skipWifiSetup,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: context.spacing.gapMd,
-                            ),
-                            child: Text(
-                              _isConnecting
-                                  ? 'setup.wifi.cancel_button'.tr()
-                                  : 'setup.wifi.skip_button'.tr(),
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: _isConnecting
-                                    ? context.colors.error
-                                    : theme.colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.w500,
+                        Semantics(
+                          button: true,
+                          label: _isConnecting
+                              ? 'setup.wifi.cancel_button'.tr()
+                              : 'setup.wifi.skip_button'.tr(),
+                          child: GestureDetector(
+                            onTap: _isConnecting
+                                ? _cancelConnection
+                                : _skipWifiSetup,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: context.spacing.gapMd,
+                              ),
+                              child: Text(
+                                _isConnecting
+                                    ? 'setup.wifi.cancel_button'.tr()
+                                    : 'setup.wifi.skip_button'.tr(),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: _isConnecting
+                                      ? context.colors.error
+                                      : theme.colorScheme.onSurfaceVariant,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
@@ -630,30 +636,34 @@ class _QuickActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
-    return InkWell(
-      onTap: onPressed,
-      borderRadius: context.radius.input,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.spacing.gapXl,
-          vertical: context.spacing.gapLg,
-        ),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-          borderRadius: context.radius.input,
-          border: Border.all(color: colorScheme.outline),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: context.colors.primary, size: 28),
-            SizedBox(height: context.spacing.gapXs),
-            Text(
-              label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colorScheme.onSurface,
+    return Semantics(
+      button: true,
+      label: label,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: context.radius.input,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.gapXl,
+            vertical: context.spacing.gapLg,
+          ),
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            borderRadius: context.radius.input,
+            border: Border.all(color: colorScheme.outline),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: context.colors.primary, size: 28),
+              SizedBox(height: context.spacing.gapXs),
+              Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: colorScheme.onSurface,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

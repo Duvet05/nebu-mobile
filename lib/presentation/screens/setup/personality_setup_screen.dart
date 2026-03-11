@@ -200,10 +200,14 @@ class _PersonalitySetupScreenState
 
     return Padding(
       padding: EdgeInsets.only(bottom: context.spacing.panelPadding),
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedId = personality.id),
-        child: Container(
-          padding: EdgeInsets.all(context.spacing.panelPadding),
+      child: Semantics(
+        button: true,
+        label: personality.name,
+        selected: isSelected,
+        child: GestureDetector(
+          onTap: () => setState(() => _selectedId = personality.id),
+          child: Container(
+            padding: EdgeInsets.all(context.spacing.panelPadding),
           decoration: BoxDecoration(
             color: isSelected
                 ? context.colors.primary.withValues(alpha: 0.08)
@@ -279,6 +283,7 @@ class _PersonalitySetupScreenState
             ],
           ),
         ),
+      ),
       ),
     );
   }

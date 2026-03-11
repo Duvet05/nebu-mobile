@@ -148,7 +148,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
                 ),
               ),
               Text(
-                'Status: ${status.status.toUpperCase()}',
+                '${'health_check.status_label'.tr()}: ${status.status.toUpperCase()}',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: isHealthy
                       ? context.colors.success
@@ -175,10 +175,10 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
-        _buildInfoRow(theme, 'Version', status.version),
-        _buildInfoRow(theme, 'Environment', status.environment),
-        _buildInfoRow(theme, 'Uptime', _formatUptime(status.uptime)),
-        _buildInfoRow(theme, 'Timestamp', status.timestamp),
+        _buildInfoRow(theme, 'health_check.version'.tr(), status.version),
+        _buildInfoRow(theme, 'health_check.environment'.tr(), status.environment),
+        _buildInfoRow(theme, 'health_check.uptime'.tr(), _formatUptime(status.uptime)),
+        _buildInfoRow(theme, 'health_check.timestamp'.tr(), status.timestamp),
       ],
     );
   }
@@ -201,15 +201,15 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
         SizedBox(height: context.spacing.titleBottomMarginSm),
         _buildInfoRow(
           theme,
-          'Heap Used',
+          'health_check.heap_used'.tr(),
           '${memory.heapUsed.toStringAsFixed(2)} MB',
         ),
         _buildInfoRow(
           theme,
-          'Heap Total',
+          'health_check.heap_total'.tr(),
           '${memory.heapTotal.toStringAsFixed(2)} MB',
         ),
-        _buildProgressRow(theme, 'Usage', memory.heapUsedPercent),
+        _buildProgressRow(theme, 'health_check.usage'.tr(), memory.heapUsedPercent),
       ],
     );
   }
@@ -230,9 +230,9 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
-        _buildCheckRow(theme, 'Database', checks.database),
-        _buildCheckRow(theme, 'Redis', checks.redis),
-        _buildCheckRow(theme, 'Configuration', checks.configuration),
+        _buildCheckRow(theme, 'health_check.database'.tr(), checks.database),
+        _buildCheckRow(theme, 'health_check.redis'.tr(), checks.redis),
+        _buildCheckRow(theme, 'health_check.configuration'.tr(), checks.configuration),
       ],
     );
   }
@@ -253,10 +253,10 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
-        _buildInfoRow(theme, 'Response Time', '${performance.responseTime}ms'),
-        _buildInfoRow(theme, 'Process ID', '${performance.pid}'),
-        _buildInfoRow(theme, 'Platform', performance.platform),
-        _buildInfoRow(theme, 'Node Version', performance.nodeVersion),
+        _buildInfoRow(theme, 'health_check.response_time'.tr(), '${performance.responseTime}ms'),
+        _buildInfoRow(theme, 'health_check.process_id'.tr(), '${performance.pid}'),
+        _buildInfoRow(theme, 'health_check.platform'.tr(), performance.platform),
+        _buildInfoRow(theme, 'health_check.node_version'.tr(), performance.nodeVersion),
       ],
     );
   }

@@ -90,13 +90,17 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                             padding: EdgeInsets.only(
                               bottom: context.spacing.gapLg,
                             ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _selectedVoice = voice['label'] as String;
-                                });
-                              },
-                              child: Container(
+                            child: Semantics(
+                              button: true,
+                              label: (voice['label'] as String).tr(),
+                              selected: isSelected,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedVoice = voice['label'] as String;
+                                  });
+                                },
+                                child: Container(
                                 padding: EdgeInsets.all(context.spacing.gapXl),
                                 decoration: BoxDecoration(
                                   color: isSelected
@@ -188,6 +192,7 @@ class _VoiceSetupScreenState extends State<VoiceSetupScreen> {
                                   ],
                                 ),
                               ),
+                            ),
                             ),
                           );
                         },

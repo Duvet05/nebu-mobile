@@ -70,10 +70,10 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                     Expanded(
                       child: GridView.builder(
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                            SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
+                              crossAxisSpacing: context.spacing.gapLg,
+                              mainAxisSpacing: context.spacing.gapLg,
                               childAspectRatio: 1.2,
                             ),
                         itemCount: _categories.length,
@@ -83,8 +83,12 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                             category['label'] as String,
                           );
 
-                          return GestureDetector(
-                            onTap: () {
+                          return Semantics(
+                            button: true,
+                            label: (category['label'] as String).tr(),
+                            selected: isSelected,
+                            child: GestureDetector(
+                              onTap: () {
                               setState(() {
                                 if (isSelected) {
                                   _selectedFavorites.remove(
@@ -148,6 +152,7 @@ class _FavoritesSetupScreenState extends State<FavoritesSetupScreen> {
                                 ],
                               ),
                             ),
+                          ),
                           );
                         },
                       ),
