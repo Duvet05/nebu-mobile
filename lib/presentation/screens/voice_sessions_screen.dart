@@ -444,6 +444,12 @@ class _SessionDetail extends ConsumerWidget {
             ),
           ],
 
+          // Engagement stats
+          if (session.engagementStats != null) ...[
+            SizedBox(height: context.spacing.paragraphBottomMarginSm),
+            _EngagementSection(stats: session.engagementStats!),
+          ],
+
           SizedBox(height: context.spacing.paragraphBottomMarginSm),
 
           // Conversations
@@ -484,6 +490,121 @@ class _SessionDetail extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── Engagement Section ───
+
+class _EngagementSection extends StatelessWidget {
+  const _EngagementSection({required this.stats});
+  final EngagementStats stats;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.theme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'voice_history.engagement'.tr(),
+          style: theme.textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: context.spacing.labelBottomMargin),
+        Wrap(
+          spacing: context.spacing.labelBottomMargin,
+          runSpacing: context.spacing.labelBottomMargin,
+          children: [
+            if (stats.mood != null)
+              _EngagementChip(
+                icon: Icons.mood,
+                label: 'voice_history.mood'.tr(),
+                value: stats.mood!,
+              ),
+            if (stats.rapport != null)
+              _EngagementChip(
+                icon: Icons.handshake_outlined,
+                label: 'voice_history.rapport'.tr(),
+                value: stats.rapport!,
+              ),
+            _EngagementChip(
+              icon: Icons.swap_horiz,
+              label: 'voice_history.turns'.tr(args: ['${stats.turnCount}']),
+              value: null,
+            ),
+            if (stats.sessionMinutes > 0)
+              _EngagementChip(
+                icon: Icons.timer_outlined,
+                label: 'voice_history.session_minutes'.tr(
+                  args: ['${stats.sessionMinutes.toStringAsFixed(1)}'],
+                ),
+                value: null,
+              ),
+            if (stats.factsTold > 0)
+              _EngagementChip(
+                icon: Icons.lightbulb_outline,
+                label: 'voice_history.facts_told'.tr(
+                  args: ['${stats.factsTold}'],
+                ),
+                value: null,
+              ),
+            if (stats.riddlesTold > 0)
+              _EngagementChip(
+                icon: Icons.psychology_outlined,
+                label: 'voice_history.riddles_told'.tr(
+                  args: ['${stats.riddlesTold}'],
+                ),
+                value: null,
+              ),
+            if (stats.favoriteCategory != null)
+              _EngagementChip(
+                icon: Icons.category_outlined,
+                label: 'voice_history.favorite_category'.tr(),
+                value: stats.favoriteCategory!,
+              ),
+            if (stats.cultureHype > 0)
+              _EngagementChip(
+                icon: Icons.public,
+                label: 'voice_history.culture_hype'.tr(),
+                value: '${(stats.cultureHype * 100).round()}%',
+              ),
+            if (stats.profileId != null)
+              _EngagementChip(
+                icon: Icons.person_outline,
+                label: 'voice_history.profile'.tr(),
+                value: stats.profileId!,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _EngagementChip extends StatelessWidget {
+  const _EngagementChip({
+    required this.icon,
+    required this.label,
+    this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = context.theme;
+    final display = value != null ? '$label: $value' : label;
+
+    return Chip(
+      avatar: Icon(icon, size: 16),
+      label: Text(display, style: theme.textTheme.labelSmall),
+      backgroundColor: context.colors.secondary.withValues(alpha: 0.08),
+      visualDensity: VisualDensity.compact,
     );
   }
 }

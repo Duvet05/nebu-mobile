@@ -26,6 +26,32 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   bool _shareActivityData = false;
   bool _analyticsEnabled = true;
 
+  Map<Permission, bool> _permissions = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPermissions();
+  }
+
+  Future<void> _loadPermissions() async {
+    final results = await Future.wait([
+      Permission.bluetooth.isGranted,
+      Permission.camera.isGranted,
+      Permission.location.isGranted,
+      Permission.microphone.isGranted,
+    ]);
+    if (!mounted) return;
+    setState(() {
+      _permissions = {
+        Permission.bluetooth: results[0],
+        Permission.camera: results[1],
+        Permission.location: results[2],
+        Permission.microphone: results[3],
+      };
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -72,7 +98,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 Icons.bluetooth,
                 'privacy.bluetooth'.tr(),
                 'privacy.bluetooth_desc'.tr(),
-                true,
+                _permissions[Permission.bluetooth] ?? false,
               ),
               const Divider(),
               _buildPermissionTile(
@@ -80,7 +106,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 Icons.camera_alt,
                 'privacy.camera'.tr(),
                 'privacy.camera_desc'.tr(),
-                true,
+                _permissions[Permission.camera] ?? false,
               ),
               const Divider(),
               _buildPermissionTile(
@@ -88,7 +114,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 Icons.location_on,
                 'privacy.location'.tr(),
                 'privacy.location_desc'.tr(),
-                false,
+                _permissions[Permission.location] ?? false,
               ),
               const Divider(),
               _buildPermissionTile(
@@ -96,7 +122,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 Icons.mic,
                 'privacy.microphone'.tr(),
                 'privacy.microphone_desc'.tr(),
-                true,
+                _permissions[Permission.microphone] ?? false,
               ),
             ],
           ),

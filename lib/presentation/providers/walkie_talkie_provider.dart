@@ -103,7 +103,7 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
       final roomName = tokenResponse['roomName'] as String?;
       final serverUrl = tokenResponse['serverUrl'] as String?;
       if (token == null || roomName == null || serverUrl == null) {
-        throw Exception('walkie_talkie.missing_token_fields');
+        throw Exception('Missing token fields from server');
       }
 
       // 2. Create voice session on backend
@@ -153,10 +153,17 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         phase: WalkieTalkiePhase.error,
         error: 'toy_not_connected',
       );
-    } on Exception catch (e) {
+    } on AppException catch (e) {
+      _logger.e('Walkie-talkie session failed: $e');
       state = state.copyWith(
         phase: WalkieTalkiePhase.error,
-        error: e.toString(),
+        error: e is NetworkException ? 'no_connection' : 'connection_failed',
+      );
+    } on Exception catch (e) {
+      _logger.e('Walkie-talkie session failed: $e');
+      state = state.copyWith(
+        phase: WalkieTalkiePhase.error,
+        error: 'connection_failed',
       );
     }
   }
@@ -175,13 +182,22 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     if (state.phase != WalkieTalkiePhase.connected) {
       return;
     }
-    state = state.copyWith(isTalking: true);
-    await _liveKitService.setMicrophoneEnabled(enabled: true);
+    try {
+      await _liveKitService.setMicrophoneEnabled(enabled: true);
+      state = state.copyWith(isTalking: true);
+    } on Exception catch (e) {
+      _logger.e('Failed to enable microphone: $e');
+      state = state.copyWith(isTalking: false);
+    }
   }
 
   Future<void> stopTalking() async {
     state = state.copyWith(isTalking: false);
-    await _liveKitService.setMicrophoneEnabled(enabled: false);
+    try {
+      await _liveKitService.setMicrophoneEnabled(enabled: false);
+    } on Exception catch (e) {
+      _logger.w('Failed to disable microphone: $e');
+    }
   }
 
   Future<void> toggleRemoteMute() async {
@@ -192,14 +208,15 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     }
 
     final newMuted = !state.isRemoteMuted;
-    final success = await _liveKitService.muteParticipant(
-      roomName: state.roomName!,
-      identity: state.remoteParticipantName!,
-      mute: newMuted,
-    );
-
-    if (success) {
+    try {
+      await _liveKitService.muteParticipant(
+        roomName: state.roomName!,
+        identity: state.remoteParticipantName!,
+        mute: newMuted,
+      );
       state = state.copyWith(isRemoteMuted: newMuted);
+    } on Exception catch (e) {
+      _logger.e('Failed to toggle mute: $e');
     }
   }
 

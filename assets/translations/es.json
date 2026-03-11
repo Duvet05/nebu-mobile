@@ -568,6 +568,8 @@
     "toy_not_connected": "Tu juguete no está conectado. ¡Asegúrate de que esté encendido y conectado al Wi-Fi!",
     "mute_toy": "Silenciar Juguete",
     "unmute_toy": "Activar Sonido",
+    "no_connection": "Sin conexión a internet. Revisa tu red e intenta de nuevo.",
+    "connection_lost": "Se perdió la conexión con tu juguete",
     "active_rooms": "Salas Activas",
     "no_active_rooms": "No hay salas de voz activas",
     "room_name": "Sala: {}",
@@ -917,7 +919,17 @@
     "messages": "{} mensajes",
     "conversation": "Conversación",
     "no_messages": "Sin mensajes en esta sesión",
-    "error_conversations": "No se pudieron cargar los mensajes"
+    "error_conversations": "No se pudieron cargar los mensajes",
+    "engagement": "Interacción",
+    "turns": "{} turnos",
+    "mood": "Ánimo",
+    "rapport": "Vínculo",
+    "facts_told": "{} datos",
+    "riddles_told": "{} adivinanzas",
+    "favorite_category": "Favorito",
+    "session_minutes": "{} min",
+    "culture_hype": "Cultura",
+    "profile": "Perfil"
   },
   "setup_progress": {
     "step_of": "Paso {} de {}"
@@ -932,6 +944,7 @@
     "language_spanish": "Español"
   },
   "errors": {
-    "route_not_found": "Página no encontrada"
+    "route_not_found": "Página no encontrada",
+    "invalid_toy": "Información del juguete no disponible. Por favor regresa e intenta de nuevo."
   }
 }

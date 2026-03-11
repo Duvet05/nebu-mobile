@@ -257,15 +257,21 @@ class AppRouter {
     // Dynamic Routes
     GoRoute(
       path: AppRoutes.toySettings.path,
-      builder: (c, s) => ToySettingsScreen(toy: s.extra! as Toy),
+      builder: (c, s) => s.extra is Toy
+          ? ToySettingsScreen(toy: s.extra! as Toy)
+          : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
     ),
     GoRoute(
       path: AppRoutes.toyMemory.path,
-      builder: (c, s) => ToyMemoryScreen(toy: s.extra! as Toy),
+      builder: (c, s) => s.extra is Toy
+          ? ToyMemoryScreen(toy: s.extra! as Toy)
+          : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
     ),
     GoRoute(
       path: AppRoutes.walkieTalkie.path,
-      builder: (c, s) => WalkieTalkieScreen(toy: s.extra! as Toy),
+      builder: (c, s) => s.extra is Toy
+          ? WalkieTalkieScreen(toy: s.extra! as Toy)
+          : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
     ),
     GoRoute(
       path: AppRoutes.playground.path,

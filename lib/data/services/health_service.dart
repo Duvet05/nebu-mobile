@@ -23,7 +23,10 @@ class HealthService {
       ),
     );
     final response = await dio.get<Map<String, dynamic>>('$healthUrl/health');
-    final data = response.data!;
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Health endpoint returned empty response');
+    }
     _logger.i('Backend health check successful: ${data['status']}');
     return data;
   }

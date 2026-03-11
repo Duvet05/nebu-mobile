@@ -412,7 +412,9 @@
     "no_iot_device": "This toy doesn't have a connected device yet",
     "toy_not_connected": "Your toy isn't online right now. Make sure it's turned on and connected to Wi-Fi!",
     "mute_toy": "Mute Toy",
-    "unmute_toy": "Unmute Toy"
+    "unmute_toy": "Unmute Toy",
+    "no_connection": "No internet connection. Check your network and try again.",
+    "connection_lost": "Connection to your toy was lost"
   },
   "auth": {
     "welcome_back": "Welcome back",
@@ -731,7 +733,17 @@
     "messages": "{} messages",
     "conversation": "Conversation",
     "no_messages": "No messages in this session",
-    "error_conversations": "Could not load messages"
+    "error_conversations": "Could not load messages",
+    "engagement": "Engagement",
+    "turns": "{} turns",
+    "mood": "Mood",
+    "rapport": "Rapport",
+    "facts_told": "{} facts",
+    "riddles_told": "{} riddles",
+    "favorite_category": "Favorite",
+    "session_minutes": "{} min",
+    "culture_hype": "Culture",
+    "profile": "Profile"
   },
   "setup_progress": {
     "step_of": "Step {} of {}"
@@ -746,6 +758,7 @@
     "language_spanish": "Español"
   },
   "errors": {
-    "route_not_found": "Page not found"
+    "route_not_found": "Page not found",
+    "invalid_toy": "Toy information not available. Please go back and try again."
   }
 }

@@ -62,6 +62,7 @@ class LiveKitService {
   final ApiService _apiService;
 
   Room? _room;
+  EventsListener<RoomEvent>? _roomListener;
   LiveKitConnectionStatus _status = LiveKitConnectionStatus.disconnected;
 
   final StreamController<LiveKitConnectionStatus> _statusController =
@@ -103,7 +104,8 @@ class LiveKitService {
       return;
     }
 
-    _room!.createListener()
+    _roomListener?.dispose();
+    _roomListener = _room!.createListener()
       ..on<RoomConnectedEvent>((event) {
         _logger.d('LiveKit room connected');
         _setStatus(LiveKitConnectionStatus.connected);
@@ -154,7 +156,7 @@ class LiveKitService {
   /// Fetch token from backend. Falls back to a dev-only demo token.
   Future<String> _fetchToken(String participantName, String roomName) async {
     if (Config.isDevelopment) {
-      assert(true, 'Demo tokens must not be used in production');
+      _logger.w('Using unsigned dev token — NOT for production');
       return _createDevToken(participantName, roomName);
     }
 
@@ -191,39 +193,29 @@ class LiveKitService {
   }
 
   /// Mute/unmute a remote participant via backend API.
-  Future<bool> muteParticipant({
+  Future<void> muteParticipant({
     required String roomName,
     required String identity,
     bool mute = true,
   }) async {
-    try {
-      _logger.d(
-        '${mute ? "Muting" : "Unmuting"} participant $identity in $roomName',
-      );
-      await _apiService.post<dynamic>(
-        '/livekit/rooms/$roomName/mute/$identity',
-        data: {'muteAudio': mute},
-      );
-      _logger.d(
-        'Participant $identity ${mute ? "muted" : "unmuted"} successfully',
-      );
-      return true;
-    } on Exception catch (e) {
-      _logger.e('Error muting participant: $e');
-      return false;
-    }
+    _logger.d(
+      '${mute ? "Muting" : "Unmuting"} participant $identity in $roomName',
+    );
+    await _apiService.post<dynamic>(
+      '/livekit/rooms/$roomName/mute/$identity',
+      data: {'muteAudio': mute},
+    );
+    _logger.d(
+      'Participant $identity ${mute ? "muted" : "unmuted"} successfully',
+    );
   }
 
   Future<void> setMicrophoneEnabled({required bool enabled}) async {
     if (_room == null) {
       return;
     }
-    try {
-      await _room!.localParticipant?.setMicrophoneEnabled(enabled);
-      _logger.d('Microphone ${enabled ? 'enabled' : 'disabled'}');
-    } on Exception catch (e) {
-      _logger.e('Error setting microphone: $e');
-    }
+    await _room!.localParticipant?.setMicrophoneEnabled(enabled);
+    _logger.d('Microphone ${enabled ? 'enabled' : 'disabled'}');
   }
 
   List<RemoteParticipant> get participants =>
@@ -238,6 +230,8 @@ class LiveKitService {
 
   Future<void> disconnect() async {
     try {
+      _roomListener?.dispose();
+      _roomListener = null;
       await _room?.disconnect();
       _room = null;
       _setStatus(LiveKitConnectionStatus.disconnected);

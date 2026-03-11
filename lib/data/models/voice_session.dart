@@ -20,6 +20,7 @@ abstract class VoiceSession with _$VoiceSession {
     @JsonKey(fromJson: _topicsFromJson) List<String>? topics,
     String? emotion,
     Map<String, dynamic>? metadata,
+    EngagementStats? engagementStats,
   }) = _VoiceSession;
 
   factory VoiceSession.fromJson(Map<String, dynamic> json) =>
@@ -38,6 +39,24 @@ List<String>? _topicsFromJson(Object? value) {
     return value.split(',').map((e) => e.trim()).toList();
   }
   return null;
+}
+
+@freezed
+abstract class EngagementStats with _$EngagementStats {
+  const factory EngagementStats({
+    @Default(0) int turnCount,
+    String? mood,
+    String? rapport,
+    @Default(0) int factsTold,
+    @Default(0) int riddlesTold,
+    String? favoriteCategory,
+    @Default(0) double sessionMinutes,
+    @Default(0) double cultureHype,
+    String? profileId,
+  }) = _EngagementStats;
+
+  factory EngagementStats.fromJson(Map<String, dynamic> json) =>
+      _$EngagementStatsFromJson(json);
 }
 
 @freezed

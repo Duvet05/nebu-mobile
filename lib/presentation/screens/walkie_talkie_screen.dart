@@ -37,8 +37,9 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
       }
       await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
     } on Exception catch (e) {
+      debugPrint('WalkieTalkie init error: $e');
       if (mounted) {
-        context.showErrorSnackBar(e.toString());
+        context.showErrorSnackBar('walkie_talkie.connection_failed'.tr());
       }
     }
   }
