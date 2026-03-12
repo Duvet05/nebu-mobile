@@ -21,9 +21,6 @@ class PersonalitiesScreen extends ConsumerStatefulWidget {
 }
 
 class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
-  static const _allFilter = 'all';
-  String _selectedCategory = _allFilter;
-
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -44,77 +41,30 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
     List<Personality> personalities,
     ThemeData theme,
   ) {
-    final categories = [_allFilter, ...personalities.uniqueCategories];
-    final filtered = _selectedCategory == _allFilter
-        ? personalities
-        : personalities
-              .where((p) => p.category?.toLowerCase() == _selectedCategory)
-              .toList();
-
-    return Column(
-      children: [
-        // Category filter chips — derived from data
-        SizedBox(
-          height: 56,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.symmetric(
-              horizontal: context.spacing.alertPadding,
-              vertical: context.spacing.labelBottomMargin,
-            ),
-            itemCount: categories.length,
-            separatorBuilder: (_, _) =>
-                SizedBox(width: context.spacing.labelBottomMargin),
-            itemBuilder: (context, index) {
-              final cat = categories[index];
-              final isSelected = _selectedCategory == cat;
-              return FilterChip(
-                label: Text(_categoryLabel(cat)),
-                selected: isSelected,
-                onSelected: (_) => setState(() => _selectedCategory = cat),
-                selectedColor: _getCategoryColor(
-                  context,
-                  cat,
-                ).withValues(alpha: 0.2),
-                checkmarkColor: _getCategoryColor(context, cat),
-                labelStyle: theme.textTheme.labelMedium?.copyWith(
-                  color: isSelected
-                      ? _getCategoryColor(context, cat)
-                      : theme.colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              );
-            },
+    if (personalities.isEmpty) {
+      return Center(
+        child: Text(
+          'personalities.empty'.tr(),
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
+      );
+    }
 
-        // Personalities grid
-        Expanded(
-          child: filtered.isEmpty
-              ? Center(
-                  child: Text(
-                    'personalities.empty'.tr(),
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                )
-              : GridView.builder(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: context.spacing.gapLg,
-                    mainAxisSpacing: context.spacing.gapLg,
-                    childAspectRatio: 0.78,
-                  ),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) => _PersonalityCard(
-                    personality: filtered[index],
-                    onTap: () => _showDetailModal(context, filtered[index]),
-                  ),
-                ),
-        ),
-      ],
+    return GridView.builder(
+      padding: EdgeInsets.all(context.spacing.alertPadding),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: context.spacing.gapLg,
+        mainAxisSpacing: context.spacing.gapLg,
+        childAspectRatio: 0.78,
+      ),
+      itemCount: personalities.length,
+      itemBuilder: (context, index) => _PersonalityCard(
+        personality: personalities[index],
+        onTap: () => _showDetailModal(context, personalities[index]),
+      ),
     );
   }
 

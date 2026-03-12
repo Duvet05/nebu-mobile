@@ -35,10 +35,3 @@ abstract class Personality with _$Personality {
   factory Personality.fromJson(Map<String, dynamic> json) =>
       _$PersonalityFromJson(json);
 }
-
-extension PersonalityListX on List<Personality> {
-  /// Extracts unique categories from the personality list, sorted.
-  List<String> get uniqueCategories =>
-      map((p) => p.category?.toLowerCase()).whereType<String>().toSet().toList()
-        ..sort();
-}
