@@ -24,6 +24,7 @@ class PersonsScreen extends ConsumerStatefulWidget {
 class _PersonsScreenState extends ConsumerState<PersonsScreen> {
   bool _didLoad = false;
   bool _syncDismissed = false;
+  bool _isSyncing = false;
 
   @override
   void initState() {
@@ -68,6 +69,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: context.colors.primary,
         onPressed: () => _showPersonForm(context),
+        tooltip: 'persons.add_child'.tr(),
         child: Icon(Icons.add, color: context.colors.textOnFilled),
       ),
     );
@@ -206,8 +208,6 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
                     onPressed: () {
                       setState(() => _syncDismissed = true);
                     },
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
                   ),
                 ],
               ),
@@ -232,7 +232,10 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
                   SizedBox(width: context.spacing.gapMd),
                   CustomButton(
                     text: 'persons.sync_now'.tr(),
-                    onPressed: () => _syncLocalData(service),
+                    isLoading: _isSyncing,
+                    onPressed: _isSyncing
+                        ? null
+                        : () => _syncLocalData(service),
                   ),
                 ],
               ),
@@ -246,31 +249,34 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
   }
 
   Future<void> _syncLocalData(LocalChildDataService service) async {
+    if (_isSyncing) {
+      return;
+    }
+    setState(() => _isSyncing = true);
     try {
       final name = service.getChildName();
       final person = await ref
           .read(personProvider.notifier)
           .createPerson(givenName: name);
 
-      // Clear local data after successful sync
       await service.clearChildData();
 
       if (!mounted) {
         return;
       }
-      setState(() => _syncDismissed = true);
+      setState(() {
+        _syncDismissed = true;
+        _isSyncing = false;
+      });
       context.showSuccessSnackBar(
         'persons.sync_success'.tr(args: [person.givenName ?? '']),
       );
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       if (!mounted) {
         return;
       }
-      context.showErrorSnackBar(
-        'persons.sync_error'.tr(
-          args: [e.toString().replaceFirst('Exception: ', '')],
-        ),
-      );
+      setState(() => _isSyncing = false);
+      context.showErrorSnackBar('persons.save_error'.tr());
     }
   }
 
@@ -303,23 +309,36 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
     }
 
     try {
+      // Collect toys to unassign BEFORE deleting the person
+      final toysToUnassign = (ref.read(toyProvider).value ?? [])
+          .where((t) => t.ownerId == person.id)
+          .toList();
+
       await ref.read(personProvider.notifier).deletePerson(person.id);
 
-      // Unassign toys that belonged to this person
-      final toys = ref.read(toyProvider).value ?? [];
-      for (final toy in toys.where((t) => t.ownerId == person.id)) {
-        await ref.read(toyProvider.notifier).updateToy(id: toy.id, ownerId: '');
+      // Best-effort unassign — continue on individual failure
+      for (final toy in toysToUnassign) {
+        if (!mounted) {
+          return;
+        }
+        try {
+          await ref
+              .read(toyProvider.notifier)
+              .updateToy(id: toy.id, ownerId: '');
+        } on Exception catch (_) {
+          // Person already deleted; log but continue with remaining toys
+        }
       }
 
       if (!context.mounted) {
         return;
       }
       context.showSuccessSnackBar('persons.deleted'.tr(args: [name]));
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       if (!context.mounted) {
         return;
       }
-      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      context.showErrorSnackBar('persons.delete_error'.tr());
     }
   }
 
@@ -380,13 +399,16 @@ class _PersonCard extends ConsumerWidget {
               horizontal: context.spacing.panelPadding,
               vertical: context.spacing.gapMd,
             ),
-            leading: CircleAvatar(
-              backgroundColor: context.colors.primary.withValues(alpha: 0.1),
-              child: Text(
-                _initials,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: context.colors.primary,
-                  fontWeight: FontWeight.w600,
+            leading: Semantics(
+              label: _displayName(context),
+              child: CircleAvatar(
+                backgroundColor: context.colors.primary.withValues(alpha: 0.1),
+                child: Text(
+                  _initials,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: context.colors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -398,6 +420,7 @@ class _PersonCard extends ConsumerWidget {
             ),
             subtitle: _subtitle(context),
             trailing: PopupMenuButton<String>(
+              tooltip: 'common.edit'.tr(),
               onSelected: (value) {
                 switch (value) {
                   case 'edit':
@@ -626,11 +649,11 @@ class _PersonFormSheetState extends ConsumerState<_PersonFormSheet> {
       context.showSuccessSnackBar(
         _isEditing ? 'persons.updated'.tr() : 'persons.created'.tr(),
       );
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       if (!mounted) {
         return;
       }
-      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      context.showErrorSnackBar('persons.save_error'.tr());
     } finally {
       if (mounted) {
         setState(() => _isSaving = false);
@@ -666,136 +689,142 @@ class _PersonFormSheetState extends ConsumerState<_PersonFormSheet> {
       ),
       child: Form(
         key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Handle bar
-            Center(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: context.colors.grey400,
-                  borderRadius: BorderRadius.circular(2),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle bar
+              Center(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: context.colors.grey400,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                  child: const SizedBox(width: 40, height: 4),
                 ),
-                child: const SizedBox(width: 40, height: 4),
               ),
-            ),
-            SizedBox(height: context.spacing.titleBottomMargin),
+              SizedBox(height: context.spacing.titleBottomMargin),
 
-            // Title
-            Text(
-              _isEditing ? 'persons.edit_child'.tr() : 'persons.add_child'.tr(),
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
+              // Title
+              Text(
+                _isEditing
+                    ? 'persons.edit_child'.tr()
+                    : 'persons.add_child'.tr(),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            SizedBox(height: context.spacing.paragraphBottomMargin),
+              SizedBox(height: context.spacing.paragraphBottomMargin),
 
-            // Given name
-            CustomInput(
-              controller: _givenNameController,
-              label: 'persons.given_name'.tr(),
-              prefixIcon: const Icon(Icons.person_outline),
-              enabled: !_isSaving,
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'persons.name_required'.tr();
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: context.spacing.titleBottomMargin),
-
-            // Family name
-            CustomInput(
-              controller: _familyNameController,
-              label: 'persons.family_name'.tr(),
-              prefixIcon: const Icon(Icons.people_outline),
-              enabled: !_isSaving,
-            ),
-            SizedBox(height: context.spacing.titleBottomMargin),
-
-            // Gender dropdown
-            DropdownButtonFormField<String>(
-              initialValue: _selectedGender,
-              decoration: InputDecoration(
-                labelText: 'persons.gender'.tr(),
-                prefixIcon: const Icon(Icons.wc_outlined),
-                border: OutlineInputBorder(borderRadius: context.radius.input),
+              // Given name
+              CustomInput(
+                controller: _givenNameController,
+                label: 'persons.given_name'.tr(),
+                prefixIcon: const Icon(Icons.person_outline),
+                enabled: !_isSaving,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'persons.name_required'.tr();
+                  }
+                  return null;
+                },
               ),
-              items: [
-                DropdownMenuItem(
-                  value: 'male',
-                  child: Text('persons.gender_male'.tr()),
-                ),
-                DropdownMenuItem(
-                  value: 'female',
-                  child: Text('persons.gender_female'.tr()),
-                ),
-                DropdownMenuItem(
-                  value: 'other',
-                  child: Text('persons.gender_other'.tr()),
-                ),
-              ],
-              onChanged: _isSaving
-                  ? null
-                  : (value) {
-                      setState(() => _selectedGender = value);
-                    },
-            ),
-            SizedBox(height: context.spacing.titleBottomMargin),
+              SizedBox(height: context.spacing.titleBottomMargin),
 
-            // Birth date picker
-            InkWell(
-              onTap: _isSaving ? null : _pickBirthDate,
-              borderRadius: context.radius.input,
-              child: InputDecorator(
+              // Family name
+              CustomInput(
+                controller: _familyNameController,
+                label: 'persons.family_name'.tr(),
+                prefixIcon: const Icon(Icons.people_outline),
+                enabled: !_isSaving,
+              ),
+              SizedBox(height: context.spacing.titleBottomMargin),
+
+              // Gender dropdown
+              DropdownButtonFormField<String>(
+                initialValue: _selectedGender,
                 decoration: InputDecoration(
-                  labelText: 'persons.birth_date'.tr(),
-                  prefixIcon: const Icon(Icons.cake_outlined),
+                  labelText: 'persons.gender'.tr(),
+                  prefixIcon: const Icon(Icons.wc_outlined),
                   border: OutlineInputBorder(
                     borderRadius: context.radius.input,
                   ),
                 ),
-                child: Text(
-                  _selectedBirthDate != null
-                      ? DateFormat.yMMMd().format(_selectedBirthDate!)
-                      : 'persons.select_date'.tr(),
-                  style: _selectedBirthDate != null
-                      ? theme.textTheme.bodyLarge
-                      : theme.textTheme.bodyLarge?.copyWith(
-                          color: context.colors.grey500,
-                        ),
+                items: [
+                  DropdownMenuItem(
+                    value: 'male',
+                    child: Text('persons.gender_male'.tr()),
+                  ),
+                  DropdownMenuItem(
+                    value: 'female',
+                    child: Text('persons.gender_female'.tr()),
+                  ),
+                  DropdownMenuItem(
+                    value: 'other',
+                    child: Text('persons.gender_other'.tr()),
+                  ),
+                ],
+                onChanged: _isSaving
+                    ? null
+                    : (value) {
+                        setState(() => _selectedGender = value);
+                      },
+              ),
+              SizedBox(height: context.spacing.titleBottomMargin),
+
+              // Birth date picker
+              InkWell(
+                onTap: _isSaving ? null : _pickBirthDate,
+                borderRadius: context.radius.input,
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'persons.birth_date'.tr(),
+                    prefixIcon: const Icon(Icons.cake_outlined),
+                    border: OutlineInputBorder(
+                      borderRadius: context.radius.input,
+                    ),
+                  ),
+                  child: Text(
+                    _selectedBirthDate != null
+                        ? DateFormat.yMMMd().format(_selectedBirthDate!)
+                        : 'persons.select_date'.tr(),
+                    style: _selectedBirthDate != null
+                        ? theme.textTheme.bodyLarge
+                        : theme.textTheme.bodyLarge?.copyWith(
+                            color: context.colors.grey500,
+                          ),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: context.spacing.paragraphBottomMargin),
+              SizedBox(height: context.spacing.paragraphBottomMargin),
 
-            // Actions
-            Row(
-              children: [
-                Expanded(
-                  child: CustomButton(
-                    text: 'common.cancel'.tr(),
-                    variant: ButtonVariant.outline,
-                    onPressed: _isSaving
-                        ? null
-                        : () => Navigator.of(context).pop(),
+              // Actions
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomButton(
+                      text: 'common.cancel'.tr(),
+                      variant: ButtonVariant.outline,
+                      onPressed: _isSaving
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                    ),
                   ),
-                ),
-                SizedBox(width: context.spacing.gapLg),
-                Expanded(
-                  child: CustomButton(
-                    text: _isEditing
-                        ? 'common.save'.tr()
-                        : 'persons.add_child'.tr(),
-                    isLoading: _isSaving,
-                    onPressed: _save,
+                  SizedBox(width: context.spacing.gapLg),
+                  Expanded(
+                    child: CustomButton(
+                      text: _isEditing
+                          ? 'common.save'.tr()
+                          : 'persons.add_child'.tr(),
+                      isLoading: _isSaving,
+                      onPressed: _save,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -847,11 +876,11 @@ class _ToyAssignmentSheetState extends ConsumerState<_ToyAssignmentSheet> {
             ? 'persons.toy_unassigned'.tr(args: [toy.name])
             : 'persons.toy_assigned'.tr(args: [toy.name]),
       );
-    } on Exception catch (e) {
+    } on Exception catch (_) {
       if (!mounted) {
         return;
       }
-      context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+      context.showErrorSnackBar('persons.assign_error'.tr());
     } finally {
       if (mounted) {
         setState(() => _savingToyId = null);

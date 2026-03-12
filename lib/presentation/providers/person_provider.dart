@@ -52,7 +52,7 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
       ref.read(loggerProvider).d('Person created: ${person.givenName}');
 
-      final current = await _currentPersons();
+      final current = state.value ?? [];
       state = AsyncValue.data([...current, person]);
 
       return person;
@@ -83,11 +83,13 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
       final current = await _currentPersons();
       final index = current.indexWhere((p) => p.id == updated.id);
+      final newList = [...current];
       if (index != -1) {
-        final newList = [...current];
         newList[index] = updated;
-        state = AsyncValue.data(newList);
+      } else {
+        newList.add(updated);
       }
+      state = AsyncValue.data(newList);
 
       return updated;
     } catch (e) {

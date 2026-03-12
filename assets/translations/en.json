@@ -801,7 +801,10 @@
     "sync_now": "Sync Now",
     "sync_dismiss": "Dismiss",
     "sync_success": "{} synced to your account",
-    "sync_error": "Could not sync: {}"
+    "sync_error": "Could not sync: {}",
+    "save_error": "Could not save. Please try again.",
+    "delete_error": "Could not remove. Please try again.",
+    "assign_error": "Could not update toy assignment. Please try again."
   },
   "errors": {
     "route_not_found": "Page not found",

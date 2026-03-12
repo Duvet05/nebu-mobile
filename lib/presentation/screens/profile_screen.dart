@@ -114,6 +114,7 @@ class ProfileScreen extends ConsumerWidget {
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.7,
                             ),
+                            tooltip: 'profile.edit_profile'.tr(),
                             onPressed: () {
                               context.push(AppRoutes.editProfile.path);
                             },

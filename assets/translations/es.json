@@ -985,7 +985,10 @@
     "sync_now": "Sincronizar",
     "sync_dismiss": "Descartar",
     "sync_success": "{} sincronizado con tu cuenta",
-    "sync_error": "No se pudo sincronizar: {}"
+    "sync_error": "No se pudo sincronizar: {}",
+    "save_error": "No se pudo guardar. Intenta de nuevo.",
+    "delete_error": "No se pudo eliminar. Intenta de nuevo.",
+    "assign_error": "No se pudo actualizar la asignación del juguete. Intenta de nuevo."
   },
   "errors": {
     "route_not_found": "Página no encontrada",
