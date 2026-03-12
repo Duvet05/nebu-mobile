@@ -209,7 +209,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                personality.name,
+                                _cleanName(personality.name),
                                 style: theme.textTheme.headlineSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -248,7 +248,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                     Text(
                       personality.description.replaceAll(
                         '{name}',
-                        personality.name,
+                        _cleanName(personality.name),
                       ),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -282,7 +282,7 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
                               child: Text(
                                 personality.greeting!.replaceAll(
                                   '{name}',
-                                  personality.name,
+                                  _cleanName(personality.name),
                                 ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontStyle: FontStyle.italic,
@@ -558,7 +558,7 @@ class _PersonalityCard extends StatelessWidget {
               ),
               SizedBox(height: context.spacing.paragraphBottomMarginSm),
               Text(
-                personality.name,
+                _cleanName(personality.name),
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -587,7 +587,7 @@ class _PersonalityCard extends StatelessWidget {
                 ),
               SizedBox(height: context.spacing.labelBottomMargin),
               Text(
-                personality.description.replaceAll('{name}', personality.name),
+                personality.description.replaceAll('{name}', _cleanName(personality.name)),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -604,6 +604,9 @@ class _PersonalityCard extends StatelessWidget {
 }
 
 // ── Shared helpers ──────────────────────────────────────────────────────
+
+/// Strips the `{name}` placeholder from a personality name.
+String _cleanName(String name) => name.replaceAll('{name}', '').trim();
 
 /// Translated label; falls back to capitalized category name.
 String _categoryLabel(String category) {
