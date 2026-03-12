@@ -20,6 +20,7 @@ import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
 import '../../presentation/screens/notifications_screen.dart';
 import '../../presentation/screens/personalities_screen.dart';
+import '../../presentation/screens/persons_screen.dart';
 import '../../presentation/screens/playground_screen.dart';
 import '../../presentation/screens/privacy_policy_screen.dart';
 import '../../presentation/screens/privacy_settings_screen.dart';
@@ -139,6 +140,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         AppRoutes.usageLimits.path,
         AppRoutes.notifications.path,
         AppRoutes.privacySettings.path,
+        AppRoutes.persons.path,
       ].contains(path);
 
       if (needsAccount && user == null) {
@@ -236,6 +238,10 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.childProfile.path,
       builder: (_, _) => const ChildProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.persons.path,
+      builder: (_, _) => const PersonsScreen(),
     ),
     GoRoute(
       path: AppRoutes.personalities.path,

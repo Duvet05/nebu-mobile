@@ -25,6 +25,7 @@ enum AppRoutes {
   favoritesSetup('/setup/favorites'),
   worldInfoSetup('/setup/world-info'),
   childProfile('/child-profile'),
+  persons('/persons'),
   walkieTalkie('/walkie-talkie'),
   toyMemory('/toy-memory'),
   personalities('/personalities'),

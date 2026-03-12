@@ -89,12 +89,14 @@ class AuthNotifier extends AsyncNotifier<User?> {
     required String password,
     String? firstName,
     String? lastName,
+    String? preferredLanguage,
   }) => _authenticate((s) async {
     final r = await s.register(
       email: email,
       password: password,
       firstName: firstName,
       lastName: lastName,
+      preferredLanguage: preferredLanguage,
     );
     return (success: r.success, user: r.user, error: r.error);
   });

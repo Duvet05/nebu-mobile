@@ -17,6 +17,7 @@ import '../../data/services/health_service.dart';
 import '../../data/services/livekit_service.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../../data/services/notification_service.dart';
+import '../../data/services/person_service.dart';
 import '../../data/services/toy_service.dart';
 import '../../data/services/user_service.dart';
 import '../../data/services/user_setup_service.dart';
@@ -119,6 +120,12 @@ final toyServiceProvider = Provider<ToyService>((ref) {
   final apiService = ref.watch(apiServiceProvider);
   final logger = ref.watch(loggerProvider);
   return ToyService(apiService: apiService, logger: logger);
+});
+
+final personServiceProvider = Provider<PersonService>((ref) {
+  final apiService = ref.watch(apiServiceProvider);
+  final logger = ref.watch(loggerProvider);
+  return PersonService(apiService: apiService, logger: logger);
 });
 
 final activityServiceProvider = Provider<ActivityService>((ref) {

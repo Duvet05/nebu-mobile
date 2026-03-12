@@ -31,6 +31,7 @@ abstract class Toy with _$Toy {
     String? iotDeviceId,
     String? iotDeviceStatus,
     String? userId,
+    String? ownerId,
     String? model,
     String? manufacturer,
     String? firmwareVersion,

@@ -54,6 +54,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           password: _passwordController.text,
           firstName: firstName.isNotEmpty ? firstName : null,
           lastName: lastName.isNotEmpty ? lastName : null,
+          preferredLanguage: context.locale.languageCode,
         );
   }
 

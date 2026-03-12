@@ -171,6 +171,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
   Future<Toy> updateToy({
     required String id,
     String? name,
+    String? ownerId,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -186,6 +187,7 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
       final updatedToy = await _toyService.updateToy(
         id: id,
         name: name,
+        ownerId: ownerId,
         model: model,
         manufacturer: manufacturer,
         status: status,

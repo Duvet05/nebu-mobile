@@ -136,6 +136,7 @@ class ToyService {
   Future<Toy> updateToy({
     required String id,
     String? name,
+    String? ownerId,
     String? model,
     String? manufacturer,
     ToyStatus? status,
@@ -152,6 +153,7 @@ class ToyService {
       '/toys/$id',
       data: {
         'name': ?name,
+        'ownerId': ?ownerId,
         'model': ?model,
         'manufacturer': ?manufacturer,
         if (status != null) 'status': status.name,

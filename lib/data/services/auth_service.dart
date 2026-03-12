@@ -58,6 +58,7 @@ class AuthService {
     required String password,
     String? firstName,
     String? lastName,
+    String? preferredLanguage,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
@@ -67,6 +68,7 @@ class AuthService {
           'password': password,
           'firstName': ?firstName,
           'lastName': ?lastName,
+          'preferredLanguage': ?preferredLanguage,
         },
       );
 

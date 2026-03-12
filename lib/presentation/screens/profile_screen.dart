@@ -132,13 +132,19 @@ class ProfileScreen extends ConsumerWidget {
                         _SettingsTile(
                           theme: theme,
                           icon: Icons.child_care,
-                          title: 'profile.child_profile'.tr(),
+                          title: user != null
+                              ? 'persons.title'.tr()
+                              : 'profile.child_profile'.tr(),
                           trailing: Icon(
                             Icons.chevron_right,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
-                            context.push(AppRoutes.childProfile.path);
+                            context.push(
+                              user != null
+                                  ? AppRoutes.persons.path
+                                  : AppRoutes.childProfile.path,
+                            );
                           },
                         ),
                         Divider(
