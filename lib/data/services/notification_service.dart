@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../../core/errors/app_exception.dart';
 import '../models/app_notification.dart';
 import 'api_service.dart';
 
@@ -14,23 +15,59 @@ class NotificationService {
   /// Get my notifications
   Future<List<AppNotification>> getMyNotifications() async {
     _logger.d('Fetching my notifications');
-    final response = await _apiService.get<List<dynamic>>('/notifications/my');
-    return response
-        .cast<Map<String, dynamic>>()
-        .map(AppNotification.fromJson)
-        .toList();
+
+    List<dynamic> response;
+    try {
+      response = await _apiService.get<List<dynamic>>('/notifications/my');
+    } on NotFoundException {
+      _logger.i('No notifications found (404), returning empty list');
+      return [];
+    }
+
+    if (response.isEmpty) {
+      return [];
+    }
+
+    final notifications = <AppNotification>[];
+    for (var i = 0; i < response.length; i++) {
+      try {
+        final json = response[i] as Map<String, dynamic>;
+        notifications.add(AppNotification.fromJson(json));
+      } catch (e) {
+        _logger.e('Error parsing notification $i: $e');
+      }
+    }
+    return notifications;
   }
 
   /// Get unread notifications
   Future<List<AppNotification>> getUnreadNotifications() async {
     _logger.d('Fetching unread notifications');
-    final response = await _apiService.get<List<dynamic>>(
-      '/notifications/my/unread',
-    );
-    return response
-        .cast<Map<String, dynamic>>()
-        .map(AppNotification.fromJson)
-        .toList();
+
+    List<dynamic> response;
+    try {
+      response = await _apiService.get<List<dynamic>>(
+        '/notifications/my/unread',
+      );
+    } on NotFoundException {
+      _logger.i('No unread notifications found (404), returning empty list');
+      return [];
+    }
+
+    if (response.isEmpty) {
+      return [];
+    }
+
+    final notifications = <AppNotification>[];
+    for (var i = 0; i < response.length; i++) {
+      try {
+        final json = response[i] as Map<String, dynamic>;
+        notifications.add(AppNotification.fromJson(json));
+      } catch (e) {
+        _logger.e('Error parsing notification $i: $e');
+      }
+    }
+    return notifications;
   }
 
   /// Mark a notification as read

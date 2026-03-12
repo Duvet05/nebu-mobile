@@ -21,7 +21,7 @@ void main() async {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
-      } on UnsupportedError {
+      } on UnsupportedError { // ignore: avoid_catching_errors
         // Linux and other desktop platforms not configured for Firebase
       } on Exception catch (e) {
         debugPrint('Firebase skip: $e');
