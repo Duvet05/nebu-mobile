@@ -164,6 +164,8 @@ class AuthService {
     'NOT_FOUND' => 'auth.error_not_found',
     'TOO_MANY_REQUESTS' => 'auth.error_too_many_requests',
     'INTERNAL_SERVER_ERROR' => 'auth.error_server',
+    'EMAIL_NOT_VERIFIED' ||
+    'PENDING_VERIFICATION' => 'auth.error_email_not_verified',
     _ => null,
   };
 
@@ -269,6 +271,14 @@ class AuthService {
   }
 
   // Email Verification
+  Future<bool> verifyEmail(String token) async {
+    await _dio.post<void>(
+      '/auth/verify-email',
+      queryParameters: {'token': token},
+    );
+    return true;
+  }
+
   Future<bool> resendVerification(String email) async {
     await _dio.post<void>('/auth/resend-verification', data: {'email': email});
     return true;

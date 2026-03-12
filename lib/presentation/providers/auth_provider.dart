@@ -8,7 +8,8 @@ import '../../data/services/activity_migration_service.dart';
 import '../../data/services/auth_service.dart';
 import 'api_provider.dart';
 
-export 'api_provider.dart' show sessionExpiredProvider, sharedPreferencesProvider;
+export 'api_provider.dart'
+    show sessionExpiredProvider, sharedPreferencesProvider;
 
 final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(
   AuthNotifier.new,
@@ -67,7 +68,9 @@ class AuthNotifier extends AsyncNotifier<User?> {
     try {
       await ref.read(activityMigrationServiceProvider).migrateIfNeeded(user.id);
     } on Exception catch (e) {
-      ref.read(loggerProvider).w('Activity migration failed (non-blocking): $e');
+      ref
+          .read(loggerProvider)
+          .w('Activity migration failed (non-blocking): $e');
     }
     unawaited(ref.read(firebasePushServiceProvider).initialize());
   }
@@ -153,6 +156,24 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }) async => (await ref.read(
     authServiceProvider.future,
   )).resetPassword(token: token, newPassword: newPassword);
+
+  /// Re-fetch user profile from backend and update local state.
+  /// Used after email verification to pick up emailVerified: true.
+  Future<bool> refreshUser() async {
+    try {
+      final userService = ref.read(userServiceProvider);
+      final user = await userService.getCurrentUserProfile();
+      await _onAuthSuccess(user);
+      state = AsyncValue.data(user);
+      return true;
+    } on Exception catch (e) {
+      ref.read(loggerProvider).e('Failed to refresh user', error: e);
+      return false;
+    }
+  }
+
+  Future<bool> verifyEmail(String token) async =>
+      (await ref.read(authServiceProvider.future)).verifyEmail(token);
 
   Future<bool> resendVerification(String email) async =>
       (await ref.read(authServiceProvider.future)).resendVerification(email);

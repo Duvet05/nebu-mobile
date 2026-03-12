@@ -662,8 +662,11 @@
     "verify_email_resend_error": "No se pudo enviar el correo de verificación. Intenta de nuevo.",
     "verify_email_resend_countdown": "Reenviar en {}s",
     "verify_email_resent": "¡Correo de verificación enviado! Revisa tu bandeja.",
+    "verify_email_check_status": "Ya verifiqué mi correo",
+    "verify_email_not_yet": "Correo aún no verificado. Revisa tu bandeja y haz clic en el enlace de verificación.",
     "verify_email_wrong_email": "¿Correo incorrecto?",
-    "verify_email_logout": "Cerrar sesión"
+    "verify_email_logout": "Cerrar sesión",
+    "error_email_not_verified": "Tu correo no está verificado. Revisa tu bandeja de entrada para el enlace de verificación."
   },
   "audio_controls": {
     "volume_error": "No se pudo cambiar el volumen. Intenta de nuevo.",

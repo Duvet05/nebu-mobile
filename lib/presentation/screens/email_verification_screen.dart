@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/ui_helpers.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
@@ -25,6 +26,7 @@ class _EmailVerificationScreenState
     extends ConsumerState<EmailVerificationScreen> {
   bool _isResending = false;
   bool _isLoggingOut = false;
+  bool _isCheckingStatus = false;
   _ResendStatus _resendStatus = _ResendStatus.idle;
   int _cooldownSeconds = 0;
   Timer? _cooldownTimer;
@@ -85,6 +87,31 @@ class _EmailVerificationScreenState
         timer.cancel();
       }
     });
+  }
+
+  Future<void> _handleCheckStatus() async {
+    if (_isCheckingStatus) {
+      return;
+    }
+    setState(() => _isCheckingStatus = true);
+
+    final verified = await ref.read(authProvider.notifier).refreshUser();
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _isCheckingStatus = false);
+
+    if (verified) {
+      final user = ref.read(authProvider).value;
+      if (user?.emailVerified ?? false) {
+        // Router will automatically redirect away from verify screen
+        return;
+      }
+    }
+
+    context.showErrorSnackBar('auth.verify_email_not_yet'.tr());
   }
 
   Future<void> _handleLogout() async {
@@ -207,15 +234,40 @@ class _EmailVerificationScreenState
 
               const Spacer(),
 
-              // Resend button
+              // "I've already verified" button
               AuthPrimaryButton(
-                text: _cooldownSeconds > 0
-                    ? 'auth.verify_email_resend_countdown'.tr(
-                        args: ['$_cooldownSeconds'],
+                text: 'auth.verify_email_check_status'.tr(),
+                isLoading: _isCheckingStatus,
+                onPressed: _handleCheckStatus,
+              ),
+
+              SizedBox(height: context.spacing.titleBottomMargin),
+
+              // Resend button
+              TextButton(
+                onPressed: _cooldownSeconds > 0 || _isResending
+                    ? null
+                    : _handleResend,
+                child: _isResending
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: context.theme.colorScheme.primary,
+                        ),
                       )
-                    : 'auth.verify_email_resend'.tr(),
-                isLoading: _isResending,
-                onPressed: _cooldownSeconds > 0 ? null : _handleResend,
+                    : Text(
+                        _cooldownSeconds > 0
+                            ? 'auth.verify_email_resend_countdown'.tr(
+                                args: ['$_cooldownSeconds'],
+                              )
+                            : 'auth.verify_email_resend'.tr(),
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: context.theme.colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
               ),
 
               SizedBox(height: context.spacing.paragraphBottomMargin),

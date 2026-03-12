@@ -487,8 +487,11 @@
     "verify_email_resend_error": "Could not send verification email. Please try again.",
     "verify_email_resend_countdown": "Resend in {}s",
     "verify_email_resent": "Verification email sent! Check your inbox.",
+    "verify_email_check_status": "I've already verified",
+    "verify_email_not_yet": "Email not verified yet. Check your inbox and click the verification link.",
     "verify_email_wrong_email": "Wrong email?",
-    "verify_email_logout": "Sign out"
+    "verify_email_logout": "Sign out",
+    "error_email_not_verified": "Your email is not verified. Please check your inbox for the verification link."
   },
   "audio_controls": {
     "volume_error": "Couldn't change volume. Please try again.",

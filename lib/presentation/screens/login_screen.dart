@@ -17,6 +17,7 @@ const _pendingVerificationKeywords = [
   'verify',
   'pending',
   'pendiente',
+  'error_email_not_verified',
 ];
 
 class LoginScreen extends ConsumerStatefulWidget {
