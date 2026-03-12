@@ -12,6 +12,26 @@ class PersonService {
   final ApiService _apiService;
   final Logger _logger;
 
+  /// Extracts givenName/familyName from names[] into flat fields
+  /// so Person.fromJson() can parse them.
+  static Map<String, dynamic> _normalizePersonJson(Map<String, dynamic> json) {
+    final names = json['names'] as List<dynamic>?;
+    if (names == null || names.isEmpty) {
+      return json;
+    }
+    final preferred =
+        names.firstWhere(
+              (n) => (n as Map<String, dynamic>)['preferred'] == true,
+              orElse: () => names.first,
+            )
+            as Map<String, dynamic>;
+    return {
+      ...json,
+      'givenName': json['givenName'] ?? preferred['givenName'],
+      'familyName': json['familyName'] ?? preferred['familyName'],
+    };
+  }
+
   /// Create a new person (child)
   Future<Person> createPerson({
     String? givenName,
@@ -30,15 +50,16 @@ class PersonService {
       },
     );
     _logger.d('Person created: ${response['id']}');
-    return Person.fromJson(response);
+    return Person.fromJson(_normalizePersonJson(response));
   }
 
   /// Get a person by ID
   Future<Person> getPerson(String id) async {
     _logger.d('Fetching person: $id');
-    final response =
-        await _apiService.get<Map<String, dynamic>>('/persons/$id');
-    return Person.fromJson(response);
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/persons/$id',
+    );
+    return Person.fromJson(_normalizePersonJson(response));
   }
 
   /// Get all persons for the current user
@@ -56,7 +77,9 @@ class PersonService {
     final persons = <Person>[];
     for (final item in response) {
       try {
-        persons.add(Person.fromJson(item as Map<String, dynamic>));
+        persons.add(
+          Person.fromJson(_normalizePersonJson(item as Map<String, dynamic>)),
+        );
       } on Exception catch (e) {
         _logger.e('Error parsing person: $e');
       }
@@ -84,7 +107,7 @@ class PersonService {
       },
     );
     _logger.d('Person updated');
-    return Person.fromJson(response);
+    return Person.fromJson(_normalizePersonJson(response));
   }
 
   /// Delete a person
