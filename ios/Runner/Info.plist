@@ -61,5 +61,7 @@
 	<string>Necesitamos reconocimiento de voz para el asistente inteligente</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Necesitamos acceso a la red local para conectar con dispositivos IoT</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 </dict>
 </plist>

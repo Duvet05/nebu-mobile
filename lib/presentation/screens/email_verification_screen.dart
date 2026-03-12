@@ -12,10 +12,13 @@ import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
 class EmailVerificationScreen extends ConsumerStatefulWidget {
-  const EmailVerificationScreen({this.email, super.key});
+  const EmailVerificationScreen({this.email, this.token, super.key});
 
   /// Email passed from login rejection (when user is null in auth state).
   final String? email;
+
+  /// Token from deep link (e.g. flow-telligence.com/verify-email?token=xxx).
+  final String? token;
 
   @override
   ConsumerState<EmailVerificationScreen> createState() =>
@@ -33,6 +36,38 @@ class _EmailVerificationScreenState
 
   String get _email =>
       widget.email ?? ref.read(authProvider).value?.email ?? '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.token != null) {
+      _autoVerify(widget.token!);
+    }
+  }
+
+  Future<void> _autoVerify(String token) async {
+    setState(() => _isCheckingStatus = true);
+
+    try {
+      await ref.read(authProvider.notifier).verifyEmail(token);
+      await ref.read(authProvider.notifier).refreshUser();
+    } on Exception {
+      // Token invalid/expired — user can resend or check manually
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final user = ref.read(authProvider).value;
+    if (user?.emailVerified ?? false) {
+      // Router will redirect away automatically
+      return;
+    }
+
+    setState(() => _isCheckingStatus = false);
+    context.showErrorSnackBar('auth.verify_email_not_yet'.tr());
+  }
 
   @override
   void dispose() {
