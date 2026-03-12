@@ -52,11 +52,16 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
       ref.read(loggerProvider).d('Person created: ${person.givenName}');
 
-      final current = state.value ?? [];
-      state = AsyncValue.data([...current, person]);
+      final current = await _currentPersons();
+      // Deduplicate: API reload may already include the new person
+      if (current.any((p) => p.id == person.id)) {
+        state = AsyncValue.data(current);
+      } else {
+        state = AsyncValue.data([...current, person]);
+      }
 
       return person;
-    } catch (e) {
+    } on Exception catch (e) {
       ref.read(loggerProvider).e('Error creating person: $e');
       rethrow;
     }
@@ -92,7 +97,7 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
       state = AsyncValue.data(newList);
 
       return updated;
-    } catch (e) {
+    } on Exception catch (e) {
       ref.read(loggerProvider).e('Error updating person: $e');
       rethrow;
     }
@@ -106,7 +111,7 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
       final current = await _currentPersons();
       state = AsyncValue.data(current.where((p) => p.id != id).toList());
-    } catch (e) {
+    } on Exception catch (e) {
       ref.read(loggerProvider).e('Error deleting person: $e');
       rethrow;
     }

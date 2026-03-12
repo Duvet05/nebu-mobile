@@ -70,7 +70,9 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
         backgroundColor: context.colors.primary,
         onPressed: () => _showPersonForm(context),
         tooltip: 'persons.add_child'.tr(),
-        child: Icon(Icons.add, color: context.colors.textOnFilled),
+        child: ExcludeSemantics(
+          child: Icon(Icons.add, color: context.colors.textOnFilled),
+        ),
       ),
     );
   }
@@ -205,6 +207,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
                       size: 18,
                       color: context.colors.grey400,
                     ),
+                    tooltip: 'persons.sync_dismiss'.tr(),
                     onPressed: () {
                       setState(() => _syncDismissed = true);
                     },
@@ -399,8 +402,7 @@ class _PersonCard extends ConsumerWidget {
               horizontal: context.spacing.panelPadding,
               vertical: context.spacing.gapMd,
             ),
-            leading: Semantics(
-              label: _displayName(context),
+            leading: ExcludeSemantics(
               child: CircleAvatar(
                 backgroundColor: context.colors.primary.withValues(alpha: 0.1),
                 child: Text(
@@ -936,55 +938,65 @@ class _ToyAssignmentSheetState extends ConsumerState<_ToyAssignmentSheet> {
               ),
             )
           else
-            ...toys.map((toy) {
-              final isAssigned = toy.ownerId == widget.person.id;
-              final isSaving = _savingToyId == toy.id;
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.4,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: toys.map((toy) {
+                    final isAssigned = toy.ownerId == widget.person.id;
+                    final isSaving = _savingToyId == toy.id;
 
-              return ListTile(
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: context.spacing.gapMd,
-                ),
-                leading: Icon(
-                  Icons.smart_toy,
-                  color: isAssigned
-                      ? context.colors.primary
-                      : context.colors.grey400,
-                ),
-                title: Text(
-                  toy.name,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: isAssigned ? FontWeight.w600 : null,
-                  ),
-                ),
-                subtitle:
-                    toy.ownerId != null &&
-                        toy.ownerId!.isNotEmpty &&
-                        toy.ownerId != widget.person.id
-                    ? Text(
-                        'persons.assigned_elsewhere'.tr(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: context.colors.grey500,
-                        ),
-                      )
-                    : null,
-                trailing: isSaving
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Checkbox(
-                        value: isAssigned,
-                        onChanged: _savingToyId != null
-                            ? null
-                            : (_) => _toggleAssignment(toy),
-                        activeColor: context.colors.primary,
+                    return ListTile(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: context.spacing.gapMd,
                       ),
-                onTap: _savingToyId != null
-                    ? null
-                    : () => _toggleAssignment(toy),
-              );
-            }),
+                      leading: Icon(
+                        Icons.smart_toy,
+                        color: isAssigned
+                            ? context.colors.primary
+                            : context.colors.grey400,
+                      ),
+                      title: Text(
+                        toy.name,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: isAssigned ? FontWeight.w600 : null,
+                        ),
+                      ),
+                      subtitle:
+                          toy.ownerId != null &&
+                              toy.ownerId!.isNotEmpty &&
+                              toy.ownerId != widget.person.id
+                          ? Text(
+                              'persons.assigned_elsewhere'.tr(),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: context.colors.grey500,
+                              ),
+                            )
+                          : null,
+                      trailing: isSaving
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Checkbox(
+                              value: isAssigned,
+                              onChanged: _savingToyId != null
+                                  ? null
+                                  : (_) => _toggleAssignment(toy),
+                              activeColor: context.colors.primary,
+                            ),
+                      onTap: _savingToyId != null
+                          ? null
+                          : () => _toggleAssignment(toy),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
 
           SizedBox(height: context.spacing.panelPadding),
         ],
