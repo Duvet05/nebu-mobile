@@ -56,11 +56,18 @@ class AuthService {
   Future<AuthResponse> register({
     required String email,
     required String password,
+    String? firstName,
+    String? lastName,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/register',
-        data: {'email': email, 'password': password},
+        data: {
+          'email': email,
+          'password': password,
+          'firstName': ?firstName,
+          'lastName': ?lastName,
+        },
       );
 
       final authResponse = AuthResponse.fromBackend(response.data!);

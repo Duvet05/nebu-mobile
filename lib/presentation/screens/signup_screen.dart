@@ -20,6 +20,8 @@ class SignUpScreen extends ConsumerStatefulWidget {
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -29,6 +31,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -40,11 +44,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       return;
     }
 
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
+
     await ref
         .read(authProvider.notifier)
         .register(
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          firstName: firstName.isNotEmpty ? firstName : null,
+          lastName: lastName.isNotEmpty ? lastName : null,
         );
   }
 
@@ -111,6 +120,31 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         AuthErrorBanner(message: _authError!),
                         SizedBox(height: context.spacing.titleBottomMargin),
                       ],
+
+                      // Name fields (optional)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AuthTextField(
+                              controller: _firstNameController,
+                              label: 'auth.first_name'.tr(),
+                              prefixIcon: Icons.person_outline_rounded,
+                              textCapitalization: TextCapitalization.words,
+                            ),
+                          ),
+                          SizedBox(width: context.spacing.gapLg),
+                          Expanded(
+                            child: AuthTextField(
+                              controller: _lastNameController,
+                              label: 'auth.last_name'.tr(),
+                              prefixIcon: Icons.person_outline_rounded,
+                              textCapitalization: TextCapitalization.words,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      SizedBox(height: context.spacing.titleBottomMargin),
 
                       // Email field
                       AuthTextField(

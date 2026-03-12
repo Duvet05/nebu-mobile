@@ -58,8 +58,13 @@ class ApiService {
           return handler.next(response);
         },
         onError: (error, handler) async {
+          final status = error.response?.statusCode;
+          final path = error.requestOptions.path;
+          final body = error.response?.data;
+          final msg = _extractBackendMessage(body);
           _logger.e(
-            'Error: ${error.response?.statusCode} ${error.requestOptions.path}',
+            'API $status ${error.requestOptions.method} $path'
+            '${msg != null ? ' → $msg' : ''}',
           );
 
           // Only attempt refresh on 401 if we haven't already retried
@@ -101,8 +106,11 @@ class ApiService {
     if (Config.enableDebugLogs) {
       _dio.interceptors.add(
         LogInterceptor(
+          request: false,
+          requestHeader: false,
           requestBody: true,
-          responseBody: true,
+          responseHeader: false,
+          error: false,
           logPrint: _logger.d,
         ),
       );
@@ -180,6 +188,10 @@ class ApiService {
 
     final code = statusCode ?? 0;
     return switch (code) {
+      400 => ValidationException(
+        backendMsg ?? 'Bad request',
+        statusCode: 400,
+      ),
       401 => AuthException(backendMsg ?? 'Not authorized', statusCode: 401),
       403 => AuthException(backendMsg ?? 'Forbidden', statusCode: 403),
       404 => NotFoundException(backendMsg ?? 'Not found', statusCode: 404),

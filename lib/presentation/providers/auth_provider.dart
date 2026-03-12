@@ -84,11 +84,20 @@ class AuthNotifier extends AsyncNotifier<User?> {
         return (success: r.success, user: r.user, error: r.error);
       });
 
-  Future<void> register({required String email, required String password}) =>
-      _authenticate((s) async {
-        final r = await s.register(email: email, password: password);
-        return (success: r.success, user: r.user, error: r.error);
-      });
+  Future<void> register({
+    required String email,
+    required String password,
+    String? firstName,
+    String? lastName,
+  }) => _authenticate((s) async {
+    final r = await s.register(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+    return (success: r.success, user: r.user, error: r.error);
+  });
 
   Future<void> loginWithGoogle(String token) => _authenticate((s) async {
     final r = await s.googleLogin(token);
