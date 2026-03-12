@@ -16,30 +16,41 @@ class PersonalityService {
     _logger.d('Fetching personalities');
     final response = await _apiService.get<dynamic>('/agent/personalities');
 
+    List<dynamic> items;
     if (response is List) {
-      return response
-          .cast<Map<String, dynamic>>()
-          .map(Personality.fromJson)
-          .toList();
-    }
-
-    if (response is Map<String, dynamic>) {
+      items = response;
+    } else if (response is Map<String, dynamic>) {
       final data = response['data'] ?? response['personalities'];
       if (data is List) {
-        return data
-            .cast<Map<String, dynamic>>()
-            .map(Personality.fromJson)
-            .toList();
+        items = data;
+      } else {
+        _logger.e(
+          'getPersonalities: unexpected response shape: ${response.runtimeType}',
+        );
+        throw const ServerException(
+          'Unexpected response format from /agent/personalities',
+          statusCode: 500,
+        );
       }
+    } else {
+      _logger.e(
+        'getPersonalities: unexpected response shape: ${response.runtimeType}',
+      );
+      throw const ServerException(
+        'Unexpected response format from /agent/personalities',
+        statusCode: 500,
+      );
     }
 
-    _logger.e(
-      'getPersonalities: unexpected response shape: ${response.runtimeType}',
-    );
-    throw const ServerException(
-      'Unexpected response format from /agent/personalities',
-      statusCode: 500,
-    );
+    if (items.isNotEmpty) {
+      _logger.d('Personality[0] keys: ${(items.first as Map).keys.toList()}');
+    }
+
+    return items
+        .cast<Map<String, dynamic>>()
+        .map(Personality.fromJson)
+        .toList();
+
   }
 
   Future<void> assignPersonalityToToy({
