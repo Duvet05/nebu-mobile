@@ -473,7 +473,14 @@
     "unassign_confirm": "¿Estás seguro de que quieres liberar {}? Podrá ser asignado a otro usuario.",
     "unassign_success": "Juguete liberado correctamente",
     "unassign_error": "No se pudo liberar el juguete. Intenta de nuevo.",
-    "device_id": "ID: {}"
+    "device_id": "ID: {}",
+    "advanced_settings": "Ajustes Avanzados",
+    "variety_engine": "Personalidad dinámica",
+    "variety_engine_desc": "El juguete varía su forma de hablar y no repite frases",
+    "walkie_talkie_mode": "Modo padre",
+    "walkie_talkie_mode_desc": "Pausa al juguete cuando un adulto se conecta a la sala",
+    "settings_saved": "Ajuste actualizado",
+    "settings_error": "No se pudo actualizar el ajuste. Intenta de nuevo."
   },
   "child_profile": {
     "title": "Perfil del Niño",

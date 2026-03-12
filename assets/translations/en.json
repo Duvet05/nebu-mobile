@@ -354,7 +354,14 @@
     "unassign_confirm": "Are you sure you want to release {}? It can be assigned to another user.",
     "unassign_success": "Toy released successfully",
     "unassign_error": "Could not release the toy. Please try again.",
-    "device_id": "ID: {}"
+    "device_id": "ID: {}",
+    "advanced_settings": "Advanced Settings",
+    "variety_engine": "Dynamic Personality",
+    "variety_engine_desc": "The toy varies how it talks and doesn't repeat phrases",
+    "walkie_talkie_mode": "Parent Mode",
+    "walkie_talkie_mode_desc": "Pauses the toy when an adult joins the room",
+    "settings_saved": "Setting updated",
+    "settings_error": "Could not update setting. Please try again."
   },
   "child_profile": {
     "title": "Child Profile",

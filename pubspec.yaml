@@ -54,8 +54,8 @@ dependencies:
   easy_localization: ^3.0.7
 
   # Firebase
-  firebase_core: ^3.12.1
-  firebase_messaging: ^15.2.4
+  firebase_core: ^4.0.0
+  firebase_messaging: ^16.0.0
 
   # Utilities
   logger: ^2.3.0
