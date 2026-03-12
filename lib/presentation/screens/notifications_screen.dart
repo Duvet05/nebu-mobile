@@ -54,7 +54,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         _isLoading = false;
         _errorMessage = e.message;
       });
-    } catch (e) {
+    } on Exception catch (e) {
       if (!mounted) {
         return;
       }
@@ -238,7 +238,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       }
       setState(() => _isBusy = false);
       context.showErrorSnackBar(e.message);
-    } catch (e) {
+    } on Exception catch (e) {
       if (!mounted) {
         return;
       }
@@ -280,7 +280,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       }
       setState(() => _isBusy = false);
       context.showErrorSnackBar(e.message);
-    } catch (e) {
+    } on Exception catch (e) {
       if (!mounted) {
         return;
       }
@@ -313,7 +313,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       }
       setState(() => _isDismissing = false);
       context.showInfoSnackBar('notifications.deleted'.tr());
-    } catch (_) {
+    } on Exception catch (_) {
       if (!mounted) {
         return;
       }

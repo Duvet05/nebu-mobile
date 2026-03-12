@@ -33,7 +33,7 @@ class NotificationService {
       try {
         final json = response[i] as Map<String, dynamic>;
         notifications.add(AppNotification.fromJson(json));
-      } catch (e) {
+      } on Exception catch (e) {
         _logger.e('Error parsing notification $i: $e');
       }
     }
@@ -63,7 +63,7 @@ class NotificationService {
       try {
         final json = response[i] as Map<String, dynamic>;
         notifications.add(AppNotification.fromJson(json));
-      } catch (e) {
+      } on Exception catch (e) {
         _logger.e('Error parsing notification $i: $e');
       }
     }
