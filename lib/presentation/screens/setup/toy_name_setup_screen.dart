@@ -24,15 +24,25 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isRegistering = false;
+  bool _isValid = false;
 
   @override
   void initState() {
     super.initState();
+    _controller.addListener(_onNameChanged);
     _loadSavedName();
+  }
+
+  void _onNameChanged() {
+    final valid = ValidationRules.validateToyName(_controller.text) == null;
+    if (valid != _isValid) {
+      setState(() => _isValid = valid);
+    }
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onNameChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -280,6 +290,8 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                               // Name input
                               TextFormField(
                                 controller: _controller,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 style: theme.textTheme.titleMedium,
                                 textCapitalization: TextCapitalization.words,
                                 decoration: InputDecoration(
@@ -332,7 +344,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                         button: true,
                         label: 'setup.toy_name.next'.tr(),
                         child: GestureDetector(
-                          onTap: _isRegistering
+                          onTap: _isRegistering || !_isValid
                               ? null
                               : () async {
                                   if (_formKey.currentState!.validate()) {
@@ -344,26 +356,29 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                     }
                                   }
                                 },
-                          child: Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  context.colors.primary100,
-                                  context.colors.primary,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: _isValid ? 1.0 : 0.5,
+                            child: Container(
+                              height: 56,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    context.colors.primary100,
+                                    context.colors.primary,
+                                  ],
+                                ),
+                                borderRadius: context.radius.panel,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: context.colors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
                                 ],
                               ),
-                              borderRadius: context.radius.panel,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: context.colors.primary.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  blurRadius: 20,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
                             child: Center(
                               child: _isRegistering
                                   ? SizedBox(
@@ -385,6 +400,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                           ),
                                     ),
                             ),
+                          ),
                           ),
                         ),
                       ),

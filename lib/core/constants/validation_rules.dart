@@ -75,6 +75,9 @@ abstract final class ValidationRules {
     if (value.trim().length > toyNameMaxLength) {
       return 'setup.toy_name.validation_long';
     }
+    if (!RegExp(r"^[a-zA-ZÀ-ÿ0-9 '\-]+$").hasMatch(value.trim())) {
+      return 'setup.toy_name.validation_invalid_chars';
+    }
     if (ContentFilter.containsProfanity(value)) {
       return 'setup.toy_name.validation_inappropriate';
     }

@@ -83,6 +83,7 @@
       "validation_short": "Name must be at least 2 characters",
       "validation_long": "Name must be less than 50 characters",
       "validation_inappropriate": "Please choose an appropriate name",
+      "validation_invalid_chars": "Only letters, numbers, spaces, and hyphens allowed",
       "next": "Next",
       "device_registered": "Toy registered successfully!",
       "error_registering_device": "Could not register the toy. Please try again."
