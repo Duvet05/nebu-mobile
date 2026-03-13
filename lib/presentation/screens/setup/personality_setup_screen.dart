@@ -22,6 +22,7 @@ class PersonalitySetupScreen extends ConsumerStatefulWidget {
 class _PersonalitySetupScreenState
     extends ConsumerState<PersonalitySetupScreen> {
   String? _selectedId;
+  String _toyName = 'Nebu';
 
   @override
   void initState() {
@@ -34,11 +35,18 @@ class _PersonalitySetupScreenState
       auth_provider.sharedPreferencesProvider.future,
     );
     final saved = prefs.getString(StorageKeys.setupPersonalityId);
-    if (saved != null && saved.isNotEmpty && mounted) {
-      setState(() {
-        _selectedId = saved;
-      });
+    final toyName = prefs.getString(StorageKeys.setupToyName);
+    if (!mounted) {
+      return;
     }
+    setState(() {
+      if (saved != null && saved.isNotEmpty) {
+        _selectedId = saved;
+      }
+      if (toyName != null && toyName.isNotEmpty) {
+        _toyName = toyName;
+      }
+    });
   }
 
   Future<void> _saveAndContinue() async {
@@ -243,7 +251,7 @@ class _PersonalitySetupScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      personality.name,
+                      personality.name.replaceAll('{name}', _toyName),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: isSelected
@@ -255,7 +263,7 @@ class _PersonalitySetupScreenState
                     Text(
                       personality.description.replaceAll(
                         '{name}',
-                        personality.name,
+                        _toyName,
                       ),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: isSelected
