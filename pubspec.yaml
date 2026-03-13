@@ -2,7 +2,7 @@ name: nebu_mobile_flutter
 description: "Nebu — smart toy companion app with Bluetooth pairing, real-time walkie talkie (WebRTC), AI personalities, and parental controls."
 publish_to: 'none'
 
-version: 1.2.0+28
+version: 1.2.0+29
 
 environment:
   sdk: ^3.8.0

@@ -55,9 +55,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       return;
     }
     final savedName = prefs.getString(StorageKeys.setupToyName);
-    if (savedName != null && savedName.isNotEmpty) {
-      _controller.text = savedName;
-    }
+    _controller.text = (savedName != null && savedName.isNotEmpty)
+        ? savedName
+        : 'Nebu';
   }
 
   Future<void> _saveToyName() async {
