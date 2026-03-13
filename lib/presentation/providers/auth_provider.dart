@@ -65,13 +65,14 @@ class AuthNotifier extends AsyncNotifier<User?> {
     await ref
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
-    try {
-      await ref.read(activityMigrationServiceProvider).migrateIfNeeded(user.id);
-    } on Exception catch (e) {
-      ref
-          .read(loggerProvider)
-          .w('Activity migration failed (non-blocking): $e');
-    }
+    // Fire-and-forget: migration must never block login
+    unawaited(() async {
+      try {
+        await ref.read(activityMigrationServiceProvider).migrateIfNeeded(user.id);
+      } on Exception catch (e) {
+        ref.read(loggerProvider).w('Activity migration failed (non-blocking): $e');
+      }
+    }());
     unawaited(ref.read(firebasePushServiceProvider).initialize());
   }
 

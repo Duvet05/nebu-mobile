@@ -73,12 +73,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       final auth = ref.read(authProvider);
       final toysAsync = ref.read(hasLocalToysProvider);
       final setupAsync = ref.read(setupSkippedProvider);
-      // Wait for all async providers to resolve before making redirect decisions
-      if (auth.isLoading ||
-          toysAsync.isLoading ||
-          setupAsync.isLoading ||
-          toysAsync.hasError ||
-          setupAsync.hasError) {
+      // Wait for async providers to resolve — but only block on loading, not errors.
+      // Errors in SharedPreferences reads are treated as false (safe default).
+      if (auth.isLoading || toysAsync.isLoading || setupAsync.isLoading) {
         return null;
       }
 

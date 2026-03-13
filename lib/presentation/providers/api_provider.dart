@@ -37,6 +37,10 @@ final secureStorageProvider = Provider<FlutterSecureStorage>(
 
 final dioProvider = Provider<Dio>((ref) => Dio());
 
+/// Separate Dio instance for AuthService — avoids ApiService interceptors
+/// (token injection, 401 retry) interfering with login/register calls.
+final authDioProvider = Provider<Dio>((ref) => Dio());
+
 final loggerProvider = Provider<Logger>(
   (ref) => Logger(
     printer: PrettyPrinter(
@@ -80,7 +84,7 @@ final apiServiceProvider = Provider<ApiService>((ref) {
 });
 
 final authServiceProvider = FutureProvider<AuthService>((ref) async {
-  final dio = ref.watch(dioProvider);
+  final dio = ref.watch(authDioProvider);
   final secureStorage = ref.watch(secureStorageProvider);
   final logger = ref.watch(loggerProvider);
   return AuthService(dio: dio, secureStorage: secureStorage, logger: logger);

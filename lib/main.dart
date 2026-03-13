@@ -58,7 +58,7 @@ class NebuApp extends ConsumerWidget {
     // Escuchamos el tema, pero usamos un valor inicial para evitar el "loading flicker"
     final themeMode =
         ref.watch(themeProvider).value?.themeMode ?? ThemeMode.system;
-    final router = ref.watch(routerProvider);
+    final   router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: Config.appName,
