@@ -101,9 +101,9 @@ class ToyService {
       '/toys/assign',
       data: {
         'userId': userId,
-        if (deviceId != null) 'deviceId': deviceId,
-        if (macAddress != null) 'macAddress': macAddress,
-        if (toyName != null) 'toyName': toyName,
+        'deviceId': ?deviceId,
+        'macAddress': ?macAddress,
+        'toyName': ?toyName,
       },
     );
     _logger.d('Toy assigned successfully');

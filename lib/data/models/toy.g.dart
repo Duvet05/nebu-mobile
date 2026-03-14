@@ -22,6 +22,7 @@ _Toy _$ToyFromJson(Map<String, dynamic> json) => _Toy(
   notes: json['notes'] as String?,
   prompt: json['prompt'] as String?,
   personalityProfile: json['personalityProfile'] as String?,
+  customPersonalityId: json['customPersonalityId'] as String?,
   greeting: json['greeting'] as String?,
   batteryLevel: json['batteryLevel'] as String?,
   signalStrength: json['signalStrength'] as String?,
@@ -55,6 +56,7 @@ Map<String, dynamic> _$ToyToJson(_Toy instance) => <String, dynamic>{
   'notes': instance.notes,
   'prompt': instance.prompt,
   'personalityProfile': instance.personalityProfile,
+  'customPersonalityId': instance.customPersonalityId,
   'greeting': instance.greeting,
   'batteryLevel': instance.batteryLevel,
   'signalStrength': instance.signalStrength,
@@ -89,6 +91,7 @@ _CreateToyRequest _$CreateToyRequestFromJson(Map<String, dynamic> json) =>
       notes: json['notes'] as String?,
       prompt: json['prompt'] as String?,
       personalityProfile: json['personalityProfile'] as String?,
+      customPersonalityId: json['customPersonalityId'] as String?,
       greeting: json['greeting'] as String?,
     );
 
@@ -106,6 +109,7 @@ Map<String, dynamic> _$CreateToyRequestToJson(_CreateToyRequest instance) =>
       'notes': instance.notes,
       'prompt': instance.prompt,
       'personalityProfile': instance.personalityProfile,
+      'customPersonalityId': instance.customPersonalityId,
       'greeting': instance.greeting,
     };
 

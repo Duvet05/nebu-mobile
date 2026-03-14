@@ -42,8 +42,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
 
   @override
   void dispose() {
-    _controller.removeListener(_onNameChanged);
-    _controller.dispose();
+    _controller
+      ..removeListener(_onNameChanged)
+      ..dispose();
     super.dispose();
   }
 
