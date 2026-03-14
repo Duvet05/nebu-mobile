@@ -49,7 +49,7 @@ abstract final class Config {
   // ============================================
   // LiveKit
   // ============================================
-  static String get livekitUrl => 'wss://livekit-demo.livekit.cloud';
+  static String get livekitUrl => 'wss://livekit.flow-telligence.com';
   static String get livekitApiKey => '';
   static String get livekitApiSecret => '';
 

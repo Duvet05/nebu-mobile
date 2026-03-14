@@ -54,12 +54,12 @@ class VoiceSessionService {
     );
   }
 
-  /// Get session metrics/statistics.
-  /// Backend: GET /voice/sessions/metrics
+  /// Get voice usage stats for the current user.
+  /// Backend: GET /voice/usage (public, per-user)
   Future<VoiceMetrics> getMetrics() async {
-    _logger.d('Fetching voice session metrics');
+    _logger.d('Fetching voice usage stats');
     final response = await _apiService.get<Map<String, dynamic>>(
-      '/voice/sessions/metrics',
+      '/voice/usage',
     );
     return VoiceMetrics.fromJson(response);
   }
