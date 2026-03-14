@@ -17,9 +17,9 @@ class HealthService {
   final ApiService? _apiService;
 
   /// Check backend health status
-  /// Hits GET /api/v1/health
+  /// Hits GET /health (server root, no /api/v1 prefix)
   Future<Map<String, dynamic>> checkHealth() async {
-    _logger.i('Checking backend health at ${Config.apiBaseUrl}/health');
+    _logger.i('Checking backend health at ${Config.serverBaseUrl}/health');
     final dio = Dio(
       BaseOptions(
         connectTimeout: Config.healthTimeout,
@@ -27,7 +27,7 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ),
     );
-    final response = await dio.get<Map<String, dynamic>>('${Config.apiBaseUrl}/health');
+    final response = await dio.get<Map<String, dynamic>>('${Config.serverBaseUrl}/health');
     final data = response.data;
     if (data == null) {
       throw Exception('Health endpoint returned empty response');
@@ -37,7 +37,7 @@ class HealthService {
   }
 
   /// Check backend readiness
-  /// Hits GET /api/v1/health/readiness
+  /// Hits GET /health (server root, no /api/v1 prefix)/readiness
   Future<bool> checkReadiness() async {
     try {
       final dio = Dio(BaseOptions(
@@ -46,7 +46,7 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ));
       final response = await dio.get<Map<String, dynamic>>(
-        '${Config.apiBaseUrl}/health/readiness',
+        '${Config.serverBaseUrl}/health/readiness',
       );
       return response.data?['status'] == 'ok';
     } on Exception catch (e) {
@@ -56,7 +56,7 @@ class HealthService {
   }
 
   /// Check backend liveness
-  /// Hits GET /api/v1/health/liveness
+  /// Hits GET /health (server root, no /api/v1 prefix)/liveness
   Future<bool> checkLiveness() async {
     try {
       final dio = Dio(BaseOptions(
@@ -65,7 +65,7 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ));
       final response = await dio.get<Map<String, dynamic>>(
-        '${Config.apiBaseUrl}/health/liveness',
+        '${Config.serverBaseUrl}/health/liveness',
       );
       return response.data?['status'] == 'ok';
     } on Exception catch (e) {
@@ -86,7 +86,7 @@ class HealthService {
   }
 
   /// Get detailed health status with all checks
-  /// Hits GET /api/v1/health/details (Requires JWT)
+  /// Hits GET /health (server root, no /api/v1 prefix)/details (Requires JWT)
   Future<HealthStatus> getDetailedHealthStatus() async {
     if (_apiService == null) {
       throw Exception('ApiService is required for detailed health checks');

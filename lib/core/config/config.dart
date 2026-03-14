@@ -40,6 +40,9 @@ abstract final class Config {
   /// URL del API - Valores por defecto seguros para producción y desarrollo
   static String get apiBaseUrl => 'https://api.flow-telligence.com/api/v1';
 
+  /// Server root URL (no /api/v1 prefix) — used by health endpoints.
+  static String get serverBaseUrl => 'https://api.flow-telligence.com';
+
   static String get apiKey => '';
   static String get wsUrl => '';
 

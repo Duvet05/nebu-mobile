@@ -308,7 +308,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         ),
       );
 
-      setState(() => _isConnecting = false);
+      if (mounted) {
+        setState(() => _isConnecting = false);
+      }
     }
   }
 

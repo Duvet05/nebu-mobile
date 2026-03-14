@@ -58,20 +58,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       return;
     }
 
-    final firstNameError = ValidationRules.validateName(
-      _firstNameController.text,
-    );
-    if (firstNameError != null) {
-      context.showErrorSnackBar(firstNameError.tr());
-      return;
+    final firstName = _firstNameController.text.trim();
+    if (firstName.isNotEmpty) {
+      final firstNameError = ValidationRules.validateName(firstName);
+      if (firstNameError != null) {
+        context.showErrorSnackBar(firstNameError.tr());
+        return;
+      }
     }
 
-    final lastNameError = ValidationRules.validateName(
-      _lastNameController.text,
-    );
-    if (lastNameError != null) {
-      context.showErrorSnackBar(lastNameError.tr());
-      return;
+    final lastName = _lastNameController.text.trim();
+    if (lastName.isNotEmpty) {
+      final lastNameError = ValidationRules.validateName(lastName);
+      if (lastNameError != null) {
+        context.showErrorSnackBar(lastNameError.tr());
+        return;
+      }
     }
 
     setState(() => _isSaving = true);
