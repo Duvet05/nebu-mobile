@@ -154,10 +154,10 @@ class LiveKitService {
   }
 
   /// Fetch token from backend via the user-accessible endpoint.
-  Future<String> _fetchToken(String participantName, String roomName) async {
+  Future<String> _fetchToken(String participantName, String toyId) async {
     final response = await _apiService.post<Map<String, dynamic>>(
       '/livekit/token/user',
-      data: {'participantName': participantName, 'roomName': roomName},
+      data: {'toyId': toyId, 'identity': participantName},
     );
     final token = response['token'];
     if (token is! String) {
