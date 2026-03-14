@@ -11,35 +11,6 @@ class UserService {
   final ApiService _apiService;
   final Logger _logger;
 
-  /// Crear un nuevo usuario (registro simple sin autenticación)
-  Future<User> createUser({
-    required String email,
-    required String firstName,
-    required String lastName,
-    required String password,
-    String? username,
-    String? phone,
-    String? preferredLanguage,
-  }) async {
-    _logger.d('Creating user with email: $email');
-
-    final response = await _apiService.post<Map<String, dynamic>>(
-      '/users',
-      data: {
-        'email': email,
-        'firstName': firstName,
-        'lastName': lastName,
-        'password': password,
-        'username': ?username,
-        'phone': ?phone,
-        'preferredLanguage': ?preferredLanguage,
-      },
-    );
-
-    _logger.d('User created successfully: ${response['id']}');
-    return User.fromJson(response);
-  }
-
   /// Obtener el perfil del usuario actual
   Future<User> getCurrentUserProfile() async {
     _logger.d('Fetching current user profile');

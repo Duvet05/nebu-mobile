@@ -41,7 +41,7 @@ class PersonService {
   }) async {
     _logger.d('Creating person');
     final response = await _apiService.post<Map<String, dynamic>>(
-      '/persons',
+      '/persons/me',
       data: {
         'givenName': ?givenName,
         'familyName': ?familyName,
@@ -57,7 +57,7 @@ class PersonService {
   Future<Person> getPerson(String id) async {
     _logger.d('Fetching person: $id');
     final response = await _apiService.get<Map<String, dynamic>>(
-      '/persons/$id',
+      '/persons/me/$id',
     );
     return Person.fromJson(_normalizePersonJson(response));
   }
@@ -68,7 +68,7 @@ class PersonService {
 
     List<dynamic> response;
     try {
-      response = await _apiService.get<List<dynamic>>('/persons');
+      response = await _apiService.get<List<dynamic>>('/persons/me');
     } on NotFoundException {
       _logger.i('No persons found (404), returning empty list');
       return [];
@@ -98,7 +98,7 @@ class PersonService {
   }) async {
     _logger.d('Updating person: $id');
     final response = await _apiService.patch<Map<String, dynamic>>(
-      '/persons/$id',
+      '/persons/me/$id',
       data: {
         'givenName': ?givenName,
         'familyName': ?familyName,
@@ -113,7 +113,7 @@ class PersonService {
   /// Delete a person
   Future<void> deletePerson(String id) async {
     _logger.d('Deleting person: $id');
-    await _apiService.delete<void>('/persons/$id');
+    await _apiService.delete<void>('/persons/me/$id');
     _logger.d('Person deleted');
   }
 }

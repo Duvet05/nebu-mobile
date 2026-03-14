@@ -40,6 +40,7 @@ abstract class Toy with _$Toy {
     String? notes,
     String? prompt,
     String? personalityProfile,
+    String? customPersonalityId,
     String? greeting,
     String? batteryLevel,
     String? signalStrength,
@@ -67,6 +68,7 @@ abstract class CreateToyRequest with _$CreateToyRequest {
     String? notes,
     String? prompt,
     String? personalityProfile,
+    String? customPersonalityId,
     String? greeting,
   }) = _CreateToyRequest;
 

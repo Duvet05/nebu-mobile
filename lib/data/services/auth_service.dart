@@ -217,6 +217,15 @@ class AuthService {
         value: newAccessToken,
       );
 
+      // Update refresh token if backend rotated it
+      final newRefreshToken = response.data?['refreshToken'] as String?;
+      if (newRefreshToken != null) {
+        await _secureStorage.write(
+          key: StorageKeys.refreshToken,
+          value: newRefreshToken,
+        );
+      }
+
       return newAccessToken;
     } on DioException catch (e) {
       // Only logout on auth errors (401/403), not transient network issues

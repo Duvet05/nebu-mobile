@@ -153,6 +153,15 @@ class ApiService {
         value: newAccessToken,
       );
 
+      // Update refresh token if backend rotated it
+      final newRefreshToken = response.data?['refreshToken'] as String?;
+      if (newRefreshToken != null) {
+        await _secureStorage.write(
+          key: StorageKeys.refreshToken,
+          value: newRefreshToken,
+        );
+      }
+
       _refreshCompleter!.complete(newAccessToken);
       return newAccessToken;
     } on Exception catch (e) {

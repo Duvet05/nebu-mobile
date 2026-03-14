@@ -91,14 +91,20 @@ class ToyService {
 
   /// Asignar un juguete existente a la cuenta del usuario
   Future<AssignToyResponse> assignToy({
-    required String macAddress,
     required String userId,
+    String? deviceId,
+    String? macAddress,
     String? toyName,
   }) async {
-    _logger.d('Assigning toy with MAC: $macAddress');
+    _logger.d('Assigning toy with deviceId: $deviceId, MAC: $macAddress');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/toys/assign',
-      data: {'macAddress': macAddress, 'userId': userId, 'toyName': ?toyName},
+      data: {
+        'userId': userId,
+        if (deviceId != null) 'deviceId': deviceId,
+        if (macAddress != null) 'macAddress': macAddress,
+        if (toyName != null) 'toyName': toyName,
+      },
     );
     _logger.d('Toy assigned successfully');
     return AssignToyResponse.fromJson(response);

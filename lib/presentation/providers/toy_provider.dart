@@ -91,14 +91,16 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
 
   /// Assign toy to user account
   Future<AssignToyResponse> assignToy({
-    required String macAddress,
     required String userId,
+    String? deviceId,
+    String? macAddress,
     String? toyName,
   }) async {
     try {
       final response = await _toyService.assignToy(
-        macAddress: macAddress,
         userId: userId,
+        deviceId: deviceId,
+        macAddress: macAddress,
         toyName: toyName,
       );
 

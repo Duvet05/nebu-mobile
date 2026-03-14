@@ -153,43 +153,17 @@ class LiveKitService {
     onConnectionStatusCallback?.call(status);
   }
 
-  /// Fetch token from backend. Falls back to a dev-only demo token.
+  /// Fetch token from backend via the user-accessible endpoint.
   Future<String> _fetchToken(String participantName, String roomName) async {
-    if (Config.isDevelopment) {
-      _logger.w('Using unsigned dev token — NOT for production');
-      return _createDevToken(participantName, roomName);
+    final response = await _apiService.post<Map<String, dynamic>>(
+      '/livekit/token/user',
+      data: {'participantName': participantName, 'roomName': roomName},
+    );
+    final token = response['token'];
+    if (token is! String) {
+      throw Exception('Invalid token response from server');
     }
-
-    try {
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/livekit/token',
-        data: {'participantName': participantName, 'roomName': roomName},
-      );
-      final token = response['token'];
-      if (token is! String) {
-        throw Exception('Invalid token response from server');
-      }
-      return token;
-    } on Exception catch (e) {
-      if (Config.isDevelopment) {
-        _logger.w('Failed to fetch token from server, using dev token: $e');
-        return _createDevToken(participantName, roomName);
-      }
-      rethrow;
-    }
-  }
-
-  /// Dev-only demo token. NOT cryptographically signed.
-  String _createDevToken(String participantName, String roomName) {
-    final tokenData = {
-      'sub': participantName,
-      'room': roomName,
-      'iss': 'nebu-demo',
-      'exp':
-          DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/
-          1000,
-    };
-    return base64Encode(utf8.encode(jsonEncode(tokenData)));
+    return token;
   }
 
   /// Mute/unmute a remote participant via backend API.
