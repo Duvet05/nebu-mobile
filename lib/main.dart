@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -40,13 +44,43 @@ void main() async {
     }(),
   ]);
 
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('es')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('en'),
-      child: const ProviderScope(child: NebuApp()),
+  // Crashlytics: solo en release, desactivado en debug
+  if (Firebase.apps.isNotEmpty) {
+    FlutterError.onError = (details) {
+      if (kReleaseMode) {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      } else {
+        FlutterError.presentError(details);
+      }
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      if (kReleaseMode) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      }
+      return true;
+    };
+
+    if (!kReleaseMode) {
+      await FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(false);
+    }
+  }
+
+  runZonedGuarded(
+    () => runApp(
+      EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('es')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('en'),
+        child: const ProviderScope(child: NebuApp()),
+      ),
     ),
+    (error, stack) {
+      if (kReleaseMode && Firebase.apps.isNotEmpty) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      }
+    },
   );
 }
 
@@ -55,10 +89,9 @@ class NebuApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Escuchamos el tema, pero usamos un valor inicial para evitar el "loading flicker"
     final themeMode =
         ref.watch(themeProvider).value?.themeMode ?? ThemeMode.system;
-    final   router = ref.watch(routerProvider);
+    final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       title: Config.appName,
@@ -69,7 +102,7 @@ class NebuApp extends ConsumerWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
 
-      // Tema (Línea Directa)
+      // Tema
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,

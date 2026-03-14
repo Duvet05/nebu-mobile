@@ -4,6 +4,7 @@ import 'package:logger/logger.dart';
 
 import '../../core/config/config.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/errors/app_exception.dart';
 import '../models/user.dart';
 
 class AuthService {
@@ -264,32 +265,74 @@ class AuthService {
 
   // Password Reset
   Future<bool> requestPasswordReset(String email) async {
-    await _dio.post<void>('/auth/forgot-password', data: {'email': email});
-    return true;
+    try {
+      await _dio.post<void>('/auth/forgot-password', data: {'email': email});
+      return true;
+    } on DioException catch (e) {
+      _logger.e('requestPasswordReset failed', error: e);
+      throw _mapDioException(e);
+    }
   }
 
   Future<bool> resetPassword({
     required String token,
     required String newPassword,
   }) async {
-    await _dio.post<void>(
-      '/auth/reset-password',
-      data: {'token': token, 'newPassword': newPassword},
-    );
-    return true;
+    try {
+      await _dio.post<void>(
+        '/auth/reset-password',
+        data: {'token': token, 'newPassword': newPassword},
+      );
+      return true;
+    } on DioException catch (e) {
+      _logger.e('resetPassword failed', error: e);
+      throw _mapDioException(e);
+    }
   }
 
   // Email Verification
   Future<bool> verifyEmail(String token) async {
-    await _dio.post<void>(
-      '/auth/verify-email',
-      queryParameters: {'token': token},
-    );
-    return true;
+    try {
+      await _dio.post<void>(
+        '/auth/verify-email',
+        queryParameters: {'token': token},
+      );
+      return true;
+    } on DioException catch (e) {
+      _logger.e('verifyEmail failed', error: e);
+      throw _mapDioException(e);
+    }
   }
 
   Future<bool> resendVerification(String email) async {
-    await _dio.post<void>('/auth/resend-verification', data: {'email': email});
-    return true;
+    try {
+      await _dio.post<void>(
+        '/auth/resend-verification',
+        data: {'email': email},
+      );
+      return true;
+    } on DioException catch (e) {
+      _logger.e('resendVerification failed', error: e);
+      throw _mapDioException(e);
+    }
+  }
+
+  /// Converts DioException to typed AppException for methods using _dio directly.
+  AppException _mapDioException(DioException e) {
+    final statusCode = e.response?.statusCode;
+    final message = _extractErrorMessage(e) ?? 'auth.error_server';
+
+    return switch (statusCode) {
+      400 => ValidationException(message, statusCode: statusCode),
+      401 || 403 => AuthException(message, statusCode: statusCode),
+      404 => NotFoundException(message, statusCode: statusCode),
+      409 => ConflictException(message, statusCode: statusCode),
+      429 => RateLimitException(message, statusCode: statusCode),
+      _ when e.type == DioExceptionType.connectionTimeout ||
+              e.type == DioExceptionType.receiveTimeout ||
+              e.type == DioExceptionType.connectionError =>
+        NetworkException(message, statusCode: statusCode),
+      _ => ServerException(message, statusCode: statusCode ?? 500),
+    };
   }
 }

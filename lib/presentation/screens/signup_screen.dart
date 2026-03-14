@@ -131,6 +131,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               label: 'auth.first_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
                               textCapitalization: TextCapitalization.words,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return null; // optional field
+                                }
+                                return ValidationRules.validateName(value)?.tr();
+                              },
                             ),
                           ),
                           SizedBox(width: context.spacing.gapLg),
@@ -140,6 +146,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               label: 'auth.last_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
                               textCapitalization: TextCapitalization.words,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return null; // optional field
+                                }
+                                return ValidationRules.validateName(value)?.tr();
+                              },
                             ),
                           ),
                         ],

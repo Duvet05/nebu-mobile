@@ -10,11 +10,17 @@ import '../../data/services/local_child_data_service.dart';
 import '../providers/api_provider.dart';
 import '../widgets/custom_button.dart';
 
-class ChildProfileScreen extends ConsumerWidget {
+class ChildProfileScreen extends ConsumerStatefulWidget {
   const ChildProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChildProfileScreen> createState() =>
+      _ChildProfileScreenState();
+}
+
+class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
+  @override
+  Widget build(BuildContext context) {
     final localChildDataService = ref.watch(localChildDataServiceProvider);
     final colorScheme = context.theme.colorScheme;
 
@@ -206,8 +212,13 @@ class ChildProfileScreen extends ConsumerWidget {
       content: 'child_profile.confirm_deletion_message'.tr(),
       destructive: true,
     );
-    if (confirmed) {
-      await service.clearChildData();
+    if (!confirmed) {
+      return;
     }
+    await service.clearChildData();
+    if (!mounted) {
+      return;
+    }
+    ref.invalidate(localChildDataServiceProvider);
   }
 }

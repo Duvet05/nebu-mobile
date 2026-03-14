@@ -89,38 +89,30 @@ class DeviceTokenService {
   }
 
   /// Revoke a device token.
+  /// Throws [AppException] on failure so callers can distinguish error types.
   Future<bool> revokeDeviceToken(String deviceId) async {
-    try {
-      _logger.d('Revoking device token for: $deviceId');
-      await _apiService.delete<void>('$_baseEndpoint/$deviceId');
-      _removeFromCache(deviceId);
-      _logger.d('Device token revoked for: $deviceId');
-      return true;
-    } on Exception catch (e) {
-      _logger.e('Error revoking device token: $e');
-      return false;
-    }
+    _logger.d('Revoking device token for: $deviceId');
+    await _apiService.delete<void>('$_baseEndpoint/$deviceId');
+    _removeFromCache(deviceId);
+    _logger.d('Device token revoked for: $deviceId');
+    return true;
   }
 
   /// Verify token status with backend.
+  /// Throws [AppException] on failure so callers can distinguish error types.
   Future<bool> verifyTokenStatus(String deviceId) async {
-    try {
-      _logger.d('Verifying token status for: $deviceId');
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '$_baseEndpoint/$deviceId/status',
-      );
+    _logger.d('Verifying token status for: $deviceId');
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '$_baseEndpoint/$deviceId/status',
+    );
 
-      final isValid = response['valid'] as bool? ?? false;
-      if (!isValid) {
-        _removeFromCache(deviceId);
-      }
-
-      _logger.d('Token status for $deviceId: ${isValid ? 'valid' : 'invalid'}');
-      return isValid;
-    } on Exception catch (e) {
-      _logger.e('Error verifying token status: $e');
-      return false;
+    final isValid = response['valid'] as bool? ?? false;
+    if (!isValid) {
+      _removeFromCache(deviceId);
     }
+
+    _logger.d('Token status for $deviceId: ${isValid ? 'valid' : 'invalid'}');
+    return isValid;
   }
 
   /// Clear expired tokens from cache.

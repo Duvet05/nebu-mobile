@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,8 +75,9 @@ class VoiceMetricsNotifier extends AsyncNotifier<VoiceMetrics> {
       final fresh = await _fetchFromApi();
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
-    } on Exception {
-      // Silent — cached data is already showing
+    } on Exception catch (e) {
+      // Cached data still showing; log for observability
+      debugPrint('VoiceSession refresh failed: $e');
     }
   }
 
@@ -175,8 +177,9 @@ class UserVoiceSessionsNotifier extends AsyncNotifier<List<VoiceSession>> {
       final fresh = await _fetchFromApi(userId);
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
-    } on Exception {
-      // Silent — cached data is already showing
+    } on Exception catch (e) {
+      // Cached data still showing; log for observability
+      debugPrint('VoiceSession refresh failed: $e');
     }
   }
 
@@ -272,8 +275,9 @@ class UserLimitsNotifier extends AsyncNotifier<UserLimits> {
       final fresh = await _fetchFromApi();
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
-    } on Exception {
-      // Silent — cached data is already showing
+    } on Exception catch (e) {
+      // Cached data still showing; log for observability
+      debugPrint('VoiceSession refresh failed: $e');
     }
   }
 

@@ -105,7 +105,7 @@ class AuthTextField extends StatelessWidget {
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: context.spacing.gapXxl,
-          vertical: 18,
+          vertical: context.spacing.listItemVPadding,
         ),
       ),
     );

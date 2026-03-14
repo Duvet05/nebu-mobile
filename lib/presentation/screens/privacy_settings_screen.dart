@@ -23,6 +23,9 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
+  static const _kShareActivityData = 'privacy_share_activity_data';
+  static const _kAnalyticsEnabled = 'privacy_analytics_enabled';
+
   bool _shareActivityData = false;
   bool _analyticsEnabled = true;
 
@@ -32,6 +35,23 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   void initState() {
     super.initState();
     _loadPermissions();
+    _loadPrivacyPreferences();
+  }
+
+  Future<void> _loadPrivacyPreferences() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _shareActivityData = prefs.getBool(_kShareActivityData) ?? false;
+      _analyticsEnabled = prefs.getBool(_kAnalyticsEnabled) ?? true;
+    });
+  }
+
+  Future<void> _savePrivacyPreference(String key, bool value) async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool(key, value);
   }
 
   Future<void> _loadPermissions() async {
@@ -74,6 +94,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 value: _shareActivityData,
                 onChanged: (value) {
                   setState(() => _shareActivityData = value);
+                  _savePrivacyPreference(_kShareActivityData, value);
                 },
               ),
               const Divider(),
@@ -83,6 +104,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 value: _analyticsEnabled,
                 onChanged: (value) {
                   setState(() => _analyticsEnabled = value);
+                  _savePrivacyPreference(_kAnalyticsEnabled, value);
                 },
               ),
             ],
@@ -275,22 +297,27 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   );
 
   void _showDownloadDataDialog() {
+    final parentContext = context;
     unawaited(
       showDialog<void>(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (dialogContext) => AlertDialog(
           title: Text('privacy.download_data'.tr()),
           content: Text('privacy.download_data_info'.tr()),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: Text('common.cancel'.tr()),
             ),
             CustomButton(
               text: 'privacy.download'.tr(),
               onPressed: () {
-                Navigator.pop(context);
-                context.showInfoSnackBar('privacy.download_started'.tr());
+                Navigator.pop(dialogContext);
+                if (mounted) {
+                  parentContext.showInfoSnackBar(
+                    'privacy.download_started'.tr(),
+                  );
+                }
               },
             ),
           ],

@@ -205,9 +205,9 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         ),
         actions: [
           if (_isSaving)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: SizedBox(
+            Padding(
+              padding: EdgeInsets.all(context.spacing.panelPadding),
+              child: const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(strokeWidth: 2),

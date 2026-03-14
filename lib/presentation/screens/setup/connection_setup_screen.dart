@@ -276,9 +276,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
+              borderRadius: context.radius.bottomSheetTop,
             ),
             padding: EdgeInsets.all(context.spacing.pageMargin),
             child: Column(

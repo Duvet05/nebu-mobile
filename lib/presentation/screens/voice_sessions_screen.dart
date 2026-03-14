@@ -321,7 +321,7 @@ class _SessionCard extends ConsumerWidget {
             if (isActive) ...[
               SizedBox(width: context.spacing.labelBottomMargin),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapSm, vertical: context.spacing.gapXxs),
                 decoration: BoxDecoration(
                   color: context.colors.success.withValues(alpha: 0.15),
                   borderRadius: context.radius.tile,
@@ -428,8 +428,8 @@ class _SessionDetail extends ConsumerWidget {
           if (session.topics != null && session.topics!.isNotEmpty) ...[
             SizedBox(height: context.spacing.labelBottomMargin),
             Wrap(
-              spacing: 6,
-              runSpacing: 4,
+              spacing: context.spacing.gapSm,
+              runSpacing: context.spacing.gapXs,
               children: session.topics!
                   .map(
                     (topic) => Chip(

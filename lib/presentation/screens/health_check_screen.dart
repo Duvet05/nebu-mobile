@@ -16,6 +16,7 @@ class HealthCheckScreen extends ConsumerStatefulWidget {
 }
 
 class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
+  static const double _labelWidth = 140;
   bool _isLoading = false;
   String? _errorMessage;
   HealthStatus? _healthStatus;
@@ -266,7 +267,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
     child: Row(
       children: [
         SizedBox(
-          width: 140,
+          width: _labelWidth,
           child: Text(
             '$label:',
             style: theme.textTheme.labelLarge?.copyWith(
@@ -288,7 +289,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
             Row(
               children: [
                 SizedBox(
-                  width: 140,
+                  width: _labelWidth,
                   child: Text(
                     '$label:',
                     style: theme.textTheme.labelLarge?.copyWith(
@@ -318,7 +319,7 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
       child: Row(
         children: [
           SizedBox(
-            width: 140,
+            width: _labelWidth,
             child: Text(
               '$label:',
               style: theme.textTheme.labelLarge?.copyWith(

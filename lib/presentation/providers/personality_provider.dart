@@ -82,8 +82,9 @@ class PersonalitiesNotifier extends AsyncNotifier<List<Personality>> {
       final fresh = await _fetchFromApi();
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
-    } on Exception {
-      // Silent — cached data is already showing
+    } on Exception catch (e) {
+      // Cached data still showing; log for observability
+      ref.read(loggerProvider).w('Personality refresh failed: $e');
     }
   }
 
