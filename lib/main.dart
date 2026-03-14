@@ -57,6 +57,8 @@ void main() async {
     PlatformDispatcher.instance.onError = (error, stack) {
       if (kReleaseMode) {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      } else {
+        debugPrint('Platform error: $error\n$stack');
       }
       return true;
     };

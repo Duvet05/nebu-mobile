@@ -397,62 +397,67 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     }
   }
 
-  Future<String?> _confirmDeleteAccount() {
+  Future<String?> _confirmDeleteAccount() async {
     final confirmController = TextEditingController();
     final passwordController = TextEditingController();
-    return showDialog<String?>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('privacy.confirm_deletion'.tr()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('privacy.type_delete_to_confirm'.tr()),
-            SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            CustomInput(
-              controller: confirmController,
-              hint: 'privacy.delete_hint'.tr(),
+    try {
+      return await showDialog<String?>(
+        context: context,
+        builder: (dialogCtx) => AlertDialog(
+          title: Text('privacy.confirm_deletion'.tr()),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('privacy.type_delete_to_confirm'.tr()),
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+              CustomInput(
+                controller: confirmController,
+                hint: 'privacy.delete_hint'.tr(),
+              ),
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+              CustomInput(
+                controller: passwordController,
+                hint: 'privacy.enter_password'.tr(),
+                obscureText: true,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogCtx),
+              child: Text('common.cancel'.tr()),
             ),
-            SizedBox(height: context.spacing.sectionTitleBottomMargin),
-            CustomInput(
-              controller: passwordController,
-              hint: 'privacy.enter_password'.tr(),
-              obscureText: true,
+            CustomButton(
+              text: 'common.delete'.tr(),
+              variant: ButtonVariant.danger,
+              onPressed: () {
+                if (confirmController.text.toUpperCase() != 'DELETE') {
+                  ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                    SnackBar(
+                      content: Text('privacy.incorrect_confirmation'.tr()),
+                      backgroundColor: context.colors.error,
+                    ),
+                  );
+                  return;
+                }
+                if (passwordController.text.isEmpty) {
+                  ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                    SnackBar(
+                      content: Text('privacy.password_required'.tr()),
+                      backgroundColor: context.colors.error,
+                    ),
+                  );
+                  return;
+                }
+                Navigator.pop(dialogCtx, passwordController.text);
+              },
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('common.cancel'.tr()),
-          ),
-          CustomButton(
-            text: 'common.delete'.tr(),
-            variant: ButtonVariant.danger,
-            onPressed: () {
-              if (confirmController.text.toUpperCase() != 'DELETE') {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('privacy.incorrect_confirmation'.tr()),
-                    backgroundColor: context.colors.error,
-                  ),
-                );
-                return;
-              }
-              if (passwordController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('privacy.password_required'.tr()),
-                    backgroundColor: context.colors.error,
-                  ),
-                );
-                return;
-              }
-              Navigator.pop(context, passwordController.text);
-            },
-          ),
-        ],
-      ),
-    );
+      );
+    } finally {
+      confirmController.dispose();
+      passwordController.dispose();
+    }
   }
 }

@@ -330,7 +330,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     } else if (difference.inDays < 7) {
       return 'activity_log.days_ago'.tr(args: ['${difference.inDays}']);
     } else {
-      return DateFormat('activity_log.date_format'.tr(), context.locale.languageCode).format(timestamp);
+      return DateFormat.yMMMd(context.locale.languageCode).format(timestamp);
     }
   }
 }

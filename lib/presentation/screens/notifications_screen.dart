@@ -502,10 +502,7 @@ class _NotificationCard extends StatelessWidget {
     } else if (difference.inDays < 7) {
       return 'notifications.days_ago'.tr(args: [difference.inDays.toString()]);
     } else {
-      return DateFormat(
-        'notifications.date_format'.tr(),
-        context.locale.languageCode,
-      ).format(timestamp);
+      return DateFormat.yMMMd(context.locale.languageCode).format(timestamp);
     }
   }
 }

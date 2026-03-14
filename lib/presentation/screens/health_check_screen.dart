@@ -31,11 +31,17 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
     try {
       final healthService = ref.read(healthServiceProvider);
       final status = await healthService.getDetailedHealthStatus();
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _healthStatus = status;
         _isLoading = false;
       });
     } on Exception {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _errorMessage = 'health_check.error'.tr();
         _isLoading = false;

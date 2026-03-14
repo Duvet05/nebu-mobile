@@ -78,8 +78,13 @@ class PersonalitiesNotifier extends AsyncNotifier<List<Personality>> {
     if (!_isStale(prefs)) {
       return;
     }
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
     try {
       final fresh = await _fetchFromApi();
+      if (disposed) {
+        return;
+      }
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
     } on Exception catch (e) {

@@ -126,6 +126,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         androidUsesFineLocation: true,
       );
 
+      await _scanSubscription?.cancel();
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
             .where(

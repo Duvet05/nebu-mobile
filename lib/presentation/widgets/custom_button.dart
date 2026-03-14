@@ -30,7 +30,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.theme.colorScheme;
-    final effectiveRadius = borderRadius ?? context.radius.panel;
+    final effectiveRadius = borderRadius ?? context.radius.button;
 
     final spinnerColor = variant == ButtonVariant.dangerOutline
         ? context.colors.error

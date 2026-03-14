@@ -70,10 +70,12 @@ class DeviceTokenService {
 
     final tokenResponse = DeviceTokenResponse.fromJson(response);
 
-    // Cache with buffer before expiry
+    // Cache with buffer before expiry (floor at 0 to prevent negative Duration)
     _tokenCache[deviceId] = tokenResponse;
+    final cacheSeconds = (tokenResponse.expiresIn - _cacheBufferSeconds)
+        .clamp(0, tokenResponse.expiresIn);
     _tokenExpiry[deviceId] = DateTime.now().add(
-      Duration(seconds: tokenResponse.expiresIn - _cacheBufferSeconds),
+      Duration(seconds: cacheSeconds),
     );
 
     _logger.d('Device token obtained for: $deviceId');

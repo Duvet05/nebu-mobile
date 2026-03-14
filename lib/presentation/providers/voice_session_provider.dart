@@ -71,13 +71,18 @@ class VoiceMetricsNotifier extends AsyncNotifier<VoiceMetrics> {
     if (!_isStale(prefs)) {
       return;
     }
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
     try {
       final fresh = await _fetchFromApi();
+      if (disposed) {
+        return;
+      }
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
     } on Exception catch (e) {
       // Cached data still showing; log for observability
-      debugPrint('VoiceSession refresh failed: $e');
+      debugPrint('VoiceMetrics refresh failed: $e');
     }
   }
 
@@ -173,13 +178,18 @@ class UserVoiceSessionsNotifier extends AsyncNotifier<List<VoiceSession>> {
     if (!_isStale(prefs)) {
       return;
     }
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
     try {
       final fresh = await _fetchFromApi(userId);
+      if (disposed) {
+        return;
+      }
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
     } on Exception catch (e) {
       // Cached data still showing; log for observability
-      debugPrint('VoiceSession refresh failed: $e');
+      debugPrint('UserVoiceSessions refresh failed: $e');
     }
   }
 
@@ -271,13 +281,18 @@ class UserLimitsNotifier extends AsyncNotifier<UserLimits> {
     if (!_isStale(prefs)) {
       return;
     }
+    var disposed = false;
+    ref.onDispose(() => disposed = true);
     try {
       final fresh = await _fetchFromApi();
+      if (disposed) {
+        return;
+      }
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
     } on Exception catch (e) {
       // Cached data still showing; log for observability
-      debugPrint('VoiceSession refresh failed: $e');
+      debugPrint('UserLimits refresh failed: $e');
     }
   }
 
