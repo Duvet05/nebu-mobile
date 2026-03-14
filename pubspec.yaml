@@ -67,6 +67,7 @@ dependencies:
   # UI Helpers
   package_info_plus: ^9.0.0
   google_fonts: ^8.0.2
+  flutter_svg: ^2.0.17
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -92,7 +93,21 @@ flutter:
     # .env NO se incluye en release por seguridad
     # Solo se usa en debug/development
     - assets/images/
+    - assets/images/renders/
+    - assets/images/conversation/
     - assets/translations/
+    - assets/icon_nebu_1024.png
+    - assets/icon_flow.svg
+    - assets/nebu-alt.svg
+    - assets/dino-alt.svg
+    - assets/logos/
+    - assets/icons/
+    - assets/icons/flags/
+
+  fonts:
+    - family: GochiHand
+      fonts:
+        - asset: assets/fonts/GochiHand-Regular.ttf
 
 flutter_launcher_icons:
   android: true
