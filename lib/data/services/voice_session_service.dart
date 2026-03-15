@@ -80,6 +80,7 @@ class VoiceSessionService {
     required String userId,
     required String sessionToken,
     required String roomName,
+    String? toyId,
   }) async {
     _logger.d('Creating voice session for user: $userId');
     final response = await _apiService.post<Map<String, dynamic>>(
@@ -88,6 +89,7 @@ class VoiceSessionService {
         'userId': userId,
         'sessionToken': sessionToken,
         'roomName': roomName,
+        'toyId': ?toyId,
       },
     );
     return VoiceSession.fromJson(response);
