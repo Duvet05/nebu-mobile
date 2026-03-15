@@ -31,17 +31,15 @@ void main() async {
     }(),
     () async {
       try {
-        debugPrint('[GOOGLE_INIT] serverClientId: ${Config.googleWebClientId}');
         await GoogleSignIn.instance.initialize(
           serverClientId: Config.googleWebClientId.isNotEmpty
               ? Config.googleWebClientId
               : null,
         );
-        debugPrint('[GOOGLE_INIT] initialize() OK');
       } on UnimplementedError { // ignore: avoid_catching_errors
-        debugPrint('[GOOGLE_INIT] UnimplementedError — platform not supported');
+        // Platform doesn't support Google Sign In (e.g. Linux desktop)
       } on Exception catch (e) {
-        debugPrint('[GOOGLE_INIT] Exception: $e');
+        debugPrint('GoogleSignIn init skip: $e');
       }
     }(),
   ]);
