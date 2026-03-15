@@ -100,8 +100,7 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         '/livekit/token/user',
         data: {
           'toyId': toy.id,
-          'voicePreference':
-              ?toy.settings?['voicePreference'] as String?,
+          'voicePreference': ?toy.settings?['voicePreference'] as String?,
           'interests': ?toy.settings?['interests'] as List<dynamic>?,
           'childAge': ?toy.settings?['childAge'] as String?,
         },
