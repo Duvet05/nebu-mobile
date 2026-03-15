@@ -114,13 +114,15 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       await ref.read(toyProvider.notifier).saveLocalToy(localToy);
     }
 
-    // Clean up temporary setup flags
-    await prefs.remove(StorageKeys.setupDeviceRegistered);
-    await prefs.remove(StorageKeys.setupPersonalityId);
-    await prefs.remove(StorageKeys.setupChildAge);
-    await prefs.remove(StorageKeys.setupVoicePreference);
-    await prefs.remove(StorageKeys.setupFavorites);
-    await prefs.setBool(StorageKeys.setupCompleted, true);
+    // Clean up temporary setup flags in parallel
+    await Future.wait([
+      prefs.remove(StorageKeys.setupDeviceRegistered),
+      prefs.remove(StorageKeys.setupPersonalityId),
+      prefs.remove(StorageKeys.setupChildAge),
+      prefs.remove(StorageKeys.setupVoicePreference),
+      prefs.remove(StorageKeys.setupFavorites),
+      prefs.setBool(StorageKeys.setupCompleted, true),
+    ]);
 
     if (context.mounted) {
       context.go(AppRoutes.home.path);
