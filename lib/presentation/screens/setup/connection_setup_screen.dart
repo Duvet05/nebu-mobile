@@ -402,7 +402,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               ),
               child: Row(
                 children: [
-                  _BackButton(onPressed: () => context.pop()),
+                  if (context.canPop())
+                    _BackButton(onPressed: () => context.pop())
+                  else
+                    const SizedBox(width: 44),
                   const Spacer(),
                   const _StepIndicator(currentStep: 1, totalSteps: 7),
                   const Spacer(),
