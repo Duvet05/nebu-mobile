@@ -94,6 +94,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
       );
     } on Exception catch (e) {
       state = state.copyWith(isLoading: false, error: _mapErrorMessage(e));
+    } catch (e) { // ignore: avoid_catches_without_on_clauses
+      // Catch TypeError / Error from JSON parsing failures
+      state = state.copyWith(
+        isLoading: false,
+        error: 'activity_log.error_loading',
+      );
     }
   }
 
