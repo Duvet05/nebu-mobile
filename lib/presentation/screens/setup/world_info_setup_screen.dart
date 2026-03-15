@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,21 +27,47 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         prefs.getBool(StorageKeys.setupDeviceRegistered) ?? false;
     final personalityId = prefs.getString(StorageKeys.setupPersonalityId);
 
+    // Read all setup preferences collected during the wizard
+    final childAge = prefs.getString(StorageKeys.setupChildAge);
+    final voicePreference = prefs.getString(StorageKeys.setupVoicePreference);
+    final favoritesJson = prefs.getString(StorageKeys.setupFavorites);
+    final List<String> favorites = favoritesJson != null
+        ? (json.decode(favoritesJson) as List<dynamic>).cast<String>()
+        : [];
+
+    // Build settings map with collected preferences
+    final Map<String, dynamic> setupSettings = {
+      'childAge': ?childAge,
+      'voicePreference': ?voicePreference,
+      if (favorites.isNotEmpty) 'interests': favorites,
+    };
+
     if (deviceRegistered) {
-      // Toy was registered at step 3 — PATCH it with personality if selected
-      if (personalityId != null && personalityId.isNotEmpty) {
-        try {
-          final toys = ref.read(toyProvider).value;
-          if (toys != null && toys.isNotEmpty) {
+      // Toy was registered at step 3 — PATCH it with personality + settings
+      try {
+        final toys = ref.read(toyProvider).value;
+        if (toys != null && toys.isNotEmpty) {
+          final hasPersonality =
+              personalityId != null && personalityId.isNotEmpty;
+          final hasSettings = setupSettings.isNotEmpty;
+
+          if (hasPersonality || hasSettings) {
             await ref
                 .read(toyProvider.notifier)
-                .updateToy(id: toys.last.id, personalityProfile: personalityId);
-            logger.d('Personality $personalityId applied to toy');
+                .updateToy(
+                  id: toys.last.id,
+                  personalityProfile: hasPersonality ? personalityId : null,
+                  settings: hasSettings ? setupSettings : null,
+                );
+            logger.d(
+              'Setup preferences applied to toy: '
+              'personality=$personalityId, settings=$setupSettings',
+            );
           }
-        } on Exception catch (e) {
-          logger.e('Failed to apply personality to toy: $e');
-          // Non-blocking — toy was created, personality can be set later
         }
+      } on Exception catch (e) {
+        logger.e('Failed to apply setup preferences to toy: $e');
+        // Non-blocking — toy was created, preferences can be set later
       }
     } else {
       // Device was NOT registered — save as local toy with pending status
@@ -52,6 +80,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         model: 'Nebu',
         manufacturer: 'NEBU',
         personalityProfile: personalityId,
+        settings: setupSettings.isNotEmpty ? setupSettings : null,
         createdAt: DateTime.now(),
       );
 
@@ -61,6 +90,9 @@ class WorldInfoSetupScreen extends ConsumerWidget {
     // Clean up temporary setup flags
     await prefs.remove(StorageKeys.setupDeviceRegistered);
     await prefs.remove(StorageKeys.setupPersonalityId);
+    await prefs.remove(StorageKeys.setupChildAge);
+    await prefs.remove(StorageKeys.setupVoicePreference);
+    await prefs.remove(StorageKeys.setupFavorites);
     await prefs.setBool(StorageKeys.setupCompleted, true);
 
     if (context.mounted) {

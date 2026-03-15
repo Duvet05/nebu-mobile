@@ -32,6 +32,11 @@ class StorageKeys {
   // Setup Personality
   static const String setupPersonalityId = 'setup_personality_id';
 
+  // Setup Preferences (collected during wizard)
+  static const String setupChildAge = 'setup_child_age';
+  static const String setupVoicePreference = 'setup_voice_preference';
+  static const String setupFavorites = 'setup_favorites';
+
   // Guest Mode
   static const String setupSkipped = 'setup_skipped';
 
