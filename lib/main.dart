@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -33,13 +31,17 @@ void main() async {
     }(),
     () async {
       try {
+        debugPrint('[GOOGLE_INIT] serverClientId: ${Config.googleWebClientId}');
         await GoogleSignIn.instance.initialize(
           serverClientId: Config.googleWebClientId.isNotEmpty
               ? Config.googleWebClientId
               : null,
         );
+        debugPrint('[GOOGLE_INIT] initialize() OK');
+      } on UnimplementedError { // ignore: avoid_catching_errors
+        debugPrint('[GOOGLE_INIT] UnimplementedError — platform not supported');
       } on Exception catch (e) {
-        debugPrint('GoogleSignIn init skip: $e');
+        debugPrint('[GOOGLE_INIT] Exception: $e');
       }
     }(),
   ]);
@@ -69,20 +71,13 @@ void main() async {
     }
   }
 
-  runZonedGuarded(
-    () => runApp(
-      EasyLocalization(
-        supportedLocales: const [Locale('en'), Locale('es')],
-        path: 'assets/translations',
-        fallbackLocale: const Locale('en'),
-        child: const ProviderScope(child: NebuApp()),
-      ),
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('es')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      child: const ProviderScope(child: NebuApp()),
     ),
-    (error, stack) {
-      if (kReleaseMode && Firebase.apps.isNotEmpty) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      }
-    },
   );
 }
 

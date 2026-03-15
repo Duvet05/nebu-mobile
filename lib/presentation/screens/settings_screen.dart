@@ -223,7 +223,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 child: CustomButton(
                   text: 'auth.sign_in'.tr(),
-                  onPressed: () => context.go(AppRoutes.login.path),
+                  onPressed: () => context.go(AppRoutes.signUp.path),
                   icon: Icons.login,
                   isFullWidth: true,
                 ),
