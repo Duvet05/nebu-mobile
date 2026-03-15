@@ -20,6 +20,7 @@ class FavoritesSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
+  static const _maxFavorites = 5;
   final Set<String> _selectedFavorites = {};
 
   final List<Map<String, dynamic>> _categories = [
@@ -69,6 +70,7 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final canProceed = _selectedFavorites.length >= 2;
+    final atLimit = _selectedFavorites.length >= _maxFavorites;
 
     return Scaffold(
       body: SafeArea(
@@ -119,6 +121,7 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
                           final isSelected = _selectedFavorites.contains(
                             categoryId,
                           );
+                          final isDisabled = !isSelected && atLimit;
 
                           return Semantics(
                             button: true,
@@ -129,12 +132,15 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
                                 setState(() {
                                   if (isSelected) {
                                     _selectedFavorites.remove(categoryId);
-                                  } else {
+                                  } else if (_selectedFavorites.length < _maxFavorites) {
                                     _selectedFavorites.add(categoryId);
                                   }
                                 });
                               },
-                              child: DecoratedBox(
+                              child: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 200),
+                                opacity: isDisabled ? 0.4 : 1.0,
+                                child: DecoratedBox(
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? context.colors.primary.withValues(
@@ -187,6 +193,7 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
                                   ],
                                 ),
                               ),
+                            ),
                             ),
                           );
                         },

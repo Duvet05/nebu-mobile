@@ -93,16 +93,14 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     state = state.copyWith(phase: WalkieTalkiePhase.connecting);
 
     try {
-      // 1. Get parent token to join the toy's active LiveKit room
-      // Pass toy settings as overrides so the backend can configure
-      // the agent's voice, interests, and age without a second lookup.
+      // 1. Get parent token to join the toy's active LiveKit room.
+      // The agent already has the toy's settings (childAge, interests,
+      // voicePreference) from the room metadata set at device join time,
+      // so we only need to send the toyId here.
       final tokenResponse = await _apiService.post<Map<String, dynamic>>(
         '/livekit/token/user',
         data: {
           'toyId': toy.id,
-          'voicePreference': ?toy.settings?['voicePreference'] as String?,
-          'interests': ?toy.settings?['interests'] as List<dynamic>?,
-          'childAge': ?toy.settings?['childAge'] as String?,
         },
       );
 

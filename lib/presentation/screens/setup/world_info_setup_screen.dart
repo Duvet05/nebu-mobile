@@ -11,6 +11,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
+import '../../providers/person_provider.dart';
 import '../../providers/toy_provider.dart';
 import '../../widgets/setup_widgets.dart';
 
@@ -44,24 +45,50 @@ class WorldInfoSetupScreen extends ConsumerWidget {
 
     if (deviceRegistered) {
       // Toy was registered at step 3 — PATCH it with personality + settings
+      // and create a Person (child) to link as owner
       try {
         final toys = ref.read(toyProvider).value;
         if (toys != null && toys.isNotEmpty) {
+          final toy = toys.last;
           final hasPersonality =
               personalityId != null && personalityId.isNotEmpty;
           final hasSettings = setupSettings.isNotEmpty;
 
-          if (hasPersonality || hasSettings) {
+          // Create a Person (child) for the toy owner so the agent
+          // receives proper context (name, age, interests).
+          // Estimate birthDate from the age-range selection.
+          String? ownerId;
+          final authState = ref.read(auth_provider.authProvider);
+          if (authState.value != null) {
+            try {
+              final birthDate = _estimateBirthDate(childAge);
+              final child = await ref
+                  .read(personProvider.notifier)
+                  .createPerson(
+                    givenName: 'Mi niño',
+                    birthDate: birthDate,
+                  );
+              ownerId = child.id;
+              logger.d('Child Person created: ${child.id}');
+            } on Exception catch (e) {
+              logger.e('Failed to create child Person: $e');
+              // Non-blocking — toy settings still get applied below
+            }
+          }
+
+          if (hasPersonality || hasSettings || ownerId != null) {
             await ref
                 .read(toyProvider.notifier)
                 .updateToy(
-                  id: toys.last.id,
+                  id: toy.id,
                   personalityProfile: hasPersonality ? personalityId : null,
                   settings: hasSettings ? setupSettings : null,
+                  ownerId: ownerId,
                 );
             logger.d(
               'Setup preferences applied to toy: '
-              'personality=$personalityId, settings=$setupSettings',
+              'personality=$personalityId, settings=$setupSettings, '
+              'ownerId=$ownerId',
             );
           }
         }
@@ -199,6 +226,27 @@ class WorldInfoSetupScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// Estimate a birthDate from the age-range string selected in setup.
+  /// Uses the midpoint of each range so Person.age is approximately correct.
+  static DateTime? _estimateBirthDate(String? ageRange) {
+    if (ageRange == null) return null;
+    final int midAge;
+    switch (ageRange) {
+      case '3-5':
+        midAge = 4;
+      case '6-8':
+        midAge = 7;
+      case '9-12':
+        midAge = 10;
+      case '13+':
+        midAge = 14;
+      default:
+        return null;
+    }
+    final now = DateTime.now();
+    return DateTime(now.year - midAge, now.month, now.day);
   }
 
   Widget _buildFeatureSummary(
