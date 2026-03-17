@@ -24,6 +24,9 @@ class CustomInput extends StatefulWidget {
     this.suffixIcon,
     this.errorText,
     this.autofocus = false,
+    this.autovalidateMode,
+    this.textCapitalization = TextCapitalization.none,
+    this.onSubmitted,
   });
   final String? label;
   final String? hint;
@@ -43,6 +46,9 @@ class CustomInput extends StatefulWidget {
   final Widget? suffixIcon;
   final String? errorText;
   final bool autofocus;
+  final AutovalidateMode? autovalidateMode;
+  final TextCapitalization textCapitalization;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<CustomInput> createState() => _CustomInputState();
@@ -84,6 +90,9 @@ class _CustomInputState extends State<CustomInput> {
         maxLength: widget.maxLength,
         enabled: widget.enabled,
         autofocus: widget.autofocus,
+        autovalidateMode: widget.autovalidateMode,
+        textCapitalization: widget.textCapitalization,
+        onFieldSubmitted: widget.onSubmitted,
         decoration: InputDecoration(
           hintText: widget.hint,
           prefixIcon: widget.prefixIcon,

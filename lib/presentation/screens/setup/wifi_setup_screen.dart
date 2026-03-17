@@ -15,6 +15,7 @@ import '../../../data/services/esp32_wifi_config_service.dart';
 import '../../../data/services/wifi_qr_parser.dart';
 import '../../../data/services/wifi_service.dart';
 import '../../providers/api_provider.dart';
+import '../../widgets/custom_input.dart';
 import '../../widgets/setup_widgets.dart';
 import '../../widgets/wifi_networks_sheet.dart';
 
@@ -36,7 +37,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   final _ssidController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isPasswordVisible = false;
   bool _isConnecting = false;
   StreamSubscription<ESP32WifiStatus>? _statusSubscription;
   Timer? _timeoutTimer;
@@ -438,9 +438,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                                 SizedBox(height: context.spacing.gapLg),
                                 _buildHotspotHint(),
                                 SizedBox(height: context.spacing.gapXl),
-                                _buildSsidInput(theme),
+                                _buildSsidInput(),
                                 SizedBox(height: context.spacing.gapXxl),
-                                _buildPasswordInput(theme),
+                                _buildPasswordInput(),
                               ],
                             ),
                           ),
@@ -547,10 +547,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     ],
   );
 
-  Widget _buildSsidInput(ThemeData theme) => TextFormField(
+  Widget _buildSsidInput() => CustomInput(
     controller: _ssidController,
-    style: theme.textTheme.titleMedium,
-    decoration: _buildInputDecoration(theme, 'setup.wifi.ssid_hint'.tr()),
+    hint: 'setup.wifi.ssid_hint'.tr(),
     validator: (value) {
       if (value == null || value.trim().isEmpty) {
         return 'setup.wifi.validation_ssid_empty'.tr();
@@ -565,23 +564,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     },
   );
 
-  Widget _buildPasswordInput(ThemeData theme) => TextFormField(
+  Widget _buildPasswordInput() => CustomInput(
     controller: _passwordController,
-    obscureText: !_isPasswordVisible,
-    style: theme.textTheme.titleMedium,
-    decoration: _buildInputDecoration(
-      theme,
-      'setup.wifi.password_hint'.tr(),
-      suffixIcon: IconButton(
-        icon: Icon(
-          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-          color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-        ),
-        onPressed: () {
-          setState(() => _isPasswordVisible = !_isPasswordVisible);
-        },
-      ),
-    ),
+    hint: 'setup.wifi.password_hint'.tr(),
+    obscureText: true,
     validator: (value) {
       if (value != null &&
           value.isNotEmpty &&
@@ -596,32 +582,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     },
   );
 
-  InputDecoration _buildInputDecoration(
-    ThemeData theme,
-    String hintText, {
-    Widget? suffixIcon,
-  }) => InputDecoration(
-    hintText: hintText,
-    hintStyle: theme.textTheme.bodyMedium?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
-    ),
-    filled: true,
-    fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-    border: OutlineInputBorder(
-      borderRadius: context.radius.input,
-      borderSide: BorderSide(color: theme.colorScheme.outline),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: context.radius.input,
-      borderSide: BorderSide(color: theme.colorScheme.outline),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: context.radius.input,
-      borderSide: BorderSide(color: context.colors.primary, width: 2),
-    ),
-    contentPadding: EdgeInsets.all(context.spacing.gapXxl),
-    suffixIcon: suffixIcon,
-  );
 }
 
 class _QuickActionButton extends StatelessWidget {

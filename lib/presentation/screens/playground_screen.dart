@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/personality.dart';
 import '../providers/personality_provider.dart';
+import '../widgets/custom_input.dart';
 
 class PlaygroundScreen extends ConsumerStatefulWidget {
   const PlaygroundScreen({this.initialPersonality, super.key});
@@ -376,21 +377,12 @@ class _PlaygroundScreenState extends ConsumerState<PlaygroundScreen> {
       child: Row(
         children: [
           Expanded(
-            child: TextField(
+            child: CustomInput(
               controller: _messageController,
               enabled: _selectedPersonality != null,
-              decoration: InputDecoration(
-                hintText: _selectedPersonality != null
-                    ? 'playground.message_hint'.tr()
-                    : 'playground.select_first'.tr(),
-                border: OutlineInputBorder(
-                  borderRadius: context.radius.bottomSheet,
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: context.spacing.alertPadding,
-                  vertical: context.spacing.paragraphBottomMarginSm,
-                ),
-              ),
+              hint: _selectedPersonality != null
+                  ? 'playground.message_hint'.tr()
+                  : 'playground.select_first'.tr(),
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => _sendMessage(),
             ),

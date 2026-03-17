@@ -173,10 +173,10 @@ class _SecondaryButton extends StatelessWidget {
         child: Container(
           height: 56,
           decoration: BoxDecoration(
-            color: context.colors.textOnFilled.withValues(alpha: 0.1),
+            color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.1),
             borderRadius: context.radius.panel,
             border: Border.all(
-              color: context.colors.textOnFilled.withValues(alpha: 0.4),
+              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.4),
               width: 1.5,
             ),
           ),

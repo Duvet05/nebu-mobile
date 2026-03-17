@@ -12,6 +12,7 @@ import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
 import '../../providers/toy_provider.dart';
+import '../../widgets/custom_input.dart';
 
 class ToyNameSetupScreen extends ConsumerStatefulWidget {
   const ToyNameSetupScreen({super.key});
@@ -293,45 +294,12 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                               ),
 
                               // Name input
-                              TextFormField(
+                              CustomInput(
                                 controller: _controller,
+                                hint: 'setup.toy_name.hint'.tr(),
                                 autovalidateMode:
                                     AutovalidateMode.onUserInteraction,
-                                style: theme.textTheme.titleMedium,
                                 textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  hintText: 'setup.toy_name.hint'.tr(),
-                                  hintStyle: theme.textTheme.titleMedium
-                                      ?.copyWith(
-                                        color: colorScheme.onSurfaceVariant
-                                            .withValues(alpha: 0.5),
-                                      ),
-                                  filled: true,
-                                  fillColor: colorScheme.surfaceContainerHighest
-                                      .withValues(alpha: 0.3),
-                                  border: OutlineInputBorder(
-                                    borderRadius: context.radius.input,
-                                    borderSide: BorderSide(
-                                      color: colorScheme.outline,
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: context.radius.input,
-                                    borderSide: BorderSide(
-                                      color: colorScheme.outline,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: context.radius.input,
-                                    borderSide: BorderSide(
-                                      color: context.colors.primary,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  contentPadding: EdgeInsets.all(
-                                    context.spacing.gapXxl,
-                                  ),
-                                ),
                                 validator: (value) =>
                                     ValidationRules.validateToyName(
                                       value,

@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
+import '../providers/api_provider.dart';
 import '../providers/walkie_talkie_provider.dart';
 import '../widgets/connection_status_indicator.dart';
 import '../widgets/custom_button.dart';
@@ -37,7 +38,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
       }
       await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
     } on Exception catch (e) {
-      debugPrint('WalkieTalkie init error: $e');
+      ref.read(loggerProvider).e('WalkieTalkie init error: $e');
       if (mounted) {
         context.showErrorSnackBar('walkie_talkie.connection_failed'.tr());
       }
