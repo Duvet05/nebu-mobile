@@ -136,7 +136,8 @@
       "device_connected": "Dispositivo conectado",
       "profile_configured": "Perfil configurado",
       "preferences_saved": "Preferências salvas",
-      "start_using": "Começar a Usar o Nebu"
+      "start_using": "Começar a Usar o Nebu",
+      "default_child_name": "Meu filho"
     }
   },
   "splash": {
@@ -189,6 +190,8 @@
     "help_phone": "Telefone",
     "help_chat": "Chat ao Vivo",
     "help_chat_hours": "Disponível das 9h às 17h",
+    "help_contact_email": "support@nebu.ai",
+    "help_contact_phone": "+1 (555) 123-4567",
     "help_close": "Fechar",
     "about": "Sobre",
     "about_description": "O Nebu Mobile dá vida aos seus brinquedos interativos com conversas movidas por IA e experiências personalizadas.",
@@ -236,7 +239,8 @@
     "insights_messages": "{} mensagens",
     "insights_emotions": "Emoções detectadas",
     "insights_topics": "Tópicos frequentes",
-    "date_format": "d MMM"
+    "date_format": "d MMM",
+    "emotion_count": "{} ({})"
   },
   "notifications": {
     "title": "Notificações",
@@ -676,7 +680,8 @@
     "changes_content": "Podemos atualizar nossa Política de Privacidade periodicamente. Notificaremos sobre quaisquer alterações publicando a nova Política de Privacidade nesta página e atualizando a data de \"Última atualização\".",
     "contact_title": "Contate-nos",
     "contact_content": "Se você tiver dúvidas sobre esta Política de Privacidade, entre em contato:",
-    "email_label": "Envie-nos um email em"
+    "email_label": "Envie-nos um email em",
+    "effective_date_value": "9 de dezembro de 2025"
   },
   "terms": {
     "title": "Termos de Serviço",
@@ -720,7 +725,8 @@
     "law_content": "Estes Termos serão regidos e interpretados de acordo com as leis da jurisdição em que a Nebu AI opera, sem considerar suas disposições sobre conflitos de leis.",
     "contact_title": "13. Informações de Contato",
     "contact_content": "Se você tiver dúvidas sobre estes Termos, entre em contato:",
-    "contact_info": "Dúvidas? Contate-nos"
+    "contact_info": "Dúvidas? Contate-nos",
+    "effective_date_value": "9 de dezembro de 2025"
   },
   "knowledge": {
     "title": "Base de Conhecimento",
@@ -756,7 +762,8 @@
     "favorite_category": "Favorito",
     "session_minutes": "{} min",
     "culture_hype": "Cultura",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "stat_format": "{}: {}"
   },
   "setup_progress": {
     "step_of": "Passo {} de {}"

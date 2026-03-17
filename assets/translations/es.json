@@ -174,6 +174,7 @@
       "profile_configured": "Perfil configurado",
       "preferences_saved": "Preferencias guardadas",
       "start_using": "Comenzar a Usar Nebu",
+      "default_child_name": "Mi niño",
       "family_members": "Miembros de la Familia",
       "pets": "Mascotas",
       "school": "Nombre de Escuela/Guardería",
@@ -270,6 +271,8 @@
     "help_phone": "Teléfono",
     "help_chat": "Chat en Vivo",
     "help_chat_hours": "Disponible 9AM-5PM EST",
+    "help_contact_email": "support@nebu.ai",
+    "help_contact_phone": "+1 (555) 123-4567",
     "help_close": "Cerrar",
     "about": "Acerca de",
     "about_description": "Nebu Mobile da vida a tus juguetes interactivos con conversaciones impulsadas por IA y experiencias personalizadas.",
@@ -326,7 +329,8 @@
     "insights_messages": "{} mensajes",
     "insights_emotions": "Emociones detectadas",
     "insights_topics": "Temas frecuentes",
-    "date_format": "d 'de' MMM"
+    "date_format": "d 'de' MMM",
+    "emotion_count": "{} ({})"
   },
   "notifications": {
     "title": "Notificaciones",
@@ -722,7 +726,7 @@
     "empty": "No se encontraron personalidades en esta categoría",
     "select": "Seleccionar",
     "try_playground": "Probar",
-    "settings": "Configuracion",
+    "settings": "Configuración",
     "voice": "Voz",
     "speed": "Velocidad",
     "language": "Idioma",
@@ -733,7 +737,7 @@
     "category_all": "Todos",
     "category_educativo": "Educativo",
     "category_entretenimiento": "Entretenimiento",
-    "category_companero": "Companero",
+    "category_companero": "Compañero",
     "category_creativo": "Creativo",
     "category_aventura": "Aventura",
     "category_bienestar": "Bienestar",
@@ -748,15 +752,15 @@
     "clear_chat": "Limpiar chat",
     "local_mode_banner": "Modo local - Las respuestas son simuladas",
     "empty_title": "Prueba una Personalidad",
-    "empty_message": "Selecciona una personalidad arriba y empieza a chatear para ver como responde!",
-    "default_greeting": "Hola! Soy {}. Vamos a charlar!",
-    "response_educativo": "Esa es una gran pregunta sobre \"{}\"! Dejame explicarte...",
-    "response_entretenimiento": "Oh, \"{}\"! Eso suena divertido! Dejame pensar algo entretenido...",
-    "response_companero": "Te escucho sobre \"{}\". Estoy aqui para ti, hablemos de eso!",
-    "response_creativo": "Wow, \"{}\" me da muchas ideas creativas! Y si...",
-    "response_aventura": "Una aventura sobre \"{}\"? Vamos a explorar juntos!",
+    "empty_message": "¡Selecciona una personalidad arriba y empieza a chatear para ver cómo responde!",
+    "default_greeting": "¡Hola! Soy {}. ¡Vamos a charlar!",
+    "response_educativo": "¡Esa es una gran pregunta sobre \"{}\"! Déjame explicarte...",
+    "response_entretenimiento": "¡Oh, \"{}\"! ¡Eso suena divertido! Déjame pensar algo entretenido...",
+    "response_companero": "Te escucho sobre \"{}\". Estoy aquí para ti, ¡hablemos de eso!",
+    "response_creativo": "¡Wow, \"{}\" me da muchas ideas creativas! ¿Y si...?",
+    "response_aventura": "¿Una aventura sobre \"{}\"? ¡Vamos a explorar juntos!",
     "response_bienestar": "Tomemos un momento para reflexionar sobre \"{}\". Respira profundo...",
-    "response_default": "Gracias por compartir! Soy {} y me encanta charlar contigo!"
+    "response_default": "¡Gracias por compartir! Soy {} y ¡me encanta charlar contigo!"
   },
   "privacy": {
     "title": "Privacidad y Seguridad",
@@ -860,7 +864,8 @@
     "changes_content": "Podemos actualizar nuestra Política de Privacidad de vez en cuando. Te notificaremos cualquier cambio publicando la nueva Política de Privacidad en esta página y actualizando la fecha de \"Última actualización\".",
     "contact_title": "Contáctanos",
     "contact_content": "Si tienes alguna pregunta sobre esta Política de Privacidad, contáctanos:",
-    "email_label": "Envíanos un correo a"
+    "email_label": "Envíanos un correo a",
+    "effective_date_value": "9 de diciembre de 2025"
   },
   "terms": {
     "title": "Términos de Servicio",
@@ -904,7 +909,8 @@
     "law_content": "Estos Términos se regirán e interpretarán de acuerdo con las leyes de la jurisdicción en la que opera Nebu AI, sin tener en cuenta sus disposiciones sobre conflictos de leyes.",
     "contact_title": "13. Información de Contacto",
     "contact_content": "Si tienes alguna pregunta sobre estos Términos, contáctanos:",
-    "contact_info": "¿Preguntas? Contáctanos"
+    "contact_info": "¿Preguntas? Contáctanos",
+    "effective_date_value": "9 de diciembre de 2025"
   },
   "knowledge": {
     "title": "Base de Conocimiento",
@@ -940,7 +946,8 @@
     "favorite_category": "Favorito",
     "session_minutes": "{} min",
     "culture_hype": "Cultura",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "stat_format": "{}: {}"
   },
   "setup_progress": {
     "step_of": "Paso {} de {}"
