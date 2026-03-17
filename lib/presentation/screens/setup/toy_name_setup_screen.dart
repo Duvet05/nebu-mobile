@@ -222,7 +222,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                     button: true,
                     label: MaterialLocalizations.of(context).backButtonTooltip,
                     child: GestureDetector(
-                      onTap: () => context.pop(),
+                      onTap: () {
+                        if (context.canPop()) context.pop();
+                      },
                       child: Container(
                         width: 44,
                         height: 44,
