@@ -768,7 +768,8 @@
     "clear_local_data_confirm": "Clear Data",
     "clear_local_data_success": "Local data cleared successfully",
     "language_english": "English",
-    "language_spanish": "Español"
+    "language_spanish": "Español",
+    "language_portuguese": "Português"
   },
   "persons": {
     "title": "Children",

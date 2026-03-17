@@ -115,6 +115,20 @@ class SettingsScreen extends ConsumerWidget {
                               ],
                             ),
                           ),
+                          DropdownMenuItem(
+                            value: 'pt',
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  String.fromCharCodes([0x1F1E7, 0x1F1F7]),
+                                  style: theme.textTheme.titleLarge,
+                                ),
+                                SizedBox(width: context.spacing.gapMd),
+                                Text('settings.language_portuguese'.tr()),
+                              ],
+                            ),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value != null) {

@@ -952,7 +952,8 @@
     "clear_local_data_confirm": "Borrar Datos",
     "clear_local_data_success": "Datos locales borrados exitosamente",
     "language_english": "English",
-    "language_spanish": "Español"
+    "language_spanish": "Español",
+    "language_portuguese": "Português"
   },
   "persons": {
     "title": "Hijos",
