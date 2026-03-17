@@ -596,7 +596,9 @@ class _EngagementChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
-    final display = value != null ? '$label: $value' : label;
+    final display = value != null
+        ? 'voice_history.stat_format'.tr(args: [label, value!])
+        : label;
 
     return Chip(
       avatar: Icon(icon, size: 16),

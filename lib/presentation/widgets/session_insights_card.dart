@@ -23,9 +23,9 @@ class SessionInsightsCard extends ConsumerWidget {
         }
         return _InsightsContent(sessions: sessions);
       },
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Center(child: CircularProgressIndicator()),
+      loading: () => Padding(
+        padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
+        child: const Center(child: CircularProgressIndicator()),
       ),
       error: (_, _) => const SizedBox.shrink(),
     );
@@ -257,7 +257,10 @@ class _EmotionBadge extends StatelessWidget {
         children: [
           Icon(emotionIcon(emotion), size: 14),
           SizedBox(width: context.spacing.gapXs),
-          Text('$emotion ($count)', style: theme.textTheme.labelSmall),
+          Text(
+            'activity_log.emotion_count'.tr(args: [emotion, '$count']),
+            style: theme.textTheme.labelSmall,
+          ),
         ],
       ),
     );

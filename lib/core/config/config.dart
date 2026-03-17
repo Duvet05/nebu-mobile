@@ -78,14 +78,14 @@ abstract final class Config {
     final errors = <String>[];
 
     if (apiBaseUrl.isEmpty) {
-      errors.add('❌ API_URL no configurada');
+      errors.add('API_URL not configured');
     }
 
     if (errors.isNotEmpty) {
       throw Exception(
-        'Configuración inválida:\n${errors.join('\n')}\n\n'
-        'En desarrollo: Verifica tu archivo .env\n'
-        'En producción: Usa --dart-define en el build',
+        'Invalid configuration:\n${errors.join('\n')}\n\n'
+        'Development: Check your .env file\n'
+        'Production: Use --dart-define in the build',
       );
     }
   }

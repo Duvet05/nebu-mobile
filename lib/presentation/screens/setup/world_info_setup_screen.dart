@@ -65,7 +65,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
               final child = await ref
                   .read(personProvider.notifier)
                   .createPerson(
-                    givenName: 'Mi niño',
+                    givenName: 'setup.world_info.default_child_name'.tr(),
                     birthDate: birthDate,
                   );
               ownerId = child.id;
@@ -98,7 +98,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       }
     } else {
       // Device was NOT registered — save as local toy with pending status
-      final toyName = prefs.getString(StorageKeys.setupToyName) ?? 'My Nebu';
+      final toyName = prefs.getString(StorageKeys.setupToyName) ?? 'Nebu';
 
       final localToy = Toy(
         id: 'local_${DateTime.now().millisecondsSinceEpoch}',

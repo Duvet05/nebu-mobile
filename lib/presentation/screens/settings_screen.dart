@@ -263,13 +263,13 @@ void _showHelpDialog(BuildContext context) {
           _buildHelpOption(
             Icons.email,
             'profile.help_email'.tr(),
-            'support@nebu.ai',
+            'profile.help_contact_email'.tr(),
           ),
           SizedBox(height: context.spacing.titleBottomMarginSm),
           _buildHelpOption(
             Icons.phone,
             'profile.help_phone'.tr(),
-            '+1 (555) 123-4567',
+            'profile.help_contact_phone'.tr(),
           ),
           SizedBox(height: context.spacing.titleBottomMarginSm),
           _buildHelpOption(

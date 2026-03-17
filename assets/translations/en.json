@@ -136,7 +136,8 @@
       "device_connected": "Device connected",
       "profile_configured": "Profile configured",
       "preferences_saved": "Preferences saved",
-      "start_using": "Start Using Nebu"
+      "start_using": "Start Using Nebu",
+      "default_child_name": "My child"
     }
   },
   "splash": {
@@ -189,6 +190,8 @@
     "help_phone": "Phone",
     "help_chat": "Live Chat",
     "help_chat_hours": "Available 9AM-5PM EST",
+    "help_contact_email": "support@nebu.ai",
+    "help_contact_phone": "+1 (555) 123-4567",
     "help_close": "Close",
     "about": "About",
     "about_description": "Nebu Mobile brings your interactive toys to life with AI-powered conversations and personalized experiences.",
@@ -236,7 +239,8 @@
     "insights_messages": "{} messages",
     "insights_emotions": "Detected emotions",
     "insights_topics": "Frequent topics",
-    "date_format": "MMM d"
+    "date_format": "MMM d",
+    "emotion_count": "{} ({})"
   },
   "notifications": {
     "title": "Notifications",
@@ -676,7 +680,8 @@
     "changes_content": "We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last updated\" date.",
     "contact_title": "Contact Us",
     "contact_content": "If you have any questions about this Privacy Policy, please contact us:",
-    "email_label": "Email us at"
+    "email_label": "Email us at",
+    "effective_date_value": "December 9, 2025"
   },
   "terms": {
     "title": "Terms of Service",
@@ -720,7 +725,8 @@
     "law_content": "These Terms shall be governed by and construed in accordance with the laws of the jurisdiction in which Nebu AI operates, without regard to its conflict of law provisions.",
     "contact_title": "13. Contact Information",
     "contact_content": "If you have any questions about these Terms, please contact us:",
-    "contact_info": "Questions? Contact Us"
+    "contact_info": "Questions? Contact Us",
+    "effective_date_value": "December 9, 2025"
   },
   "knowledge": {
     "title": "Knowledge Base",
@@ -756,7 +762,8 @@
     "favorite_category": "Favorite",
     "session_minutes": "{} min",
     "culture_hype": "Culture",
-    "profile": "Profile"
+    "profile": "Profile",
+    "stat_format": "{}: {}"
   },
   "setup_progress": {
     "step_of": "Step {} of {}"

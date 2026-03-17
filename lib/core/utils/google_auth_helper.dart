@@ -24,7 +24,7 @@ Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
     final idToken = googleUser.authentication.idToken;
 
     if (idToken == null) {
-      throw Exception('auth.google_no_id_token'.tr());
+      throw Exception('Google authentication returned no ID token');
     }
 
     await ref.read(authProvider.notifier).loginWithGoogle(idToken);

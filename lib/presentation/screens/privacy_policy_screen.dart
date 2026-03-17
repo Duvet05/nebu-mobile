@@ -30,7 +30,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
             ),
             SizedBox(height: context.spacing.titleBottomMarginSm),
             Text(
-              'privacy_policy.last_updated'.tr(args: ['December 9, 2025']),
+              'privacy_policy.last_updated'.tr(args: ['privacy_policy.effective_date_value'.tr()]),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
