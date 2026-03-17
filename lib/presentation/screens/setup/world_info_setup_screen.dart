@@ -233,7 +233,9 @@ class WorldInfoSetupScreen extends ConsumerWidget {
   /// Estimate a birthDate from the age-range string selected in setup.
   /// Uses the midpoint of each range so Person.age is approximately correct.
   static DateTime? _estimateBirthDate(String? ageRange) {
-    if (ageRange == null) return null;
+    if (ageRange == null) {
+      return null;
+    }
     final int midAge;
     switch (ageRange) {
       case '3-5':

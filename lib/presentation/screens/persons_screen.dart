@@ -58,7 +58,11 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            }
+          },
         ),
       ),
       body: personsState.when(
@@ -313,9 +317,12 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
 
     try {
       // Collect toys to unassign BEFORE deleting the person
-      final toysToUnassign = (ref.read(toyProvider).value ?? [])
-          .where((t) => t.ownerId == person.id)
-          .toList();
+      // Use pattern-matching to avoid ?? [] masking an error state
+      final toysToUnassign = switch (ref.read(toyProvider)) {
+        AsyncData(:final value) =>
+          value.where((t) => t.ownerId == person.id).toList(),
+        _ => <Toy>[],
+      };
 
       await ref.read(personProvider.notifier).deletePerson(person.id);
 

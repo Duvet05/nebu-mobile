@@ -447,8 +447,14 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
         Navigator.pop(ctx);
       }
       if (mounted) {
+        final toyName = toys
+            .firstWhere((t) => t.id == selectedToy,
+                orElse: () => toys.first)
+            .name;
         context.showInfoSnackBar(
-          'personalities.assigned_success'.tr(args: [personality.name, '']),
+          'personalities.assigned_success'.tr(
+            args: [personality.name, toyName],
+          ),
         );
       }
     } on Exception catch (e) {
