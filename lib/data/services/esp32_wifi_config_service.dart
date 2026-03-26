@@ -165,6 +165,9 @@ class ESP32WifiConfigService {
   }
 
   /// Send WiFi credentials to the ESP32.
+  ///
+  /// Throws if BLE write fails. Returns a result indicating whether
+  /// characteristics were ready.
   Future<ESP32WifiConfigResult> sendWifiCredentials({
     required String ssid,
     required String password,
@@ -176,31 +179,23 @@ class ESP32WifiConfigService {
       );
     }
 
-    try {
-      _logger.i('[WIFI] Sending credentials (SSID: "$ssid")');
+    _logger.i('[WIFI] Sending credentials (SSID: "$ssid")');
 
-      await _ssid.writeString(ssid);
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      await _password.writeString(password);
+    await _ssid.writeString(ssid);
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+    await _password.writeString(password);
 
-      _logger.i('[WIFI] Credentials sent');
+    _logger.i('[WIFI] Credentials sent');
 
-      // Read initial status if available
-      if (_status.supportsRead) {
-        await readWifiStatus();
-      }
-
-      return const ESP32WifiConfigResult(
-        success: true,
-        message: 'WiFi credentials sent to ESP32',
-      );
-    } on Exception catch (e) {
-      _logger.e('[WIFI] Error sending credentials: $e');
-      return ESP32WifiConfigResult(
-        success: false,
-        message: 'Failed to send credentials: $e',
-      );
+    // Read initial status if available
+    if (_status.supportsRead) {
+      await readWifiStatus();
     }
+
+    return const ESP32WifiConfigResult(
+      success: true,
+      message: 'WiFi credentials sent to ESP32',
+    );
   }
 
   /// Read current WiFi connection status.
@@ -212,6 +207,7 @@ class ESP32WifiConfigService {
 
     final status = ESP32WifiStatus.fromString(raw);
     _logger.d('[STATUS] WiFi status: $status');
+    _statusController.add(status);
     return status;
   }
 

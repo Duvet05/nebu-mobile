@@ -31,6 +31,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   bool _isBluetoothEnabled = false;
   StreamSubscription<fbp.BluetoothAdapterState>? _adapterStateSubscription;
   StreamSubscription<List<fbp.ScanResult>>? _scanSubscription;
+  Timer? _scanTimeoutTimer;
   List<fbp.ScanResult> _scanResults = [];
   fbp.BluetoothDevice? _selectedDevice;
 
@@ -52,6 +53,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
   @override
   void dispose() {
+    _scanTimeoutTimer?.cancel();
     _stopScan();
     _adapterStateSubscription?.cancel();
     _scanSubscription?.cancel();
@@ -121,11 +123,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     });
 
     try {
-      await fbp.FlutterBluePlus.startScan(
-        timeout: const Duration(seconds: 15),
-        androidUsesFineLocation: true,
-      );
-
+      // Subscribe BEFORE starting scan to avoid missing early results
       await _scanSubscription?.cancel();
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
@@ -142,7 +140,13 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         }
       });
 
-      Future<void>.delayed(const Duration(seconds: 15), () {
+      await fbp.FlutterBluePlus.startScan(
+        timeout: const Duration(seconds: 15),
+        androidUsesFineLocation: true,
+      );
+
+      _scanTimeoutTimer?.cancel();
+      _scanTimeoutTimer = Timer(const Duration(seconds: 15), () {
         if (mounted) {
           _stopScan();
         }
@@ -156,6 +160,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _stopScan() async {
+    _scanTimeoutTimer?.cancel();
+    _scanTimeoutTimer = null;
     try {
       await fbp.FlutterBluePlus.stopScan();
       await _scanSubscription?.cancel();

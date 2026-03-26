@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isConnecting = false;
+  bool _hasNavigatedToNext = false;
   StreamSubscription<ESP32WifiStatus>? _statusSubscription;
   Timer? _timeoutTimer;
   final _networkInfo = NetworkInfo();
@@ -98,6 +100,11 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           case ESP32WifiStatus.connected:
             _timeoutTimer?.cancel();
             setState(() => _isConnecting = false);
+
+            if (_hasNavigatedToNext) {
+              break;
+            }
+            _hasNavigatedToNext = true;
 
             messenger.showSnackBar(
               SnackBar(
@@ -231,17 +238,21 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       esp32WifiConfigService: esp32Service,
     );
 
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => WifiNetworksSheet(
-        wifiService: wifiService,
-        onNetworkSelected: (ssid) {
-          setState(() => _ssidController.text = ssid);
-        },
-      ),
-    );
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (sheetContext) => WifiNetworksSheet(
+          wifiService: wifiService,
+          onNetworkSelected: (ssid) {
+            setState(() => _ssidController.text = ssid);
+          },
+        ),
+      );
+    } finally {
+      unawaited(wifiService.dispose());
+    }
   }
 
   Future<void> _connectToWifi() async {
@@ -281,29 +292,24 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       } else {
         throw Exception(result.message);
       }
-    } on Exception catch (e) {
-      final errorMsg = e.toString().toLowerCase();
-
-      String translationKey;
-      Color snackColor;
-      if (errorMsg.contains('disconnected') ||
-          errorMsg.contains('connection') ||
-          errorMsg.contains('not connected')) {
-        translationKey = 'setup.wifi.error_ble_disconnected';
-        snackColor = colors.error;
-      } else if (errorMsg.contains('timeout') ||
-          errorMsg.contains('timed out')) {
-        translationKey = 'setup.wifi.error_ble_timeout';
-        snackColor = colors.warning;
-      } else {
-        translationKey = 'setup.wifi.error_send_credentials';
-        snackColor = colors.error;
+    } on TimeoutException {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('setup.wifi.error_ble_timeout'.tr()),
+          backgroundColor: colors.warning,
+          duration: _kSnackBarDurationLong,
+        ),
+      );
+      if (mounted) {
+        setState(() => _isConnecting = false);
       }
+    } on Exception catch (e) {
+      _logger.e('Error sending WiFi credentials: $e');
 
       messenger.showSnackBar(
         SnackBar(
-          content: Text(translationKey.tr()),
-          backgroundColor: snackColor,
+          content: Text('setup.wifi.error_send_credentials'.tr()),
+          backgroundColor: colors.error,
           duration: _kSnackBarDurationLong,
         ),
       );
@@ -554,7 +560,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (value == null || value.trim().isEmpty) {
         return 'setup.wifi.validation_ssid_empty'.tr();
       }
-      if (value.trim().length > ValidationRules.wifiSsidMaxBytes) {
+      if (utf8.encode(value.trim()).length > ValidationRules.wifiSsidMaxBytes) {
         return 'setup.wifi.validation_ssid_too_long'.tr();
       }
       if (value.contains('\n') || value.contains('\r')) {
