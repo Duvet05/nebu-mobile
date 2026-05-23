@@ -42,6 +42,8 @@ DerivedData/
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Flutter/ephemeral/
+ios/Flutter/Flutter.podspec
+ios/.symlinks/
 
 # Android
 .gradle/
