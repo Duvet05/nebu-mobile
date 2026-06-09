@@ -81,11 +81,13 @@ tasks.withType(JavaCompile).configureEach {
 play {
     // Configuración de Google Play Publisher
     serviceAccountCredentials = file("../service-account.json")
-    track = "internal" // internal, alpha, beta, production
+    track = System.getenv("PLAY_TRACK") ?: "internal"
     defaultToAppBundles = true
     // DRAFT = Requiere revisión manual en Play Console
     // COMPLETED = Se publica automáticamente a testers
-    releaseStatus = com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT
+    releaseStatus = com.github.triplet.gradle.androidpublisher.ReleaseStatus.valueOf(
+            System.getenv("PLAY_RELEASE_STATUS") ?: "DRAFT"
+    )
 }
 
 flutter {

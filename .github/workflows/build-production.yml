@@ -3,8 +3,29 @@ name: Build & Publish Android
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_dispatch:
+    inputs:
+      play_track:
+        description: "Google Play track: internal, alpha, beta, production, or a custom closed track"
+        required: false
+        default: "internal"
+      release_status:
+        description: "Google Play release status: DRAFT, COMPLETED, HALTED, IN_PROGRESS"
+        required: false
+        default: "DRAFT"
+      build_name:
+        description: "Optional Flutter build name, for example 1.2.1"
+        required: false
+      build_number:
+        description: "Optional Flutter build number, must increase for stores"
+        required: false
+
+env:
+  FLUTTER_VERSION: "3.41.7"
+  ANDROID_NDK_VERSION: "28.2.13676358"
+  PLAY_TRACK: ${{ github.event.inputs.play_track || 'internal' }}
+  PLAY_RELEASE_STATUS: ${{ github.event.inputs.release_status || 'DRAFT' }}
 
 jobs:
   build-and-publish:
@@ -17,39 +38,130 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: zulu
-          java-version: '17'
+          java-version: "17"
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.35.6'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
 
-      - run: flutter pub get
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager --install "platforms;android-36" "ndk;${ANDROID_NDK_VERSION}"
 
-      - name: Run tests
-        run: flutter test
+      - name: Decode Firebase Android config
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GOOGLE_SERVICES_JSON_BASE64}" ]; then
+            echo "Missing GitHub secret GOOGLE_SERVICES_JSON_BASE64" >&2
+            exit 1
+          fi
+          printf '%s' "${GOOGLE_SERVICES_JSON_BASE64}" | base64 --decode > android/app/google-services.json
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
 
       - name: Decode keystore
-        run: echo "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" | base64 -d > android/upload-keystore.jks
+        env:
+          UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${UPLOAD_KEYSTORE_BASE64}" ]; then
+            echo "Missing GitHub secret UPLOAD_KEYSTORE_BASE64" >&2
+            exit 1
+          fi
+          printf '%s' "${UPLOAD_KEYSTORE_BASE64}" | base64 --decode > android/upload-keystore.jks
 
       - name: Create key.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          cat > android/key.properties <<EOF
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=../upload-keystore.jks
-          EOF
+          set -euo pipefail
+          if [ -z "${KEYSTORE_PASSWORD}" ] || [ -z "${KEY_PASSWORD}" ] || [ -z "${KEY_ALIAS}" ]; then
+            echo "Missing one of KEYSTORE_PASSWORD, KEY_PASSWORD, KEY_ALIAS" >&2
+            exit 1
+          fi
+          printf '%s\n' \
+            "storePassword=${KEYSTORE_PASSWORD}" \
+            "keyPassword=${KEY_PASSWORD}" \
+            "keyAlias=${KEY_ALIAS}" \
+            "storeFile=../upload-keystore.jks" \
+            > android/key.properties
 
-      - name: Decode service account
-        run: echo "${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}" | base64 -d > android/service-account.json
+      - name: Decode Play service account
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
+          fi
+          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" | base64 --decode > android/service-account.json
 
       - name: Build AAB
-        run: flutter build appbundle --release
+        env:
+          API_URL: ${{ vars.API_URL }}
+          SERVER_URL: ${{ vars.SERVER_URL }}
+          WS_URL: ${{ vars.WS_URL }}
+          LIVEKIT_URL: ${{ vars.LIVEKIT_URL }}
+          GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
+          GOOGLE_IOS_CLIENT_ID: ${{ vars.GOOGLE_IOS_CLIENT_ID }}
+          FACEBOOK_APP_ID: ${{ vars.FACEBOOK_APP_ID }}
+          BUILD_NAME: ${{ github.event.inputs.build_name || '' }}
+          BUILD_NUMBER: ${{ github.event.inputs.build_number || '' }}
+        run: |
+          set -euo pipefail
+          ENV=production
+          ENABLE_CRASH_REPORTING=true
+          ENABLE_DEBUG_LOGS=false
 
-      - name: Publish to Play Store (internal)
-        run: cd android && ./gradlew publishReleaseBundle
+          build_args=(--release)
+          encoded_defines=()
+
+          add_define() {
+            local name="$1"
+            local value="${!name:-}"
+            if [ -n "${value}" ]; then
+              build_args+=("--dart-define=${name}=${value}")
+              encoded_defines+=("$(printf '%s' "${name}=${value}" | base64 -w0)")
+            fi
+          }
+
+          add_define ENV
+          add_define ENABLE_CRASH_REPORTING
+          add_define ENABLE_DEBUG_LOGS
+          add_define API_URL
+          add_define SERVER_URL
+          add_define WS_URL
+          add_define LIVEKIT_URL
+          add_define GOOGLE_WEB_CLIENT_ID
+          add_define GOOGLE_IOS_CLIENT_ID
+          add_define FACEBOOK_APP_ID
+
+          if [ -n "${BUILD_NAME}" ]; then
+            build_args+=(--build-name="${BUILD_NAME}")
+          fi
+          if [ -n "${BUILD_NUMBER}" ]; then
+            build_args+=(--build-number="${BUILD_NUMBER}")
+          fi
+
+          dart_defines="$(IFS=,; printf '%s' "${encoded_defines[*]}")"
+          printf 'DART_DEFINES=%s\n' "${dart_defines}" >> "${GITHUB_ENV}"
+
+          flutter build appbundle "${build_args[@]}"
+
+      - name: Publish to Play Store
+        run: cd android && ./gradlew publishReleaseBundle -Pdart-defines="${DART_DEFINES}"
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4

@@ -23,7 +23,8 @@ void main() async {
         await Firebase.initializeApp(
           options: DefaultFirebaseOptions.currentPlatform,
         );
-      } on UnsupportedError { // ignore: avoid_catching_errors
+        // ignore: avoid_catching_errors
+      } on UnsupportedError {
         // Linux and other desktop platforms not configured for Firebase
       } on Exception catch (e) {
         debugPrint('Firebase skip: $e');
@@ -32,11 +33,15 @@ void main() async {
     () async {
       try {
         await GoogleSignIn.instance.initialize(
+          clientId: Config.googleIosClientId.isNotEmpty
+              ? Config.googleIosClientId
+              : null,
           serverClientId: Config.googleWebClientId.isNotEmpty
               ? Config.googleWebClientId
               : null,
         );
-      } on UnimplementedError { // ignore: avoid_catching_errors
+        // ignore: avoid_catching_errors
+      } on UnimplementedError {
         // Platform doesn't support Google Sign In (e.g. Linux desktop)
       } on Exception catch (e) {
         debugPrint('GoogleSignIn init skip: $e');
@@ -46,8 +51,12 @@ void main() async {
 
   // Crashlytics: solo en release, desactivado en debug
   if (Firebase.apps.isNotEmpty) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+      Config.enableCrashReporting,
+    );
+
     FlutterError.onError = (details) {
-      if (kReleaseMode) {
+      if (Config.enableCrashReporting) {
         FirebaseCrashlytics.instance.recordFlutterFatalError(details);
       } else {
         FlutterError.presentError(details);
@@ -55,18 +64,13 @@ void main() async {
     };
 
     PlatformDispatcher.instance.onError = (error, stack) {
-      if (kReleaseMode) {
+      if (Config.enableCrashReporting) {
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       } else {
         debugPrint('Platform error: $error\n$stack');
       }
       return true;
     };
-
-    if (!kReleaseMode) {
-      await FirebaseCrashlytics.instance
-          .setCrashlyticsCollectionEnabled(false);
-    }
   }
 
   runApp(
