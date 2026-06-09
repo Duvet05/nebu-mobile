@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.example.nebu_mobile_flutter"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -54,6 +54,26 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    doFirst {
+        def registrant = file("src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java")
+        if (!registrant.exists()) {
+            return
+        }
+
+        def directLiveKitRegistration = "flutterEngine.getPlugins().add(new io.livekit.plugin.LiveKitPlugin());"
+        def reflectiveLiveKitRegistration = """flutterEngine.getPlugins().add(
+        (io.flutter.embedding.engine.plugins.FlutterPlugin) Class.forName("io.livekit.plugin.LiveKitPlugin")
+          .getDeclaredConstructor()
+          .newInstance());"""
+
+        def contents = registrant.text
+        if (contents.contains(directLiveKitRegistration)) {
+            registrant.text = contents.replace(directLiveKitRegistration, reflectiveLiveKitRegistration)
         }
     }
 }

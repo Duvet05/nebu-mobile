@@ -192,6 +192,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const AuthOrDivider(),
                       SizedBox(height: context.spacing.panelPadding),
                       AuthGoogleButton(
+                        key: const ValueKey('login.googleButton'),
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
                         onPressed: () => handleGoogleAuth(context, ref),

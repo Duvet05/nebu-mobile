@@ -7,6 +7,30 @@ import '../../presentation/providers/auth_provider.dart';
 
 bool _googleAuthInProgress = false;
 
+abstract interface class GoogleAuthClient {
+  Future<String> authenticateIdToken();
+}
+
+final googleAuthClientProvider = Provider<GoogleAuthClient>(
+  (_) => const GoogleSignInAuthClient(),
+);
+
+class GoogleSignInAuthClient implements GoogleAuthClient {
+  const GoogleSignInAuthClient();
+
+  @override
+  Future<String> authenticateIdToken() async {
+    final googleUser = await GoogleSignIn.instance.authenticate();
+    final idToken = googleUser.authentication.idToken;
+
+    if (idToken == null) {
+      throw Exception('Google authentication returned no ID token');
+    }
+
+    return idToken;
+  }
+}
+
 /// Shared Google sign-in handler for login and signup screens.
 Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
   if (_googleAuthInProgress) {
@@ -15,16 +39,12 @@ Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
   _googleAuthInProgress = true;
 
   try {
-    final googleUser = await GoogleSignIn.instance.authenticate();
+    final idToken = await ref
+        .read(googleAuthClientProvider)
+        .authenticateIdToken();
 
     if (!context.mounted) {
       return;
-    }
-
-    final idToken = googleUser.authentication.idToken;
-
-    if (idToken == null) {
-      throw Exception('Google authentication returned no ID token');
     }
 
     await ref.read(authProvider.notifier).loginWithGoogle(idToken);
