@@ -20,22 +20,21 @@ La aplicación tiene como propósito principal:
 
 ## ⚙️ Configuración Inicial
 
-### 1. Setup de Secretos y Variables de Entorno
+### 1. Setup de Configuracion
 
 ```bash
-# Copiar el archivo de ejemplo
-cp .env.example .env
+# Desarrollo local con defaults de produccion
+flutter run
 
-# Editar con tus valores reales
-nano .env
+# Override opcional por dart-define
+flutter run --dart-define=ENV=development --dart-define=API_URL=https://api.flow-telligence.com/api/v1
 ```
 
-Ver **[docs/CONFIGURATION.md](docs/CONFIGURATION.md)** para instrucciones detalladas sobre:
-- Configuración de desarrollo con `.env`
-- Builds de producción con `--dart-define`
-- Scripts de build automáticos
-- Manejo seguro de secretos
-- CI/CD setup
+Ver **[docs/production-release.md](docs/production-release.md)** para:
+- Builds de produccion con `--dart-define`
+- GitHub Variables/Secrets
+- Firebase Android/iOS
+- Publicacion a Play Store
 
 ### 2. Instalar Dependencias
 
@@ -208,7 +207,7 @@ flutter run --dart-define=ENV=development
 - [ ] Configurar webhook URL en LiveKit Cloud Dashboard
 - [ ] Crear activities tipo 'voice_command' desde webhook
 - [ ] Verificar firma de webhook (HMAC-SHA256)
-- [ ] Agregar `LIVEKIT_WEBHOOK_SECRET` a .env
+- [ ] Agregar `LIVEKIT_WEBHOOK_SECRET` a las variables del backend
 
 **Tareas ESP32**:
 - [ ] Enviar `userId` y `toyId` en room metadata al conectar
@@ -357,11 +356,9 @@ flutter pub get
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
-4. **Configurar variables de entorno**
+4. **Configurar variables de build**
 ```bash
-# Crear archivo .env en la raíz del proyecto
-cp .env.example .env
-# Editar con tus configuraciones
+flutter run --dart-define=ENV=development
 ```
 
 5. **Ejecutar la aplicación**
@@ -426,30 +423,35 @@ flutter run --release
 
 ## 🔧 Configuración de Desarrollo
 
-### Variables de Entorno
-Crear archivo `.env` con:
-```env
-# Backend API
-API_BASE_URL=https://api.flow-telligence.com/api/v1
+### Variables de Build
+La app no carga `.env`. Para overrides locales usa `--dart-define`:
 
-# LiveKit (Para app, opcional)
-LIVEKIT_API_KEY=your_livekit_api_key
-LIVEKIT_API_SECRET=your_livekit_secret
-
-# OpenAI (Si se usa en app)
-OPENAI_API_KEY=your_openai_api_key
+```bash
+flutter run \
+  --dart-define=ENV=development \
+  --dart-define=API_URL=https://api.flow-telligence.com/api/v1 \
+  --dart-define=LIVEKIT_URL=wss://livekit.flow-telligence.com
 ```
 
 ### Variables Backend (Requiere implementar)
+Estas variables van en el backend, no en la app movil:
+
 ```env
 # LiveKit Webhook
 LIVEKIT_WEBHOOK_SECRET=your_webhook_secret_from_livekit_dashboard
+
+# LiveKit server credentials
+LIVEKIT_API_KEY=your_livekit_api_key
+LIVEKIT_API_SECRET=your_livekit_secret
 
 # Database
 MONGODB_URI=your_mongodb_uri
 
 # JWT
 JWT_SECRET=your_jwt_secret
+
+# AI
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Permisos Android

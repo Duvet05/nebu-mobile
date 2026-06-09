@@ -93,8 +93,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    # .env NO se incluye en release por seguridad
-    # Solo se usa en debug/development
+    # App assets
     - assets/images/
     - assets/images/renders/
     - assets/images/conversation/

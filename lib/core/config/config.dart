@@ -139,8 +139,8 @@ abstract final class Config {
     if (errors.isNotEmpty) {
       throw Exception(
         'Invalid configuration:\n${errors.join('\n')}\n\n'
-        'Development: Check your .env file\n'
-        'Production: Use --dart-define in the build',
+        'Development: Use --dart-define overrides when needed\n'
+        'Production: Configure GitHub Variables/Secrets and --dart-define',
       );
     }
   }
