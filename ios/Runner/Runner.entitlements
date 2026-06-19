@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:flow-telligence.com</string>
+		<string>applinks:nebu.flow-telligence.com</string>
 	</array>
 </dict>
 </plist>

@@ -54,7 +54,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
-                      android:host="flow-telligence.com"
+                      android:host="nebu.flow-telligence.com"
                       android:pathPrefix="/verify-email"/>
             </intent-filter>
 

@@ -17,7 +17,7 @@ class EmailVerificationScreen extends ConsumerStatefulWidget {
   /// Email passed from login rejection (when user is null in auth state).
   final String? email;
 
-  /// Token from deep link (e.g. flow-telligence.com/verify-email?token=xxx).
+  /// Token from deep link (e.g. nebu.flow-telligence.com/verify-email?token=xxx).
   final String? token;
 
   @override
