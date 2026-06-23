@@ -31,9 +31,9 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Necesitamos acceso a Bluetooth para conectar con dispositivos IoT</string>
+	<string>Nebu necesita el Bluetooth para conectarse a tu dispositivo</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Necesitamos acceso a Bluetooth para conectar con dispositivos IoT</string>
+	<string>Nebu necesita el Bluetooth para conectarse a tu dispositivo</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Necesitamos acceso a la cámara para escanear códigos QR de dispositivos</string>
 	<key>NSLocalNetworkUsageDescription</key>

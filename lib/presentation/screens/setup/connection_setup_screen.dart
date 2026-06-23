@@ -29,6 +29,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   bool _isScanning = false;
   bool _isConnecting = false;
   bool _isBluetoothEnabled = false;
+  bool _isBluetoothSheetOpen = false;
   StreamSubscription<fbp.BluetoothAdapterState>? _adapterStateSubscription;
   StreamSubscription<List<fbp.ScanResult>>? _scanSubscription;
   Timer? _scanTimeoutTimer;
@@ -67,10 +68,15 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       state,
     ) {
       _logger.d('Bluetooth adapter state changed: $state');
+      final isEnabled = state == fbp.BluetoothAdapterState.on;
       if (mounted) {
         setState(() {
-          _isBluetoothEnabled = state == fbp.BluetoothAdapterState.on;
+          _isBluetoothEnabled = isEnabled;
         });
+
+        if (isEnabled && _isBluetoothSheetOpen) {
+          Navigator.of(context).pop();
+        }
       }
     });
 
@@ -245,6 +251,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   void _showEnableBluetoothSheet() {
+    _isBluetoothSheetOpen = true;
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -255,19 +262,31 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         description: 'setup.connection.enable_bluetooth_message'.tr(),
         primaryText: 'setup.connection.enable_bluetooth_title'.tr(),
         primaryOnPressed: () async {
-          Navigator.pop(context);
+          final bluetoothStatus = await Permission.bluetoothConnect.status;
+          final bluetoothScanStatus = await Permission.bluetoothScan.status;
+
+          if (bluetoothStatus.isPermanentlyDenied ||
+              bluetoothScanStatus.isPermanentlyDenied ||
+              bluetoothStatus.isDenied ||
+              bluetoothScanStatus.isDenied) {
+            await openAppSettings();
+            return;
+          }
+
           try {
             if (await fbp.FlutterBluePlus.isSupported) {
               await fbp.FlutterBluePlus.turnOn();
             }
           } on Exception catch (e) {
             _logger.e('Error turning on Bluetooth: $e');
+            // If turnOn fails, it might be because of permissions on some platforms/versions
+            await openAppSettings();
           }
         },
         secondaryText: 'common.cancel'.tr(),
         secondaryOnPressed: () => Navigator.pop(context),
       ),
-    );
+    ).then((_) => _isBluetoothSheetOpen = false);
   }
 
   void _showSkipSetupSheet() {
