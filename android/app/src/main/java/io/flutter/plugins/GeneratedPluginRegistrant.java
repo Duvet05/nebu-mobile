@@ -46,9 +46,9 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin firebase_messaging, io.flutter.plugins.firebase.messaging.FlutterFirebaseMessagingPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.lib.flutter_blue_plus.FlutterBluePlusPlugin());
+      flutterEngine.getPlugins().add(new com.jmx.flutter_blue_plus.FlutterBluePlusPlugin());
     } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin flutter_blue_plus_android, com.lib.flutter_blue_plus.FlutterBluePlusPlugin", e);
+      Log.e(TAG, "Error registering plugin flutter_blue_plus_android, com.jmx.flutter_blue_plus.FlutterBluePlusPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin());
@@ -91,7 +91,10 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin jni_flutter, com.github.dart_lang.jni_flutter.JniFlutterPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new io.livekit.plugin.LiveKitPlugin());
+      flutterEngine.getPlugins().add(
+        (io.flutter.embedding.engine.plugins.FlutterPlugin) Class.forName("io.livekit.plugin.LiveKitPlugin")
+          .getDeclaredConstructor()
+          .newInstance());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin livekit_client, io.livekit.plugin.LiveKitPlugin", e);
     }
