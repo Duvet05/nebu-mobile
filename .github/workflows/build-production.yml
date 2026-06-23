@@ -107,10 +107,7 @@ jobs:
         with:
           workload_identity_provider: projects/874117365573/locations/global/workloadIdentityPools/github-actions/providers/github
           service_account: play-store-publisher@nebu-b65d4.iam.gserviceaccount.com
-          create_credentials_file: true
-
-      - name: Symlink Play service account
-        run: cp "${{ steps.auth.outputs.credentials_file_path }}" android/service-account.json
+          token_format: access_token
 
       - name: Build AAB
         env:
@@ -164,8 +161,38 @@ jobs:
 
           flutter build appbundle "${build_args[@]}"
 
-      - name: Publish to Play Store
-        run: cd android && ./gradlew publishReleaseBundle -Pdart-defines="${DART_DEFINES}"
+      - name: Publish to Play Store via API
+        env:
+          ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+          PACKAGE_NAME: com.nebu.mobile
+        run: |
+          set -euo pipefail
+          AAB_PATH="build/app/outputs/bundle/release/app-release.aab"
+
+          EDIT_ID="$(curl -s -X POST \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits" \
+            -d '{}' | jq -r '.id')"
+          echo "Edit ID: ${EDIT_ID}"
+
+          VERSION_CODE="$(curl -s -X POST \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/octet-stream" \
+            "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/bundles?uploadType=media" \
+            --data-binary "@${AAB_PATH}" | jq -r '.versionCode')"
+          echo "Uploaded bundle version code: ${VERSION_CODE}"
+
+          curl -s -X PUT \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/tracks/${PLAY_TRACK}" \
+            -d "{\"releases\":[{\"versionCodes\":[\"${VERSION_CODE}\"],\"status\":\"${PLAY_RELEASE_STATUS}\"}]}"
+
+          curl -s -X POST \
+            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}:commit"
+          echo "Published to ${PLAY_TRACK} track"
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
