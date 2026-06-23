@@ -91,10 +91,7 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin jni_flutter, com.github.dart_lang.jni_flutter.JniFlutterPlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(
-        (io.flutter.embedding.engine.plugins.FlutterPlugin) Class.forName("io.livekit.plugin.LiveKitPlugin")
-          .getDeclaredConstructor()
-          .newInstance());
+      flutterEngine.getPlugins().add(new io.livekit.plugin.LiveKitPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin livekit_client, io.livekit.plugin.LiveKitPlugin", e);
     }
