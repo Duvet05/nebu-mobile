@@ -143,9 +143,7 @@ class AuthPrimaryButton extends StatelessWidget {
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [context.colors.primary100, context.colors.primary],
-                ),
+                color: context.colors.primary,
                 borderRadius: context.radius.panel,
                 boxShadow: _isEnabled
                     ? [
