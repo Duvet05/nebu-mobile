@@ -106,6 +106,7 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin:$PATH"
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager --install "platforms;android-36" "ndk;${ANDROID_NDK_VERSION}"
 
@@ -172,6 +173,7 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/tools/bin:$PATH"
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager --install "platforms;android-36" "ndk;${ANDROID_NDK_VERSION}"
 
