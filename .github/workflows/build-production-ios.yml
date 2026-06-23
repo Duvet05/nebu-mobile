@@ -122,7 +122,10 @@ jobs:
             exit 1
           fi
 
-          printf '%s' "${APP_STORE_PROVISIONING_PROFILE_BASE64}" | base64 --decode > "$RUNNER_TEMP/AppStore.mobileprovision"
+          echo "Secret length: ${#APP_STORE_PROVISIONING_PROFILE_BASE64}"
+          echo "${APP_STORE_PROVISIONING_PROFILE_BASE64}" | base64 -D -o "$RUNNER_TEMP/AppStore.mobileprovision"
+          echo "Decoded file size: $(wc -c < "$RUNNER_TEMP/AppStore.mobileprovision")"
+          file "$RUNNER_TEMP/AppStore.mobileprovision"
           PROFILE_ID="$(security cms -D -i "$RUNNER_TEMP/AppStore.mobileprovision" | /usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin)"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$RUNNER_TEMP/AppStore.mobileprovision" \
