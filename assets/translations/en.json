@@ -571,6 +571,7 @@
     "select_personality": "Select a personality",
     "select_first": "Select a personality first",
     "message_hint": "Type a message...",
+    "send_message": "Send message",
     "clear_chat": "Clear chat",
     "local_mode_banner": "Local mode - Responses are simulated",
     "empty_title": "Try a Personality",

@@ -581,7 +581,8 @@
     "response_creativo": "¡Wow, \"{}\" me da muchas ideas creativas! ¿Y si...?",
     "response_aventura": "¿Una aventura sobre \"{}\"? ¡Vamos a explorar juntos!",
     "response_bienestar": "Tomemos un momento para reflexionar sobre \"{}\". Respira profundo...",
-    "response_default": "¡Gracias por compartir! Soy {} y ¡me encanta charlar contigo!"
+    "response_default": "¡Gracias por compartir! Soy {} y ¡me encanta charlar contigo!",
+    "send_message": "Enviar"
   },
   "privacy": {
     "title": "Privacidad y Seguridad",
