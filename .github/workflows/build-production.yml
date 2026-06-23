@@ -33,7 +33,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -101,13 +100,16 @@ jobs:
             "storeFile=../upload-keystore.jks" \
             > android/key.properties
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          workload_identity_provider: projects/874117365573/locations/global/workloadIdentityPools/github-actions/providers/github
-          service_account: play-store-publisher@nebu-b65d4.iam.gserviceaccount.com
-          token_format: access_token
+      - name: Decode Play Store service account
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
+          fi
+          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" > android/service-account.json
 
       - name: Build AAB
         env:
@@ -161,38 +163,8 @@ jobs:
 
           flutter build appbundle "${build_args[@]}"
 
-      - name: Publish to Play Store via API
-        env:
-          ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
-          PACKAGE_NAME: com.nebu.mobile
-        run: |
-          set -euo pipefail
-          AAB_PATH="build/app/outputs/bundle/release/app-release.aab"
-
-          EDIT_ID="$(curl -s -X POST \
-            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-            -H "Content-Type: application/json" \
-            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits" \
-            -d '{}' | jq -r '.id')"
-          echo "Edit ID: ${EDIT_ID}"
-
-          VERSION_CODE="$(curl -s -X POST \
-            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-            -H "Content-Type: application/octet-stream" \
-            "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/bundles?uploadType=media" \
-            --data-binary "@${AAB_PATH}" | jq -r '.versionCode')"
-          echo "Uploaded bundle version code: ${VERSION_CODE}"
-
-          curl -s -X PUT \
-            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-            -H "Content-Type: application/json" \
-            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}/tracks/${PLAY_TRACK}" \
-            -d "{\"releases\":[{\"versionCodes\":[\"${VERSION_CODE}\"],\"status\":\"${PLAY_RELEASE_STATUS}\"}]}"
-
-          curl -s -X POST \
-            -H "Authorization: Bearer ${ACCESS_TOKEN}" \
-            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${PACKAGE_NAME}/edits/${EDIT_ID}:commit"
-          echo "Published to ${PLAY_TRACK} track"
+      - name: Publish to Play Store
+        run: cd android && ./gradlew publishReleaseBundle -Pdart-defines="${DART_DEFINES}"
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
