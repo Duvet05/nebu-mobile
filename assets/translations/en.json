@@ -461,6 +461,7 @@
     "login_error": "An error occurred during sign in",
     "registration_error": "An error occurred during registration",
     "google_signin_failed_detail": "Google Sign-In failed. Please try again.",
+    "apple_signin_failed": "Apple sign-in failed. Please try again.",
     "google_signup_failed_detail": "Google Sign-Up failed. Please try again.",
     "forgot_password_title": "Reset Password",
     "forgot_password_body": "Enter your email and we'll send you a link to reset your password.",

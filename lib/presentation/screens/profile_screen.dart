@@ -269,6 +269,23 @@ class ProfileScreen extends ConsumerWidget {
                             context.push(AppRoutes.privacyPolicy.path);
                           },
                         ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.delete_forever_outlined,
+                          title: 'privacy.delete_account'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.error,
+                          ),
+                          onTap: () {
+                            context.push(AppRoutes.privacySettings.path);
+                          },
+                        ),
                       ],
                     ),
                   ],

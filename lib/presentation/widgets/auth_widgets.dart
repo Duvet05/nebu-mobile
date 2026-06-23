@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/theme/app_colors.dart';
 
@@ -228,7 +231,7 @@ class AuthGoogleButton extends StatelessWidget {
               Text(
                 text,
                 style: textTheme.titleMedium?.copyWith(
-                  color: context.colors.grey200,
+                  color: context.colors.textNormal,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -236,6 +239,36 @@ class AuthGoogleButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AuthAppleButton extends StatelessWidget {
+  const AuthAppleButton({
+    required this.onPressed,
+    super.key,
+    this.isLoading = false,
+  });
+  final bool isLoading;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!Platform.isIOS) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      children: [
+        SizedBox(height: context.spacing.panelPadding),
+        SignInWithAppleButton(
+          onPressed: isLoading ? () {} : onPressed,
+          style: Theme.of(context).brightness == Brightness.dark
+              ? SignInWithAppleButtonStyle.white
+              : SignInWithAppleButtonStyle.black,
+          borderRadius: context.radius.panel,
+        ),
+      ],
     );
   }
 }

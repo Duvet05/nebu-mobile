@@ -450,9 +450,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                     // Title section
                     Text(
                       'setup.connection.title'.tr(),
+                      textAlign: TextAlign.center,
                       style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
+                        fontSize: 24, // Fixed size to avoid extreme scaling on iPad
                       ),
                     ),
                     SizedBox(height: context.spacing.titleBottomMarginSm),
@@ -460,8 +462,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       _isScanning
                           ? 'setup.connection.searching'.tr()
                           : 'setup.connection.subtitle'.tr(),
+                      textAlign: TextAlign.center,
                       style: textTheme.titleMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
+                        fontSize: 16,
                       ),
                     ),
 

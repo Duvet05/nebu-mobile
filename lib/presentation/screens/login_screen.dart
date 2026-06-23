@@ -7,6 +7,7 @@ import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/google_auth_helper.dart';
+import '../../core/utils/apple_auth_helper.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
@@ -196,6 +197,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
                         onPressed: () => handleGoogleAuth(context, ref),
+                      ),
+                      AuthAppleButton(
+                        isLoading: authState.isLoading,
+                        onPressed: () => handleAppleAuth(context, ref),
                       ),
                       SizedBox(height: context.spacing.panelPadding),
                     ],

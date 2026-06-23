@@ -51,7 +51,7 @@ class CustomButton extends StatelessWidget {
           )
         else ...[
           if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
-          Flexible(child: Text(text, overflow: TextOverflow.ellipsis, maxLines: 1)),
+          Flexible(child: Text(text, textAlign: TextAlign.center)),
         ],
       ],
     );
@@ -65,11 +65,7 @@ class CustomButton extends StatelessWidget {
           width: buttonWidth,
           height: buttonHeight,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [context.colors.primary, context.colors.secondary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: context.colors.primary,
             borderRadius: effectiveRadius,
             boxShadow: onPressed != null && !isLoading
                 ? [

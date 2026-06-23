@@ -42,21 +42,21 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Nebu necesita el Bluetooth para conectarse a tu dispositivo</string>
+	<string>Nebu needs Bluetooth access to connect to your smart toy and configure its WiFi settings.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Nebu necesita el Bluetooth para conectarse a tu dispositivo</string>
+	<string>Nebu needs Bluetooth access to connect to your smart toy and configure its WiFi settings.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Necesitamos acceso a la cámara para escanear códigos QR de dispositivos</string>
+	<string>We need camera access to scan the QR codes on your Nebu devices for easy setup.</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Necesitamos acceso a la red local para conectar con dispositivos IoT</string>
+	<string>We need local network access to communicate with your device during the initial configuration.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Necesitamos tu ubicación para conectar con dispositivos cercanos</string>
+	<string>We need your location to scan for nearby Bluetooth devices during the connection process.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Necesitamos acceso al micrófono para el asistente de voz</string>
+	<string>Microphone access is required for the real-time AI voice interaction with your Nebu toy.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Necesitamos acceso a tus fotos para configurar tu perfil</string>
+	<string>Photo library access is used if you want to upload a custom profile picture.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Necesitamos reconocimiento de voz para el asistente inteligente</string>
+	<string>Speech recognition is used to process your voice commands and interact with the AI assistant.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
