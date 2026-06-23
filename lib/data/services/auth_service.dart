@@ -328,7 +328,8 @@ class AuthService {
       404 => NotFoundException(message, statusCode: statusCode),
       409 => ConflictException(message, statusCode: statusCode),
       429 => RateLimitException(message, statusCode: statusCode),
-      _ when e.type == DioExceptionType.connectionTimeout ||
+      _
+          when e.type == DioExceptionType.connectionTimeout ||
               e.type == DioExceptionType.receiveTimeout ||
               e.type == DioExceptionType.connectionError =>
         NetworkException(message, statusCode: statusCode),

@@ -50,7 +50,6 @@ class PersonalityService {
         .cast<Map<String, dynamic>>()
         .map(Personality.fromJson)
         .toList();
-
   }
 
   Future<void> assignPersonalityToToy({

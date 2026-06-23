@@ -135,7 +135,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                 if (value == null || value.trim().isEmpty) {
                                   return null; // optional field
                                 }
-                                return ValidationRules.validateName(value)?.tr();
+                                return ValidationRules.validateName(
+                                  value,
+                                )?.tr();
                               },
                             ),
                           ),
@@ -150,7 +152,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                                 if (value == null || value.trim().isEmpty) {
                                   return null; // optional field
                                 }
-                                return ValidationRules.validateName(value)?.tr();
+                                return ValidationRules.validateName(
+                                  value,
+                                )?.tr();
                               },
                             ),
                           ),

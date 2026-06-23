@@ -325,7 +325,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                     final success =
                                         await _registerDeviceIfNeeded();
                                     if (success && context.mounted) {
-                                      await context.push(AppRoutes.ageSetup.path);
+                                      await context.push(
+                                        AppRoutes.ageSetup.path,
+                                      );
                                     }
                                   }
                                 },
@@ -352,28 +354,30 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
                                   ),
                                 ],
                               ),
-                            child: Center(
-                              child: _isRegistering
-                                  ? SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          context.colors.textOnFilled,
+                              child: Center(
+                                child: _isRegistering
+                                    ? SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2.5,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                context.colors.textOnFilled,
+                                              ),
                                         ),
+                                      )
+                                    : Text(
+                                        'setup.toy_name.next'.tr(),
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                              color:
+                                                  context.colors.textOnFilled,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
-                                    )
-                                  : Text(
-                                      'setup.toy_name.next'.tr(),
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            color: context.colors.textOnFilled,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
+                              ),
                             ),
-                          ),
                           ),
                         ),
                       ),

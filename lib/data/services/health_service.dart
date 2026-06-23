@@ -7,11 +7,9 @@ import 'api_service.dart';
 /// Service for checking backend health and connectivity.
 /// Uses Dio directly for public endpoints and ApiService for authenticated ones.
 class HealthService {
-  HealthService({
-    required Logger logger,
-    ApiService? apiService,
-  })  : _logger = logger,
-        _apiService = apiService;
+  HealthService({required Logger logger, ApiService? apiService})
+    : _logger = logger,
+      _apiService = apiService;
 
   final Logger _logger;
   final ApiService? _apiService;
@@ -27,7 +25,9 @@ class HealthService {
         sendTimeout: Config.healthTimeout,
       ),
     );
-    final response = await dio.get<Map<String, dynamic>>('${Config.serverBaseUrl}/health');
+    final response = await dio.get<Map<String, dynamic>>(
+      '${Config.serverBaseUrl}/health',
+    );
     final data = response.data;
     if (data == null) {
       throw Exception('Health endpoint returned empty response');
@@ -40,11 +40,13 @@ class HealthService {
   /// Hits GET /health (server root, no /api/v1 prefix)/readiness
   Future<bool> checkReadiness() async {
     try {
-      final dio = Dio(BaseOptions(
-        connectTimeout: Config.healthTimeout,
-        receiveTimeout: Config.healthTimeout,
-        sendTimeout: Config.healthTimeout,
-      ));
+      final dio = Dio(
+        BaseOptions(
+          connectTimeout: Config.healthTimeout,
+          receiveTimeout: Config.healthTimeout,
+          sendTimeout: Config.healthTimeout,
+        ),
+      );
       final response = await dio.get<Map<String, dynamic>>(
         '${Config.serverBaseUrl}/health/readiness',
       );
@@ -59,11 +61,13 @@ class HealthService {
   /// Hits GET /health (server root, no /api/v1 prefix)/liveness
   Future<bool> checkLiveness() async {
     try {
-      final dio = Dio(BaseOptions(
-        connectTimeout: Config.healthTimeout,
-        receiveTimeout: Config.healthTimeout,
-        sendTimeout: Config.healthTimeout,
-      ));
+      final dio = Dio(
+        BaseOptions(
+          connectTimeout: Config.healthTimeout,
+          receiveTimeout: Config.healthTimeout,
+          sendTimeout: Config.healthTimeout,
+        ),
+      );
       final response = await dio.get<Map<String, dynamic>>(
         '${Config.serverBaseUrl}/health/liveness',
       );

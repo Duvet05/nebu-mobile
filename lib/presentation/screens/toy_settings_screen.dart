@@ -290,8 +290,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     });
 
     try {
-      final currentSettings =
-          Map<String, dynamic>.from(_currentToy.settings ?? {});
+      final currentSettings = Map<String, dynamic>.from(
+        _currentToy.settings ?? {},
+      );
       currentSettings[flag] = value;
 
       final updated = await ref
@@ -354,8 +355,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     children: [
                       CircleAvatar(
                         radius: 40,
-                        backgroundColor: context.colors.primary
-                            .withValues(alpha: 0.2),
+                        backgroundColor: context.colors.primary.withValues(
+                          alpha: 0.2,
+                        ),
                         child: Icon(
                           Icons.smart_toy,
                           size: 48,
@@ -366,16 +368,15 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                         height: context.spacing.sectionTitleBottomMargin,
                       ),
                       Text(
-                        _currentToy.model ??
-                            'toy_settings.unknown_model'.tr(),
+                        _currentToy.model ?? 'toy_settings.unknown_model'.tr(),
                         style: theme.textTheme.titleLarge,
                       ),
                       if (_currentToy.iotDeviceId != null) ...[
-                        SizedBox(
-                          height: context.spacing.titleBottomMarginSm,
-                        ),
+                        SizedBox(height: context.spacing.titleBottomMarginSm),
                         Text(
-                          'toy_settings.device_id'.tr(args: [_currentToy.iotDeviceId!]),
+                          'toy_settings.device_id'.tr(
+                            args: [_currentToy.iotDeviceId!],
+                          ),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.disabledColor,
                           ),
@@ -437,8 +438,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                           'toy_settings.device_connection'.tr(),
                           _currentToy.iotDeviceStatus!,
                           theme,
-                          statusColor:
-                              _currentToy.iotDeviceStatus == 'online'
+                          statusColor: _currentToy.iotDeviceStatus == 'online'
                               ? context.colors.success
                               : context.colors.error,
                         ),
@@ -504,13 +504,13 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                           Icons.auto_awesome_rounded,
                           color: context.colors.primary,
                         ),
-                        value: _currentToy
-                                    .settings?['enableVarietyEngine'] ==
-                                true,
+                        value:
+                            _currentToy.settings?['enableVarietyEngine'] ==
+                            true,
                         onChanged: _anyLoading
                             ? null
-                            : (v) => _toggleSettingsFlag(
-                                'enableVarietyEngine', v),
+                            : (v) =>
+                                  _toggleSettingsFlag('enableVarietyEngine', v),
                       ),
                       const Divider(height: 1),
                       SwitchListTile(
@@ -530,13 +530,12 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                           Icons.family_restroom_rounded,
                           color: context.colors.primary,
                         ),
-                        value: _currentToy
-                                    .settings?['enableWalkieTalkie'] ==
-                                true,
+                        value:
+                            _currentToy.settings?['enableWalkieTalkie'] == true,
                         onChanged: _anyLoading
                             ? null
-                            : (v) => _toggleSettingsFlag(
-                                'enableWalkieTalkie', v),
+                            : (v) =>
+                                  _toggleSettingsFlag('enableWalkieTalkie', v),
                       ),
                     ],
                   ),
@@ -720,7 +719,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       Expanded(
         child: Text(
           label,
-          style: theme.textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.disabledColor,
+          ),
         ),
       ),
       Row(

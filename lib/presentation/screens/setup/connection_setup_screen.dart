@@ -454,7 +454,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
-                        fontSize: 24, // Fixed size to avoid extreme scaling on iPad
+                        fontSize:
+                            24, // Fixed size to avoid extreme scaling on iPad
                       ),
                     ),
                     SizedBox(height: context.spacing.titleBottomMarginSm),
