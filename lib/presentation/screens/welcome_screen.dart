@@ -16,17 +16,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              context.colors.primary100,
-              context.colors.primary,
-              context.colors.secondary,
-            ],
-          ),
-        ),
+        color: context.colors.primary,
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
