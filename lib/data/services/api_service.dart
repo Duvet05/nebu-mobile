@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import '../../core/config/config.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/error_reporting_service.dart';
 
 class ApiService {
   ApiService({
@@ -82,8 +83,20 @@ class ApiService {
                 );
                 return handler.resolve(retryResponse);
               }
-            } on Exception catch (e) {
+            } on Exception catch (e, st) {
               _logger.e('Token refresh failed, clearing session: $e');
+              unawaited(
+                ErrorReportingService.recordError(
+                  e,
+                  st,
+                  reason: 'Token refresh failed while handling 401',
+                  context: {
+                    'handler': 'api_service_401_retry',
+                    'path': path,
+                    'status_code': status.toString(),
+                  },
+                ),
+              );
               await _clearTokens();
               onSessionExpired?.call();
             }
@@ -164,7 +177,15 @@ class ApiService {
 
       _refreshCompleter!.complete(newAccessToken);
       return newAccessToken;
-    } on Exception catch (e) {
+    } on Exception catch (e, st) {
+      unawaited(
+        ErrorReportingService.recordError(
+          e,
+          st,
+          reason: 'Token refresh request failed',
+          context: {'handler': 'api_service_refresh'},
+        ),
+      );
       _refreshCompleter!.completeError(e);
       rethrow;
     } finally {
@@ -197,10 +218,7 @@ class ApiService {
 
     final code = statusCode ?? 0;
     return switch (code) {
-      400 => ValidationException(
-        backendMsg ?? 'Bad request',
-        statusCode: 400,
-      ),
+      400 => ValidationException(backendMsg ?? 'Bad request', statusCode: 400),
       401 => AuthException(backendMsg ?? 'Not authorized', statusCode: 401),
       403 => AuthException(backendMsg ?? 'Forbidden', statusCode: 403),
       404 => NotFoundException(backendMsg ?? 'Not found', statusCode: 404),
@@ -265,6 +283,7 @@ class ApiService {
   }) => _request(
     () => _dio.get<T>(path, queryParameters: queryParameters, options: options),
     'GET',
+    path,
   );
 
   Future<T> post<T>(
@@ -280,6 +299,7 @@ class ApiService {
       options: options,
     ),
     'POST',
+    path,
   );
 
   Future<T> put<T>(
@@ -295,6 +315,7 @@ class ApiService {
       options: options,
     ),
     'PUT',
+    path,
   );
 
   Future<T> delete<T>(
@@ -310,6 +331,7 @@ class ApiService {
       options: options,
     ),
     'DELETE',
+    path,
   );
 
   Future<T> patch<T>(
@@ -325,11 +347,13 @@ class ApiService {
       options: options,
     ),
     'PATCH',
+    path,
   );
 
   Future<T> _request<T>(
     Future<Response<T>> Function() execute,
     String method,
+    String path,
   ) async {
     try {
       final response = await execute();
@@ -345,9 +369,37 @@ class ApiService {
         );
       }
       return data;
-    } catch (e) {
+    } on Exception catch (e, st) {
       _logger.e('$method request failed: $e');
+      if (_shouldReportError(e)) {
+        unawaited(
+          ErrorReportingService.recordError(
+            e,
+            st,
+            reason: 'API request failed',
+            context: {'method': method, 'path': path},
+          ),
+        );
+      }
+      _rethrowTyped(e);
+    } catch (e, st) {
+      unawaited(
+        ErrorReportingService.recordError(
+          e,
+          st,
+          reason: 'Unexpected API request failure',
+          context: {'method': method, 'path': path},
+        ),
+      );
       _rethrowTyped(e);
     }
+  }
+
+  bool _shouldReportError(Object error) {
+    if (error is DioException && error.error is AppException) {
+      return error.error is ServerException || error.error is NetworkException;
+    }
+
+    return true;
   }
 }

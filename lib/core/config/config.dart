@@ -81,6 +81,8 @@ abstract final class Config {
   static const Duration animationLong = Duration(milliseconds: 500);
   static const String privacyPolicyUrl =
       'https://nebu.flow-telligence.com/privacy';
+  static const String supportUrl =
+      'https://nebu.flow-telligence.com/support';
   static const String deleteAccountUrl =
       'https://nebu.flow-telligence.com/privacy/delete-account';
   static const String deleteDataUrl =

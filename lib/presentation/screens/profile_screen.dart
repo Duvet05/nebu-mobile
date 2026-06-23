@@ -4,6 +4,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../core/config/config.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
@@ -233,6 +236,26 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           onTap: () {
                             context.push(AppRoutes.privacySettings.path);
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: theme.dividerColor,
+                        ),
+                        _SettingsTile(
+                          theme: theme,
+                          icon: Icons.help_outline,
+                          title: 'profile.help_support'.tr(),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: context.colors.grey400,
+                          ),
+                          onTap: () async {
+                            final url = Uri.parse(Config.supportUrl);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url, mode: LaunchMode.externalApplication);
+                            }
                           },
                         ),
                         Divider(

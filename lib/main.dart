@@ -1,7 +1,7 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'core/config/config.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/utils/error_reporting_service.dart';
 import 'firebase_options.dart';
 import 'presentation/providers/theme_provider.dart';
 
@@ -49,37 +50,29 @@ void main() async {
     }(),
   ]);
 
-  // Crashlytics: solo en release, desactivado en debug
-  if (Firebase.apps.isNotEmpty) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
-      Config.enableCrashReporting,
-    );
+  await ErrorReportingService.initialize();
+  ErrorReportingService.installGlobalErrorHandlers();
 
-    FlutterError.onError = (details) {
-      if (Config.enableCrashReporting) {
-        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-      } else {
-        FlutterError.presentError(details);
-      }
-    };
-
-    PlatformDispatcher.instance.onError = (error, stack) {
-      if (Config.enableCrashReporting) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      } else {
-        debugPrint('Platform error: $error\n$stack');
-      }
-      return true;
-    };
-  }
-
-  runApp(
-    EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
-      path: 'assets/translations',
-      fallbackLocale: const Locale('en'),
-      child: const ProviderScope(child: NebuApp()),
+  runZonedGuarded(
+    () => runApp(
+      EasyLocalization(
+        supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
+        path: 'assets/translations',
+        fallbackLocale: const Locale('en'),
+        child: const ProviderScope(child: NebuApp()),
+      ),
     ),
+    (error, stack) {
+      unawaited(
+        ErrorReportingService.recordError(
+          error,
+          stack,
+          reason: 'Unhandled error in root zone',
+          fatal: true,
+        ),
+      );
+      debugPrint('Unhandled app error: $error\n$stack');
+    },
   );
 }
 

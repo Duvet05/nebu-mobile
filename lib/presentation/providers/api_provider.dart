@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/utils/crashlytics_log_output.dart';
 import '../../data/services/activity_service.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/auth_service.dart';
@@ -43,6 +44,7 @@ final authDioProvider = Provider<Dio>((ref) => Dio());
 
 final loggerProvider = Provider<Logger>(
   (ref) => Logger(
+    output: CrashlyticsLogOutput(),
     printer: PrettyPrinter(
       methodCount: 0,
       errorMethodCount: 5,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/utils/error_reporting_service.dart';
 import '../../data/models/user.dart';
 import '../../data/services/activity_migration_service.dart';
 import '../../data/services/auth_service.dart';
@@ -29,6 +30,12 @@ class AuthNotifier extends AsyncNotifier<User?> {
         if (userJson != null) {
           final user = User.fromJson(
             json.decode(userJson) as Map<String, dynamic>,
+          );
+          unawaited(
+            ErrorReportingService.setUserContext(
+              userId: user.id,
+              email: user.email,
+            ),
           );
           unawaited(ref.read(firebasePushServiceProvider).initialize());
           return user;
@@ -62,15 +69,22 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> _onAuthSuccess(User user) async {
+    unawaited(
+      ErrorReportingService.setUserContext(userId: user.id, email: user.email),
+    );
     await ref
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
     // Fire-and-forget: migration must never block login
     unawaited(() async {
       try {
-        await ref.read(activityMigrationServiceProvider).migrateIfNeeded(user.id);
+        await ref
+            .read(activityMigrationServiceProvider)
+            .migrateIfNeeded(user.id);
       } on Exception catch (e) {
-        ref.read(loggerProvider).w('Activity migration failed (non-blocking): $e');
+        ref
+            .read(loggerProvider)
+            .w('Activity migration failed (non-blocking): $e');
       }
     }());
     unawaited(ref.read(firebasePushServiceProvider).initialize());
@@ -134,6 +148,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
   /// Force logout without backend call — used when session expired.
   Future<void> forceLogout() async {
     await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    unawaited(ErrorReportingService.clearUserContext());
     state = const AsyncValue.data(null);
   }
 
@@ -145,6 +160,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       ref.read(loggerProvider).w('Backend logout failed: $e');
     }
     await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    unawaited(ErrorReportingService.clearUserContext());
     state = const AsyncValue.data(null);
   }
 

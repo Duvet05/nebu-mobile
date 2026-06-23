@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../core/config/config.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/storage_keys.dart';
@@ -152,8 +154,15 @@ class SettingsScreen extends ConsumerWidget {
                         Icons.chevron_right,
                         color: context.colors.grey400,
                       ),
-                      onTap: () {
-                        _showHelpDialog(context);
+                      onTap: () async {
+                        final url = Uri.parse(Config.supportUrl);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        } else {
+                          if (context.mounted) {
+                            _showHelpDialog(context);
+                          }
+                        }
                       },
                     ),
 
