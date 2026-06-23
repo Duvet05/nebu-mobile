@@ -123,7 +123,8 @@ jobs:
           fi
 
           echo "${APP_STORE_PROVISIONING_PROFILE_BASE64}" | base64 -D -o "$RUNNER_TEMP/AppStore.mobileprovision"
-          PROFILE_ID="$(openssl smime -inform der -verify -noverify -in "$RUNNER_TEMP/AppStore.mobileprovision" 2>/dev/null | /usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin)"
+          PROFILE_ID="$(grep -aEo '[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}' "$RUNNER_TEMP/AppStore.mobileprovision" | head -1)"
+          echo "Profile UUID: $PROFILE_ID"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$RUNNER_TEMP/AppStore.mobileprovision" \
             "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_ID}.mobileprovision"
