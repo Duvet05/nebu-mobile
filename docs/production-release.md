@@ -30,6 +30,18 @@ iOS release verification:
 
 - `GOOGLE_SERVICE_INFO_PLIST_BASE64`
 
+App Store (signed upload) release:
+
+- `APP_STORE_TEAM_ID` (GitHub variable) or use default from project signing config.
+- `APP_STORE_BUNDLE_ID` (GitHub variable, defaults to `com.nebu.nebuMobileFlutter`).
+- `APP_STORE_DISTRIBUTION_P12_BASE64`
+- `APP_STORE_DISTRIBUTION_P12_PASSWORD`
+- `APP_STORE_PROVISIONING_PROFILE_BASE64`
+- `APP_STORE_PROVISIONING_PROFILE_NAME`
+- `APP_STORE_CONNECT_API_KEY_ID`
+- `APP_STORE_CONNECT_API_ISSUER_ID`
+- `APP_STORE_CONNECT_API_KEY_BASE64`
+
 Encode local files without newlines before adding them as GitHub secrets:
 
 ```sh
@@ -37,6 +49,9 @@ base64 -i android/app/google-services.json | tr -d '\n'
 base64 -i android/upload-keystore.jks | tr -d '\n'
 base64 -i android/service-account.json | tr -d '\n'
 base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
+base64 -i ios/certificates/AppStoreDistribution.p12 | tr -d '\n'
+base64 -i ios/profiles/AppStore_Provisioning_Profile.mobileprovision | tr -d '\n'
+base64 -i ios/AuthKey_XXXXXX.p8 | tr -d '\n'
 ```
 
 ## Workflows
@@ -45,9 +60,9 @@ base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
   Publisher plugin. Use `workflow_dispatch` to choose the Play track
   (`internal`, `alpha`, `beta`, `production`, or a custom closed-testing track)
   and release status (`DRAFT` by default).
-- `Build iOS` builds `Runner.app` with `--no-codesign`. It verifies Firebase
-  and Google Sign-In config by decoding `GoogleService-Info.plist` and patching
-  the URL scheme during CI.
+- `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`), uploads it to
+  App Store Connect/TestFlight using `xcrun altool`, and keeps the IPA as an
+  artifact.
 
 ## Store notes
 
