@@ -72,8 +72,10 @@ class DeviceTokenService {
 
     // Cache with buffer before expiry (floor at 0 to prevent negative Duration)
     _tokenCache[deviceId] = tokenResponse;
-    final cacheSeconds = (tokenResponse.expiresIn - _cacheBufferSeconds)
-        .clamp(0, tokenResponse.expiresIn);
+    final cacheSeconds = (tokenResponse.expiresIn - _cacheBufferSeconds).clamp(
+      0,
+      tokenResponse.expiresIn,
+    );
     _tokenExpiry[deviceId] = DateTime.now().add(
       Duration(seconds: cacheSeconds),
     );

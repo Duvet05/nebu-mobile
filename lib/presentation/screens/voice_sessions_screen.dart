@@ -321,7 +321,10 @@ class _SessionCard extends ConsumerWidget {
             if (isActive) ...[
               SizedBox(width: context.spacing.labelBottomMargin),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: context.spacing.gapSm, vertical: context.spacing.gapXxs),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapSm,
+                  vertical: context.spacing.gapXxs,
+                ),
                 decoration: BoxDecoration(
                   color: context.colors.success.withValues(alpha: 0.15),
                   borderRadius: context.radius.tile,
@@ -478,7 +481,9 @@ class _SessionDetail extends ConsumerWidget {
               );
             },
             loading: () => Padding(
-              padding: EdgeInsets.symmetric(vertical: context.spacing.alertPadding),
+              padding: EdgeInsets.symmetric(
+                vertical: context.spacing.alertPadding,
+              ),
               child: const Center(child: CircularProgressIndicator()),
             ),
             error: (_, _) => Text(
@@ -532,9 +537,7 @@ class _EngagementSection extends StatelessWidget {
               ),
             _EngagementChip(
               icon: Icons.swap_horiz,
-              label: 'voice_history.turns'.tr(
-                args: ['${stats.turnCount}'],
-              ),
+              label: 'voice_history.turns'.tr(args: ['${stats.turnCount}']),
             ),
             if (stats.sessionMinutes > 0)
               _EngagementChip(
@@ -583,11 +586,7 @@ class _EngagementSection extends StatelessWidget {
 }
 
 class _EngagementChip extends StatelessWidget {
-  const _EngagementChip({
-    required this.icon,
-    required this.label,
-    this.value,
-  });
+  const _EngagementChip({required this.icon, required this.label, this.value});
 
   final IconData icon;
   final String label;

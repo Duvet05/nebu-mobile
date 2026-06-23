@@ -587,7 +587,6 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       return null;
     },
   );
-
 }
 
 class _QuickActionButton extends StatelessWidget {

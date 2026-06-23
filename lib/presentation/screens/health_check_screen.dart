@@ -183,8 +183,16 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
         _buildInfoRow(theme, 'health_check.version'.tr(), status.version),
-        _buildInfoRow(theme, 'health_check.environment'.tr(), status.environment),
-        _buildInfoRow(theme, 'health_check.uptime'.tr(), _formatUptime(status.uptime)),
+        _buildInfoRow(
+          theme,
+          'health_check.environment'.tr(),
+          status.environment,
+        ),
+        _buildInfoRow(
+          theme,
+          'health_check.uptime'.tr(),
+          _formatUptime(status.uptime),
+        ),
         _buildInfoRow(theme, 'health_check.timestamp'.tr(), status.timestamp),
       ],
     );
@@ -216,7 +224,11 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           'health_check.heap_total'.tr(),
           '${memory.heapTotal.toStringAsFixed(2)} MB',
         ),
-        _buildProgressRow(theme, 'health_check.usage'.tr(), memory.heapUsedPercent),
+        _buildProgressRow(
+          theme,
+          'health_check.usage'.tr(),
+          memory.heapUsedPercent,
+        ),
       ],
     );
   }
@@ -239,7 +251,11 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
         SizedBox(height: context.spacing.titleBottomMarginSm),
         _buildCheckRow(theme, 'health_check.database'.tr(), checks.database),
         _buildCheckRow(theme, 'health_check.redis'.tr(), checks.redis),
-        _buildCheckRow(theme, 'health_check.configuration'.tr(), checks.configuration),
+        _buildCheckRow(
+          theme,
+          'health_check.configuration'.tr(),
+          checks.configuration,
+        ),
       ],
     );
   }
@@ -260,10 +276,26 @@ class _HealthCheckScreenState extends ConsumerState<HealthCheckScreen> {
           ),
         ),
         SizedBox(height: context.spacing.titleBottomMarginSm),
-        _buildInfoRow(theme, 'health_check.response_time'.tr(), '${performance.responseTime}ms'),
-        _buildInfoRow(theme, 'health_check.process_id'.tr(), '${performance.pid}'),
-        _buildInfoRow(theme, 'health_check.platform'.tr(), performance.platform),
-        _buildInfoRow(theme, 'health_check.node_version'.tr(), performance.nodeVersion),
+        _buildInfoRow(
+          theme,
+          'health_check.response_time'.tr(),
+          '${performance.responseTime}ms',
+        ),
+        _buildInfoRow(
+          theme,
+          'health_check.process_id'.tr(),
+          '${performance.pid}',
+        ),
+        _buildInfoRow(
+          theme,
+          'health_check.platform'.tr(),
+          performance.platform,
+        ),
+        _buildInfoRow(
+          theme,
+          'health_check.node_version'.tr(),
+          performance.nodeVersion,
+        ),
       ],
     );
   }

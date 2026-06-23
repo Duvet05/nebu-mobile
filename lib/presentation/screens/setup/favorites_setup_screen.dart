@@ -132,7 +132,8 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
                                 setState(() {
                                   if (isSelected) {
                                     _selectedFavorites.remove(categoryId);
-                                  } else if (_selectedFavorites.length < _maxFavorites) {
+                                  } else if (_selectedFavorites.length <
+                                      _maxFavorites) {
                                     _selectedFavorites.add(categoryId);
                                   }
                                 });
@@ -141,59 +142,58 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
                                 duration: const Duration(milliseconds: 200),
                                 opacity: isDisabled ? 0.4 : 1.0,
                                 child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? context.colors.primary.withValues(
-                                          alpha: 0.08,
-                                        )
-                                      : colorScheme.surfaceContainerHighest
-                                            .withValues(alpha: 0.3),
-                                  borderRadius: context.radius.panel,
-                                  border: Border.all(
+                                  decoration: BoxDecoration(
                                     color: isSelected
-                                        ? context.colors.primary
-                                        : colorScheme.outline,
-                                    width: isSelected ? 2 : 1,
+                                        ? context.colors.primary.withValues(
+                                            alpha: 0.08,
+                                          )
+                                        : colorScheme.surfaceContainerHighest
+                                              .withValues(alpha: 0.3),
+                                    borderRadius: context.radius.panel,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? context.colors.primary
+                                          : colorScheme.outline,
+                                      width: isSelected ? 2 : 1,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? context.colors.primary
+                                                    .withValues(alpha: 0.15)
+                                              : colorScheme
+                                                    .surfaceContainerHighest,
+                                          borderRadius: context.radius.panel,
+                                        ),
+                                        child: Icon(
+                                          category['icon'] as IconData,
+                                          size: 24,
+                                          color: isSelected
+                                              ? context.colors.primary
+                                              : colorScheme.onSurfaceVariant,
+                                        ),
+                                      ),
+                                      SizedBox(height: context.spacing.gapLg),
+                                      Text(
+                                        (category['label'] as String).tr(),
+                                        style: theme.textTheme.titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              color: isSelected
+                                                  ? context.colors.primary
+                                                  : colorScheme.onSurface,
+                                            ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 48,
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? context.colors.primary.withValues(
-                                                alpha: 0.15,
-                                              )
-                                            : colorScheme
-                                                  .surfaceContainerHighest,
-                                        borderRadius: context.radius.panel,
-                                      ),
-                                      child: Icon(
-                                        category['icon'] as IconData,
-                                        size: 24,
-                                        color: isSelected
-                                            ? context.colors.primary
-                                            : colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                    SizedBox(height: context.spacing.gapLg),
-                                    Text(
-                                      (category['label'] as String).tr(),
-                                      style: theme.textTheme.titleSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            color: isSelected
-                                                ? context.colors.primary
-                                                : colorScheme.onSurface,
-                                          ),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
                             ),
                           );
                         },

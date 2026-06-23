@@ -14,8 +14,7 @@ class ChildProfileScreen extends ConsumerStatefulWidget {
   const ChildProfileScreen({super.key});
 
   @override
-  ConsumerState<ChildProfileScreen> createState() =>
-      _ChildProfileScreenState();
+  ConsumerState<ChildProfileScreen> createState() => _ChildProfileScreenState();
 }
 
 class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {

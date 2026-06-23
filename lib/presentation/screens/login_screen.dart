@@ -6,8 +6,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/utils/google_auth_helper.dart';
 import '../../core/utils/apple_auth_helper.dart';
+import '../../core/utils/google_auth_helper.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 

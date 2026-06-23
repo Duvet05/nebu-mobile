@@ -42,7 +42,8 @@ abstract final class Config {
   );
   static const String _googleIosClientId = String.fromEnvironment(
     'GOOGLE_IOS_CLIENT_ID',
-    defaultValue: '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com',
+    defaultValue:
+        '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com',
   );
   static const String _facebookAppId = String.fromEnvironment(
     'FACEBOOK_APP_ID',
@@ -81,8 +82,7 @@ abstract final class Config {
   static const Duration animationLong = Duration(milliseconds: 500);
   static const String privacyPolicyUrl =
       'https://nebu.flow-telligence.com/privacy';
-  static const String supportUrl =
-      'https://nebu.flow-telligence.com/support';
+  static const String supportUrl = 'https://nebu.flow-telligence.com/support';
   static const String deleteAccountUrl =
       'https://nebu.flow-telligence.com/privacy/delete-account';
   static const String deleteDataUrl =

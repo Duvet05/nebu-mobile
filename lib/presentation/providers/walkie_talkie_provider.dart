@@ -99,9 +99,7 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
       // so we only need to send the toyId here.
       final tokenResponse = await _apiService.post<Map<String, dynamic>>(
         '/livekit/token/user',
-        data: {
-          'toyId': toy.id,
-        },
+        data: {'toyId': toy.id},
       );
 
       final token = tokenResponse['token'] as String?;

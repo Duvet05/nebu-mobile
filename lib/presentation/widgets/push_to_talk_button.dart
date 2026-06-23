@@ -86,48 +86,48 @@ class _PushToTalkButtonState extends State<PushToTalkButton>
             onTapUp: widget.isEnabled ? (_) => widget.onTalkEnd() : null,
             onTapCancel: widget.isEnabled ? widget.onTalkEnd : null,
             child: AnimatedBuilder(
-            animation: _pulseAnimation,
-            builder: (context, child) {
-              final scale = widget.isTalking ? _pulseAnimation.value : 1.0;
-              return Transform.scale(
-                scale: scale,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: buttonColor,
-                    shape: BoxShape.circle,
-                    boxShadow: widget.isTalking
-                        ? [
-                            BoxShadow(
-                              color: context.colors.primary.withValues(
-                                alpha: 0.4,
+              animation: _pulseAnimation,
+              builder: (context, child) {
+                final scale = widget.isTalking ? _pulseAnimation.value : 1.0;
+                return Transform.scale(
+                  scale: scale,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: buttonColor,
+                      shape: BoxShape.circle,
+                      boxShadow: widget.isTalking
+                          ? [
+                              BoxShadow(
+                                color: context.colors.primary.withValues(
+                                  alpha: 0.4,
+                                ),
+                                blurRadius: 24,
+                                spreadRadius: 4,
                               ),
-                              blurRadius: 24,
-                              spreadRadius: 4,
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: context.colors.textNormal.withValues(
-                                alpha: 0.1,
+                            ]
+                          : [
+                              BoxShadow(
+                                color: context.colors.textNormal.withValues(
+                                  alpha: 0.1,
+                                ),
+                                blurRadius: 8,
+                                spreadRadius: 1,
                               ),
-                              blurRadius: 8,
-                              spreadRadius: 1,
-                            ),
-                          ],
+                            ],
+                    ),
+                    child: Icon(
+                      widget.isTalking ? Icons.mic : Icons.mic_none,
+                      size: 48,
+                      color: iconColor,
+                    ),
                   ),
-                  child: Icon(
-                    widget.isTalking ? Icons.mic : Icons.mic_none,
-                    size: 48,
-                    color: iconColor,
-                  ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
         ),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
         Text(

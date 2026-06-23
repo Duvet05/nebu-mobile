@@ -109,7 +109,7 @@ jobs:
       - name: Install provisioning profile
         env:
           APP_STORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APP_STORE_PROVISIONING_PROFILE_BASE64 }}
-          APP_STORE_PROVISIONING_PROFILE_NAME: ${{ secrets.APP_STORE_PROVISIONING_PROFILE_NAME }}
+          APP_STORE_PROVISIONING_PROFILE_NAME: ${{ vars.APP_STORE_PROVISIONING_PROFILE_NAME }}
         run: |
           set -euo pipefail
           if [ -z "${APP_STORE_PROVISIONING_PROFILE_BASE64}" ]; then

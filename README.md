@@ -1,9 +1,8 @@
 # Nebu Mobile App 🧸
-Pendientes menores que ya conoces: el plist de iOS desde Firebase console (no bloquea nada hoy) y las variables opcionales. Si vuelves a quedarte sin espacio, el runtime del
-simulador iOS 26.4.1 (~17 GB) sigue siendo el candidato más gordo.
+
 **Aplicación móvil para configuración y gestión de juguetes inteligentes con ESP32**
 
-Nebu Mobile es una aplicación Flutter que permite a los usuarios configurar y gestionar juguetes inteligentes equipados con ESP32. La app facilita la conexión WiFi del dispositivo, el seguimiento de actividades del usuario, y la integración con servicios de IA a través de LiveKit Cloud. hECHO POR DUVET05
+Nebu Mobile es una aplicación Flutter que permite a los usuarios configurar y gestionar juguetes inteligentes equipados con ESP32. La app facilita la conexión WiFi del dispositivo, el seguimiento de actividades del usuario, y la integración con servicios de IA a través de LiveKit Cloud.
 
 ---
 
@@ -518,19 +517,19 @@ flutter build ios --release
 ✅ Bluetooth Tracking:        100% (auto-tracking implementado)
 ✅ Auth Integration:          100% (migración automática)
 ⏳ Voice Commands:             33% (mobile listo, falta backend webhook)
-❌ Error Tracking:              0% (pendiente GlobalErrorHandler)
+✅ Error Tracking:            100% (Crashlytics + GlobalErrorHandlers)
 ❌ Play Sessions:               0% (pendiente integración)
 ❌ Chat Tracking:               0% (pendiente identificar servicio)
 ❌ Activity Stats UI:           0% (pendiente widget)
 ```
 
-**Total Implementado**: 5/11 funcionalidades = **45.5%** ✅
+**Total Implementado**: 6/11 funcionalidades = **54.5%** ✅
 
 ### Tracking de Actividades (Mobile)
 - ✅ `trackToyConnection()` / `trackToyDisconnection()` - **Implementado**
 - ✅ `trackSetupCompleted()` - **Implementado**
 - ✅ `trackVoiceCommand()` - ⏳ Listo (falta webhook backend)
-- ❌ `trackError()` - Método existe, falta GlobalErrorHandler
+- ✅ `trackError()` - **Implementado** (ErrorReportingService + Crashlytics)
 - ❌ `trackPlaySessionStart()` - Método existe, falta integración
 - ❌ `trackInteraction()` - Método existe, sin uso
 - ❌ `trackChatMessage()` - Método existe, sin uso

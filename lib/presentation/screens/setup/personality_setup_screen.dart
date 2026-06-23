@@ -216,82 +216,81 @@ class _PersonalitySetupScreenState
           onTap: () => setState(() => _selectedId = personality.id),
           child: Container(
             padding: EdgeInsets.all(context.spacing.panelPadding),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? context.colors.primary.withValues(alpha: 0.08)
-                : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-            borderRadius: context.radius.panel,
-            border: Border.all(
-              color: isSelected ? context.colors.primary : colorScheme.outline,
-              width: isSelected ? 2 : 1,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? context.colors.primary.withValues(alpha: 0.08)
+                  : colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              borderRadius: context.radius.panel,
+              border: Border.all(
+                color: isSelected
+                    ? context.colors.primary
+                    : colorScheme.outline,
+                width: isSelected ? 2 : 1,
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.primary.withValues(alpha: 0.15)
-                      : colorScheme.surfaceContainerHighest,
-                  borderRadius: context.radius.panel,
-                ),
-                child: Icon(
-                  _iconForPersonality(personality.id),
-                  size: 24,
-                  color: isSelected
-                      ? context.colors.primary
-                      : colorScheme.onSurfaceVariant,
-                ),
-              ),
-              SizedBox(width: context.spacing.panelPadding),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      personality.name.replaceAll('{name}', _toyName),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? context.colors.primary
-                            : colorScheme.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: context.spacing.labelBottomMargin),
-                    Text(
-                      personality.description.replaceAll(
-                        '{name}',
-                        _toyName,
-                      ),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: isSelected
-                            ? context.colors.primary.withValues(alpha: 0.7)
-                            : colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (isSelected)
+            child: Row(
+              children: [
                 Container(
-                  width: 24,
-                  height: 24,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: context.colors.primary,
-                    shape: BoxShape.circle,
+                    color: isSelected
+                        ? context.colors.primary.withValues(alpha: 0.15)
+                        : colorScheme.surfaceContainerHighest,
+                    borderRadius: context.radius.panel,
                   ),
                   child: Icon(
-                    Icons.check_rounded,
-                    color: context.colors.textOnFilled,
-                    size: 16,
+                    _iconForPersonality(personality.id),
+                    size: 24,
+                    color: isSelected
+                        ? context.colors.primary
+                        : colorScheme.onSurfaceVariant,
                   ),
                 ),
-            ],
+                SizedBox(width: context.spacing.panelPadding),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        personality.name.replaceAll('{name}', _toyName),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? context.colors.primary
+                              : colorScheme.onSurface,
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.labelBottomMargin),
+                      Text(
+                        personality.description.replaceAll('{name}', _toyName),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: isSelected
+                              ? context.colors.primary.withValues(alpha: 0.7)
+                              : colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (isSelected)
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: context.colors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.check_rounded,
+                      color: context.colors.textOnFilled,
+                      size: 16,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
