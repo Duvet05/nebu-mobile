@@ -39,8 +39,11 @@ App Store (signed upload) release:
 - `APP_STORE_PROVISIONING_PROFILE_BASE64`
 - `APP_STORE_PROVISIONING_PROFILE_NAME`
 - `APP_STORE_CONNECT_API_KEY_ID`
-- `APP_STORE_CONNECT_API_ISSUER_ID`
+- `APP_STORE_CONNECT_API_ISSUER_ID` (`APP_STORE_CONNECT_API_KEY_ISSUER_ID` is also supported)
 - `APP_STORE_CONNECT_API_KEY_BASE64`
+
+If the workflow runs with `upload_to_app_store=true` and any of these are missing,
+it fails fast with explicit `Missing GitHub secret ...` messages.
 
 Encode local files without newlines before adding them as GitHub secrets:
 
@@ -62,7 +65,8 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
   and release status (`DRAFT` by default).
 - `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`), uploads it to
   App Store Connect/TestFlight using `xcrun altool`, and keeps the IPA as an
-  artifact.
+  artifact. You can run it with `upload_to_app_store=false` to skip App Store
+  signing and upload while still keeping the job green.
 - `CI` now includes:
   - `Analyze`
   - `Format check`
