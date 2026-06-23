@@ -1,0 +1,8 @@
+"NSBluetoothAlwaysUsageDescription" = "Nebu necesita acceso a Bluetooth para conectarse a tu peluche inteligente y configurar su WiFi.";
+"NSBluetoothPeripheralUsageDescription" = "Nebu necesita acceso a Bluetooth para conectarse a tu peluche inteligente y configurar su WiFi.";
+"NSCameraUsageDescription" = "Necesitamos acceso a la cámara para escanear los códigos QR de tus dispositivos Nebu.";
+"NSLocalNetworkUsageDescription" = "Necesitamos acceso a la red local para comunicarnos con tu dispositivo durante la configuración inicial.";
+"NSLocationWhenInUseUsageDescription" = "Necesitamos tu ubicación para buscar dispositivos Bluetooth cercanos durante el proceso de conexión.";
+"NSMicrophoneUsageDescription" = "Se requiere acceso al micrófono para la interacción de voz en tiempo real con tu peluche Nebu.";
+"NSPhotoLibraryUsageDescription" = "Se usa el acceso a la galería de fotos si deseas subir una foto de perfil personalizada.";
+"NSSpeechRecognitionUsageDescription" = "El reconocimiento de voz se usa para procesar tus comandos de voz e interactuar con el asistente de IA.";

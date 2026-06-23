@@ -1,0 +1,8 @@
+"NSBluetoothAlwaysUsageDescription" = "Nebu needs Bluetooth access to connect to your smart toy and configure its WiFi settings.";
+"NSBluetoothPeripheralUsageDescription" = "Nebu needs Bluetooth access to connect to your smart toy and configure its WiFi settings.";
+"NSCameraUsageDescription" = "We need camera access to scan the QR codes on your Nebu devices for easy setup.";
+"NSLocalNetworkUsageDescription" = "We need local network access to communicate with your device during the initial configuration.";
+"NSLocationWhenInUseUsageDescription" = "We need your location to scan for nearby Bluetooth devices during the connection process.";
+"NSMicrophoneUsageDescription" = "Microphone access is required for the real-time AI voice interaction with your Nebu toy.";
+"NSPhotoLibraryUsageDescription" = "Photo library access is used if you want to upload a custom profile picture.";
+"NSSpeechRecognitionUsageDescription" = "Speech recognition is used to process your voice commands and interact with the AI assistant.";
