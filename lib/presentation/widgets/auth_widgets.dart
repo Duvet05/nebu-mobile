@@ -228,11 +228,14 @@ class AuthGoogleButton extends StatelessWidget {
                 ),
               ),
               SizedBox(width: context.spacing.gapLg),
-              Text(
-                text,
-                style: textTheme.titleMedium?.copyWith(
-                  color: context.colors.textNormal,
-                  fontWeight: FontWeight.w600,
+              Flexible(
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: context.colors.textNormal,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -318,8 +321,8 @@ class AuthSwitchLink extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Wrap(
+      alignment: WrapAlignment.center,
       children: [
         Text(
           '$prompt ',

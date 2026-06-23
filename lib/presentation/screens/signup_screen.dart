@@ -78,7 +78,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       backgroundColor: context.colors.bgPrimary,
       body: SafeArea(
         child: Padding(
-          padding: context.spacing.pageEdgeInsets,
+          padding: context.constrainedPageEdgeInsets,
           child: Form(
             key: _formKey,
             child: CustomScrollView(

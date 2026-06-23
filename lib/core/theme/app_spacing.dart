@@ -284,6 +284,20 @@ class SemanticSpacing {
 // ═══════════════════════════════════════════════════════════
 
 extension ThemeSpacingExtension on BuildContext {
+  static const double _maxContentWidth = 500;
+
   SemanticSpacing get spacing =>
       SemanticSpacing._(_resolveScreenSize(MediaQuery.sizeOf(this).width));
+
+  /// Page-level EdgeInsets that cap content at [_maxContentWidth] on wide
+  /// screens (iPad). On phones the normal page margin is used.
+  EdgeInsets get constrainedPageEdgeInsets {
+    final screenWidth = MediaQuery.sizeOf(this).width;
+    final margin = spacing.pageMargin;
+    if (screenWidth <= _maxContentWidth + margin * 2) {
+      return EdgeInsets.symmetric(horizontal: margin);
+    }
+    final horizontalPadding = (screenWidth - _maxContentWidth) / 2;
+    return EdgeInsets.symmetric(horizontal: horizontalPadding);
+  }
 }

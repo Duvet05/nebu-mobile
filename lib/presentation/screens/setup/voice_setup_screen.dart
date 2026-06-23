@@ -61,7 +61,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
             // Content
             Expanded(
               child: Padding(
-                padding: context.spacing.pageEdgeInsets,
+                padding: context.constrainedPageEdgeInsets,
                 child: Column(
                   children: [
                     SizedBox(height: context.spacing.titleBottomMargin),

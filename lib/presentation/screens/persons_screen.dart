@@ -82,7 +82,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
 
   Widget _buildErrorState(BuildContext context, Object error) => Center(
     child: Padding(
-      padding: context.spacing.pageEdgeInsets,
+      padding: context.constrainedPageEdgeInsets,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -112,7 +112,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
     return RefreshIndicator(
       onRefresh: () => ref.read(personProvider.notifier).loadMyPersons(),
       child: ListView(
-        padding: context.spacing.pageEdgeInsets,
+        padding: context.constrainedPageEdgeInsets,
         children: [
           // Sync banner
           if (!_syncDismissed) _buildSyncBanner(context),
@@ -134,7 +134,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
 
   Widget _buildEmptyState(BuildContext context) => Center(
     child: Padding(
-      padding: context.spacing.pageEdgeInsets,
+      padding: context.constrainedPageEdgeInsets,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

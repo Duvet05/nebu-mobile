@@ -143,7 +143,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
             // Content
             Expanded(
               child: Padding(
-                padding: context.spacing.pageEdgeInsets,
+                padding: context.constrainedPageEdgeInsets,
                 child: Column(
                   children: [
                     const Spacer(),

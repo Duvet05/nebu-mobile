@@ -170,7 +170,7 @@ class _EmailVerificationScreenState
       backgroundColor: context.colors.bgPrimary,
       body: SafeArea(
         child: Padding(
-          padding: context.spacing.pageEdgeInsets,
+          padding: context.constrainedPageEdgeInsets,
           child: Column(
             children: [
               SizedBox(height: context.spacing.largePageBottomMargin),

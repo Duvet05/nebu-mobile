@@ -256,7 +256,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
             // Content
             Expanded(
               child: Padding(
-                padding: context.spacing.pageEdgeInsets,
+                padding: context.constrainedPageEdgeInsets,
                 child: Form(
                   key: _formKey,
                   child: Column(

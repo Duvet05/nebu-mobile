@@ -410,7 +410,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
               Expanded(
                 child: Padding(
-                  padding: context.spacing.pageEdgeInsets,
+                  padding: context.constrainedPageEdgeInsets,
                   child: Form(
                     key: _formKey,
                     child: Column(
