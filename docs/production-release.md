@@ -89,3 +89,16 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
   the backend only. Do not compile those into the mobile app.
 - For signed iOS/TestFlight CI, add Apple certificate/provisioning/App Store
   Connect API secrets and replace the no-codesign build with `flutter build ipa`.
+
+## Technical debt
+
+- **Consolidate GCP projects**: Nebu currently uses two GCP projects under the
+  PUCP organization (`pucp.pe`, org ID `642164415054`):
+  - `nebu-b65d4` — Firebase (Core, Crashlytics, FCM), Google Sign-In, OAuth clients
+  - `nebu-486902` — Play Store publishing service account (`nebu-104@nebu-486902.iam.gserviceaccount.com`)
+
+  The PUCP org enforces `iam.managed.disableServiceAccountKeyCreation`, preventing
+  new service account key creation. The existing key works but cannot be rotated.
+  Plan: migrate both projects to a personal Google account outside PUCP to gain
+  full control. This requires re-creating Firebase config, OAuth clients, and
+  updating all GitHub secrets.
