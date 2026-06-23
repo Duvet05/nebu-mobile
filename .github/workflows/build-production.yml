@@ -31,6 +31,9 @@ jobs:
   build-and-publish:
     name: Build AAB & Publish to Play Store
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -98,16 +101,16 @@ jobs:
             "storeFile=../upload-keystore.jks" \
             > android/key.properties
 
-      - name: Decode Play service account
-        env:
-          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: |
-          set -euo pipefail
-          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
-            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
-            exit 1
-          fi
-          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" | base64 --decode > android/service-account.json
+      - id: auth
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/874117365573/locations/global/workloadIdentityPools/github-actions/providers/github
+          service_account: play-store-publisher@nebu-b65d4.iam.gserviceaccount.com
+          create_credentials_file: true
+
+      - name: Symlink Play service account
+        run: cp "${{ steps.auth.outputs.credentials_file_path }}" android/service-account.json
 
       - name: Build AAB
         env:
