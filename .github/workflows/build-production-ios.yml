@@ -107,27 +107,24 @@ jobs:
           # Keep keychain unlocked for the build duration
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
 
-      - name: Install provisioning profile
+      - name: Prepare App Store Connect API key
         if: env.APP_STORE_UPLOAD == 'true'
         env:
-          APP_STORE_PROVISIONING_PROFILE_BASE64: ${{ secrets.APP_STORE_PROVISIONING_PROFILE_BASE64 }}
-          APP_STORE_PROVISIONING_PROFILE_NAME: ${{ vars.APP_STORE_PROVISIONING_PROFILE_NAME }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
         run: |
           set -euo pipefail
-          if [ -z "${APP_STORE_PROVISIONING_PROFILE_BASE64}" ]; then
-            echo "Missing GitHub secret APP_STORE_PROVISIONING_PROFILE_BASE64" >&2
-            exit 1
-          fi
-          if [ -z "${APP_STORE_PROVISIONING_PROFILE_NAME}" ]; then
-            echo "Missing GitHub secret APP_STORE_PROVISIONING_PROFILE_NAME" >&2
+          if [ -z "${APP_STORE_CONNECT_API_KEY_ID}" ] || [ -z "${APP_STORE_CONNECT_API_ISSUER_ID}" ] || [ -z "${APP_STORE_CONNECT_API_KEY_BASE64}" ]; then
+            echo "Missing App Store Connect API key secrets" >&2
             exit 1
           fi
 
-          printf '%s' "${APP_STORE_PROVISIONING_PROFILE_BASE64}" | base64 --decode > "$RUNNER_TEMP/AppStore.mobileprovision"
-          PROFILE_ID="$(security cms -D -i "$RUNNER_TEMP/AppStore.mobileprovision" | /usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin)"
-          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$RUNNER_TEMP/AppStore.mobileprovision" \
-            "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_ID}.mobileprovision"
+          API_KEY_DIR="$RUNNER_TEMP/AuthKey"
+          mkdir -p "$API_KEY_DIR"
+          printf '%s' "${APP_STORE_CONNECT_API_KEY_BASE64}" | base64 --decode > "$API_KEY_DIR/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+
+          printf 'API_KEY_PATH=%s\n' "$API_KEY_DIR/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8" >> "${GITHUB_ENV}"
 
           cat > ios/ExportOptions.plist <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
@@ -139,17 +136,12 @@ jobs:
             <key>teamID</key>
             <string>${APP_STORE_TEAM_ID}</string>
             <key>signingStyle</key>
-            <string>manual</string>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>${APP_STORE_BUNDLE_ID}</key>
-              <string>${APP_STORE_PROVISIONING_PROFILE_NAME}</string>
-            </dict>
+            <string>automatic</string>
           </dict>
           </plist>
           PLIST
 
-      - name: Build iOS IPA
+      - name: Build iOS archive
         if: env.APP_STORE_UPLOAD == 'true'
         env:
           API_URL: ${{ vars.API_URL }}
@@ -170,7 +162,7 @@ jobs:
             GOOGLE_IOS_CLIENT_ID="${FIREBASE_IOS_CLIENT_ID}"
           fi
 
-          build_args=(ipa --release --export-options-plist ios/ExportOptions.plist)
+          build_args=(ios --release --no-codesign)
 
           add_define() {
             local name="$1"
@@ -200,27 +192,48 @@ jobs:
 
           flutter build "${build_args[@]}"
 
+      - name: Archive & export IPA
+        if: env.APP_STORE_UPLOAD == 'true'
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          ARCHIVE_PATH="$RUNNER_TEMP/Runner.xcarchive"
+
+          xcodebuild archive \
+            -workspace ios/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER_ID"
+
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist ios/ExportOptions.plist \
+            -exportPath build/ios/ipa \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER_ID"
+
       - name: Upload IPA to App Store Connect
         if: env.APP_STORE_UPLOAD == 'true'
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
-          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ISSUER_ID || secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
-          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+          APP_STORE_CONNECT_API_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_API_ISSUER_ID }}
         run: |
           set -euo pipefail
-          IPA_PATH="build/ios/ipa/Runner.ipa"
-          if [ ! -f "$IPA_PATH" ]; then
-            echo "IPA not found at $IPA_PATH" >&2
+          IPA_PATH="$(find build/ios/ipa -name '*.ipa' -print -quit)"
+          if [ -z "$IPA_PATH" ]; then
+            echo "No IPA found in build/ios/ipa/" >&2
             exit 1
           fi
-
-          if [ -z "${APP_STORE_CONNECT_API_KEY_ID:-}" ] || [ -z "${APP_STORE_CONNECT_API_ISSUER_ID:-}" ] || [ -z "${APP_STORE_CONNECT_API_KEY_BASE64:-}" ]; then
-            echo "Missing App Store Connect API key secrets (APP_STORE_CONNECT_API_KEY_ID / ISSUER_ID / API_KEY_BASE64)" >&2
-            exit 1
-          fi
-
-          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          printf '%s' "${APP_STORE_CONNECT_API_KEY_BASE64}" | base64 --decode > "$API_KEY_PATH"
 
           xcrun altool \
             --upload-app \
@@ -228,14 +241,14 @@ jobs:
             --file "$IPA_PATH" \
             --apiKey "${APP_STORE_CONNECT_API_KEY_ID}" \
             --apiIssuer "${APP_STORE_CONNECT_API_ISSUER_ID}" \
-            --apiKeyPath "$API_KEY_PATH"
+            --apiKeyPath "$(dirname "$API_KEY_PATH")"
 
       - name: Upload iOS build
         uses: actions/upload-artifact@v4
         if: env.APP_STORE_UPLOAD == 'true'
         with:
           name: ios-runner-ipa
-          path: build/ios/ipa/Runner.ipa
+          path: build/ios/ipa/*.ipa
           retention-days: 30
 
       - name: Skip iOS App Store publish
