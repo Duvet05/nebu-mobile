@@ -88,6 +88,11 @@ dev_dependencies:
   # Launcher Icons
   flutter_launcher_icons: ^0.14.1
 
+dependency_overrides:
+  # connectivity_plus 7.1.1 uses NWPath.isUltraConstrained which requires
+  # iOS 18.4+ SDK — pin to 6.x until livekit_client updates.
+  connectivity_plus: ^6.1.4
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

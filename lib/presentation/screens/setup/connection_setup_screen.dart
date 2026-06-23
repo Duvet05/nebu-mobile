@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -98,11 +99,13 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   Future<bool> _requestPermissions() async {
     try {
       _logger.i('Requesting Bluetooth permissions...');
-      final permissions = await [
-        Permission.bluetoothScan,
-        Permission.bluetoothConnect,
-        Permission.location,
-      ].request();
+      final permissions = Platform.isIOS
+          ? await [Permission.bluetooth].request()
+          : await [
+              Permission.bluetoothScan,
+              Permission.bluetoothConnect,
+              Permission.location,
+            ].request();
       final granted = permissions.values.every((status) => status.isGranted);
       _logger.i('All permissions granted: $granted');
       if (!granted && mounted) {
