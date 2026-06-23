@@ -42,6 +42,7 @@ abstract final class Config {
   );
   static const String _googleIosClientId = String.fromEnvironment(
     'GOOGLE_IOS_CLIENT_ID',
+    defaultValue: '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com',
   );
   static const String _facebookAppId = String.fromEnvironment(
     'FACEBOOK_APP_ID',
