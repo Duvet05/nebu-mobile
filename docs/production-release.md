@@ -51,7 +51,7 @@ base64 -i android/service-account.json | tr -d '\n'
 base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
 base64 -i ios/certificates/AppStoreDistribution.p12 | tr -d '\n'
 base64 -i ios/profiles/AppStore_Provisioning_Profile.mobileprovision | tr -d '\n'
-base64 -i ios/AuthKey_XXXXXX.p8 | tr -d '\n'
+base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
 ```
 
 ## Workflows
@@ -63,6 +63,20 @@ base64 -i ios/AuthKey_XXXXXX.p8 | tr -d '\n'
 - `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`), uploads it to
   App Store Connect/TestFlight using `xcrun altool`, and keeps the IPA as an
   artifact.
+- `CI` now includes:
+  - `Analyze`
+  - `Format check`
+  - `Unit tests` (placeholder-safe no-op when no `test/` suite exists yet)
+  - `Android debug build`
+  - `Android e2e` (`workflow_dispatch` to run)
+  - `CodeQL` security scan
+  - `Dependency Review` on pull requests
+
+## Branch protection
+
+- Main is protected to require pull requests with at least one approving review and
+  minimum status checks: `CI / Analyze`, `CI / Format check`, `CI / Unit tests`,
+  `CI / Android debug build`.
 
 ## Store notes
 
