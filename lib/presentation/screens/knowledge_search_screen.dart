@@ -55,6 +55,9 @@ class _KnowledgeSearchScreenState extends ConsumerState<KnowledgeSearchScreen> {
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear),
+                      tooltip: MaterialLocalizations.of(
+                        context,
+                      ).clearButtonTooltip,
                       onPressed: () {
                         _searchController.clear();
                         ref.read(knowledgeSearchProvider.notifier).clear();

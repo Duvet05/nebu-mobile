@@ -311,6 +311,9 @@ class _SearchTab extends ConsumerWidget {
             suffixIcon: searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear),
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).clearButtonTooltip,
                     onPressed: () {
                       searchController.clear();
                       ref.read(memorySearchProvider.notifier).clear();

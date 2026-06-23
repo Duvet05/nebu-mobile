@@ -26,10 +26,7 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('child_profile.title'.tr()),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
+        leading: BackButton(onPressed: () => context.pop()),
       ),
       body: localChildDataService.when(
         data: (service) {

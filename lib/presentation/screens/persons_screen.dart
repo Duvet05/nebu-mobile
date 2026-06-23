@@ -56,8 +56,7 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+        leading: BackButton(
           onPressed: () {
             if (context.canPop()) {
               context.pop();

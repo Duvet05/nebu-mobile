@@ -201,10 +201,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('profile.edit_profile'.tr()),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
+        leading: BackButton(onPressed: () => context.pop()),
         actions: [
           if (_isSaving)
             Padding(
@@ -218,6 +215,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           else
             IconButton(
               icon: const Icon(Icons.check),
+              tooltip: 'common.save'.tr(),
               onPressed: _updateProfile,
             ),
         ],
