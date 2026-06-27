@@ -88,3 +88,4 @@ doc/api/
 /.claude/
 /CLAUDE.md
 /service-account.json
+.vercel

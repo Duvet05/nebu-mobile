@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -55,6 +56,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   }
 
   Future<void> _loadPermissions() async {
+    if (kIsWeb) return;
     final results = await Future.wait([
       Permission.bluetooth.isGranted,
       Permission.camera.isGranted,
@@ -283,17 +285,19 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
           ? context.colors.success.withValues(alpha: 0.1)
           : context.colors.warning.withValues(alpha: 0.1),
     ),
-    onTap: () {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('privacy.manage_in_settings'.tr()),
-          action: SnackBarAction(
-            label: 'privacy.open_settings'.tr(),
-            onPressed: openAppSettings,
-          ),
-        ),
-      );
-    },
+    onTap: kIsWeb
+        ? null
+        : () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('privacy.manage_in_settings'.tr()),
+                action: SnackBarAction(
+                  label: 'privacy.open_settings'.tr(),
+                  onPressed: openAppSettings,
+                ),
+              ),
+            );
+          },
   );
 
   void _showDownloadDataDialog() {

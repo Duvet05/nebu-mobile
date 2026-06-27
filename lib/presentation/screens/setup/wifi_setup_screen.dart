@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -200,6 +201,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   }
 
   Future<void> _getCurrentWifi() async {
+    if (kIsWeb) return;
     final status = await Permission.locationWhenInUse.request();
     if (status.isGranted) {
       try {
@@ -535,21 +537,24 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     spacing: context.spacing.gapMd,
     runSpacing: context.spacing.gapMd,
     children: [
-      _QuickActionButton(
-        icon: Icons.qr_code_scanner,
-        label: 'setup.wifi.qr_scan_label'.tr(),
-        onPressed: _scanQrCode,
-      ),
-      _QuickActionButton(
-        icon: Icons.wifi,
-        label: 'setup.wifi.current_wifi_label'.tr(),
-        onPressed: _getCurrentWifi,
-      ),
-      _QuickActionButton(
-        icon: Icons.wifi_find,
-        label: 'setup.wifi.scan_networks'.tr(),
-        onPressed: _showWifiNetworksSheet,
-      ),
+      if (!kIsWeb)
+        _QuickActionButton(
+          icon: Icons.qr_code_scanner,
+          label: 'setup.wifi.qr_scan_label'.tr(),
+          onPressed: _scanQrCode,
+        ),
+      if (!kIsWeb)
+        _QuickActionButton(
+          icon: Icons.wifi,
+          label: 'setup.wifi.current_wifi_label'.tr(),
+          onPressed: _getCurrentWifi,
+        ),
+      if (!kIsWeb)
+        _QuickActionButton(
+          icon: Icons.wifi_find,
+          label: 'setup.wifi.scan_networks'.tr(),
+          onPressed: _showWifiNetworksSheet,
+        ),
     ],
   );
 

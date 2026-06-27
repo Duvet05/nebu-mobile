@@ -300,6 +300,7 @@ class BluetoothService {
 
   // Get connected devices
   Future<List<fbp.BluetoothDevice>> getConnectedDevices() async {
+    if (kIsWeb) return [];
     try {
       return fbp.FlutterBluePlus.connectedDevices;
     } on Exception catch (e) {
