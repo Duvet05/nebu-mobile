@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -402,15 +403,16 @@ Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
     secureStorage.delete(key: StorageKeys.localAvatar),
   ]);
 
-  // Delete avatar file if it exists
-  try {
-    final appDir = await getApplicationDocumentsDirectory();
-    final avatarFile = File('${appDir.path}/avatar.jpg');
-    if (avatarFile.existsSync()) {
-      avatarFile.deleteSync();
+  if (!kIsWeb) {
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final avatarFile = File('${appDir.path}/avatar.jpg');
+      if (avatarFile.existsSync()) {
+        avatarFile.deleteSync();
+      }
+    } on Exception {
+      // Avatar file cleanup is best-effort
     }
-  } on Exception {
-    // Avatar file cleanup is best-effort
   }
 
   if (!context.mounted) {

@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:web/web.dart' as web;
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
@@ -65,6 +68,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _initializeBluetooth() async {
+    if (kIsWeb) return;
     _adapterStateSubscription = fbp.FlutterBluePlus.adapterState.listen((
       state,
     ) {
@@ -90,16 +94,92 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _checkPermissionsAndStartScan() async {
+    if (kIsWeb) {
+      await _connectViaWebBluetooth();
+      return;
+    }
     final hasPermissions = await _requestPermissions();
     if (hasPermissions && _isBluetoothEnabled) {
       await _startScan();
     }
   }
 
+  Future<void> _connectViaWebBluetooth() async {
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _isScanning = true);
+    try {
+      final nav = web.window.navigator as JSObject;
+      if (!nav.has('bluetooth')) {
+        throw Exception('Web Bluetooth not supported');
+      }
+      final bluetooth = nav['bluetooth'] as JSObject;
+
+      final options = {
+        'filters': [
+          {'namePrefix': 'Nebu'},
+          {'namePrefix': 'ESP32'},
+          {'namePrefix': 'nebu'},
+        ],
+        'optionalServices': ['0000bc9a-7856-3412-3412-341278563412'],
+      }.jsify();
+
+      final devicePromise =
+          bluetooth.callMethodVarArgs<JSPromise>('requestDevice'.toJS, [options]);
+      final device = (await devicePromise.toDart) as JSObject;
+
+      final deviceName =
+          (device['name'] as JSString?)?.toDart ?? 'Nebu Device';
+
+      final gatt = device['gatt'] as JSObject;
+      final connectPromise =
+          gatt.callMethodVarArgs<JSPromise>('connect'.toJS, []);
+      await connectPromise.toDart;
+
+      if (!mounted) return;
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.check_circle, color: context.colors.textOnFilled, size: 20),
+              SizedBox(width: context.spacing.gapLg),
+              Text('setup.connection.connected_to'.tr(args: [deviceName])),
+            ],
+          ),
+          backgroundColor: context.colors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: context.radius.button),
+          margin: EdgeInsets.all(context.spacing.alertPadding),
+        ),
+      );
+
+      // Store device reference and navigate to WiFi setup
+      setState(() => _isScanning = false);
+      if (mounted) context.push(AppRoutes.wifiSetup.path);
+    } on Exception catch (e) {
+      _logger.e('Web Bluetooth error: $e');
+      if (mounted) {
+        setState(() => _isScanning = false);
+        final msg = e.toString();
+        if (!msg.contains('cancel')) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text('setup.connection.connection_failed'.tr()),
+              backgroundColor: context.colors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   Future<bool> _requestPermissions() async {
+    if (kIsWeb) return true;
     try {
       _logger.i('Requesting Bluetooth permissions...');
-      final permissions = Platform.isIOS
+      final permissions =
+          defaultTargetPlatform == TargetPlatform.iOS
           ? await [Permission.bluetooth].request()
           : await [
               Permission.bluetoothScan,
@@ -120,9 +200,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _startScan() async {
-    if (_isScanning) {
-      return;
-    }
+    if (_isScanning || kIsWeb) return;
 
     _logger.i('Starting Bluetooth scan...');
     setState(() {
@@ -132,7 +210,6 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     });
 
     try {
-      // Subscribe BEFORE starting scan to avoid missing early results
       await _scanSubscription?.cancel();
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
@@ -171,6 +248,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   Future<void> _stopScan() async {
     _scanTimeoutTimer?.cancel();
     _scanTimeoutTimer = null;
+    if (kIsWeb) return;
     try {
       await fbp.FlutterBluePlus.stopScan();
       await _scanSubscription?.cancel();
@@ -484,6 +562,33 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                           : _buildDevicesList(),
                     ),
 
+                    if (kIsWeb) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF3CD),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFFFD54F)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.info_outline_rounded,
+                                color: Color(0xFF856404), size: 20),
+                            SizedBox(width: context.spacing.gapMd),
+                            Expanded(
+                              child: Text(
+                                'Web Bluetooth only works on Chrome or Edge. Safari and Firefox are not supported.',
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: const Color(0xFF856404),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.sectionTitleBottomMargin),
+                    ],
+
                     // Bottom buttons
                     _PrimaryButton(
                       text: _isScanning
@@ -498,7 +603,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                         }
                         if (canProceed) {
                           context.push(AppRoutes.wifiSetup.path);
-                        } else if (!_isBluetoothEnabled) {
+                        } else if (!kIsWeb && !_isBluetoothEnabled) {
                           _showEnableBluetoothSheet();
                         } else {
                           _checkPermissionsAndStartScan();

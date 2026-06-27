@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -36,10 +36,10 @@ class BluetoothService {
   fbp.BluetoothDevice? get connectedDevice => _connectedDevice;
   bool get isConnected => _connectedDevice != null;
 
-  // Request Bluetooth permissions
   Future<bool> requestPermissions() async {
+    if (kIsWeb) return true;
     try {
-      if (Platform.isAndroid) {
+      if (defaultTargetPlatform == TargetPlatform.android) {
         final bluetoothScan = await Permission.bluetoothScan.request();
         final bluetoothConnect = await Permission.bluetoothConnect.request();
         final location = await Permission.location.request();
@@ -53,7 +53,7 @@ class BluetoothService {
           _logger.w('Bluetooth permissions not granted');
           return false;
         }
-      } else if (Platform.isIOS) {
+      } else if (defaultTargetPlatform == TargetPlatform.iOS) {
         final bluetooth = await Permission.bluetooth.request();
         if (!bluetooth.isGranted) {
           _logger.w('Bluetooth permission not granted on iOS');
@@ -68,10 +68,10 @@ class BluetoothService {
     }
   }
 
-  // Check if Bluetooth is available and enabled
   Future<bool> isBluetoothAvailable() async {
+    if (kIsWeb) return false;
     try {
-      if (Platform.isAndroid) {
+      if (defaultTargetPlatform == TargetPlatform.android) {
         final isSupported = await fbp.FlutterBluePlus.isSupported;
         if (!isSupported) {
           _logger.w('Bluetooth not supported on this device');
