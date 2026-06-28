@@ -71,6 +71,7 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
   - `Analyze`
   - `Format check`
   - `Unit tests` (placeholder-safe no-op when no `test/` suite exists yet)
+  - `Web release build`
   - `Android debug build`
   - `Android e2e` (`workflow_dispatch` to run)
   - `CodeQL` security scan
