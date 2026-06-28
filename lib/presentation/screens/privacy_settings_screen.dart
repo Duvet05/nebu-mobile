@@ -56,7 +56,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   }
 
   Future<void> _loadPermissions() async {
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      return;
+    }
     final results = await Future.wait([
       Permission.bluetooth.isGranted,
       Permission.camera.isGranted,

@@ -234,7 +234,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   }
 
   Future<void> _getCurrentWifi() async {
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      return;
+    }
     final status = await Permission.locationWhenInUse.request();
     if (status.isGranted) {
       try {

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,7 +38,9 @@ class BluetoothService {
   bool get isConnected => _connectedDevice != null;
 
   Future<bool> requestPermissions() async {
-    if (kIsWeb) return true;
+    if (kIsWeb) {
+      return true;
+    }
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
         final bluetoothScan = await Permission.bluetoothScan.request();
@@ -69,7 +72,9 @@ class BluetoothService {
   }
 
   Future<bool> isBluetoothAvailable() async {
-    if (kIsWeb) return false;
+    if (kIsWeb) {
+      return false;
+    }
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
         final isSupported = await fbp.FlutterBluePlus.isSupported;
@@ -300,7 +305,9 @@ class BluetoothService {
 
   // Get connected devices
   Future<List<fbp.BluetoothDevice>> getConnectedDevices() async {
-    if (kIsWeb) return [];
+    if (kIsWeb) {
+      return [];
+    }
     try {
       return fbp.FlutterBluePlus.connectedDevices;
     } on Exception catch (e) {

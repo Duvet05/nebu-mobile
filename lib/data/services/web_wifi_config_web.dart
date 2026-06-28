@@ -84,12 +84,7 @@ class WebWifiConfigSession {
     if (service == null) {
       return null;
     }
-
-    try {
-      return service as JSObject;
-    } catch (_) {
-      return null;
-    }
+    return service as JSObject;
   }
 
   Future<JSObject> _getCharacteristic(JSObject service, String uuid) async {
@@ -97,15 +92,23 @@ class WebWifiConfigSession {
       'getCharacteristic'.toJS,
       [uuid.toJS],
     );
-    return (await promise.toDart) as JSObject;
+    return _promiseToJsObject(promise, 'Web Bluetooth characteristic');
   }
 
   Future<JSObject?> _tryGetCharacteristic(JSObject service, String uuid) async {
     try {
       return await _getCharacteristic(service, uuid);
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     }
+  }
+
+  Future<JSObject> _promiseToJsObject(JSPromise promise, String context) async {
+    final value = await promise.toDart;
+    if (value == null) {
+      throw Exception('$context resolved to null');
+    }
+    return value as JSObject;
   }
 
   Future<void> _writeString(JSObject characteristic, String value) async {
@@ -119,7 +122,7 @@ class WebWifiConfigSession {
         );
         await promise.toDart;
         return;
-      } catch (_) {
+      } on Object catch (_) {
         // Fall through to the legacy Web Bluetooth write method.
       }
     }
@@ -161,7 +164,7 @@ class WebWifiConfigSession {
         _statusChangedListener,
       ]);
       _isListeningForStatus = true;
-    } catch (_) {
+    } on Object catch (_) {
       // Some firmwares expose STATUS as read-only. Polling remains the fallback.
     }
   }
@@ -182,8 +185,8 @@ class WebWifiConfigSession {
   }
 
   void _handleStatusChanged(JSObject event) {
-    final target = event['target'] as JSObject?;
-    final value = target?['value'] as JSObject?;
+    final target = _jsObjectProperty(event, 'target');
+    final value = target == null ? null : _jsObjectProperty(target, 'value');
     if (value == null) {
       return;
     }
@@ -207,9 +210,9 @@ class WebWifiConfigSession {
         'readValue'.toJS,
         [],
       );
-      final dataView = (await promise.toDart) as JSObject;
+      final dataView = await _promiseToJsObject(promise, 'WiFi status value');
       return _emitStatusFromDataView(dataView);
-    } catch (_) {
+    } on Object catch (_) {
       return null;
     } finally {
       _isReadingStatus = false;
@@ -234,7 +237,12 @@ class WebWifiConfigSession {
   }
 
   String _decodeDataView(JSObject dataView) {
-    final byteLength = (dataView['byteLength'] as JSNumber).toDartInt;
+    final byteLengthValue = dataView['byteLength'];
+    if (byteLengthValue == null) {
+      return '';
+    }
+
+    final byteLength = (byteLengthValue as JSNumber).toDartInt;
     final bytes = <int>[];
     for (var i = 0; i < byteLength; i += 1) {
       final byte = dataView.callMethodVarArgs<JSNumber>('getUint8'.toJS, [
@@ -243,5 +251,13 @@ class WebWifiConfigSession {
       bytes.add(byte.toDartInt);
     }
     return utf8.decode(bytes, allowMalformed: true);
+  }
+
+  JSObject? _jsObjectProperty(JSObject object, String key) {
+    final value = object[key];
+    if (value == null) {
+      return null;
+    }
+    return value as JSObject;
   }
 }

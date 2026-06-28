@@ -69,7 +69,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _initializeBluetooth() async {
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      return;
+    }
     _adapterStateSubscription = fbp.FlutterBluePlus.adapterState.listen((
       state,
     ) {
@@ -113,7 +115,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       if (!nav.has('bluetooth')) {
         throw Exception('Web Bluetooth not supported');
       }
-      final bluetooth = nav['bluetooth'] as JSObject;
+      final bluetooth = _requiredJsObject(
+        nav['bluetooth'],
+        'navigator.bluetooth',
+      );
 
       final options = {
         'filters': [
@@ -128,18 +133,23 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         'requestDevice'.toJS,
         [options],
       );
-      final device = (await devicePromise.toDart) as JSObject;
+      final device = await _promiseToJsObject(
+        devicePromise,
+        'Bluetooth device',
+      );
 
-      final deviceName = (device['name'] as JSString?)?.toDart ?? 'Nebu Device';
+      final deviceName = _optionalJsString(device['name']) ?? 'Nebu Device';
 
-      final gatt = device['gatt'] as JSObject;
+      final gatt = _requiredJsObject(device['gatt'], 'Bluetooth GATT server');
       final connectPromise = gatt.callMethodVarArgs<JSPromise>(
         'connect'.toJS,
         [],
       );
       await connectPromise.toDart;
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       messenger.showSnackBar(
         SnackBar(
@@ -162,18 +172,21 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       );
 
       // Discover WiFi service and pass GATT to WiFi setup
-      final serviceUuid = '0000bc9a-7856-3412-3412-341278563412';
+      const serviceUuid = '0000bc9a-7856-3412-3412-341278563412';
       final serviceProm = gatt.callMethodVarArgs<JSPromise>(
         'getPrimaryService'.toJS,
         [serviceUuid.toJS],
       );
-      final bleService = (await serviceProm.toDart) as JSObject;
+      final bleService = await _promiseToJsObject(
+        serviceProm,
+        'Nebu WiFi GATT service',
+      );
 
       setState(() => _isScanning = false);
       if (mounted) {
-        context.push(AppRoutes.wifiSetup.path, extra: bleService);
+        unawaited(context.push(AppRoutes.wifiSetup.path, extra: bleService));
       }
-    } catch (e) {
+    } on Object catch (e) {
       _logger.e('Web Bluetooth error: $e');
       if (mounted) {
         setState(() => _isScanning = false);
@@ -190,6 +203,28 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
   }
 
+  JSObject _requiredJsObject(JSAny? value, String context) {
+    if (value == null) {
+      throw Exception('$context is not available');
+    }
+    return value as JSObject;
+  }
+
+  Future<JSObject> _promiseToJsObject(JSPromise promise, String context) async {
+    final value = await promise.toDart;
+    if (value == null) {
+      throw Exception('$context resolved to null');
+    }
+    return value as JSObject;
+  }
+
+  String? _optionalJsString(JSAny? value) {
+    if (value == null) {
+      return null;
+    }
+    return (value as JSString).toDart;
+  }
+
   bool _isWebBluetoothCancellation(Object error) {
     final message = error.toString().toLowerCase();
     return message.contains('cancel') ||
@@ -199,7 +234,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<bool> _requestPermissions() async {
-    if (kIsWeb) return true;
+    if (kIsWeb) {
+      return true;
+    }
     try {
       _logger.i('Requesting Bluetooth permissions...');
       final permissions = defaultTargetPlatform == TargetPlatform.iOS
@@ -223,7 +260,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _startScan() async {
-    if (_isScanning || kIsWeb) return;
+    if (_isScanning || kIsWeb) {
+      return;
+    }
 
     _logger.i('Starting Bluetooth scan...');
     setState(() {
@@ -271,7 +310,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   Future<void> _stopScan() async {
     _scanTimeoutTimer?.cancel();
     _scanTimeoutTimer = null;
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      return;
+    }
     try {
       await fbp.FlutterBluePlus.stopScan();
       await _scanSubscription?.cancel();
