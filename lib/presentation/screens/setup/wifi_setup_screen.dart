@@ -11,6 +11,7 @@ import 'package:network_info_plus/network_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../core/constants/app_routes.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../../core/constants/validation_rules.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/services/esp32_wifi_config_service.dart';
@@ -49,6 +50,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   Timer? _timeoutTimer;
   final _networkInfo = NetworkInfo();
   WebWifiConfigSession? _webWifiConfigSession;
+  Future<void>? _webDeviceIdPersistFuture;
+  bool _hasPersistedWebDeviceId = false;
 
   @override
   void initState() {
@@ -57,6 +60,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (widget.webBleService != null) {
         _webWifiConfigSession = WebWifiConfigSession(widget.webBleService);
         _subscribeToWebWifiStatus();
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _showWebReconnectRequiredSnackBar();
+          }
+        });
       }
       return;
     }
@@ -147,13 +156,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           ),
         );
 
-        unawaited(
-          Future<void>.delayed(_kNavigationDelay, () {
-            if (mounted) {
-              context.push(AppRoutes.toyNameSetup.path);
-            }
-          }),
-        );
+        unawaited(_finishConnectedSetup());
 
       case ESP32WifiStatus.failed:
         _timeoutTimer?.cancel();
@@ -208,6 +211,67 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           duration: _kSnackBarDurationLong,
         ),
       );
+    }
+  }
+
+  void _showWebReconnectRequiredSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('setup.wifi.web_reconnect_required'.tr()),
+        backgroundColor: context.colors.warning,
+        duration: _kSnackBarDurationLong,
+        action: SnackBarAction(
+          label: 'setup.wifi.web_reconnect_action'.tr(),
+          textColor: context.colors.textOnFilled,
+          onPressed: () => context.go(AppRoutes.connectionSetup.path),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _finishConnectedSetup() async {
+    await _persistWebDeviceIdIfAvailable();
+    await Future<void>.delayed(_kNavigationDelay);
+    if (mounted) {
+      await context.push(AppRoutes.toyNameSetup.path);
+    }
+  }
+
+  Future<void> _persistWebDeviceIdIfAvailable() {
+    if (!kIsWeb || _hasPersistedWebDeviceId) {
+      return Future<void>.value();
+    }
+
+    final activePersist = _webDeviceIdPersistFuture;
+    if (activePersist != null) {
+      return activePersist;
+    }
+
+    final persistFuture = _readAndStoreWebDeviceId();
+    _webDeviceIdPersistFuture = persistFuture;
+    return persistFuture.whenComplete(() {
+      _webDeviceIdPersistFuture = null;
+    });
+  }
+
+  Future<void> _readAndStoreWebDeviceId() async {
+    final session = _webWifiConfigSession;
+    if (session == null || !session.isAvailable) {
+      return;
+    }
+
+    try {
+      final deviceId = await session.readDeviceId();
+      if (deviceId == null || deviceId.isEmpty) {
+        return;
+      }
+
+      final prefs = await ref.read(sharedPreferencesProvider.future);
+      await prefs.setString(StorageKeys.currentDeviceId, deviceId);
+      _hasPersistedWebDeviceId = true;
+      _logger.i('[WIFI_WEB] Device ID saved: $deviceId');
+    } on Object catch (e) {
+      _logger.w('[WIFI_WEB] Could not read Device ID: $e');
     }
   }
 
@@ -299,6 +363,13 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     if (_isConnecting) {
       return;
     }
+    if (kIsWeb) {
+      final session = _webWifiConfigSession;
+      if (session == null || !session.isAvailable) {
+        _showWebReconnectRequiredSnackBar();
+        return;
+      }
+    }
 
     final messenger = ScaffoldMessenger.of(context);
     final colors = context.colors;
@@ -307,10 +378,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
     try {
       if (kIsWeb) {
-        final session = _webWifiConfigSession;
-        if (session == null || !session.isAvailable) {
-          throw Exception('Web Bluetooth service is not connected');
-        }
+        final session = _webWifiConfigSession!;
 
         await session.sendWifiCredentials(
           ssid: _ssidController.text.trim(),
@@ -335,6 +403,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           backgroundColor: colors.success,
         ),
       );
+
+      unawaited(_persistWebDeviceIdIfAvailable());
 
       _timeoutTimer = Timer(_kConnectionTimeout, () {
         if (_isConnecting && mounted) {
@@ -391,7 +461,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
     if ((shouldContinue ?? false) && mounted) {
       setState(() => _isConnecting = false);
-      await context.push(AppRoutes.toyNameSetup.path);
+      await _persistWebDeviceIdIfAvailable();
+      if (mounted) {
+        await context.push(AppRoutes.toyNameSetup.path);
+      }
     }
   }
 

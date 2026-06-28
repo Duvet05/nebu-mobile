@@ -644,7 +644,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                             SizedBox(width: context.spacing.gapMd),
                             Expanded(
                               child: Text(
-                                'Web Bluetooth only works on Chrome or Edge. Safari and Firefox are not supported.',
+                                'setup.connection.web_bluetooth_notice'.tr(),
                                 style: textTheme.bodySmall?.copyWith(
                                   color: const Color(0xFF856404),
                                 ),

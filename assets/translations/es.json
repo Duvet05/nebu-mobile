@@ -35,7 +35,8 @@
       "available_devices": "Dispositivos Disponibles",
       "unknown_device": "Dispositivo Desconocido",
       "skip_for_now": "Omitir por ahora",
-      "permissions_denied_desc": "Se necesitan permisos de Bluetooth y ubicación para encontrar tu dispositivo."
+      "permissions_denied_desc": "Se necesitan permisos de Bluetooth y ubicación para encontrar tu dispositivo.",
+      "web_bluetooth_notice": "Web Bluetooth solo funciona en Chrome o Edge. Safari y Firefox no están soportados."
     },
     "wifi": {
       "title": "Conectar a Wi-Fi",
@@ -73,6 +74,8 @@
       "current_wifi_label": "WiFi Actual",
       "error_generic": "Algo salió mal. Intenta de nuevo.",
       "error_send_credentials": "No se pudieron enviar las credenciales. Intenta de nuevo.",
+      "web_reconnect_required": "Reconecta tu dispositivo Nebu para enviar credenciales Wi-Fi desde web.",
+      "web_reconnect_action": "RECONECTAR",
       "signal_info": "Señal: {} dBm"
     },
     "toy_name": {

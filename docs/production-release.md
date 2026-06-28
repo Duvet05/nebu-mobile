@@ -76,6 +76,24 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
   - `CodeQL` security scan
   - `Dependency Review` on pull requests
 
+## Web production deploy
+
+The Flutter web production target is the JS build served from Vercel:
+
+```sh
+flutter build web --release
+vercel deploy build/web --prod --archive=tgz --project nebu-mobile --yes
+```
+
+The public production alias is:
+
+- `https://nebu-mobile.vercel.app`
+
+The web WiFi provisioning flow depends on Web Bluetooth and is documented in
+[`docs/web-wifi-provisioning.md`](web-wifi-provisioning.md). Before deploying
+changes to `/setup/connection` or `/setup/wifi`, run the validation checklist
+from that document and confirm `/setup/connection` returns `200` after deploy.
+
 ## Branch protection
 
 - Main is protected to require pull requests with at least one approving review and

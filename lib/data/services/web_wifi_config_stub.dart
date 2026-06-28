@@ -17,5 +17,7 @@ class WebWifiConfigSession {
     throw UnsupportedError('Web Bluetooth is only available on web builds');
   }
 
+  Future<String?> readDeviceId() async => null;
+
   Future<void> dispose() async {}
 }

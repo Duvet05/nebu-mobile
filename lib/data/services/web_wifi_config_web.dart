@@ -19,6 +19,7 @@ class WebWifiConfigSession {
   JSObject? _ssidCharacteristic;
   JSObject? _passwordCharacteristic;
   JSObject? _statusCharacteristic;
+  JSObject? _deviceIdCharacteristic;
   Timer? _statusPollTimer;
   bool _initialized = false;
   bool _isReadingStatus = false;
@@ -50,6 +51,10 @@ class WebWifiConfigSession {
       service,
       BleConstants.esp32StatusCharUuid,
     );
+    _deviceIdCharacteristic = await _tryGetCharacteristic(
+      service,
+      BleConstants.esp32DeviceIdCharUuid,
+    );
     await _subscribeToStatusNotifications();
     _initialized = true;
   }
@@ -72,6 +77,17 @@ class WebWifiConfigSession {
 
     unawaited(_readAndEmitStatus());
     _startStatusPolling();
+  }
+
+  Future<String?> readDeviceId() async {
+    await initialize();
+
+    final deviceIdCharacteristic = _deviceIdCharacteristic;
+    if (deviceIdCharacteristic == null) {
+      return null;
+    }
+
+    return _readString(deviceIdCharacteristic);
   }
 
   Future<void> dispose() async {
@@ -216,6 +232,27 @@ class WebWifiConfigSession {
       return null;
     } finally {
       _isReadingStatus = false;
+    }
+  }
+
+  Future<String?> _readString(JSObject characteristic) async {
+    if (!characteristic.has('readValue')) {
+      return null;
+    }
+
+    try {
+      final promise = characteristic.callMethodVarArgs<JSPromise>(
+        'readValue'.toJS,
+        [],
+      );
+      final dataView = await _promiseToJsObject(
+        promise,
+        'Web Bluetooth string value',
+      );
+      final value = _decodeDataView(dataView).trim();
+      return value.isEmpty ? null : value;
+    } on Object catch (_) {
+      return null;
     }
   }
 
