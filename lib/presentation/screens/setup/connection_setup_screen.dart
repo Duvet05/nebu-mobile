@@ -3,7 +3,8 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,16 +124,19 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         'optionalServices': ['0000bc9a-7856-3412-3412-341278563412'],
       }.jsify();
 
-      final devicePromise =
-          bluetooth.callMethodVarArgs<JSPromise>('requestDevice'.toJS, [options]);
+      final devicePromise = bluetooth.callMethodVarArgs<JSPromise>(
+        'requestDevice'.toJS,
+        [options],
+      );
       final device = (await devicePromise.toDart) as JSObject;
 
-      final deviceName =
-          (device['name'] as JSString?)?.toDart ?? 'Nebu Device';
+      final deviceName = (device['name'] as JSString?)?.toDart ?? 'Nebu Device';
 
       final gatt = device['gatt'] as JSObject;
-      final connectPromise =
-          gatt.callMethodVarArgs<JSPromise>('connect'.toJS, []);
+      final connectPromise = gatt.callMethodVarArgs<JSPromise>(
+        'connect'.toJS,
+        [],
+      );
       await connectPromise.toDart;
 
       if (!mounted) return;
@@ -141,7 +145,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.check_circle, color: context.colors.textOnFilled, size: 20),
+              Icon(
+                Icons.check_circle,
+                color: context.colors.textOnFilled,
+                size: 20,
+              ),
               SizedBox(width: context.spacing.gapLg),
               Text('setup.connection.connected_to'.tr(args: [deviceName])),
             ],
@@ -153,15 +161,23 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         ),
       );
 
-      // Store device reference and navigate to WiFi setup
+      // Discover WiFi service and pass GATT to WiFi setup
+      final serviceUuid = '0000bc9a-7856-3412-3412-341278563412';
+      final serviceProm = gatt.callMethodVarArgs<JSPromise>(
+        'getPrimaryService'.toJS,
+        [serviceUuid.toJS],
+      );
+      final bleService = (await serviceProm.toDart) as JSObject;
+
       setState(() => _isScanning = false);
-      if (mounted) context.push(AppRoutes.wifiSetup.path);
-    } on Exception catch (e) {
+      if (mounted) {
+        context.push(AppRoutes.wifiSetup.path, extra: bleService);
+      }
+    } catch (e) {
       _logger.e('Web Bluetooth error: $e');
       if (mounted) {
         setState(() => _isScanning = false);
-        final msg = e.toString();
-        if (!msg.contains('cancel')) {
+        if (!_isWebBluetoothCancellation(e)) {
           messenger.showSnackBar(
             SnackBar(
               content: Text('setup.connection.connection_failed'.tr()),
@@ -174,12 +190,19 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
   }
 
+  bool _isWebBluetoothCancellation(Object error) {
+    final message = error.toString().toLowerCase();
+    return message.contains('cancel') ||
+        message.contains('notfounderror') ||
+        message.contains('user cancelled') ||
+        message.contains('user canceled');
+  }
+
   Future<bool> _requestPermissions() async {
     if (kIsWeb) return true;
     try {
       _logger.i('Requesting Bluetooth permissions...');
-      final permissions =
-          defaultTargetPlatform == TargetPlatform.iOS
+      final permissions = defaultTargetPlatform == TargetPlatform.iOS
           ? await [Permission.bluetooth].request()
           : await [
               Permission.bluetoothScan,
@@ -572,8 +595,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline_rounded,
-                                color: Color(0xFF856404), size: 20),
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: Color(0xFF856404),
+                              size: 20,
+                            ),
                             SizedBox(width: context.spacing.gapMd),
                             Expanded(
                               child: Text(
@@ -586,7 +612,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                           ],
                         ),
                       ),
-                      SizedBox(height: context.spacing.sectionTitleBottomMargin),
+                      SizedBox(
+                        height: context.spacing.sectionTitleBottomMargin,
+                      ),
                     ],
 
                     // Bottom buttons

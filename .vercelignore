@@ -1,0 +1,15 @@
+.dart_tool
+.git
+.idea
+
+build/**
+!build/web/**
+
+android
+ios
+app_store_screenshots
+integration_test
+test
+
+*.log
+.DS_Store

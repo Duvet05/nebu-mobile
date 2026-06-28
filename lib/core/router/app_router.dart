@@ -300,7 +300,7 @@ class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.wifiSetup.path,
-      builder: (_, _) => const WifiSetupScreen(),
+      builder: (_, s) => WifiSetupScreen(webBleService: s.extra),
     ),
     GoRoute(
       path: AppRoutes.ageSetup.path,

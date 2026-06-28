@@ -14,6 +14,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/validation_rules.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/services/esp32_wifi_config_service.dart';
+import '../../../data/services/web_wifi_config.dart';
 import '../../../data/services/wifi_qr_parser.dart';
 import '../../../data/services/wifi_service.dart';
 import '../../providers/api_provider.dart';
@@ -22,7 +23,9 @@ import '../../widgets/setup_widgets.dart';
 import '../../widgets/wifi_networks_sheet.dart';
 
 class WifiSetupScreen extends ConsumerStatefulWidget {
-  const WifiSetupScreen({super.key});
+  const WifiSetupScreen({this.webBleService, super.key});
+
+  final Object? webBleService;
 
   @override
   ConsumerState<WifiSetupScreen> createState() => _WifiSetupScreenState();
@@ -42,13 +45,22 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   bool _isConnecting = false;
   bool _hasNavigatedToNext = false;
   StreamSubscription<ESP32WifiStatus>? _statusSubscription;
+  StreamSubscription<ESP32WifiStatus>? _webStatusSubscription;
   Timer? _timeoutTimer;
   final _networkInfo = NetworkInfo();
+  WebWifiConfigSession? _webWifiConfigSession;
 
   @override
   void initState() {
     super.initState();
-    _subscribeToWifiStatus();
+    if (kIsWeb) {
+      if (widget.webBleService != null) {
+        _webWifiConfigSession = WebWifiConfigSession(widget.webBleService);
+        _subscribeToWebWifiStatus();
+      }
+      return;
+    }
+    unawaited(_subscribeToWifiStatus());
   }
 
   @override
@@ -56,7 +68,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     _ssidController.dispose();
     _passwordController.dispose();
     _statusSubscription?.cancel();
+    _webStatusSubscription?.cancel();
     _timeoutTimer?.cancel();
+    unawaited(_webWifiConfigSession?.dispose());
     super.dispose();
   }
 
@@ -69,113 +83,132 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     }
 
     _statusSubscription = esp32service.statusStream.listen(
-      (status) {
-        if (!mounted) {
-          return;
-        }
-
-        final messenger = ScaffoldMessenger.of(context);
-
-        switch (status) {
-          case ESP32WifiStatus.idle:
-            break;
-
-          case ESP32WifiStatus.connecting:
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('setup.wifi.status_connecting'.tr()),
-                backgroundColor: context.colors.info,
-                duration: _kSnackBarDuration,
-              ),
-            );
-
-          case ESP32WifiStatus.reconnecting:
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('setup.wifi.status_reconnecting'.tr()),
-                backgroundColor: context.colors.warning,
-                duration: _kSnackBarDuration,
-              ),
-            );
-
-          case ESP32WifiStatus.connected:
-            _timeoutTimer?.cancel();
-            setState(() => _isConnecting = false);
-
-            if (_hasNavigatedToNext) {
-              break;
-            }
-            _hasNavigatedToNext = true;
-
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('setup.wifi.status_connected'.tr()),
-                backgroundColor: context.colors.success,
-              ),
-            );
-
-            unawaited(
-              Future<void>.delayed(_kNavigationDelay, () {
-                if (mounted) {
-                  context.push(AppRoutes.toyNameSetup.path);
-                }
-              }),
-            );
-
-          case ESP32WifiStatus.failed:
-            _timeoutTimer?.cancel();
-            setState(() => _isConnecting = false);
-
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text('setup.wifi.status_failed'.tr()),
-                backgroundColor: context.colors.error,
-                duration: _kSnackBarDurationLong,
-                action: SnackBarAction(
-                  label: 'setup.wifi.retry'.tr(),
-                  textColor: context.colors.textOnFilled,
-                  onPressed: _connectToWifi,
-                ),
-              ),
-            );
-        }
-      },
-      onError: (Object error) {
-        _logger.e('WiFi status stream error: $error');
-        if (!mounted) {
-          return;
-        }
-
-        _timeoutTimer?.cancel();
-        if (_isConnecting) {
-          setState(() => _isConnecting = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('setup.wifi.error_status_stream'.tr()),
-              backgroundColor: context.colors.error,
-              duration: _kSnackBarDurationLong,
-            ),
-          );
-        }
-      },
-      onDone: () {
-        if (!mounted) {
-          return;
-        }
-
-        _timeoutTimer?.cancel();
-        if (_isConnecting) {
-          setState(() => _isConnecting = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('setup.wifi.error_ble_disconnected'.tr()),
-              backgroundColor: context.colors.error,
-              duration: _kSnackBarDurationLong,
-            ),
-          );
-        }
-      },
+      _handleWifiStatus,
+      onError: _handleWifiStatusStreamError,
+      onDone: _handleWifiStatusStreamDone,
     );
+  }
+
+  void _subscribeToWebWifiStatus() {
+    final session = _webWifiConfigSession;
+    if (session == null || !session.isAvailable) {
+      return;
+    }
+
+    _webStatusSubscription = session.statusStream.listen(
+      _handleWifiStatus,
+      onError: _handleWifiStatusStreamError,
+      onDone: _handleWifiStatusStreamDone,
+    );
+  }
+
+  void _handleWifiStatus(ESP32WifiStatus status) {
+    if (!mounted) {
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    switch (status) {
+      case ESP32WifiStatus.idle:
+        break;
+
+      case ESP32WifiStatus.connecting:
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('setup.wifi.status_connecting'.tr()),
+            backgroundColor: context.colors.info,
+            duration: _kSnackBarDuration,
+          ),
+        );
+
+      case ESP32WifiStatus.reconnecting:
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('setup.wifi.status_reconnecting'.tr()),
+            backgroundColor: context.colors.warning,
+            duration: _kSnackBarDuration,
+          ),
+        );
+
+      case ESP32WifiStatus.connected:
+        _timeoutTimer?.cancel();
+        setState(() => _isConnecting = false);
+
+        if (_hasNavigatedToNext) {
+          break;
+        }
+        _hasNavigatedToNext = true;
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('setup.wifi.status_connected'.tr()),
+            backgroundColor: context.colors.success,
+          ),
+        );
+
+        unawaited(
+          Future<void>.delayed(_kNavigationDelay, () {
+            if (mounted) {
+              context.push(AppRoutes.toyNameSetup.path);
+            }
+          }),
+        );
+
+      case ESP32WifiStatus.failed:
+        _timeoutTimer?.cancel();
+        setState(() => _isConnecting = false);
+
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('setup.wifi.status_failed'.tr()),
+            backgroundColor: context.colors.error,
+            duration: _kSnackBarDurationLong,
+            action: SnackBarAction(
+              label: 'setup.wifi.retry'.tr(),
+              textColor: context.colors.textOnFilled,
+              onPressed: _connectToWifi,
+            ),
+          ),
+        );
+    }
+  }
+
+  void _handleWifiStatusStreamError(Object error) {
+    _logger.e('WiFi status stream error: $error');
+    if (!mounted) {
+      return;
+    }
+
+    _timeoutTimer?.cancel();
+    if (_isConnecting) {
+      setState(() => _isConnecting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('setup.wifi.error_status_stream'.tr()),
+          backgroundColor: context.colors.error,
+          duration: _kSnackBarDurationLong,
+        ),
+      );
+    }
+  }
+
+  void _handleWifiStatusStreamDone() {
+    if (!mounted) {
+      return;
+    }
+
+    _timeoutTimer?.cancel();
+    if (_isConnecting) {
+      setState(() => _isConnecting = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('setup.wifi.error_ble_disconnected'.tr()),
+          backgroundColor: context.colors.error,
+          duration: _kSnackBarDurationLong,
+        ),
+      );
+    }
   }
 
   // ─── Actions ───
@@ -271,29 +304,41 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     setState(() => _isConnecting = true);
 
     try {
-      final service = await ref.read(esp32WifiConfigServiceProvider.future);
+      if (kIsWeb) {
+        final session = _webWifiConfigSession;
+        if (session == null || !session.isAvailable) {
+          throw Exception('Web Bluetooth service is not connected');
+        }
 
-      final result = await service.sendWifiCredentials(
-        ssid: _ssidController.text.trim(),
-        password: _passwordController.text,
-      );
+        await session.sendWifiCredentials(
+          ssid: _ssidController.text.trim(),
+          password: _passwordController.text,
+        );
+      } else {
+        final service = await ref.read(esp32WifiConfigServiceProvider.future);
 
-      if (result.success) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text('setup.wifi.credentials_sent'.tr()),
-            backgroundColor: colors.success,
-          ),
+        final result = await service.sendWifiCredentials(
+          ssid: _ssidController.text.trim(),
+          password: _passwordController.text,
         );
 
-        _timeoutTimer = Timer(_kConnectionTimeout, () {
-          if (_isConnecting && mounted) {
-            _showTimeoutDialog();
-          }
-        });
-      } else {
-        throw Exception(result.message);
+        if (!result.success) {
+          throw Exception(result.message);
+        }
       }
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('setup.wifi.credentials_sent'.tr()),
+          backgroundColor: colors.success,
+        ),
+      );
+
+      _timeoutTimer = Timer(_kConnectionTimeout, () {
+        if (_isConnecting && mounted) {
+          _showTimeoutDialog();
+        }
+      });
     } on TimeoutException {
       messenger.showSnackBar(
         SnackBar(
