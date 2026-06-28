@@ -103,7 +103,9 @@ class BleCharacteristicHandler {
     await _bluetoothService.writeCharacteristic(
       _characteristic!,
       value,
-      withoutResponse: _characteristic!.properties.writeWithoutResponse,
+      withoutResponse:
+          !_characteristic!.properties.write &&
+          _characteristic!.properties.writeWithoutResponse,
     );
   }
 

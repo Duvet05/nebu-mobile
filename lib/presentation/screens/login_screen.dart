@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
-import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/apple_auth_helper.dart';
 import '../../core/utils/google_auth_helper.dart';
@@ -304,7 +303,9 @@ void _showForgotPasswordDialog(
                               ),
                             ),
                           );
-                          _showResetPasswordDialog(context, ref, email);
+                          await context.push<void>(
+                            AppRoutes.resetPassword.path,
+                          );
                         }
                       } else {
                         setDialogState(() {
@@ -328,148 +329,6 @@ void _showForgotPasswordDialog(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : Text('auth.forgot_password_send'.tr()),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-void _showResetPasswordDialog(
-  BuildContext context,
-  WidgetRef ref,
-  String email,
-) {
-  final tokenController = TextEditingController();
-  final passwordController = TextEditingController();
-  final confirmController = TextEditingController();
-  var isLoading = false;
-  String? errorText;
-
-  showDialog<void>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setDialogState) => AlertDialog(
-        title: Text('auth.reset_password_title'.tr()),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'auth.reset_password_body'.tr(),
-                style: Theme.of(ctx).textTheme.bodyMedium,
-              ),
-              SizedBox(height: ctx.spacing.panelPadding),
-              AuthTextField(
-                controller: tokenController,
-                label: 'auth.reset_password_token_hint'.tr(),
-                prefixIcon: Icons.key_outlined,
-              ),
-              SizedBox(height: ctx.spacing.sectionTitleBottomMargin),
-              AuthTextField(
-                controller: passwordController,
-                label: 'auth.reset_password_new_password_hint'.tr(),
-                prefixIcon: Icons.lock_outline_rounded,
-                obscureText: true,
-              ),
-              SizedBox(height: ctx.spacing.sectionTitleBottomMargin),
-              AuthTextField(
-                controller: confirmController,
-                label: 'auth.reset_password_confirm_hint'.tr(),
-                prefixIcon: Icons.lock_outline_rounded,
-                obscureText: true,
-              ),
-              if (errorText != null) ...[
-                SizedBox(height: ctx.spacing.labelBottomMargin),
-                Text(
-                  errorText!,
-                  style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(ctx).colorScheme.error,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: isLoading ? null : () => Navigator.pop(ctx),
-            child: Text('common.cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: isLoading
-                ? null
-                : () async {
-                    final token = tokenController.text.trim();
-                    final password = passwordController.text;
-                    final confirm = confirmController.text;
-
-                    if (token.isEmpty || password.isEmpty) {
-                      return;
-                    }
-
-                    final passwordError = ValidationRules.validatePassword(
-                      password,
-                    );
-                    if (passwordError != null) {
-                      setDialogState(() {
-                        errorText = passwordError.tr();
-                      });
-                      return;
-                    }
-
-                    if (password != confirm) {
-                      setDialogState(() {
-                        errorText = 'auth.reset_password_mismatch'.tr();
-                      });
-                      return;
-                    }
-
-                    setDialogState(() {
-                      isLoading = true;
-                      errorText = null;
-                    });
-
-                    try {
-                      final success = await ref
-                          .read(authProvider.notifier)
-                          .resetPassword(token: token, newPassword: password);
-
-                      if (!ctx.mounted) {
-                        return;
-                      }
-
-                      if (success) {
-                        Navigator.pop(ctx);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('auth.reset_password_success'.tr()),
-                            ),
-                          );
-                        }
-                      } else {
-                        setDialogState(() {
-                          isLoading = false;
-                          errorText = 'auth.reset_password_error'.tr();
-                        });
-                      }
-                    } on Exception {
-                      if (ctx.mounted) {
-                        setDialogState(() {
-                          isLoading = false;
-                          errorText = 'auth.reset_password_error'.tr();
-                        });
-                      }
-                    }
-                  },
-            child: isLoading
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text('auth.reset_password_submit'.tr()),
           ),
         ],
       ),

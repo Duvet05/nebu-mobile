@@ -33,9 +33,11 @@ class WifiSetupScreen extends ConsumerStatefulWidget {
 }
 
 const _kConnectionTimeout = Duration(seconds: 45);
+const _kCredentialSendTimeout = Duration(seconds: 15);
 const _kNavigationDelay = Duration(seconds: 1);
 const _kSnackBarDuration = Duration(seconds: 2);
 const _kSnackBarDurationLong = Duration(seconds: 5);
+const _kWebDeviceIdReadTimeout = Duration(seconds: 3);
 
 final _logger = logger.Logger();
 
@@ -60,6 +62,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (widget.webBleService != null) {
         _webWifiConfigSession = WebWifiConfigSession(widget.webBleService);
         _subscribeToWebWifiStatus();
+        unawaited(_persistWebDeviceIdIfAvailable());
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
@@ -113,6 +116,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
   void _handleWifiStatus(ESP32WifiStatus status) {
     if (!mounted) {
+      return;
+    }
+    if (!_isConnecting && status != ESP32WifiStatus.idle) {
       return;
     }
 
@@ -233,7 +239,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     await _persistWebDeviceIdIfAvailable();
     await Future<void>.delayed(_kNavigationDelay);
     if (mounted) {
-      await context.push(AppRoutes.toyNameSetup.path);
+      unawaited(context.push(AppRoutes.toyNameSetup.path));
     }
   }
 
@@ -261,8 +267,13 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     }
 
     try {
-      final deviceId = await session.readDeviceId();
+      final deviceId = await session.readDeviceId().timeout(
+        _kWebDeviceIdReadTimeout,
+      );
       if (deviceId == null || deviceId.isEmpty) {
+        return;
+      }
+      if (!mounted) {
         return;
       }
 
@@ -380,17 +391,21 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       if (kIsWeb) {
         final session = _webWifiConfigSession!;
 
-        await session.sendWifiCredentials(
-          ssid: _ssidController.text.trim(),
-          password: _passwordController.text,
-        );
+        await session
+            .sendWifiCredentials(
+              ssid: _ssidController.text.trim(),
+              password: _passwordController.text,
+            )
+            .timeout(_kCredentialSendTimeout);
       } else {
         final service = await ref.read(esp32WifiConfigServiceProvider.future);
 
-        final result = await service.sendWifiCredentials(
-          ssid: _ssidController.text.trim(),
-          password: _passwordController.text,
-        );
+        final result = await service
+            .sendWifiCredentials(
+              ssid: _ssidController.text.trim(),
+              password: _passwordController.text,
+            )
+            .timeout(_kCredentialSendTimeout);
 
         if (!result.success) {
           throw Exception(result.message);
@@ -405,12 +420,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       );
 
       unawaited(_persistWebDeviceIdIfAvailable());
-
-      _timeoutTimer = Timer(_kConnectionTimeout, () {
-        if (_isConnecting && mounted) {
-          _showTimeoutDialog();
-        }
-      });
+      _startConnectionTimeout();
     } on TimeoutException {
       messenger.showSnackBar(
         SnackBar(
@@ -459,13 +469,29 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       ),
     );
 
-    if ((shouldContinue ?? false) && mounted) {
+    if (!mounted) {
+      return;
+    }
+
+    if (shouldContinue ?? false) {
       setState(() => _isConnecting = false);
+      _hasNavigatedToNext = true;
       await _persistWebDeviceIdIfAvailable();
       if (mounted) {
-        await context.push(AppRoutes.toyNameSetup.path);
+        unawaited(context.push(AppRoutes.toyNameSetup.path));
       }
+    } else if (_isConnecting) {
+      _startConnectionTimeout();
     }
+  }
+
+  void _startConnectionTimeout() {
+    _timeoutTimer?.cancel();
+    _timeoutTimer = Timer(_kConnectionTimeout, () {
+      if (_isConnecting && mounted) {
+        unawaited(_showTimeoutDialog());
+      }
+    });
   }
 
   void _cancelConnection() {
@@ -479,8 +505,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     );
   }
 
-  void _skipWifiSetup() {
-    context.push(AppRoutes.toyNameSetup.path);
+  Future<void> _skipWifiSetup() async {
+    _hasNavigatedToNext = true;
+    await _persistWebDeviceIdIfAvailable();
+    if (mounted) {
+      unawaited(context.push(AppRoutes.toyNameSetup.path));
+    }
   }
 
   // ─── Build ───
@@ -528,7 +558,11 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              const SetupHeader(currentStep: 2, totalSteps: 7),
+              SetupHeader(
+                currentStep: 2,
+                totalSteps: 7,
+                previousRoute: AppRoutes.connectionSetup.path,
+              ),
 
               Expanded(
                 child: Padding(
@@ -594,7 +628,7 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                           child: GestureDetector(
                             onTap: _isConnecting
                                 ? _cancelConnection
-                                : _skipWifiSetup,
+                                : () => unawaited(_skipWifiSetup()),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                 vertical: context.spacing.gapMd,

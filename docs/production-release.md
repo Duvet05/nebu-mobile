@@ -85,9 +85,40 @@ flutter build web --release
 vercel deploy build/web --prod --archive=tgz --project nebu-mobile --yes
 ```
 
-The public production alias is:
+The public production aliases are:
 
+- `https://app.flow-telligence.com`
 - `https://nebu-mobile.vercel.app`
+
+Backend CORS must allow every public web origin that serves this Flutter app.
+For the current production backend, keep these origins in the backend
+`IOT_ALLOWED_ORIGINS`/CORS allowlist:
+
+- `https://app.flow-telligence.com`
+- `https://nebu-mobile.vercel.app`
+
+Registration and login can pass direct API tests but still fail in the browser
+when the active app origin is missing from that allowlist.
+
+Production auth smoke checks:
+
+```sh
+curl -sS -D - -o /dev/null \
+  -X OPTIONS https://api.flow-telligence.com/api/v1/auth/register \
+  -H 'Origin: https://app.flow-telligence.com' \
+  -H 'Access-Control-Request-Method: POST' \
+  -H 'Access-Control-Request-Headers: content-type'
+```
+
+Expected headers include:
+
+- `access-control-allow-origin: https://app.flow-telligence.com`
+- `access-control-allow-credentials: true`
+
+For browser-level validation, run a Playwright smoke against the deployed app
+with a unique disposable email, assert `POST /api/v1/auth/register` returns
+`201`, and clean the test user plus related `subscriptions`, `person_names`,
+`persons`, and `email_logs` records from production data afterwards.
 
 The web WiFi provisioning flow depends on Web Bluetooth and is documented in
 [`docs/web-wifi-provisioning.md`](web-wifi-provisioning.md). Before deploying

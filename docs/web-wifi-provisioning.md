@@ -22,9 +22,15 @@ The mobile flow still uses `flutter_blue_plus` through
 | Browser does not support Web Bluetooth | High | Mitigated with HTTPS deploy and in-app browser notice | App |
 | `/setup/wifi` is opened without a live BLE session | High | Mitigated with reconnect snackbar/action | App |
 | Web flow sends WiFi but does not persist `DEVICE_ID` | High | Fixed by reading and storing `DEVICE_ID` when available | App/Firmware |
+| Optional `DEVICE_ID` read blocks navigation | Medium | Mitigated with a bounded read timeout | App |
+| Credential write hangs before connection timeout starts | Medium | Mitigated with a bounded credential-send timeout | App |
+| WiFi password leaks into BLE debug logs | High | Fixed by redacting password characteristic writes | App |
+| Mobile BLE writes skip response when both write modes exist | Medium | Fixed by preferring write-with-response | App |
 | Firmware UUID or characteristic contract differs | High | Documented; requires firmware verification | Firmware |
 | Device is not shown in browser picker | Medium | Requires advertised name prefix or service advertisement | Firmware/App |
 | STATUS is missing, unreadable, or not notifiable | Medium | App falls back to polling and timeout/continue | App/Firmware |
+| Late STATUS arrives after user cancels | Medium | Mitigated by ignoring non-idle status when not actively connecting | App |
+| User taps "wait" in timeout dialog and never gets another prompt | Low | Fixed by restarting the timeout timer | App |
 | GATT connection drops between setup screens | Medium | User sees reconnect/send failure path | Browser/App |
 | Web target is JS-only today, not Wasm-ready | Medium | Build passes JS; Wasm dry run warns on storage dependency | App |
 | User-facing text hardcoded outside i18n | Low | Fixed for Web Bluetooth notice | App |
@@ -106,6 +112,8 @@ Failure mode:
 - If firmware does not expose a readable `DEVICE_ID`, WiFi can still be
   provisioned but backend toy registration is skipped in the name step.
 - This is treated as a firmware contract issue, not a web transport issue.
+- If the browser or firmware stalls the optional `DEVICE_ID` read, navigation
+  still continues after a short timeout.
 
 Manual QA:
 
@@ -130,9 +138,14 @@ Write format:
 - SSID and password are UTF-8 strings.
 - The app tries `writeValueWithResponse` first and falls back to legacy
   `writeValue`.
+- The mobile BLE handler also prefers write-with-response when both write modes
+  are available.
+- Credential writes are bounded by a send timeout so the UI cannot spin
+  indefinitely before the connection-status timer starts.
 - SSID must be at most 32 UTF-8 bytes.
 - Password must be empty for open networks or 8-63 characters for secured
   networks.
+- Password characteristic writes are redacted in BLE logs.
 
 Status format:
 
@@ -183,6 +196,10 @@ Failure mode:
   the UI cannot know whether the ESP32 joined WiFi.
 - The user sees the timeout dialog after 45 seconds and can continue setup or
   retry.
+- If the user chooses to keep waiting, the app restarts the timeout timer so
+  they are prompted again instead of waiting indefinitely.
+- If the user cancels the WiFi attempt, late `CONNECTED` or `FAILED` statuses
+  are ignored so the app does not navigate unexpectedly.
 
 Manual QA:
 

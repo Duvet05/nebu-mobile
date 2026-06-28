@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart'
@@ -12,11 +10,11 @@ import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web/web.dart' as web;
 
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/toy_provider.dart';
 
@@ -111,41 +109,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _isScanning = true);
     try {
-      final nav = web.window.navigator as JSObject;
-      if (!nav.has('bluetooth')) {
-        throw Exception('Web Bluetooth not supported');
-      }
-      final bluetooth = _requiredJsObject(
-        nav['bluetooth'],
-        'navigator.bluetooth',
-      );
-
-      final options = {
-        'filters': [
-          {'namePrefix': 'Nebu'},
-          {'namePrefix': 'ESP32'},
-          {'namePrefix': 'nebu'},
-        ],
-        'optionalServices': ['0000bc9a-7856-3412-3412-341278563412'],
-      }.jsify();
-
-      final devicePromise = bluetooth.callMethodVarArgs<JSPromise>(
-        'requestDevice'.toJS,
-        [options],
-      );
-      final device = await _promiseToJsObject(
-        devicePromise,
-        'Bluetooth device',
-      );
-
-      final deviceName = _optionalJsString(device['name']) ?? 'Nebu Device';
-
-      final gatt = _requiredJsObject(device['gatt'], 'Bluetooth GATT server');
-      final connectPromise = gatt.callMethodVarArgs<JSPromise>(
-        'connect'.toJS,
-        [],
-      );
-      await connectPromise.toDart;
+      final connection = await connectToNebuWifiService();
 
       if (!mounted) {
         return;
@@ -161,7 +125,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                 size: 20,
               ),
               SizedBox(width: context.spacing.gapLg),
-              Text('setup.connection.connected_to'.tr(args: [deviceName])),
+              Text(
+                'setup.connection.connected_to'.tr(
+                  args: [connection.deviceName],
+                ),
+              ),
             ],
           ),
           backgroundColor: context.colors.success,
@@ -171,26 +139,17 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         ),
       );
 
-      // Discover WiFi service and pass GATT to WiFi setup
-      const serviceUuid = '0000bc9a-7856-3412-3412-341278563412';
-      final serviceProm = gatt.callMethodVarArgs<JSPromise>(
-        'getPrimaryService'.toJS,
-        [serviceUuid.toJS],
-      );
-      final bleService = await _promiseToJsObject(
-        serviceProm,
-        'Nebu WiFi GATT service',
-      );
-
       setState(() => _isScanning = false);
       if (mounted) {
-        unawaited(context.push(AppRoutes.wifiSetup.path, extra: bleService));
+        unawaited(
+          context.push(AppRoutes.wifiSetup.path, extra: connection.bleService),
+        );
       }
     } on Object catch (e) {
       _logger.e('Web Bluetooth error: $e');
       if (mounted) {
         setState(() => _isScanning = false);
-        if (!_isWebBluetoothCancellation(e)) {
+        if (!isWebBluetoothCancellation(e)) {
           messenger.showSnackBar(
             SnackBar(
               content: Text('setup.connection.connection_failed'.tr()),
@@ -201,36 +160,6 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         }
       }
     }
-  }
-
-  JSObject _requiredJsObject(JSAny? value, String context) {
-    if (value == null) {
-      throw Exception('$context is not available');
-    }
-    return value as JSObject;
-  }
-
-  Future<JSObject> _promiseToJsObject(JSPromise promise, String context) async {
-    final value = await promise.toDart;
-    if (value == null) {
-      throw Exception('$context resolved to null');
-    }
-    return value as JSObject;
-  }
-
-  String? _optionalJsString(JSAny? value) {
-    if (value == null) {
-      return null;
-    }
-    return (value as JSString).toDart;
-  }
-
-  bool _isWebBluetoothCancellation(Object error) {
-    final message = error.toString().toLowerCase();
-    return message.contains('cancel') ||
-        message.contains('notfounderror') ||
-        message.contains('user cancelled') ||
-        message.contains('user canceled');
   }
 
   Future<bool> _requestPermissions() async {

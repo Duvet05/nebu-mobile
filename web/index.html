@@ -38,6 +38,15 @@
       height: 100vh;
     }
   </style>
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      var isRoot = path === '/' || path === '/index.html';
+      if (!window.location.hash && !isRoot) {
+        window.location.replace('/#' + path + window.location.search);
+      }
+    }());
+  </script>
 </head>
 <body>
   <div class="loading">

@@ -122,6 +122,64 @@ void main() {
     expect(response.error, 'auth.error_unauthorized');
   });
 
+  test('register exitoso acepta contrato NestJS y guarda tokens', () async {
+    RequestOptions? request;
+    adapter.handle = (options) {
+      if (options.path == '/auth/register') {
+        request = options;
+        return _jsonResponse({
+          'accessToken': 'register-access-token',
+          'refreshToken': 'register-refresh-token',
+          'expiresIn': 3600,
+          'user': <String, dynamic>{
+            'id': 'user-2',
+            'email': 'new@email.com',
+            'firstName': 'New',
+            'lastName': 'User',
+          },
+        }, 201);
+      }
+      throw Exception('Unexpected request ${options.path}');
+    };
+
+    final service = AuthService(
+      dio: dio,
+      secureStorage: secureStorage,
+      logger: logger,
+    );
+
+    final response = await service.register(
+      email: 'new@email.com',
+      password: 'Aa12345678',
+      firstName: 'New',
+      lastName: 'User',
+      preferredLanguage: 'es',
+    );
+
+    expect(request?.data, containsPair('email', 'new@email.com'));
+    expect(request?.data, containsPair('password', 'Aa12345678'));
+    expect(request?.data, containsPair('firstName', 'New'));
+    expect(request?.data, containsPair('lastName', 'User'));
+    expect(request?.data, containsPair('preferredLanguage', 'es'));
+    expect(response.success, isTrue);
+    expect(response.user?.email, 'new@email.com');
+    expect(response.tokens?.accessToken, 'register-access-token');
+    expect(response.tokens?.refreshToken, 'register-refresh-token');
+    expect(response.expiresIn, 3600);
+    verify(
+      secureStorage.write(
+        key: StorageKeys.accessToken,
+        value: 'register-access-token',
+      ),
+    ).called(1);
+    verify(
+      secureStorage.write(
+        key: StorageKeys.refreshToken,
+        value: 'register-refresh-token',
+      ),
+    ).called(1);
+  });
+
   test(
     'refreshAccessToken sin refresh token hace logout y limpia almacenamiento',
     () async {

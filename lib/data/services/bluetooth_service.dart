@@ -278,14 +278,29 @@ class BluetoothService {
     bool withoutResponse = false,
   }) async {
     try {
+      final valueDescription = _logValueForCharacteristic(
+        characteristic,
+        value,
+      );
       _logger.d(
-        'Writing to characteristic: ${characteristic.uuid} - Value: ${utf8.decode(value, allowMalformed: true)}',
+        'Writing to characteristic: ${characteristic.uuid} - Value: $valueDescription',
       );
       await characteristic.write(value, withoutResponse: withoutResponse);
     } on Exception catch (e) {
       _logger.e('Error writing characteristic: $e');
       rethrow;
     }
+  }
+
+  String _logValueForCharacteristic(
+    fbp.BluetoothCharacteristic characteristic,
+    List<int> value,
+  ) {
+    if (characteristic.uuid.toString().toLowerCase() ==
+        BleConstants.esp32PasswordCharUuid.toLowerCase()) {
+      return '<redacted>';
+    }
+    return utf8.decode(value, allowMalformed: true);
   }
 
   // Subscribe to characteristic notifications

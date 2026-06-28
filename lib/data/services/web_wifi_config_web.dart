@@ -71,9 +71,13 @@ class WebWifiConfigSession {
       throw Exception('Web Bluetooth characteristics are not ready');
     }
 
-    await _writeString(ssidCharacteristic, ssid);
+    await _writeString(ssidCharacteristic, ssid, preferWithoutResponse: true);
     await Future<void>.delayed(const Duration(milliseconds: 100));
-    await _writeString(passwordCharacteristic, password);
+    await _writeString(
+      passwordCharacteristic,
+      password,
+      preferWithoutResponse: true,
+    );
 
     unawaited(_readAndEmitStatus());
     _startStatusPolling();
@@ -127,10 +131,34 @@ class WebWifiConfigSession {
     return value as JSObject;
   }
 
-  Future<void> _writeString(JSObject characteristic, String value) async {
+  Future<void> _writeString(
+    JSObject characteristic,
+    String value, {
+    bool preferWithoutResponse = false,
+  }) async {
     final bytes = Uint8List.fromList(utf8.encode(value)).toJS;
 
-    if (characteristic.has('writeValueWithResponse')) {
+    if (preferWithoutResponse &&
+        _supportsCharacteristicProperty(
+          characteristic,
+          'writeWithoutResponse',
+        ) &&
+        characteristic.has('writeValueWithoutResponse')) {
+      try {
+        final promise = characteristic.callMethodVarArgs<JSPromise>(
+          'writeValueWithoutResponse'.toJS,
+          [bytes],
+        );
+        await promise.toDart;
+        return;
+      } on Object catch (_) {
+        // Fall through to write-with-response for browsers/firmwares that
+        // reject without-response despite advertising it.
+      }
+    }
+
+    if (_supportsCharacteristicProperty(characteristic, 'write') &&
+        characteristic.has('writeValueWithResponse')) {
       try {
         final promise = characteristic.callMethodVarArgs<JSPromise>(
           'writeValueWithResponse'.toJS,
@@ -148,6 +176,20 @@ class WebWifiConfigSession {
       [bytes],
     );
     await promise.toDart;
+  }
+
+  bool _supportsCharacteristicProperty(JSObject characteristic, String key) {
+    final properties = _jsObjectProperty(characteristic, 'properties');
+    if (properties == null || !properties.has(key)) {
+      return false;
+    }
+
+    try {
+      final value = properties[key];
+      return value != null && (value as JSBoolean).toDart;
+    } on Object catch (_) {
+      return false;
+    }
   }
 
   void _startStatusPolling() {
