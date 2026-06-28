@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,12 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
   }
 
   Future<void> _initSession() async {
+    if (kIsWeb) {
+      if (mounted) {
+        context.showErrorSnackBar('walkie_talkie.connection_failed'.tr());
+      }
+      return;
+    }
     try {
       final micStatus = await Permission.microphone.request();
       if (!micStatus.isGranted && mounted) {

@@ -31,6 +31,7 @@ enum AppRoutes {
   personalities('/personalities'),
   playground('/playground'),
   verifyEmail('/verify-email'),
+  resetPassword('/reset-password'),
   healthCheck('/health-check'),
   knowledgeSearch('/knowledge-search'),
   voiceHistory('/voice-history'),

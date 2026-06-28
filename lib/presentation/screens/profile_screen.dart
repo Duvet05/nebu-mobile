@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -360,7 +361,7 @@ class ProfileScreen extends ConsumerWidget {
     required String? name,
     required ThemeData theme,
   }) {
-    if (localAvatar != null && File(localAvatar).existsSync()) {
+    if (!kIsWeb && localAvatar != null && File(localAvatar).existsSync()) {
       return ClipOval(
         child: Image.file(
           File(localAvatar),

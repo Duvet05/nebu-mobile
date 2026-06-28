@@ -36,6 +36,11 @@ Ver **[docs/production-release.md](docs/production-release.md)** para:
 - Firebase Android/iOS
 - Publicacion a Play Store
 
+Ver **[docs/web-wifi-provisioning.md](docs/web-wifi-provisioning.md)** para:
+- Mapa de riesgos del flujo WiFi desde web
+- Contrato BLE esperado por firmware ESP32
+- Checklist de validacion y QA manual con hardware
+
 ### 2. Instalar Dependencias
 
 ```bash
@@ -83,6 +88,11 @@ flutter run --dart-define=ENV=development
   - Conexión segura
   - Envío de credenciales WiFi
   - Tracking automático de conexión/desconexión
+
+- **Web WiFi Provisioning**
+  - Configuracion WiFi desde Chrome/Edge via Web Bluetooth
+  - Escritura de SSID/password por GATT
+  - Lectura de STATUS y DEVICE_ID cuando el firmware los expone
 
 - **IoT Management**
   - Dashboard de dispositivos

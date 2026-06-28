@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qr_code_dart_scan/qr_code_dart_scan.dart';
@@ -18,6 +19,22 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
   Widget build(BuildContext context) {
     final theme = context.theme;
     final notifier = ref.read(qrScannerProvider.notifier);
+
+    if (kIsWeb) {
+      return Scaffold(
+        appBar: AppBar(title: Text('qr_scanner.title'.tr())),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Text(
+              'QR scanner is not available on web',
+              style: theme.textTheme.bodyLarge,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text('qr_scanner.title'.tr())),

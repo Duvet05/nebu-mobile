@@ -26,6 +26,7 @@ import '../../presentation/screens/privacy_policy_screen.dart';
 import '../../presentation/screens/privacy_settings_screen.dart';
 import '../../presentation/screens/profile_screen.dart';
 import '../../presentation/screens/qr_scanner_screen.dart';
+import '../../presentation/screens/reset_password_screen.dart';
 import '../../presentation/screens/settings_screen.dart';
 import '../../presentation/screens/setup/age_setup_screen.dart';
 import '../../presentation/screens/setup/connection_setup_screen.dart';
@@ -85,6 +86,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final skippedSetup = setupAsync.value ?? false;
 
       final isVerifyPage = path == AppRoutes.verifyEmail.path;
+      final isResetPasswordPage = path == AppRoutes.resetPassword.path;
       final isAuthPage =
           path == AppRoutes.login.path ||
           path == AppRoutes.signUp.path ||
@@ -125,6 +127,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (user == null &&
           !isAuthPage &&
           !isVerifyPage &&
+          !isResetPasswordPage &&
           !isSetupPage &&
           !hasToys &&
           !skippedSetup) {
@@ -175,6 +178,12 @@ class AppRouter {
       builder: (_, s) => EmailVerificationScreen(
         email: s.extra as String?,
         token: s.uri.queryParameters['token'],
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.resetPassword.path,
+      builder: (_, s) => ResetPasswordScreen(
+        token: s.uri.queryParameters['token'] ?? s.uri.queryParameters['code'],
       ),
     ),
 
@@ -300,7 +309,7 @@ class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.wifiSetup.path,
-      builder: (_, _) => const WifiSetupScreen(),
+      builder: (_, s) => WifiSetupScreen(webBleService: s.extra),
     ),
     GoRoute(
       path: AppRoutes.ageSetup.path,

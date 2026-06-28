@@ -20,7 +20,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
-  <title>Nebu Mobile</title>
+  <title>Nebu</title>
   <link rel="manifest" href="manifest.json">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -38,6 +38,15 @@
       height: 100vh;
     }
   </style>
+  <script>
+    (function () {
+      var path = window.location.pathname;
+      var isRoot = path === '/' || path === '/index.html';
+      if (!window.location.hash && !isRoot) {
+        window.location.replace('/#' + path + window.location.search);
+      }
+    }());
+  </script>
 </head>
 <body>
   <div class="loading">

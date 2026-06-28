@@ -35,7 +35,8 @@
       "available_devices": "Dispositivos Disponibles",
       "unknown_device": "Dispositivo Desconocido",
       "skip_for_now": "Omitir por ahora",
-      "permissions_denied_desc": "Se necesitan permisos de Bluetooth y ubicación para encontrar tu dispositivo."
+      "permissions_denied_desc": "Se necesitan permisos de Bluetooth y ubicación para encontrar tu dispositivo.",
+      "web_bluetooth_notice": "Web Bluetooth solo funciona en Chrome o Edge. Safari y Firefox no están soportados."
     },
     "wifi": {
       "title": "Conectar a Wi-Fi",
@@ -73,6 +74,8 @@
       "current_wifi_label": "WiFi Actual",
       "error_generic": "Algo salió mal. Intenta de nuevo.",
       "error_send_credentials": "No se pudieron enviar las credenciales. Intenta de nuevo.",
+      "web_reconnect_required": "Reconecta tu dispositivo Nebu para enviar credenciales Wi-Fi desde web.",
+      "web_reconnect_action": "RECONECTAR",
       "signal_info": "Señal: {} dBm"
     },
     "toy_name": {
@@ -466,11 +469,13 @@
     "forgot_password_body": "Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.",
     "forgot_password_email_hint": "tu@correo.com",
     "forgot_password_send": "Enviar Enlace",
-    "forgot_password_success": "¡Enviamos un código de restablecimiento a tu correo!",
+    "forgot_password_success": "Enviamos instrucciones para restablecer tu contraseña a tu correo.",
     "forgot_password_error": "Algo salió mal. Por favor intenta de nuevo.",
     "reset_password_title": "Ingresa el Código",
-    "reset_password_body": "Revisa tu correo, ingresa el código de restablecimiento y tu nueva contraseña.",
+    "reset_password_body": "Revisa tu correo e ingresa el código de restablecimiento con tu nueva contraseña.",
+    "reset_password_body_link": "Ingresa tu nueva contraseña para terminar de restablecer tu cuenta.",
     "reset_password_token_hint": "Código de restablecimiento",
+    "reset_password_token_required": "El código de restablecimiento es requerido",
     "reset_password_new_password_hint": "Nueva contraseña",
     "reset_password_confirm_hint": "Confirmar nueva contraseña",
     "reset_password_submit": "Restablecer Contraseña",

@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/toy_provider.dart';
 
@@ -65,6 +67,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _initializeBluetooth() async {
+    if (kIsWeb) {
+      return;
+    }
     _adapterStateSubscription = fbp.FlutterBluePlus.adapterState.listen((
       state,
     ) {
@@ -90,16 +95,80 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _checkPermissionsAndStartScan() async {
+    if (kIsWeb) {
+      await _connectViaWebBluetooth();
+      return;
+    }
     final hasPermissions = await _requestPermissions();
     if (hasPermissions && _isBluetoothEnabled) {
       await _startScan();
     }
   }
 
+  Future<void> _connectViaWebBluetooth() async {
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _isScanning = true);
+    try {
+      final connection = await connectToNebuWifiService();
+
+      if (!mounted) {
+        return;
+      }
+
+      messenger.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: context.colors.textOnFilled,
+                size: 20,
+              ),
+              SizedBox(width: context.spacing.gapLg),
+              Text(
+                'setup.connection.connected_to'.tr(
+                  args: [connection.deviceName],
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: context.colors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: context.radius.button),
+          margin: EdgeInsets.all(context.spacing.alertPadding),
+        ),
+      );
+
+      setState(() => _isScanning = false);
+      if (mounted) {
+        unawaited(
+          context.push(AppRoutes.wifiSetup.path, extra: connection.bleService),
+        );
+      }
+    } on Object catch (e) {
+      _logger.e('Web Bluetooth error: $e');
+      if (mounted) {
+        setState(() => _isScanning = false);
+        if (!isWebBluetoothCancellation(e)) {
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text('setup.connection.connection_failed'.tr()),
+              backgroundColor: context.colors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    }
+  }
+
   Future<bool> _requestPermissions() async {
+    if (kIsWeb) {
+      return true;
+    }
     try {
       _logger.i('Requesting Bluetooth permissions...');
-      final permissions = Platform.isIOS
+      final permissions = defaultTargetPlatform == TargetPlatform.iOS
           ? await [Permission.bluetooth].request()
           : await [
               Permission.bluetoothScan,
@@ -120,7 +189,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   Future<void> _startScan() async {
-    if (_isScanning) {
+    if (_isScanning || kIsWeb) {
       return;
     }
 
@@ -132,7 +201,6 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     });
 
     try {
-      // Subscribe BEFORE starting scan to avoid missing early results
       await _scanSubscription?.cancel();
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
@@ -171,6 +239,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   Future<void> _stopScan() async {
     _scanTimeoutTimer?.cancel();
     _scanTimeoutTimer = null;
+    if (kIsWeb) {
+      return;
+    }
     try {
       await fbp.FlutterBluePlus.stopScan();
       await _scanSubscription?.cancel();
@@ -484,6 +555,38 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                           : _buildDevicesList(),
                     ),
 
+                    if (kIsWeb) ...[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF3CD),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFFFFD54F)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: Color(0xFF856404),
+                              size: 20,
+                            ),
+                            SizedBox(width: context.spacing.gapMd),
+                            Expanded(
+                              child: Text(
+                                'setup.connection.web_bluetooth_notice'.tr(),
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: const Color(0xFF856404),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: context.spacing.sectionTitleBottomMargin,
+                      ),
+                    ],
+
                     // Bottom buttons
                     _PrimaryButton(
                       text: _isScanning
@@ -498,7 +601,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                         }
                         if (canProceed) {
                           context.push(AppRoutes.wifiSetup.path);
-                        } else if (!_isBluetoothEnabled) {
+                        } else if (!kIsWeb && !_isBluetoothEnabled) {
                           _showEnableBluetoothSheet();
                         } else {
                           _checkPermissionsAndStartScan();

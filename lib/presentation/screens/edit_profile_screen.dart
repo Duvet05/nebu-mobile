@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -154,12 +155,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         _isUpdatingAvatar = true;
       });
 
-      // Copy to app documents dir with a stable filename
+      if (kIsWeb) {
+        return;
+      }
       final appDir = await getApplicationDocumentsDirectory();
       final avatarFile = File('${appDir.path}/avatar.jpg');
       await File(image.path).copy(avatarFile.path);
 
-      // Persist the path
       await ref
           .read(secureStorageProvider)
           .write(key: StorageKeys.localAvatar, value: avatarFile.path);
@@ -306,7 +308,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     required String? name,
     required ThemeData theme,
   }) {
-    if (localAvatar != null && File(localAvatar).existsSync()) {
+    if (!kIsWeb && localAvatar != null && File(localAvatar).existsSync()) {
       return ClipOval(
         child: Image.file(
           File(localAvatar),
