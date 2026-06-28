@@ -183,8 +183,7 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.resetPassword.path,
       builder: (_, s) => ResetPasswordScreen(
-        token:
-            s.uri.queryParameters['token'] ?? s.uri.queryParameters['code'],
+        token: s.uri.queryParameters['token'] ?? s.uri.queryParameters['code'],
       ),
     ),
 
