@@ -47,7 +47,7 @@ Code path:
 
 - `ConnectionSetupScreen._connectViaWebBluetooth()` checks
   `navigator.bluetooth`.
-- Vercel serves production over HTTPS at `https://nebu-mobile.vercel.app`.
+- Vercel serves production over HTTPS at `https://app.flow-telligence.com`.
 - The UI now shows a localized browser-support notice on web.
 
 Failure mode:
@@ -58,7 +58,7 @@ Failure mode:
 
 Manual QA:
 
-- Open `/setup/connection` in Chrome or Edge.
+- Open `https://app.flow-telligence.com/#/setup/connection` in Chrome or Edge.
 - Confirm the browser picker opens only after the user clicks start scan.
 - Confirm Safari/Firefox show the failure path instead of a stuck loading state.
 
@@ -254,13 +254,13 @@ rg "0000bc9a|0000c09a|writeValueWithResponse|startNotifications|characteristicva
 Production smoke test:
 
 ```sh
-curl -sI https://nebu-mobile.vercel.app/
-curl -sI https://nebu-mobile.vercel.app/setup/connection
+curl -sI https://app.flow-telligence.com/
+curl -sI https://app.flow-telligence.com/setup/connection
 ```
 
 Manual hardware QA remains required for final confidence:
 
-1. Open `https://nebu-mobile.vercel.app/setup/connection` in Chrome or Edge.
+1. Open `https://app.flow-telligence.com/#/setup/connection` in Chrome or Edge.
 2. Select a Nebu/ESP32 device from the browser Bluetooth picker.
 3. Confirm WiFi setup opens after service discovery.
 4. Enter SSID/password and confirm firmware receives both writes.

@@ -71,10 +71,16 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
     custom closed-testing track) plus release status.
   - AAB artifacts are uploaded before Play publishing, so a Play API failure does
     not lose the signed bundle.
-- `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`), uploads it to
-  App Store Connect/TestFlight using `xcrun altool`, and keeps the IPA as an
-  artifact. You can run it with `upload_to_app_store=false` to skip App Store
-  signing and upload while still keeping the job green.
+- `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`) with App Store
+  signing:
+  - Push to `main`: build the signed IPA and keep it as a GitHub artifact. This
+    does not upload to App Store Connect.
+  - Push tag `v*.*.*`: build the signed IPA, keep it as an artifact, validate it
+    with App Store Connect, and upload it for TestFlight/App Store processing.
+  - `workflow_dispatch`: build the signed IPA and optionally upload it. Use
+    `upload_to_app_store=false` for a build-only run.
+  - IPA artifacts are uploaded before App Store Connect validation/upload, so an
+    Apple API or processing failure does not lose the signed package.
 - `CI` now includes:
   - `Analyze`
   - `Format check`
@@ -94,17 +100,18 @@ flutter build web --release
 vercel deploy build/web --prod --archive=tgz --project nebu-mobile --yes
 ```
 
-The public production aliases are:
+The public production URL is:
 
 - `https://app.flow-telligence.com`
-- `https://nebu-mobile.vercel.app`
+
+Legacy Vercel aliases such as `https://nebu-mobile.vercel.app` should not be
+treated as production until a smoke check returns `200`.
 
 Backend CORS must allow every public web origin that serves this Flutter app.
 For the current production backend, keep these origins in the backend
 `IOT_ALLOWED_ORIGINS`/CORS allowlist:
 
 - `https://app.flow-telligence.com`
-- `https://nebu-mobile.vercel.app`
 
 Registration and login can pass direct API tests but still fail in the browser
 when the active app origin is missing from that allowlist.
@@ -132,7 +139,8 @@ with a unique disposable email, assert `POST /api/v1/auth/register` returns
 The web WiFi provisioning flow depends on Web Bluetooth and is documented in
 [`docs/web-wifi-provisioning.md`](web-wifi-provisioning.md). Before deploying
 changes to `/setup/connection` or `/setup/wifi`, run the validation checklist
-from that document and confirm `/setup/connection` returns `200` after deploy.
+from that document and confirm `https://app.flow-telligence.com/setup/connection`
+returns `200` after deploy.
 
 ## Branch protection
 
@@ -153,10 +161,47 @@ from that document and confirm `/setup/connection` returns `200` after deploy.
   staged for manual review in Play Console.
 - Increase the Flutter build number in `pubspec.yaml` for local store builds and
   iOS/App Store uploads. Android CI has its own monotonic build-number override.
+- App Store Connect also requires each uploaded iOS build number
+  (`CFBundleVersion`) to increase for a given app version. The iOS CI workflow
+  now overrides the Flutter build number with `IOS_BUILD_NUMBER_OFFSET +
+  GITHUB_RUN_NUMBER` unless `build_number` is provided manually. The current
+  offset is `1000`.
+- Uploading an IPA to App Store Connect is not the same as releasing to the App
+  Store. Apple processes the build first; after processing, it can be used for
+  TestFlight groups or selected for App Review/release in App Store Connect.
 - Keep LiveKit API keys, LiveKit API secrets, MongoDB, JWT, and OpenAI keys on
   the backend only. Do not compile those into the mobile app.
-- For signed iOS/TestFlight CI, add Apple certificate/provisioning/App Store
-  Connect API secrets and replace the no-codesign build with `flutter build ipa`.
+
+## iOS release runbook
+
+Build a signed IPA without uploading to Apple:
+
+1. Open GitHub Actions.
+2. Run `Build iOS`.
+3. Set `upload_to_app_store=false`.
+4. Download the `ios-runner-ipa-<run_id>` artifact after the job completes.
+
+Upload a build to App Store Connect/TestFlight:
+
+1. Create and push a version tag from the commit that should ship:
+   ```sh
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+   Tags matching `v*.*.*` trigger both Android and iOS release workflows. Use
+   `workflow_dispatch` instead when you need an iOS-only upload.
+2. Confirm the workflow summary shows the expected build name, generated build
+   number, and `Upload to App Store Connect: true`.
+3. Wait for App Store Connect processing to finish.
+4. In App Store Connect, assign the processed build to the intended TestFlight
+   group or App Store version. External TestFlight distribution may require
+   Beta App Review before testers can install the build.
+
+Manual iOS upload:
+
+1. Run `Build iOS` with `upload_to_app_store=true`.
+2. Provide `build_number` only when you need a specific `CFBundleVersion`; it
+   must be greater than the last uploaded build for that app version.
 
 ## Android release runbook
 
