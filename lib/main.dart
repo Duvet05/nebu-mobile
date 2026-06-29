@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'core/config/config.dart';
@@ -15,6 +16,7 @@ import 'presentation/providers/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   // Inicialización paralela (más rápido que secuencial)
   await Future.wait([
