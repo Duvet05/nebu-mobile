@@ -279,7 +279,12 @@ class TermsOfServiceScreen extends ConsumerWidget {
 
   Future<void> _openExternalLink(BuildContext context, String url) async {
     final uri = Uri.parse(url);
-    final success = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    var success = false;
+    try {
+      success = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on Exception {
+      success = false;
+    }
     if (!success && context.mounted) {
       ScaffoldMessenger.of(
         context,
