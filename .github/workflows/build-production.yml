@@ -2,16 +2,26 @@ name: Build & Publish Android
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*.*.*"
   workflow_dispatch:
     inputs:
+      publish_to_play:
+        description: "Publish the generated AAB to Google Play"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
       play_track:
         description: "Google Play track: internal, alpha, beta, production, or a custom closed track"
         required: false
         default: "internal"
       release_status:
-        description: "Google Play release status: DRAFT, COMPLETED, HALTED, IN_PROGRESS"
+        description: "Google Play release status. Use COMPLETED to make internal builds available to testers."
         required: false
         default: "DRAFT"
       build_name:
@@ -24,12 +34,13 @@ on:
 env:
   FLUTTER_VERSION: "3.41.7"
   ANDROID_NDK_VERSION: "28.2.13676358"
+  ANDROID_VERSION_CODE_OFFSET: "1000"
   PLAY_TRACK: ${{ github.event.inputs.play_track || 'internal' }}
-  PLAY_RELEASE_STATUS: ${{ github.event.inputs.release_status || 'DRAFT' }}
+  PLAY_RELEASE_STATUS: ${{ github.event.inputs.release_status || (startsWith(github.ref, 'refs/tags/') && 'COMPLETED' || 'DRAFT') }}
 
 jobs:
   build-and-publish:
-    name: Build AAB & Publish to Play Store
+    name: Build AAB and optional Play publish
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -71,6 +82,36 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+      - name: Resolve Android build metadata
+        env:
+          INPUT_BUILD_NAME: ${{ github.event.inputs.build_name || '' }}
+          INPUT_BUILD_NUMBER: ${{ github.event.inputs.build_number || '' }}
+        run: |
+          set -euo pipefail
+
+          pubspec_version="$(awk '/^version:/ { print $2; exit }' pubspec.yaml)"
+          default_build_name="${pubspec_version%%+*}"
+          build_name="${INPUT_BUILD_NAME:-$default_build_name}"
+          build_number="${INPUT_BUILD_NUMBER:-$((ANDROID_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER))}"
+
+          if ! [[ "${build_number}" =~ ^[0-9]+$ ]] || [ "${build_number}" -le 0 ]; then
+            echo "Android build number must be a positive integer: ${build_number}" >&2
+            exit 1
+          fi
+
+          {
+            echo "BUILD_NAME=${build_name}"
+            echo "BUILD_NUMBER=${build_number}"
+          } >> "${GITHUB_ENV}"
+
+          {
+            echo "### Android build"
+            echo "- Build name: ${build_name}"
+            echo "- Build number: ${build_number}"
+            echo "- Play track: ${PLAY_TRACK}"
+            echo "- Play release status: ${PLAY_RELEASE_STATUS}"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
       - name: Decode keystore
         env:
           UPLOAD_KEYSTORE_BASE64: ${{ secrets.UPLOAD_KEYSTORE_BASE64 }}
@@ -100,17 +141,6 @@ jobs:
             "storeFile=../upload-keystore.jks" \
             > android/key.properties
 
-      - name: Decode Play Store service account
-        env:
-          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-        run: |
-          set -euo pipefail
-          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
-            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
-            exit 1
-          fi
-          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" > android/service-account.json
-
       - name: Build AAB
         env:
           API_URL: ${{ vars.API_URL }}
@@ -120,8 +150,6 @@ jobs:
           GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
           GOOGLE_IOS_CLIENT_ID: ${{ vars.GOOGLE_IOS_CLIENT_ID }}
           FACEBOOK_APP_ID: ${{ vars.FACEBOOK_APP_ID }}
-          BUILD_NAME: ${{ github.event.inputs.build_name || '' }}
-          BUILD_NUMBER: ${{ github.event.inputs.build_number || '' }}
         run: |
           set -euo pipefail
           ENV=production
@@ -163,15 +191,30 @@ jobs:
 
           flutter build appbundle "${build_args[@]}"
 
-      - name: Publish to Play Store
-        run: cd android && ./gradlew publishReleaseBundle -Pdart-defines="${DART_DEFINES}"
-
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-aab
+          name: release-aab-${{ github.run_id }}
           path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          compression-level: 0
           retention-days: 30
+
+      - name: Decode Play Store service account
+        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.publish_to_play == 'true'
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
+          fi
+          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" > android/service-account.json
+
+      - name: Publish to Play Store
+        if: startsWith(github.ref, 'refs/tags/') || github.event.inputs.publish_to_play == 'true'
+        run: cd android && ./gradlew publishReleaseBundle -Pdart-defines="${DART_DEFINES}"
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')

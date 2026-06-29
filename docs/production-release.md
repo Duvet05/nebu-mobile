@@ -59,10 +59,18 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
 
 ## Workflows
 
-- `Build & Publish Android` builds an AAB and publishes it with the Triplet Play
-  Publisher plugin. Use `workflow_dispatch` to choose the Play track
-  (`internal`, `alpha`, `beta`, `production`, or a custom closed-testing track)
-  and release status (`DRAFT` by default).
+- `Build & Publish Android` builds a signed AAB with the Triplet Play Publisher
+  plugin wiring available for uploads:
+  - Push to `main`: build the signed AAB and keep it as a GitHub artifact. This
+    does not publish to Google Play.
+  - Push tag `v*.*.*`: build the signed AAB, keep it as an artifact, and publish
+    it to the `internal` Play track with release status `COMPLETED`.
+  - `workflow_dispatch`: build the signed AAB and optionally publish it. Use
+    `publish_to_play=false` for a build-only run, or keep `publish_to_play=true`
+    and choose the Play track (`internal`, `alpha`, `beta`, `production`, or a
+    custom closed-testing track) plus release status.
+  - AAB artifacts are uploaded before Play publishing, so a Play API failure does
+    not lose the signed bundle.
 - `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`), uploads it to
   App Store Connect/TestFlight using `xcrun altool`, and keeps the IPA as an
   artifact. You can run it with `upload_to_app_store=false` to skip App Store
@@ -134,11 +142,52 @@ from that document and confirm `/setup/connection` returns `200` after deploy.
 
 ## Store notes
 
-- Increase the Flutter build number for every Play Store or App Store upload.
+- Google Play requires every uploaded Android `versionCode` to be greater than
+  all previously uploaded bundles. The Android CI workflow now overrides the
+  Flutter build number with `ANDROID_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER`
+  unless `build_number` is provided manually. The current offset is `1000`, so
+  the next automated bundle will not collide with the existing Play bundle
+  `34`.
+- Use release status `COMPLETED` when an internal-testing build should become
+  available to testers immediately. Use `DRAFT` when the bundle should only be
+  staged for manual review in Play Console.
+- Increase the Flutter build number in `pubspec.yaml` for local store builds and
+  iOS/App Store uploads. Android CI has its own monotonic build-number override.
 - Keep LiveKit API keys, LiveKit API secrets, MongoDB, JWT, and OpenAI keys on
   the backend only. Do not compile those into the mobile app.
 - For signed iOS/TestFlight CI, add Apple certificate/provisioning/App Store
   Connect API secrets and replace the no-codesign build with `flutter build ipa`.
+
+## Android release runbook
+
+Build a signed AAB without publishing:
+
+1. Open GitHub Actions.
+2. Run `Build & Publish Android`.
+3. Set `publish_to_play=false`.
+4. Download the `release-aab-<run_id>` artifact after the job completes.
+
+Publish a build to internal testers:
+
+1. Create and push a version tag from the commit that should ship:
+   ```sh
+   git tag v1.2.3
+   git push origin v1.2.3
+   ```
+2. Confirm the workflow summary shows the expected build name, generated build
+   number, `internal` track, and `COMPLETED` release status.
+3. Check Play Console under `Test and release > Internal testing`. The new
+   release should be available to testers after Google finishes processing the
+   bundle.
+
+Manual Play upload:
+
+1. Run `Build & Publish Android` with `publish_to_play=true`.
+2. Set `play_track=internal` for tester builds.
+3. Set `release_status=COMPLETED` to make the release available, or `DRAFT` to
+   stage it without tester rollout.
+4. Provide `build_number` only when you need a specific Play version code. It
+   must be greater than every existing version code in Play Console.
 
 ## Technical debt
 
