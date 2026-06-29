@@ -76,6 +76,12 @@ jobs:
           /usr/libexec/PlistBuddy -c 'Add :CFBundleURLTypes:0:CFBundleURLSchemes array' ios/Runner/Info.plist
           /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string ${reversed_client_id}" ios/Runner/Info.plist
 
+      - name: Verify Apple associated domain
+        env:
+          APP_STORE_TEAM_ID: ${{ env.APP_STORE_TEAM_ID }}
+          APP_STORE_BUNDLE_ID: ${{ env.APP_STORE_BUNDLE_ID }}
+        run: ./scripts/check-ios-associated-domain.sh
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -162,6 +168,24 @@ jobs:
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           cp "$RUNNER_TEMP/AppStore.mobileprovision" \
             "$HOME/Library/MobileDevice/Provisioning Profiles/${PROFILE_ID}.mobileprovision"
+
+          security cms -D -i "$RUNNER_TEMP/AppStore.mobileprovision" > "$RUNNER_TEMP/AppStore.mobileprovision.plist"
+
+          apple_sign_in="$(
+            /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.applesignin:0' \
+              "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
+          )"
+          if [ "${apple_sign_in}" != "Default" ]; then
+            echo "Provisioning profile must include Sign in with Apple entitlement (Default)." >&2
+            exit 1
+          fi
+
+          if ! /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.associated-domains' \
+            "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null |
+            grep -q 'applinks:nebu.flow-telligence.com'; then
+            echo "Provisioning profile must include applinks:nebu.flow-telligence.com." >&2
+            exit 1
+          fi
 
           cat > ios/ExportOptions.plist <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
