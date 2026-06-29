@@ -13,6 +13,7 @@ import '../../presentation/screens/child_profile_screen.dart';
 import '../../presentation/screens/edit_profile_screen.dart';
 import '../../presentation/screens/email_verification_screen.dart';
 import '../../presentation/screens/health_check_screen.dart';
+import '../../presentation/screens/help_support_screen.dart';
 import '../../presentation/screens/home_screen.dart';
 import '../../presentation/screens/knowledge_search_screen.dart';
 import '../../presentation/screens/login_screen.dart';
@@ -91,10 +92,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           path == AppRoutes.login.path ||
           path == AppRoutes.signUp.path ||
           path == AppRoutes.welcome.path;
+      final isPublicPage = path == AppRoutes.helpSupport.path;
 
       // 1. Email verification gate (runs before splash to prevent bypass)
       //    emailVerified != true catches both false and null (social login edge case)
-      if (user != null && user.emailVerified != true) {
+      if (user != null && user.emailVerified != true && !isPublicPage) {
         if (!isVerifyPage) {
           return AppRoutes.verifyEmail.path;
         }
@@ -128,6 +130,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           !isAuthPage &&
           !isVerifyPage &&
           !isResetPasswordPage &&
+          !isPublicPage &&
           !isSetupPage &&
           !hasToys &&
           !skippedSetup) {
@@ -235,6 +238,10 @@ class AppRouter {
     GoRoute(
       path: AppRoutes.termsOfService.path,
       builder: (_, _) => const TermsOfServiceScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.helpSupport.path,
+      builder: (_, _) => const HelpSupportScreen(),
     ),
     GoRoute(
       path: AppRoutes.usageLimits.path,

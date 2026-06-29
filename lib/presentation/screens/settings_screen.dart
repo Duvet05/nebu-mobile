@@ -7,8 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../core/config/config.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/storage_keys.dart';
@@ -155,19 +153,7 @@ class SettingsScreen extends ConsumerWidget {
                         Icons.chevron_right,
                         color: context.colors.grey400,
                       ),
-                      onTap: () async {
-                        final url = Uri.parse(Config.supportUrl);
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(
-                            url,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        } else {
-                          if (context.mounted) {
-                            _showHelpDialog(context);
-                          }
-                        }
-                      },
+                      onTap: () => context.push(AppRoutes.helpSupport.path),
                     ),
 
                     _SettingsTile(
@@ -250,7 +236,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 child: CustomButton(
                   text: 'auth.sign_in'.tr(),
-                  onPressed: () => context.go(AppRoutes.signUp.path),
+                  onPressed: () => context.go(AppRoutes.login.path),
                   icon: Icons.login,
                   isFullWidth: true,
                 ),
@@ -261,71 +247,6 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 }
-
-void _showHelpDialog(BuildContext context) {
-  showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text('profile.help_support_title'.tr()),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('profile.help_need_help'.tr()),
-          SizedBox(height: context.spacing.sectionTitleBottomMargin),
-          _buildHelpOption(
-            Icons.email,
-            'profile.help_email'.tr(),
-            'profile.help_contact_email'.tr(),
-          ),
-          SizedBox(height: context.spacing.titleBottomMarginSm),
-          _buildHelpOption(
-            Icons.phone,
-            'profile.help_phone'.tr(),
-            'profile.help_contact_phone'.tr(),
-          ),
-          SizedBox(height: context.spacing.titleBottomMarginSm),
-          _buildHelpOption(
-            Icons.chat,
-            'profile.help_chat'.tr(),
-            'profile.help_chat_hours'.tr(),
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('profile.help_close'.tr()),
-        ),
-      ],
-    ),
-  );
-}
-
-Widget _buildHelpOption(IconData icon, String title, String subtitle) =>
-    Builder(
-      builder: (context) {
-        final theme = context.theme;
-        return Row(
-          children: [
-            Icon(icon, size: 20),
-            SizedBox(width: context.spacing.paragraphBottomMarginSm),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(subtitle, style: theme.textTheme.bodySmall),
-              ],
-            ),
-          ],
-        );
-      },
-    );
 
 void _showAboutAppDialog(BuildContext context, String appVersion) {
   showAboutDialog(
