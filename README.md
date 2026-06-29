@@ -580,8 +580,9 @@ flutter build ios --release
 
 ## � Contacto
 
-- **Repository**: [NEBUAI/nebu-mobile](https://github.com/NEBUAI/nebu-mobile)
-- **Branch**: BLE-sonido
+- **Repository**: [Duvet05/nebu-mobile](https://github.com/Duvet05/nebu-mobile)
+- **Production web app**: https://app.flow-telligence.com
+- **Branch**: main
 - **Backend API**: https://api.flow-telligence.com/api/v1
 
 ---
