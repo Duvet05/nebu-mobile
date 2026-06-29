@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:integration_test/integration_test.dart';
 import 'package:logger/logger.dart';
 import 'package:nebu_mobile_flutter/core/constants/app_routes.dart';
@@ -23,6 +24,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   setUp(() {
     SharedPreferences.setMockInitialValues(<String, Object>{});

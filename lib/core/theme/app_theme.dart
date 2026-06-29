@@ -60,93 +60,108 @@ class AppTheme {
   static TextTheme get _darkTextTheme => _getTextTheme(onBackgroundDark);
 
   /// Funnel Display for display/headline/title, Manrope for body/label.
-  static TextTheme _getTextTheme(Color textColor) {
-    final display = GoogleFonts.funnelDisplayTextTheme();
-    final body = GoogleFonts.manropeTextTheme();
+  static TextTheme _getTextTheme(Color textColor) => TextTheme(
+    // Display — Funnel Display
+    displayLarge: _displayTextStyle(
+      fontSize: 57,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    displayMedium: _displayTextStyle(
+      fontSize: 45,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    displaySmall: _displayTextStyle(
+      fontSize: 36,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    // Headline — Funnel Display
+    headlineLarge: _displayTextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.w600,
+      color: textColor,
+    ),
+    headlineMedium: _displayTextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      color: textColor,
+    ),
+    headlineSmall: _displayTextStyle(
+      fontSize: 24,
+      fontWeight: FontWeight.w600,
+      color: textColor,
+    ),
+    // Title — Funnel Display
+    titleLarge: _displayTextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+    titleMedium: _displayTextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+    titleSmall: _displayTextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+    // Body — Manrope
+    bodyLarge: _bodyTextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    bodyMedium: _bodyTextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    bodySmall: _bodyTextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: textColor,
+    ),
+    // Label — Manrope
+    labelLarge: _bodyTextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+    labelMedium: _bodyTextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+    labelSmall: _bodyTextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+      color: textColor,
+    ),
+  );
 
-    return TextTheme(
-      // Display — Funnel Display
-      displayLarge: display.displayLarge!.copyWith(
-        fontSize: 57,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      displayMedium: display.displayMedium!.copyWith(
-        fontSize: 45,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      displaySmall: display.displaySmall!.copyWith(
-        fontSize: 36,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      // Headline — Funnel Display
-      headlineLarge: display.headlineLarge!.copyWith(
-        fontSize: 32,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      headlineMedium: display.headlineMedium!.copyWith(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      headlineSmall: display.headlineSmall!.copyWith(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: textColor,
-      ),
-      // Title — Funnel Display
-      titleLarge: display.titleLarge!.copyWith(
-        fontSize: 22,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-      titleMedium: display.titleMedium!.copyWith(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-      titleSmall: display.titleSmall!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-      // Body — Manrope
-      bodyLarge: body.bodyLarge!.copyWith(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      bodyMedium: body.bodyMedium!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      bodySmall: body.bodySmall!.copyWith(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: textColor,
-      ),
-      // Label — Manrope
-      labelLarge: body.labelLarge!.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-      labelMedium: body.labelMedium!.copyWith(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-      labelSmall: body.labelSmall!.copyWith(
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-        color: textColor,
-      ),
-    );
-  }
+  static TextStyle _displayTextStyle({
+    required double fontSize,
+    required FontWeight fontWeight,
+    Color? color,
+  }) => GoogleFonts.funnelDisplay(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+  );
+
+  static TextStyle _bodyTextStyle({
+    required double fontSize,
+    required FontWeight fontWeight,
+    Color? color,
+  }) => GoogleFonts.manrope(
+    fontSize: fontSize,
+    fontWeight: fontWeight,
+    color: color,
+  );
 
   // ----------------- Main Themes -----------------
 
@@ -231,7 +246,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
-      textStyle: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600),
+      textStyle: _bodyTextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   );
 
@@ -245,7 +260,7 @@ class AppTheme {
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
       side: BorderSide(color: colorScheme.primary, width: 2),
-      textStyle: GoogleFonts.manrope(fontSize: 16, fontWeight: FontWeight.w600),
+      textStyle: _bodyTextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     ),
   );
 
