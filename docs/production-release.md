@@ -45,6 +45,14 @@ App Store (signed upload) release:
 If the workflow runs with `upload_to_app_store=true` and any of these are missing,
 it fails fast with explicit `Missing GitHub secret ...` messages.
 
+The App Store provisioning profile must be regenerated after enabling these
+capabilities for the app identifier in Apple Developer:
+
+- Associated Domains, including `applinks:nebu.flow-telligence.com`
+- Sign in with Apple
+
+The iOS workflow validates both capabilities before building the signed IPA.
+
 Encode local files without newlines before adding them as GitHub secrets:
 
 ```sh
@@ -166,6 +174,23 @@ returns `200` after deploy.
   now overrides the Flutter build number with `IOS_BUILD_NUMBER_OFFSET +
   GITHUB_RUN_NUMBER` unless `build_number` is provided manually. The current
   offset is `1000`.
+- The `nebu.flow-telligence.com` Apple App Site Association file must include
+  the real app identifier:
+  ```json
+  {
+    "applinks": {
+      "apps": [],
+      "details": [
+        {
+          "appID": "L7D2JCR89T.com.nebu.nebuMobileFlutter",
+          "paths": ["/verify-email*"]
+        }
+      ]
+    }
+  }
+  ```
+  The iOS workflow checks this before App Store builds. A placeholder such as
+  `TEAM_ID.com.nebu.nebuMobileFlutter` is not valid for universal links.
 - Uploading an IPA to App Store Connect is not the same as releasing to the App
   Store. Apple processes the build first; after processing, it can be used for
   TestFlight groups or selected for App Review/release in App Store Connect.
