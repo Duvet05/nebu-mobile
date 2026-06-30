@@ -183,7 +183,7 @@ returns `200` after deploy.
       "details": [
         {
           "appID": "L7D2JCR89T.com.nebu.nebuMobileFlutter",
-          "paths": ["/verify-email*"]
+          "paths": ["/verify-email*", "/reset-password*"]
         }
       ]
     }

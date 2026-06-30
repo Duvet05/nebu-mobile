@@ -80,6 +80,8 @@ jobs:
         env:
           APP_STORE_TEAM_ID: ${{ env.APP_STORE_TEAM_ID }}
           APP_STORE_BUNDLE_ID: ${{ env.APP_STORE_BUNDLE_ID }}
+          AASA_CHECK_ATTEMPTS: "30"
+          AASA_CHECK_DELAY_SECONDS: "10"
         run: ./scripts/check-ios-associated-domain.sh
 
       - name: Install dependencies
