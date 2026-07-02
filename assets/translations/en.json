@@ -94,7 +94,13 @@
       "validation_invalid_chars": "Only letters, numbers, spaces, and hyphens allowed",
       "next": "Next",
       "device_registered": "Toy registered successfully!",
-      "error_registering_device": "Could not register the toy. Please try again."
+      "device_transferred": "Toy transferred successfully!",
+      "transfer_owner_title": "Change toy owner",
+      "transfer_owner_message": "The toy {toyName} is already associated with another account. If you continue, ownership will be changed and it will be associated with this account.",
+      "transfer_owner_cancel": "Cancel",
+      "transfer_owner_confirm": "Change owner",
+      "error_registering_device": "Could not register the toy. Please try again.",
+      "error_transfer_device": "Could not change the toy owner. Please try again."
     },
     "age": {
       "title": "Child's Age",

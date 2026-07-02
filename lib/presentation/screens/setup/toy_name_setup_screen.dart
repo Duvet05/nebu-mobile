@@ -113,7 +113,6 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
     });
 
     try {
-      final toyService = ref.read(toyServiceProvider);
       final toyName = _controller.text.trim();
 
       logger.i(
@@ -121,7 +120,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       );
 
       // Crear el Toy en el backend
-      await toyService.createToy(
+      await ref.read(toyProvider.notifier).createToy(
         deviceId: deviceId,
         macAddress: macAddress,
         name: toyName,
@@ -134,15 +133,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
         '✅ [TOY_SETUP] Device registered successfully: $deviceIdentifier',
       );
 
-      // Marcar que el dispositivo fue registrado en el backend
-      await prefs.setBool(StorageKeys.setupDeviceRegistered, true);
-
-      // Limpiar Device info de SharedPreferences (ya está registrado)
-      await prefs.remove(StorageKeys.currentDeviceId);
-      await prefs.remove(StorageKeys.setupMacAddress);
-      ref
-          .read(loggerProvider)
-          .d('🗑️  [TOY_SETUP] Cleared Device info from local storage');
+      await _markDeviceRegistered(prefs);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -155,6 +146,83 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       }
 
       return true;
+    } on ConflictException catch (e) {
+      logger.w(
+        '⚠️ [TOY_SETUP] Device already registered, asking for transfer: $e',
+      );
+
+      if (!mounted) {
+        return false;
+      }
+
+      final toyName = _controller.text.trim();
+      final shouldTransfer = await _showTransferOwnerDialog(toyName);
+      if (!shouldTransfer || !mounted) {
+        return false;
+      }
+
+      try {
+        final response = await ref
+            .read(toyProvider.notifier)
+            .assignToy(
+              userId: user.id,
+              deviceId: deviceId,
+              macAddress: macAddress,
+              toyName: toyName,
+            );
+
+        if (!response.success) {
+          throw ConflictException(
+            response.message ?? 'setup.toy_name.error_transfer_device'.tr(),
+            statusCode: 409,
+          );
+        }
+
+        if (response.toy == null) {
+          await ref.read(toyProvider.notifier).loadMyToys();
+        }
+
+        await _markDeviceRegistered(prefs);
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('setup.toy_name.device_transferred'.tr()),
+              backgroundColor: context.colors.success,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+
+        logger.i(
+          '✅ [TOY_SETUP] Device transferred successfully: $deviceIdentifier',
+        );
+
+        return true;
+      } on Exception catch (assignError) {
+        logger.e('❌ [TOY_SETUP] Error transferring device: $assignError');
+
+        var errorMessage = 'setup.toy_name.error_transfer_device'.tr();
+        if (assignError is AppException) {
+          errorMessage = assignError.message;
+        }
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              backgroundColor: context.colors.error,
+              action: SnackBarAction(
+                label: 'common.retry'.tr(),
+                textColor: context.colors.textOnFilled,
+                onPressed: _registerDeviceIfNeeded,
+              ),
+            ),
+          );
+        }
+
+        return false;
+      }
     } on Exception catch (e) {
       logger.e('❌ [TOY_SETUP] Error registering device: $e');
 
@@ -185,6 +253,46 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
         });
       }
     }
+  }
+
+  Future<void> _markDeviceRegistered(SharedPreferences prefs) async {
+    // Marcar que el dispositivo fue registrado en el backend
+    await prefs.setBool(StorageKeys.setupDeviceRegistered, true);
+
+    // Limpiar Device info de SharedPreferences (ya está registrado)
+    await prefs.remove(StorageKeys.currentDeviceId);
+    await prefs.remove(StorageKeys.setupMacAddress);
+    ref
+        .read(loggerProvider)
+        .d('🗑️  [TOY_SETUP] Cleared Device info from local storage');
+  }
+
+  Future<bool> _showTransferOwnerDialog(String toyName) async {
+    final displayName = toyName.isEmpty ? 'Nebu' : toyName;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('setup.toy_name.transfer_owner_title'.tr()),
+        content: Text(
+          'setup.toy_name.transfer_owner_message'.tr(
+            namedArgs: {'toyName': displayName},
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text('setup.toy_name.transfer_owner_cancel'.tr()),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text('setup.toy_name.transfer_owner_confirm'.tr()),
+          ),
+        ],
+      ),
+    );
+
+    return confirmed ?? false;
   }
 
   String? _nonBlank(String? value) {

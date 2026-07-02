@@ -94,7 +94,13 @@
       "validation_invalid_chars": "Solo letras, números, espacios y guiones permitidos",
       "next": "Siguiente",
       "device_registered": "¡Juguete registrado exitosamente!",
-      "error_registering_device": "No se pudo registrar el juguete. Intenta de nuevo."
+      "device_transferred": "¡Juguete transferido exitosamente!",
+      "transfer_owner_title": "Cambiar dueño del juguete",
+      "transfer_owner_message": "El juguete {toyName} ya está asociado a otra cuenta. Si continúas, se cambiará de dueño y quedará asociado a esta cuenta.",
+      "transfer_owner_cancel": "Cancelar",
+      "transfer_owner_confirm": "Cambiar dueño",
+      "error_registering_device": "No se pudo registrar el juguete. Intenta de nuevo.",
+      "error_transfer_device": "No se pudo cambiar el dueño del juguete. Intenta de nuevo."
     },
     "age": {
       "title": "Edad del Niño",

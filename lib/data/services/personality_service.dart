@@ -23,30 +23,29 @@ class PersonalityService {
     },
     {
       'id': 'peruvian',
-      'display_name': '{name} Etnocacerista',
-      'description':
-          'Patriota andino cosmico que cree que los incas inventaron todo',
+      'display_name': '{name} Explorador Andino',
+      'description': 'Aventurero curioso que comparte historias y cultura peruana',
       'category': 'culture',
     },
     {
       'id': 'mexican',
-      'display_name': '{name} Azteca',
+      'display_name': '{name} Aventurero Mexicano',
       'description':
-          'Peluche mexicano orgulloso que cree que los aztecas y mayas inventaron todo',
+          'Companero alegre que comparte juegos, cuentos y cultura mexicana',
       'category': 'culture',
     },
     {
       'id': 'kpop',
-      'display_name': '{name} K-pop Warrior',
+      'display_name': '{name} Fan Musical',
       'description':
-          'Peluche fan del K-pop que mezcla datos curiosos con energia de idol coreano',
+          'Amigo musical con energia positiva para cantar, bailar y aprender',
       'category': 'music',
     },
     {
       'id': 'roblox',
       'display_name': '{name} Gamer',
       'description':
-          'Peluche gamer que habla en jerga de Roblox y cultura gaming para ninos',
+          'Companero gamer que propone retos creativos y juegos seguros',
       'category': 'gaming',
     },
   ];
@@ -69,13 +68,37 @@ class PersonalityService {
         return _fallback();
       }
 
-      _logger.d('Personality[0] keys: ${(items.first as Map).keys.toList()}');
+      if (items.first is Map) {
+        _logger.d('Personality[0] keys: ${(items.first as Map).keys.toList()}');
+      }
 
-      return items
-          .cast<Map<String, dynamic>>()
-          .map(_normalizePersonalityJson)
-          .map(Personality.fromJson)
-          .toList();
+      final personalities = <Personality>[];
+      for (final item in items) {
+        if (item is! Map) {
+          _logger.w('Skipping invalid personality item: ${item.runtimeType}');
+          continue;
+        }
+
+        try {
+          final normalized = _normalizePersonalityJson(
+            Map<String, dynamic>.from(item),
+          );
+          if (_nonBlank(normalized['id']?.toString()) == null) {
+            _logger.w('Skipping personality without id: $normalized');
+            continue;
+          }
+          personalities.add(Personality.fromJson(normalized));
+        } on Exception catch (parseError) {
+          _logger.w('Skipping invalid personality payload: $parseError');
+        }
+      }
+
+      if (personalities.isEmpty) {
+        _logger.w('No valid personalities parsed, using fallback');
+        return _fallback();
+      }
+
+      return personalities;
     } on Exception catch (e) {
       _logger.w('Failed to fetch personalities, using fallback: $e');
       return _fallback();
@@ -87,18 +110,29 @@ class PersonalityService {
       return response;
     }
     if (response is Map<String, dynamic>) {
-      final data = response['data'] ?? response['personalities'];
+      final data =
+          response['data'] ??
+          response['personalities'] ??
+          response['items'] ??
+          response['results'];
       if (data is List) {
         return data;
-      } else {
-        _logger.e(
-          'getPersonalities: unexpected response shape: ${response.runtimeType}',
-        );
-        throw const ServerException(
-          'Unexpected response format from /agent/personalities',
-          statusCode: 500,
-        );
       }
+      if (data is Map<String, dynamic>) {
+        final nested =
+            data['personalities'] ?? data['items'] ?? data['results'];
+        if (nested is List) {
+          return nested;
+        }
+      }
+
+      _logger.e(
+        'getPersonalities: unexpected response shape: ${response.runtimeType}',
+      );
+      throw const ServerException(
+        'Unexpected response format from /agent/personalities',
+        statusCode: 500,
+      );
     }
 
     _logger.e(
@@ -112,9 +146,16 @@ class PersonalityService {
 
   Map<String, dynamic> _normalizePersonalityJson(Map<String, dynamic> json) {
     final normalized = Map<String, dynamic>.from(json);
-    normalized['display_name'] ??= normalized['name'];
-    normalized['description'] ??= '';
+    normalized['id'] ??= normalized['key'] ?? normalized['slug'];
+    normalized['display_name'] ??=
+        normalized['name'] ?? normalized['displayName'] ?? normalized['title'];
+    normalized['description'] = normalized['description']?.toString() ?? '';
     return normalized;
+  }
+
+  String? _nonBlank(String? value) {
+    final normalized = value?.trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
   }
 
   List<Personality> _fallback() {

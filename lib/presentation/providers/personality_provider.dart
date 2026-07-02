@@ -56,11 +56,19 @@ class PersonalitiesNotifier extends AsyncNotifier<List<Personality>> {
     }
     try {
       final list = jsonDecode(raw) as List;
-      return list
+      final personalities = list
           .cast<Map<String, dynamic>>()
           .map(Personality.fromJson)
           .toList();
+      if (personalities.isEmpty) {
+        unawaited(prefs.remove(StorageKeys.personalitiesCache));
+        unawaited(prefs.remove(StorageKeys.personalitiesCacheTs));
+        return null;
+      }
+      return personalities;
     } on Exception {
+      unawaited(prefs.remove(StorageKeys.personalitiesCache));
+      unawaited(prefs.remove(StorageKeys.personalitiesCacheTs));
       return null;
     }
   }
@@ -85,6 +93,10 @@ class PersonalitiesNotifier extends AsyncNotifier<List<Personality>> {
       if (disposed) {
         return;
       }
+      if (fresh.isEmpty) {
+        ref.read(loggerProvider).w('Personality refresh returned empty list');
+        return;
+      }
       await _saveToCache(prefs, fresh);
       state = AsyncValue.data(fresh);
     } on Exception catch (e) {
@@ -95,6 +107,11 @@ class PersonalitiesNotifier extends AsyncNotifier<List<Personality>> {
 
   Future<List<Personality>> _fetchAndCache(SharedPreferences prefs) async {
     final data = await _fetchFromApi();
+    if (data.isEmpty) {
+      unawaited(prefs.remove(StorageKeys.personalitiesCache));
+      unawaited(prefs.remove(StorageKeys.personalitiesCacheTs));
+      return data;
+    }
     await _saveToCache(prefs, data);
     return data;
   }

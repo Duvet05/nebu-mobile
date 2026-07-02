@@ -64,6 +64,34 @@ class _PersonalitySetupScreenState
     }
   }
 
+  void _selectDefaultIfNeeded(List<Personality> personalities) {
+    if (personalities.isEmpty) {
+      return;
+    }
+
+    final hasValidSelection =
+        _selectedId != null &&
+        personalities.any((personality) => personality.id == _selectedId);
+    if (hasValidSelection) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      final stillHasValidSelection =
+          _selectedId != null &&
+          personalities.any((personality) => personality.id == _selectedId);
+      if (stillHasValidSelection) {
+        return;
+      }
+
+      setState(() => _selectedId = personalities.first.id);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -165,6 +193,8 @@ class _PersonalitySetupScreenState
                               ),
                             );
                           }
+
+                          _selectDefaultIfNeeded(personalities);
 
                           return ListView.builder(
                             itemCount: personalities.length,

@@ -94,7 +94,13 @@
       "validation_invalid_chars": "Apenas letras, números, espaços e hífens são permitidos",
       "next": "Próximo",
       "device_registered": "Brinquedo registrado com sucesso!",
-      "error_registering_device": "Não foi possível registrar o brinquedo. Por favor, tente novamente."
+      "device_transferred": "Brinquedo transferido com sucesso!",
+      "transfer_owner_title": "Alterar dono do brinquedo",
+      "transfer_owner_message": "O brinquedo {toyName} já está associado a outra conta. Se você continuar, o dono será alterado e ele ficará associado a esta conta.",
+      "transfer_owner_cancel": "Cancelar",
+      "transfer_owner_confirm": "Alterar dono",
+      "error_registering_device": "Não foi possível registrar o brinquedo. Por favor, tente novamente.",
+      "error_transfer_device": "Não foi possível alterar o dono do brinquedo. Por favor, tente novamente."
     },
     "age": {
       "title": "Idade da Criança",
