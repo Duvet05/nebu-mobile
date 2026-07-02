@@ -16,36 +16,37 @@ class PersonalityService {
   static const List<Map<String, dynamic>> _fallbackPersonalities = [
     {
       'id': 'neutral',
-      'display_name': '{name} Estandar',
+      'display_name': '{name} Companero',
       'description':
-          'Companero empatico y carismatico para aprender cosas increibles',
+          'Amigo calido y curioso para conversar, imaginar y aprender juntos',
       'category': 'general',
     },
     {
       'id': 'peruvian',
-      'display_name': '{name} Explorador Andino',
-      'description': 'Aventurero curioso que comparte historias y cultura peruana',
+      'display_name': '{name} Explorador Peruano',
+      'description':
+          'Aventurero respetuoso que comparte cuentos, juegos y cultura peruana',
       'category': 'culture',
     },
     {
       'id': 'mexican',
-      'display_name': '{name} Aventurero Mexicano',
+      'display_name': '{name} Explorador Mexicano',
       'description':
-          'Companero alegre que comparte juegos, cuentos y cultura mexicana',
+          'Companero alegre que comparte cuentos, juegos y cultura mexicana',
       'category': 'culture',
     },
     {
       'id': 'kpop',
-      'display_name': '{name} Fan Musical',
+      'display_name': '{name} Estrella Musical',
       'description':
-          'Amigo musical con energia positiva para cantar, bailar y aprender',
+          'Amigo musical con energia positiva para cantar, bailar y crear',
       'category': 'music',
     },
     {
       'id': 'roblox',
-      'display_name': '{name} Gamer',
+      'display_name': '{name} Constructor Gamer',
       'description':
-          'Companero gamer que propone retos creativos y juegos seguros',
+          'Companero creativo que propone retos, construcciones y juego seguro',
       'category': 'gaming',
     },
   ];
