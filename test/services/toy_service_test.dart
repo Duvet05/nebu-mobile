@@ -38,6 +38,85 @@ void main() {
     expect(toy.status, ToyStatus.active);
   });
 
+  test(
+    'createToy registra el nombre exacto en el payload de creación',
+    () async {
+      when(
+        apiService.post<Map<String, dynamic>>(
+          '/toys',
+          data: anyNamed('data') as Object?,
+        ),
+      ).thenAnswer(
+        (_) async => <String, dynamic>{
+          'id': 'toy-2',
+          'name': 'Aventurero',
+          'deviceId': 'ESP32_NODE_DIRECT',
+          'macAddress': 'MACNODEDIRECT',
+          'status': 'active',
+        },
+      );
+
+      await toyService.createToy(
+        name: 'Aventurero',
+        deviceId: 'ESP32_NODE_DIRECT',
+        macAddress: 'MACNODEDIRECT',
+      );
+
+      final payload =
+          verify(
+                apiService.post<Map<String, dynamic>>(
+                  '/toys',
+                  data: captureAnyNamed('data') as Object?,
+                ),
+              ).captured.single
+              as Map<String, dynamic>;
+
+      expect(payload['name'], 'Aventurero');
+      expect(payload['deviceId'], 'ESP32_NODE_DIRECT');
+      expect(payload['macAddress'], 'MACNODEDIRECT');
+      expect(payload.containsKey('toyName'), isFalse);
+      expect(payload.containsKey('userId'), isFalse);
+    },
+  );
+
+  test(
+    'createToy omite deviceId vacío y conserva macAddress fallback',
+    () async {
+      when(
+        apiService.post<Map<String, dynamic>>(
+          '/toys',
+          data: anyNamed('data') as Object?,
+        ),
+      ).thenAnswer(
+        (_) async => <String, dynamic>{
+          'id': 'toy-3',
+          'name': 'Aventurero',
+          'macAddress': 'AA:BB:CC:11:22:33',
+          'status': 'active',
+        },
+      );
+
+      await toyService.createToy(
+        name: 'Aventurero',
+        deviceId: '  ',
+        macAddress: ' AA:BB:CC:11:22:33 ',
+      );
+
+      final payload =
+          verify(
+                apiService.post<Map<String, dynamic>>(
+                  '/toys',
+                  data: captureAnyNamed('data') as Object?,
+                ),
+              ).captured.single
+              as Map<String, dynamic>;
+
+      expect(payload['name'], 'Aventurero');
+      expect(payload.containsKey('deviceId'), isFalse);
+      expect(payload['macAddress'], 'AA:BB:CC:11:22:33');
+    },
+  );
+
   test('getMyToys retorna lista vacía ante NotFoundException', () async {
     when(
       apiService.get<List<dynamic>>('/toys/my-toys'),

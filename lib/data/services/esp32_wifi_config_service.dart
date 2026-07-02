@@ -161,7 +161,12 @@ class ESP32WifiConfigService {
     await readVolume();
     await readMute();
 
-    _logger.i('[ESP32] Connected and ready');
+    // Store MAC address
+    final macAddress = device.remoteId.str;
+    await _prefs.setString(StorageKeys.setupMacAddress, macAddress);
+    _logger
+      ..d('[ESP32] MAC Address stored: $macAddress')
+      ..i('[ESP32] Connected and ready');
   }
 
   /// Send WiFi credentials to the ESP32.
