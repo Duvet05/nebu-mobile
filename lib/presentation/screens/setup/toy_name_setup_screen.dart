@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/constants/validation_rules.dart';
+import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
@@ -22,6 +23,10 @@ class ToyNameSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
+  static final RegExp _macAddressPattern = RegExp(
+    r'^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$|^([0-9A-Fa-f]{2}-){5}[0-9A-Fa-f]{2}$',
+  );
+
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isRegistering = false;
@@ -75,13 +80,23 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
     );
-    final deviceId = prefs.getString(StorageKeys.currentDeviceId);
+    final logger = ref.read(loggerProvider);
+    final deviceId = _nonBlank(prefs.getString(StorageKeys.currentDeviceId));
+    final storedMacAddress = _nonBlank(
+      prefs.getString(StorageKeys.setupMacAddress),
+    );
+    final macAddress = _validMacAddressOrNull(storedMacAddress);
+    final deviceIdentifier = deviceId ?? macAddress;
 
-    // Si no hay Device ID guardado, el usuario saltó la configuración WiFi
-    if (deviceId == null || deviceId.isEmpty) {
-      ref
-          .read(loggerProvider)
-          .d('📱 [TOY_SETUP] No Device ID found, skipping device registration');
+    if (storedMacAddress != null && macAddress == null) {
+      logger.w('[TOY_SETUP] Ignoring invalid stored MAC: $storedMacAddress');
+    }
+
+    // Si no hay Device ID ni MAC válida, el usuario saltó la configuración WiFi
+    if (deviceIdentifier == null) {
+      logger.d(
+        '📱 [TOY_SETUP] No Device ID or valid MAC found, skipping device registration',
+      );
       return true; // Continuar sin registrar
     }
 
@@ -89,9 +104,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
     final authState = ref.read(auth_provider.authProvider);
     final user = authState.value;
     if (user == null) {
-      ref
-          .read(loggerProvider)
-          .d('📱 [TOY_SETUP] User not authenticated, will save locally');
+      logger.d('📱 [TOY_SETUP] User not authenticated, will save locally');
       return true; // El juguete se guardará localmente al final del setup
     }
 
@@ -103,33 +116,33 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       final toyService = ref.read(toyServiceProvider);
       final toyName = _controller.text.trim();
 
-      ref
-          .read(loggerProvider)
-          .i(
-            '🚀 [TOY_SETUP] Registering device: $deviceId with name: $toyName',
-          );
+      logger.i(
+        '🚀 [TOY_SETUP] Registering device: $deviceIdentifier with name: $toyName',
+      );
 
       // Crear el Toy en el backend
       await toyService.createToy(
         deviceId: deviceId,
+        macAddress: macAddress,
         name: toyName,
         status: ToyStatus.active,
         model: 'Nebu',
         manufacturer: 'Nebu Technologies',
       );
 
-      ref
-          .read(loggerProvider)
-          .i('✅ [TOY_SETUP] Device registered successfully: $deviceId');
+      logger.i(
+        '✅ [TOY_SETUP] Device registered successfully: $deviceIdentifier',
+      );
 
       // Marcar que el dispositivo fue registrado en el backend
       await prefs.setBool(StorageKeys.setupDeviceRegistered, true);
 
-      // Limpiar el Device ID de SharedPreferences (ya está registrado)
+      // Limpiar Device info de SharedPreferences (ya está registrado)
       await prefs.remove(StorageKeys.currentDeviceId);
+      await prefs.remove(StorageKeys.setupMacAddress);
       ref
           .read(loggerProvider)
-          .d('🗑️  [TOY_SETUP] Cleared Device ID from local storage');
+          .d('🗑️  [TOY_SETUP] Cleared Device info from local storage');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -143,12 +156,17 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
 
       return true;
     } on Exception catch (e) {
-      ref.read(loggerProvider).e('❌ [TOY_SETUP] Error registering device: $e');
+      logger.e('❌ [TOY_SETUP] Error registering device: $e');
+
+      String errorMessage = 'setup.toy_name.error_registering_device'.tr();
+      if (e is AppException) {
+        errorMessage = e.message;
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('setup.toy_name.error_registering_device'.tr()),
+            content: Text(errorMessage),
             backgroundColor: context.colors.error,
             action: SnackBarAction(
               label: 'common.retry'.tr(),
@@ -167,6 +185,18 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
         });
       }
     }
+  }
+
+  String? _nonBlank(String? value) {
+    final normalized = value?.trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
+  }
+
+  String? _validMacAddressOrNull(String? value) {
+    if (value == null) {
+      return null;
+    }
+    return _macAddressPattern.hasMatch(value) ? value : null;
   }
 
   void _showSkipSetupDialog() {
