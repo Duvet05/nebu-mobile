@@ -21,6 +21,7 @@ class StorageKeys {
   static const String setupAnalytics = 'setup_analytics';
   static const String setupCompleted = 'setup_completed';
   static const String setupToyName = 'setup_toy_name';
+  static const String setupMacAddress = 'setup_mac_address';
   static const String setupCompletedLocally = 'setup_completed_locally';
 
   // Local Child Data

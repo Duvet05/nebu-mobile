@@ -12,6 +12,11 @@ class ToyService {
   final ApiService _apiService;
   final Logger _logger;
 
+  static String? _nonBlank(String? value) {
+    final normalized = value?.trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
+  }
+
   /// Registrar un nuevo juguete
   /// Backend identifies device by [deviceId] (preferred) or [macAddress] (legacy).
   /// User is auto-injected from JWT — do NOT send userId.
@@ -30,13 +35,16 @@ class ToyService {
     String? personalityProfile,
     String? greeting,
   }) async {
+    final normalizedDeviceId = _nonBlank(deviceId);
+    final normalizedMacAddress = _nonBlank(macAddress);
+
     _logger.d('Creating toy: $name');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/toys',
       data: {
         'name': name,
-        'deviceId': ?deviceId,
-        'macAddress': ?macAddress,
+        'deviceId': ?normalizedDeviceId,
+        'macAddress': ?normalizedMacAddress,
         'model': ?model,
         'manufacturer': ?manufacturer,
         if (status != null) 'status': status.name,
@@ -96,14 +104,18 @@ class ToyService {
     String? macAddress,
     String? toyName,
   }) async {
+    final normalizedDeviceId = _nonBlank(deviceId);
+    final normalizedMacAddress = _nonBlank(macAddress);
+    final normalizedToyName = _nonBlank(toyName);
+
     _logger.d('Assigning toy with deviceId: $deviceId, MAC: $macAddress');
     final response = await _apiService.post<Map<String, dynamic>>(
       '/toys/assign',
       data: {
         'userId': userId,
-        'deviceId': ?deviceId,
-        'macAddress': ?macAddress,
-        'toyName': ?toyName,
+        'deviceId': ?normalizedDeviceId,
+        'macAddress': ?normalizedMacAddress,
+        'toyName': ?normalizedToyName,
       },
     );
     _logger.d('Toy assigned successfully');
