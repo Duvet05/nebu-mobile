@@ -243,6 +243,24 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     }
   }
 
+  Future<void> _continueAfterManualWifiSuccess() async {
+    if (_hasNavigatedToNext) {
+      return;
+    }
+
+    _timeoutTimer?.cancel();
+    _hasNavigatedToNext = true;
+
+    if (mounted) {
+      setState(() => _isConnecting = false);
+    }
+
+    await _persistWebDeviceIdIfAvailable();
+    if (mounted) {
+      unawaited(context.push(AppRoutes.toyNameSetup.path));
+    }
+  }
+
   Future<void> _persistWebDeviceIdIfAvailable() {
     if (!kIsWeb || _hasPersistedWebDeviceId) {
       return Future<void>.value();
@@ -615,6 +633,56 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
                           isLoading: _isConnecting,
                           onPressed: _connectToWifi,
                         ),
+
+                        if (_isConnecting) ...[
+                          SizedBox(height: context.spacing.gapMd),
+                          Semantics(
+                            button: true,
+                            label: 'setup.wifi.manual_success_button'.tr(),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  unawaited(_continueAfterManualWifiSuccess()),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: context.spacing.gapXl,
+                                  vertical: context.spacing.gapLg,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: context.colors.success.withValues(
+                                    alpha: 0.10,
+                                  ),
+                                  borderRadius: context.radius.input,
+                                  border: Border.all(
+                                    color: context.colors.success,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.record_voice_over_rounded,
+                                      size: 18,
+                                      color: context.colors.success,
+                                    ),
+                                    SizedBox(width: context.spacing.gapSm),
+                                    Flexible(
+                                      child: Text(
+                                        'setup.wifi.manual_success_button'.tr(),
+                                        textAlign: TextAlign.center,
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                              color: context.colors.success,
+                                              fontWeight: FontWeight.w700,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
 
                         SizedBox(
                           height: context.spacing.sectionTitleBottomMargin,

@@ -53,6 +53,7 @@
       "credentials_sent": "¡Credenciales enviadas! Esperando a que tu dispositivo se conecte...",
       "status_connecting": "Tu dispositivo se está conectando a WiFi...",
       "status_connected": "¡WiFi conectado exitosamente!",
+      "manual_success_button": "¿Tu Nebu ya habló? Pasa a la siguiente",
       "status_failed": "Falló la conexión. Por favor verifica tus credenciales WiFi e intenta de nuevo.",
       "error_ble_disconnected": "Se perdió la conexión con tu dispositivo. Por favor reconecta e intenta de nuevo.",
       "error_ble_timeout": "Tu dispositivo no está respondiendo. Por favor intenta de nuevo o reinícialo.",
