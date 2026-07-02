@@ -11,6 +11,8 @@
     "connection": {
       "title": "Connect Your Device",
       "subtitle": "Let's connect your Nebu toy to get started",
+      "change_wifi_title": "Change WiFi",
+      "change_wifi_subtitle": "Connect your Nebu toy over Bluetooth to send it a new WiFi network.",
       "searching": "Searching for your Nebu device...",
       "start_scan": "Start Scan",
       "start_scan_hint": "Tap \"Start Scan\" to search for your Nebu device",
@@ -41,6 +43,8 @@
     "wifi": {
       "title": "Connect to Wi-Fi",
       "subtitle": "Enter the Wi-Fi credentials for the network you want your Nebu device to connect to.",
+      "change_title": "Change WiFi",
+      "change_subtitle": "Enter the new WiFi network for your Nebu toy.",
       "ssid_hint": "Wi-Fi Name",
       "password_hint": "Password",
       "connect_button": "Connect",
@@ -355,6 +359,7 @@
     "unknown_model": "Unknown Model",
     "unknown": "Unknown",
     "audio_controls": "Audio Controls",
+    "change_wifi": "Change WiFi",
     "save_changes": "Save Changes",
     "personality": "Personality",
     "personality_current": "Current personality",

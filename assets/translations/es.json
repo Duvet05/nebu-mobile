@@ -11,6 +11,8 @@
     "connection": {
       "title": "Conecta Tu Dispositivo",
       "subtitle": "Conectemos tu juguete Nebu para comenzar",
+      "change_wifi_title": "Cambiar WiFi",
+      "change_wifi_subtitle": "Conecta tu juguete Nebu por Bluetooth para enviarle una nueva red WiFi.",
       "searching": "Buscando tu dispositivo Nebu...",
       "start_scan": "Iniciar Escaneo",
       "start_scan_hint": "Toca \"Iniciar Escaneo\" para buscar tu dispositivo Nebu",
@@ -41,6 +43,8 @@
     "wifi": {
       "title": "Conectar a Wi-Fi",
       "subtitle": "Ingresa las credenciales de la red Wi-Fi a la que quieres que se conecte tu dispositivo Nebu.",
+      "change_title": "Cambiar WiFi",
+      "change_subtitle": "Ingresa la nueva red WiFi para tu juguete Nebu.",
       "ssid_hint": "Nombre de la Wi-Fi",
       "password_hint": "Contraseña",
       "connect_button": "Conectar",
@@ -355,6 +359,7 @@
     "unknown_model": "Modelo Desconocido",
     "unknown": "Desconocido",
     "audio_controls": "Controles de Audio",
+    "change_wifi": "Cambiar de WiFi",
     "save_changes": "Guardar Cambios",
     "personality": "Personalidad",
     "personality_current": "Personalidad actual",

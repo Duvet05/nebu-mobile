@@ -17,9 +17,15 @@ import '../../../core/theme/app_colors.dart';
 import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/toy_provider.dart';
+import 'setup_route_args.dart';
 
 class ConnectionSetupScreen extends ConsumerStatefulWidget {
-  const ConnectionSetupScreen({super.key});
+  const ConnectionSetupScreen({
+    this.args = const ConnectionSetupRouteArgs(),
+    super.key,
+  });
+
+  final ConnectionSetupRouteArgs args;
 
   @override
   ConsumerState<ConnectionSetupScreen> createState() =>
@@ -41,6 +47,14 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  bool get _isChangeWifiFlow => widget.args.mode == SetupFlowMode.changeWifi;
+
+  WifiSetupRouteArgs get _wifiSetupArgs => WifiSetupRouteArgs(
+    mode: widget.args.mode,
+    returnRoute: widget.args.returnRoute,
+    returnExtra: widget.args.returnExtra,
+  );
 
   @override
   void initState() {
@@ -142,7 +156,15 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       setState(() => _isScanning = false);
       if (mounted) {
         unawaited(
-          context.push(AppRoutes.wifiSetup.path, extra: connection.bleService),
+          context.push(
+            AppRoutes.wifiSetup.path,
+            extra: WifiSetupRouteArgs(
+              webBleService: connection.bleService,
+              mode: widget.args.mode,
+              returnRoute: widget.args.returnRoute,
+              returnExtra: widget.args.returnExtra,
+            ),
+          ),
         );
       }
     } on Object catch (e) {
@@ -488,6 +510,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     final textTheme = context.theme.textTheme;
     final colorScheme = context.theme.colorScheme;
     final canProceed = _selectedDevice != null;
+    final totalSteps = _isChangeWifiFlow ? 2 : 7;
 
     return Scaffold(
       body: SafeArea(
@@ -506,7 +529,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                   else
                     const SizedBox(width: 44),
                   const Spacer(),
-                  const _StepIndicator(currentStep: 1, totalSteps: 7),
+                  _StepIndicator(currentStep: 1, totalSteps: totalSteps),
                   const Spacer(),
                   const SizedBox(width: 44), // Balance
                 ],
@@ -523,7 +546,9 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
                     // Title section
                     Text(
-                      'setup.connection.title'.tr(),
+                      _isChangeWifiFlow
+                          ? 'setup.connection.change_wifi_title'.tr()
+                          : 'setup.connection.title'.tr(),
                       textAlign: TextAlign.center,
                       style: textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
@@ -536,6 +561,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                     Text(
                       _isScanning
                           ? 'setup.connection.searching'.tr()
+                          : _isChangeWifiFlow
+                          ? 'setup.connection.change_wifi_subtitle'.tr()
                           : 'setup.connection.subtitle'.tr(),
                       textAlign: TextAlign.center,
                       style: textTheme.titleMedium?.copyWith(
@@ -600,7 +627,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                           return;
                         }
                         if (canProceed) {
-                          context.push(AppRoutes.wifiSetup.path);
+                          context.push(
+                            AppRoutes.wifiSetup.path,
+                            extra: _wifiSetupArgs,
+                          );
                         } else if (!kIsWeb && !_isBluetoothEnabled) {
                           _showEnableBluetoothSheet();
                         } else {
@@ -609,23 +639,26 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       },
                     ),
 
-                    SizedBox(height: context.spacing.sectionTitleBottomMargin),
-
-                    GestureDetector(
-                      onTap: _showSkipSetupSheet,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: context.spacing.gapMd,
-                        ),
-                        child: Text(
-                          'setup.connection.skip_for_now'.tr(),
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
+                    if (!_isChangeWifiFlow) ...[
+                      SizedBox(
+                        height: context.spacing.sectionTitleBottomMargin,
+                      ),
+                      GestureDetector(
+                        onTap: _showSkipSetupSheet,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.spacing.gapMd,
+                          ),
+                          child: Text(
+                            'setup.connection.skip_for_now'.tr(),
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
 
                     SizedBox(height: context.spacing.panelPadding),
                   ],
