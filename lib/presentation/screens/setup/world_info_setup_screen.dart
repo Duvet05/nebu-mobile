@@ -29,6 +29,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
     final personalityId = prefs.getString(StorageKeys.setupPersonalityId);
 
     // Read all setup preferences collected during the wizard
+    final childName = prefs.getString(StorageKeys.setupChildName)?.trim();
     final childAge = prefs.getString(StorageKeys.setupChildAge);
     final voicePreference = prefs.getString(StorageKeys.setupVoicePreference);
     final favoritesJson = prefs.getString(StorageKeys.setupFavorites);
@@ -38,6 +39,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
 
     // Build settings map with collected preferences
     final Map<String, dynamic> setupSettings = {
+      if (childName != null && childName.isNotEmpty) 'childName': childName,
       'childAge': ?childAge,
       'voicePreference': ?voicePreference,
       if (favorites.isNotEmpty) 'interests': favorites,
@@ -65,7 +67,9 @@ class WorldInfoSetupScreen extends ConsumerWidget {
               final child = await ref
                   .read(personProvider.notifier)
                   .createPerson(
-                    givenName: 'setup.world_info.default_child_name'.tr(),
+                    givenName: childName != null && childName.isNotEmpty
+                        ? childName
+                        : 'setup.world_info.default_child_name'.tr(),
                     birthDate: birthDate,
                   );
               ownerId = child.id;
@@ -118,6 +122,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
     await Future.wait([
       prefs.remove(StorageKeys.setupDeviceRegistered),
       prefs.remove(StorageKeys.setupPersonalityId),
+      prefs.remove(StorageKeys.setupChildName),
       prefs.remove(StorageKeys.setupChildAge),
       prefs.remove(StorageKeys.setupVoicePreference),
       prefs.remove(StorageKeys.setupFavorites),
