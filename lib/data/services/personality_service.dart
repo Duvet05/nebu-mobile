@@ -68,8 +68,9 @@ class PersonalityService {
         return _fallback();
       }
 
-      if (items.first is Map) {
-        _logger.d('Personality[0] keys: ${(items.first as Map).keys.toList()}');
+      final firstItem = items.first;
+      if (firstItem is Map) {
+        _logger.d('Personality[0] keys: ${firstItem.keys.toList()}');
       }
 
       final personalities = <Personality>[];
@@ -105,7 +106,7 @@ class PersonalityService {
     }
   }
 
-  List<dynamic> _extractItems(dynamic response) {
+  List<Object?> _extractItems(Object? response) {
     if (response is List) {
       return response;
     }
@@ -153,17 +154,13 @@ class PersonalityService {
     return normalized;
   }
 
-  String? _nonBlank(String? value) {
-    final normalized = value?.trim();
-    return normalized == null || normalized.isEmpty ? null : normalized;
-  }
+  String? _nonBlank(String? value) =>
+      value == null || value.trim().isEmpty ? null : value.trim();
 
-  List<Personality> _fallback() {
-    return _fallbackPersonalities
-        .map(_normalizePersonalityJson)
-        .map(Personality.fromJson)
-        .toList();
-  }
+  List<Personality> _fallback() => _fallbackPersonalities
+      .map(_normalizePersonalityJson)
+      .map(Personality.fromJson)
+      .toList();
 
   Future<void> assignPersonalityToToy({
     required String toyId,
