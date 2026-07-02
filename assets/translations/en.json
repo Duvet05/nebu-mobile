@@ -11,6 +11,8 @@
     "connection": {
       "title": "Connect Your Device",
       "subtitle": "Let's connect your Nebu toy to get started",
+      "change_wifi_title": "Change WiFi",
+      "change_wifi_subtitle": "Connect your Nebu toy over Bluetooth to send it a new WiFi network.",
       "searching": "Searching for your Nebu device...",
       "start_scan": "Start Scan",
       "start_scan_hint": "Tap \"Start Scan\" to search for your Nebu device",
@@ -41,6 +43,8 @@
     "wifi": {
       "title": "Connect to Wi-Fi",
       "subtitle": "Enter the Wi-Fi credentials for the network you want your Nebu device to connect to.",
+      "change_title": "Change WiFi",
+      "change_subtitle": "Enter the new WiFi network for your Nebu toy.",
       "ssid_hint": "Wi-Fi Name",
       "password_hint": "Password",
       "connect_button": "Connect",
@@ -53,6 +57,7 @@
       "credentials_sent": "Credentials sent! Waiting for your device to connect...",
       "status_connecting": "Your device is connecting to WiFi...",
       "status_connected": "WiFi connected successfully!",
+      "manual_success_button": "Did your Nebu already speak? Go to the next step",
       "status_failed": "Connection failed. Please check your WiFi credentials and try again.",
       "error_ble_disconnected": "Lost connection to your device. Please reconnect and try again.",
       "error_ble_timeout": "Your device is not responding. Please try again or restart it.",
@@ -89,7 +94,13 @@
       "validation_invalid_chars": "Only letters, numbers, spaces, and hyphens allowed",
       "next": "Next",
       "device_registered": "Toy registered successfully!",
-      "error_registering_device": "Could not register the toy. Please try again."
+      "device_transferred": "Toy transferred successfully!",
+      "transfer_owner_title": "Change toy owner",
+      "transfer_owner_message": "The toy {toyName} is already associated with another account. If you continue, ownership will be changed and it will be associated with this account.",
+      "transfer_owner_cancel": "Cancel",
+      "transfer_owner_confirm": "Change owner",
+      "error_registering_device": "Could not register the toy. Please try again.",
+      "error_transfer_device": "Could not change the toy owner. Please try again."
     },
     "age": {
       "title": "Child's Age",
@@ -354,6 +365,7 @@
     "unknown_model": "Unknown Model",
     "unknown": "Unknown",
     "audio_controls": "Audio Controls",
+    "change_wifi": "Change WiFi",
     "save_changes": "Save Changes",
     "personality": "Personality",
     "personality_current": "Current personality",

@@ -11,6 +11,8 @@
     "connection": {
       "title": "Conecta Tu Dispositivo",
       "subtitle": "Conectemos tu juguete Nebu para comenzar",
+      "change_wifi_title": "Cambiar WiFi",
+      "change_wifi_subtitle": "Conecta tu juguete Nebu por Bluetooth para enviarle una nueva red WiFi.",
       "searching": "Buscando tu dispositivo Nebu...",
       "start_scan": "Iniciar Escaneo",
       "start_scan_hint": "Toca \"Iniciar Escaneo\" para buscar tu dispositivo Nebu",
@@ -41,6 +43,8 @@
     "wifi": {
       "title": "Conectar a Wi-Fi",
       "subtitle": "Ingresa las credenciales de la red Wi-Fi a la que quieres que se conecte tu dispositivo Nebu.",
+      "change_title": "Cambiar WiFi",
+      "change_subtitle": "Ingresa la nueva red WiFi para tu juguete Nebu.",
       "ssid_hint": "Nombre de la Wi-Fi",
       "password_hint": "Contraseña",
       "connect_button": "Conectar",
@@ -53,6 +57,7 @@
       "credentials_sent": "¡Credenciales enviadas! Esperando a que tu dispositivo se conecte...",
       "status_connecting": "Tu dispositivo se está conectando a WiFi...",
       "status_connected": "¡WiFi conectado exitosamente!",
+      "manual_success_button": "¿Tu Nebu ya habló? Pasa a la siguiente",
       "status_failed": "Falló la conexión. Por favor verifica tus credenciales WiFi e intenta de nuevo.",
       "error_ble_disconnected": "Se perdió la conexión con tu dispositivo. Por favor reconecta e intenta de nuevo.",
       "error_ble_timeout": "Tu dispositivo no está respondiendo. Por favor intenta de nuevo o reinícialo.",
@@ -89,7 +94,13 @@
       "validation_invalid_chars": "Solo letras, números, espacios y guiones permitidos",
       "next": "Siguiente",
       "device_registered": "¡Juguete registrado exitosamente!",
-      "error_registering_device": "No se pudo registrar el juguete. Intenta de nuevo."
+      "device_transferred": "¡Juguete transferido exitosamente!",
+      "transfer_owner_title": "Cambiar dueño del juguete",
+      "transfer_owner_message": "El juguete {toyName} ya está asociado a otra cuenta. Si continúas, se cambiará de dueño y quedará asociado a esta cuenta.",
+      "transfer_owner_cancel": "Cancelar",
+      "transfer_owner_confirm": "Cambiar dueño",
+      "error_registering_device": "No se pudo registrar el juguete. Intenta de nuevo.",
+      "error_transfer_device": "No se pudo cambiar el dueño del juguete. Intenta de nuevo."
     },
     "age": {
       "title": "Edad del Niño",
@@ -354,6 +365,7 @@
     "unknown_model": "Modelo Desconocido",
     "unknown": "Desconocido",
     "audio_controls": "Controles de Audio",
+    "change_wifi": "Cambiar de WiFi",
     "save_changes": "Guardar Cambios",
     "personality": "Personalidad",
     "personality_current": "Personalidad actual",

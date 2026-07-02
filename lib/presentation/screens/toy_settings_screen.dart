@@ -17,6 +17,7 @@ import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/esp32_audio_controls.dart';
+import 'setup/setup_route_args.dart';
 
 class ToySettingsScreen extends ConsumerStatefulWidget {
   const ToySettingsScreen({required this.toy, super.key});
@@ -182,6 +183,19 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     if (confirmed && mounted) {
       await _deleteToy();
     }
+  }
+
+  void _changeWifi() {
+    unawaited(
+      context.push(
+        AppRoutes.connectionSetup.path,
+        extra: ConnectionSetupRouteArgs(
+          mode: SetupFlowMode.changeWifi,
+          returnRoute: AppRoutes.toySettings.path,
+          returnExtra: _currentToy,
+        ),
+      ),
+    );
   }
 
   Future<void> _showPersonalityPicker() async {
@@ -460,6 +474,16 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     ],
                   ),
                 ),
+              ),
+
+              SizedBox(height: context.spacing.panelPadding),
+
+              CustomButton(
+                text: 'toy_settings.change_wifi'.tr(),
+                icon: Icons.wifi_rounded,
+                isFullWidth: true,
+                height: 72,
+                onPressed: _anyLoading ? null : _changeWifi,
               ),
 
               SizedBox(height: context.spacing.panelPadding),

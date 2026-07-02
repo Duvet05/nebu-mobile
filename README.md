@@ -580,7 +580,7 @@ flutter build ios --release
 
 ## � Contacto
 
-- **Repository**: [Duvet05/nebu-mobile](https://github.com/Duvet05/nebu-mobile)
+https://github.com/Duvet05/nebu-mobile/actions/runs/28349611239/job/83979705886- **Repository**: [Duvet05/nebu-mobile](https://github.com/Duvet05/nebu-mobile)
 - **Production web app**: https://app.flow-telligence.com
 - **Branch**: main
 - **Backend API**: https://api.flow-telligence.com/api/v1

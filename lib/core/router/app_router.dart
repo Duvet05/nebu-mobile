@@ -33,6 +33,7 @@ import '../../presentation/screens/setup/age_setup_screen.dart';
 import '../../presentation/screens/setup/connection_setup_screen.dart';
 import '../../presentation/screens/setup/favorites_setup_screen.dart';
 import '../../presentation/screens/setup/personality_setup_screen.dart';
+import '../../presentation/screens/setup/setup_route_args.dart';
 import '../../presentation/screens/setup/toy_name_setup_screen.dart';
 import '../../presentation/screens/setup/voice_setup_screen.dart';
 import '../../presentation/screens/setup/wifi_setup_screen.dart';
@@ -308,7 +309,11 @@ class AppRouter {
   static List<RouteBase> _getSetupRoutes() => [
     GoRoute(
       path: AppRoutes.connectionSetup.path,
-      builder: (_, _) => const ConnectionSetupScreen(),
+      builder: (_, s) => ConnectionSetupScreen(
+        args: s.extra is ConnectionSetupRouteArgs
+            ? s.extra! as ConnectionSetupRouteArgs
+            : const ConnectionSetupRouteArgs(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.toyNameSetup.path,
@@ -316,7 +321,11 @@ class AppRouter {
     ),
     GoRoute(
       path: AppRoutes.wifiSetup.path,
-      builder: (_, s) => WifiSetupScreen(webBleService: s.extra),
+      builder: (_, s) => WifiSetupScreen(
+        args: s.extra is WifiSetupRouteArgs
+            ? s.extra! as WifiSetupRouteArgs
+            : WifiSetupRouteArgs(webBleService: s.extra),
+      ),
     ),
     GoRoute(
       path: AppRoutes.ageSetup.path,

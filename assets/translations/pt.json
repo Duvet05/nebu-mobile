@@ -11,6 +11,8 @@
     "connection": {
       "title": "Conecte Seu Dispositivo",
       "subtitle": "Vamos conectar seu brinquedo Nebu para começar",
+      "change_wifi_title": "Alterar WiFi",
+      "change_wifi_subtitle": "Conecte seu brinquedo Nebu por Bluetooth para enviar uma nova rede WiFi.",
       "searching": "Procurando seu dispositivo Nebu...",
       "start_scan": "Iniciar Busca",
       "start_scan_hint": "Toque em \"Iniciar Busca\" para procurar seu dispositivo Nebu",
@@ -41,6 +43,8 @@
     "wifi": {
       "title": "Conectar ao Wi-Fi",
       "subtitle": "Insira as credenciais do Wi-Fi que deseja conectar ao seu dispositivo Nebu.",
+      "change_title": "Alterar WiFi",
+      "change_subtitle": "Insira a nova rede WiFi para seu brinquedo Nebu.",
       "ssid_hint": "Nome do Wi-Fi",
       "password_hint": "Senha",
       "connect_button": "Conectar",
@@ -53,6 +57,7 @@
       "credentials_sent": "Credenciais enviadas! Aguardando seu dispositivo conectar...",
       "status_connecting": "Seu dispositivo está conectando ao WiFi...",
       "status_connected": "WiFi conectado com sucesso!",
+      "manual_success_button": "Seu Nebu já falou? Ir para o próximo passo",
       "status_failed": "Falha na conexão. Por favor, verifique suas credenciais WiFi e tente novamente.",
       "error_ble_disconnected": "Conexão com o dispositivo perdida. Por favor, reconecte e tente novamente.",
       "error_ble_timeout": "Seu dispositivo não está respondendo. Por favor, tente novamente ou reinicie-o.",
@@ -89,7 +94,13 @@
       "validation_invalid_chars": "Apenas letras, números, espaços e hífens são permitidos",
       "next": "Próximo",
       "device_registered": "Brinquedo registrado com sucesso!",
-      "error_registering_device": "Não foi possível registrar o brinquedo. Por favor, tente novamente."
+      "device_transferred": "Brinquedo transferido com sucesso!",
+      "transfer_owner_title": "Alterar dono do brinquedo",
+      "transfer_owner_message": "O brinquedo {toyName} já está associado a outra conta. Se você continuar, o dono será alterado e ele ficará associado a esta conta.",
+      "transfer_owner_cancel": "Cancelar",
+      "transfer_owner_confirm": "Alterar dono",
+      "error_registering_device": "Não foi possível registrar o brinquedo. Por favor, tente novamente.",
+      "error_transfer_device": "Não foi possível alterar o dono do brinquedo. Por favor, tente novamente."
     },
     "age": {
       "title": "Idade da Criança",
@@ -354,6 +365,7 @@
     "unknown_model": "Modelo Desconhecido",
     "unknown": "Desconhecido",
     "audio_controls": "Controles de Áudio",
+    "change_wifi": "Alterar WiFi",
     "save_changes": "Salvar Alterações",
     "personality": "Personalidade",
     "personality_current": "Personalidade atual",
