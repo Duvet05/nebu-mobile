@@ -94,6 +94,8 @@
     "age": {
       "title": "Edad del Niño",
       "subtitle": "Ayúdanos a personalizar la experiencia",
+      "child_name_label": "Nombre del niño (opcional)",
+      "child_name_hint": "Ej. Mateo",
       "age_3_5": "3-5 años",
       "age_6_8": "6-8 años",
       "age_9_12": "9-12 años",

@@ -94,6 +94,8 @@
     "age": {
       "title": "Child's Age",
       "subtitle": "Help us personalize the experience",
+      "child_name_label": "Child name (optional)",
+      "child_name_hint": "E.g. Mateo",
       "age_3_5": "3-5 years",
       "age_6_8": "6-8 years",
       "age_9_12": "9-12 years",

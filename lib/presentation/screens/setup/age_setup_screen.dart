@@ -17,6 +17,7 @@ class AgeSetupScreen extends ConsumerStatefulWidget {
 }
 
 class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
+  final _childNameController = TextEditingController();
   String? _selectedAge;
 
   final List<Map<String, dynamic>> _ageGroups = [
@@ -25,6 +26,32 @@ class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
     {'id': '9-12', 'label': 'setup.age.age_9_12', 'icon': Icons.boy},
     {'id': '13+', 'label': 'setup.age.age_13_plus', 'icon': Icons.person},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedProfile();
+  }
+
+  @override
+  void dispose() {
+    _childNameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSavedProfile() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _selectedAge = prefs.getString(StorageKeys.setupChildAge);
+      _childNameController.text =
+          prefs.getString(StorageKeys.setupChildName) ?? '';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,103 +91,117 @@ class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
 
                     SizedBox(height: context.spacing.largePageBottomMargin),
 
-                    // Age options
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: _ageGroups.length,
-                        itemBuilder: (context, index) {
-                          final age = _ageGroups[index];
-                          final ageId = age['id'] as String;
-                          final isSelected = _selectedAge == ageId;
-
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              bottom: context.spacing.gapLg,
+                      child: ListView(
+                        children: [
+                          TextField(
+                            controller: _childNameController,
+                            textCapitalization: TextCapitalization.words,
+                            textInputAction: TextInputAction.next,
+                            decoration: InputDecoration(
+                              labelText: 'setup.age.child_name_label'.tr(),
+                              hintText: 'setup.age.child_name_hint'.tr(),
+                              prefixIcon: const Icon(Icons.badge_outlined),
+                              border: OutlineInputBorder(
+                                borderRadius: context.radius.input,
+                              ),
                             ),
-                            child: Semantics(
-                              button: true,
-                              label: (age['label'] as String).tr(),
-                              selected: isSelected,
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedAge = ageId;
-                                  });
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.all(
-                                    context.spacing.gapXl,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? context.colors.primary.withValues(
-                                            alpha: 0.08,
-                                          )
-                                        : colorScheme.surfaceContainerHighest
-                                              .withValues(alpha: 0.3),
-                                    borderRadius: context.radius.panel,
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? context.colors.primary
-                                          : colorScheme.outline,
-                                      width: isSelected ? 2 : 1,
+                          ),
+                          SizedBox(height: context.spacing.gapXl),
+                          ..._ageGroups.map((age) {
+                            final ageId = age['id'] as String;
+                            final isSelected = _selectedAge == ageId;
+
+                            return Padding(
+                              padding: EdgeInsets.only(
+                                bottom: context.spacing.gapLg,
+                              ),
+                              child: Semantics(
+                                button: true,
+                                label: (age['label'] as String).tr(),
+                                selected: isSelected,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedAge = ageId;
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(
+                                      context.spacing.gapXl,
                                     ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 48,
-                                        height: 48,
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? context.colors.primary
-                                                    .withValues(alpha: 0.15)
-                                              : colorScheme
-                                                    .surfaceContainerHighest,
-                                          borderRadius: context.radius.panel,
-                                        ),
-                                        child: Icon(
-                                          age['icon'] as IconData,
-                                          size: 24,
-                                          color: isSelected
-                                              ? context.colors.primary
-                                              : colorScheme.onSurfaceVariant,
-                                        ),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? context.colors.primary.withValues(
+                                              alpha: 0.08,
+                                            )
+                                          : colorScheme.surfaceContainerHighest
+                                                .withValues(alpha: 0.3),
+                                      borderRadius: context.radius.panel,
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? context.colors.primary
+                                            : colorScheme.outline,
+                                        width: isSelected ? 2 : 1,
                                       ),
-                                      SizedBox(width: context.spacing.gapXl),
-                                      Expanded(
-                                        child: Text(
-                                          (age['label'] as String).tr(),
-                                          style: theme.textTheme.titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                color: isSelected
-                                                    ? context.colors.primary
-                                                    : colorScheme.onSurface,
-                                              ),
-                                        ),
-                                      ),
-                                      if (isSelected)
+                                    ),
+                                    child: Row(
+                                      children: [
                                         Container(
-                                          width: 24,
-                                          height: 24,
+                                          width: 48,
+                                          height: 48,
                                           decoration: BoxDecoration(
-                                            color: context.colors.primary,
-                                            shape: BoxShape.circle,
+                                            color: isSelected
+                                                ? context.colors.primary
+                                                      .withValues(alpha: 0.15)
+                                                : colorScheme
+                                                      .surfaceContainerHighest,
+                                            borderRadius: context.radius.panel,
                                           ),
                                           child: Icon(
-                                            Icons.check_rounded,
-                                            color: context.colors.textOnFilled,
-                                            size: 16,
+                                            age['icon'] as IconData,
+                                            size: 24,
+                                            color: isSelected
+                                                ? context.colors.primary
+                                                : colorScheme.onSurfaceVariant,
                                           ),
                                         ),
-                                    ],
+                                        SizedBox(width: context.spacing.gapXl),
+                                        Expanded(
+                                          child: Text(
+                                            (age['label'] as String).tr(),
+                                            style: theme.textTheme.titleMedium
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: isSelected
+                                                      ? context.colors.primary
+                                                      : colorScheme.onSurface,
+                                                ),
+                                          ),
+                                        ),
+                                        if (isSelected)
+                                          Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                              color: context.colors.primary,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Icon(
+                                              Icons.check_rounded,
+                                              color:
+                                                  context.colors.textOnFilled,
+                                              size: 16,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          }),
+                        ],
                       ),
                     ),
 
@@ -176,6 +217,15 @@ class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
                           StorageKeys.setupChildAge,
                           _selectedAge!,
                         );
+                        final childName = _childNameController.text.trim();
+                        if (childName.isNotEmpty) {
+                          await prefs.setString(
+                            StorageKeys.setupChildName,
+                            childName,
+                          );
+                        } else {
+                          await prefs.remove(StorageKeys.setupChildName);
+                        }
                         if (mounted) {
                           await nav.push(AppRoutes.personalitySetup.path);
                         }
