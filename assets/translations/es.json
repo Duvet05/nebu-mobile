@@ -121,16 +121,18 @@
       "next": "Siguiente"
     },
     "voice": {
-      "title": "Selecciona la Voz",
-      "subtitle": "Elige cómo sonará tu juguete",
-      "child_voice": "Voz Infantil",
-      "child_voice_desc": "Aguda y juguetona",
-      "friendly_adult": "Adulto Amigable",
-      "friendly_adult_desc": "Cálida y cariñosa",
-      "robot_voice": "Voz de Robot",
-      "robot_voice_desc": "Sonidos digitales divertidos",
-      "custom": "Personalizada",
-      "custom_desc": "Configura tus preferencias"
+      "title": "Elige la Voz de Nebu",
+      "subtitle": "Selecciona cómo sonará tu juguete",
+      "nebu_lyra": "Nebu Lyra",
+      "nebu_lyra_desc": "Clara, dulce y exploradora",
+      "nebu_dash": "Nebu Dash",
+      "nebu_dash_desc": "Ágil, energética y divertida",
+      "nebu_cherry": "Nebu Cherry",
+      "nebu_cherry_desc": "Cálida, alegre y familiar",
+      "nebu_pixel": "Nebu Pixel",
+      "nebu_pixel_desc": "Joven, juguetona y curiosa",
+      "nebu_orion": "Nebu Orion",
+      "nebu_orion_desc": "Aventurera, valiente y misteriosa"
     },
     "favorites": {
       "title": "Cosas Favoritas",

@@ -21,30 +21,53 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
 
   final List<Map<String, dynamic>> _voices = [
     {
-      'id': 'child_voice',
-      'label': 'setup.voice.child_voice',
-      'icon': Icons.child_care,
-      'description': 'setup.voice.child_voice_desc',
+      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu',
+      'label': 'setup.voice.nebu_lyra',
+      'icon': Icons.auto_awesome,
+      'description': 'setup.voice.nebu_lyra_desc',
     },
     {
-      'id': 'friendly_adult',
-      'label': 'setup.voice.friendly_adult',
-      'icon': Icons.person,
-      'description': 'setup.voice.friendly_adult_desc',
+      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_cat2',
+      'label': 'setup.voice.nebu_dash',
+      'icon': Icons.bolt_rounded,
+      'description': 'setup.voice.nebu_dash_desc',
     },
     {
-      'id': 'robot_voice',
-      'label': 'setup.voice.robot_voice',
-      'icon': Icons.smart_toy,
-      'description': 'setup.voice.robot_voice_desc',
+      'id': 'default-oklrorszoxbwzfdj8zjhng__nebucherry',
+      'label': 'setup.voice.nebu_cherry',
+      'icon': Icons.favorite_rounded,
+      'description': 'setup.voice.nebu_cherry_desc',
     },
     {
-      'id': 'custom',
-      'label': 'setup.voice.custom',
-      'icon': Icons.tune,
-      'description': 'setup.voice.custom_desc',
+      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_nino',
+      'label': 'setup.voice.nebu_pixel',
+      'icon': Icons.videogame_asset_rounded,
+      'description': 'setup.voice.nebu_pixel_desc',
+    },
+    {
+      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_pirat',
+      'label': 'setup.voice.nebu_orion',
+      'icon': Icons.explore_rounded,
+      'description': 'setup.voice.nebu_orion_desc',
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedSelection();
+  }
+
+  Future<void> _loadSavedSelection() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    final saved = prefs.getString(StorageKeys.setupVoicePreference);
+    if (!mounted || saved == null || saved.isEmpty) {
+      return;
+    }
+    setState(() => _selectedVoice = saved);
+  }
 
   @override
   Widget build(BuildContext context) {
