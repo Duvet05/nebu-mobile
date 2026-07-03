@@ -10,8 +10,12 @@ abstract final class Config {
   static const String _defaultEnvironment = kReleaseMode
       ? 'production'
       : 'development';
-  static const String _defaultApiBaseUrl =
+  static const String _productionApiBaseUrl =
       'https://api.flow-telligence.com/api/v1';
+  static const String _webProxyApiBaseUrl = '/api/v1';
+  static const String _defaultApiBaseUrl = kIsWeb && kReleaseMode
+      ? _webProxyApiBaseUrl
+      : _productionApiBaseUrl;
   static const String _defaultWsBaseUrl =
       'wss://api.flow-telligence.com/api/v1';
   static const String _defaultLivekitUrl = 'wss://livekit.flow-telligence.com';
@@ -95,8 +99,9 @@ abstract final class Config {
   static String get apiBaseUrl => _apiBaseUrl;
 
   /// Server root URL (no /api/v1 prefix) — used by health endpoints.
-  static String get serverBaseUrl =>
-      _serverBaseUrl.isNotEmpty ? _serverBaseUrl : _originFromUrl(apiBaseUrl);
+  static String get serverBaseUrl => _serverBaseUrl.isNotEmpty
+      ? _serverBaseUrl
+      : _serverRootFromApiBaseUrl(apiBaseUrl);
 
   static String get apiKey => _apiKey;
   static String get wsUrl => _wsBaseUrl;
@@ -153,12 +158,20 @@ abstract final class Config {
   static String getDebugInfo() => '''
 [Nebu] env=$environment | api=$apiBaseUrl | debug=$enableDebugLogs''';
 
-  static String _originFromUrl(String value) {
+  static String _serverRootFromApiBaseUrl(String value) {
     final uri = Uri.tryParse(value);
-    if (uri == null || uri.scheme.isEmpty || uri.authority.isEmpty) {
-      return value;
+    if (uri != null && uri.scheme.isNotEmpty && uri.authority.isNotEmpty) {
+      return '${uri.scheme}://${uri.authority}';
     }
 
-    return '${uri.scheme}://${uri.authority}';
+    const apiSuffix = '/api/v1';
+    if (value == apiSuffix) {
+      return '';
+    }
+    if (value.endsWith(apiSuffix)) {
+      return value.substring(0, value.length - apiSuffix.length);
+    }
+
+    return value;
   }
 }
