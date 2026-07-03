@@ -105,8 +105,12 @@ The Flutter web production target is the JS build served from Vercel:
 
 ```sh
 flutter build web --release
-vercel deploy build/web --prod --archive=tgz --project nebu-mobile --yes
+vercel deploy build/web --prod --archive=tgz --project nebu-web --yes
 ```
+
+Release web builds default to the same-origin Vercel proxy at `/api/v1`.
+Do not pass an absolute `--dart-define=API_URL=https://api.flow-telligence.com/api/v1`
+for the Vercel web build unless the backend CORS allowlist has been verified.
 
 The public production URL is:
 
@@ -115,7 +119,10 @@ The public production URL is:
 Legacy Vercel aliases such as `https://nebu-mobile.vercel.app` should not be
 treated as production until a smoke check returns `200`.
 
-Backend CORS must allow every public web origin that serves this Flutter app.
+Vercel proxies `/api/v1/*` to `https://api.flow-telligence.com/api/v1/*`.
+This keeps browser auth requests same-origin and avoids CORS preflight failures.
+If a web build is configured to call the backend directly instead of the proxy,
+backend CORS must allow every public web origin that serves this Flutter app.
 For the current production backend, keep these origins in the backend
 `IOT_ALLOWED_ORIGINS`/CORS allowlist:
 
@@ -125,6 +132,17 @@ Registration and login can pass direct API tests but still fail in the browser
 when the active app origin is missing from that allowlist.
 
 Production auth smoke checks:
+
+```sh
+curl -sS -D - -o /dev/null \
+  -X POST https://app.flow-telligence.com/api/v1/auth/register \
+  -H 'Content-Type: application/json' \
+  --data '{}'
+```
+
+The same-origin Vercel proxy should return a non-HTML API validation response
+such as `400`/`422`, not the Flutter `index.html`.
+If the app is compiled with an absolute API URL, also check direct backend CORS:
 
 ```sh
 curl -sS -D - -o /dev/null \
