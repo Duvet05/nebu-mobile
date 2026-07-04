@@ -17,6 +17,7 @@ import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/esp32_audio_controls.dart';
+import '../widgets/nebu_voice_options.dart';
 import 'setup/setup_route_args.dart';
 
 class ToySettingsScreen extends ConsumerStatefulWidget {
@@ -76,6 +77,11 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
   }
 
   bool get _anyLoading => _isSaving || _isDeleting || _savingSettings;
+
+  String? get _currentVoiceId {
+    final value = _currentToy.settings?['voicePreference'];
+    return value is String && value.isNotEmpty ? value : null;
+  }
 
   Future<void> _updateToySettings() async {
     if (!_formKey.currentState!.validate()) {
@@ -298,6 +304,108 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     }
   }
 
+  Future<void> _showVoicePicker() async {
+    final currentVoiceId = _currentVoiceId;
+    final selected = await showModalBottomSheet<String>(
+      context: context,
+      builder: (ctx) {
+        final sheetTheme = ctx.theme;
+        final sheetColors = sheetTheme.colorScheme;
+
+        return SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(ctx.spacing.alertPadding),
+                child: Text(
+                  'toy_settings.voice_change'.tr(),
+                  style: sheetTheme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              ...nebuVoiceOptions.map(
+                (voice) => ListTile(
+                  leading: Icon(
+                    voice.icon,
+                    color: voice.id == currentVoiceId
+                        ? ctx.colors.primary
+                        : sheetColors.onSurfaceVariant,
+                  ),
+                  title: Text(
+                    voice.labelKey.tr(),
+                    style: sheetTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: voice.id == currentVoiceId
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: voice.id == currentVoiceId
+                          ? ctx.colors.primary
+                          : null,
+                    ),
+                  ),
+                  subtitle: Text(
+                    voice.descriptionKey.tr(),
+                    style: sheetTheme.textTheme.bodySmall?.copyWith(
+                      color: sheetColors.onSurfaceVariant,
+                    ),
+                  ),
+                  trailing: voice.id == currentVoiceId
+                      ? Icon(Icons.check_circle, color: ctx.colors.primary)
+                      : null,
+                  onTap: () => Navigator.pop(ctx, voice.id),
+                ),
+              ),
+              SizedBox(height: ctx.spacing.panelPadding),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selected == null || !mounted || selected == currentVoiceId) {
+      return;
+    }
+
+    await _updateVoicePreference(selected);
+  }
+
+  Future<void> _updateVoicePreference(String voiceId) async {
+    setState(() {
+      _savingSettings = true;
+    });
+
+    try {
+      final currentSettings = Map<String, dynamic>.from(
+        _currentToy.settings ?? {},
+      );
+      currentSettings['voicePreference'] = voiceId;
+
+      final updated = await ref
+          .read(toyProvider.notifier)
+          .updateToy(id: _currentToy.id, settings: currentSettings);
+
+      if (mounted) {
+        setState(() {
+          _currentToy = updated;
+        });
+        context.showSuccessSnackBar('toy_settings.voice_updated'.tr());
+      }
+    } on Exception {
+      if (mounted) {
+        context.showErrorSnackBar('toy_settings.voice_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _savingSettings = false;
+        });
+      }
+    }
+  }
+
   Future<void> _toggleSettingsFlag(String flag, bool value) async {
     setState(() {
       _savingSettings = true;
@@ -424,6 +532,18 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
               ),
               SizedBox(height: context.spacing.titleBottomMarginSm),
               _buildPersonalityCard(theme, colorScheme),
+
+              SizedBox(height: context.spacing.panelPadding),
+
+              // Voice Section
+              Text(
+                'toy_settings.voice'.tr(),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: context.spacing.titleBottomMarginSm),
+              _buildVoiceCard(theme, colorScheme),
 
               SizedBox(height: context.spacing.panelPadding),
 
@@ -713,6 +833,73 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     );
   }
 
+  Widget _buildVoiceCard(ThemeData theme, ColorScheme colorScheme) {
+    final voiceId = _currentVoiceId;
+    final isLocal = _currentToy.id.startsWith('local_');
+    final displayName = _voiceDisplayName(voiceId);
+    final option = findNebuVoiceOption(voiceId);
+
+    return Semantics(
+      button: !isLocal,
+      label: isLocal
+          ? 'toy_settings.voice_current'.tr()
+          : '${'toy_settings.voice_change'.tr()}, $displayName',
+      child: Card(
+        child: InkWell(
+          onTap: isLocal || _anyLoading ? null : _showVoicePicker,
+          borderRadius: context.radius.tile,
+          child: Padding(
+            padding: EdgeInsets.all(context.spacing.alertPadding),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: context.colors.primary.withValues(alpha: 0.12),
+                    borderRadius: context.radius.panel,
+                  ),
+                  child: Icon(
+                    option?.icon ?? Icons.record_voice_over_rounded,
+                    color: context.colors.primary,
+                  ),
+                ),
+                SizedBox(width: context.spacing.panelPadding),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'toy_settings.voice_current'.tr(),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.labelBottomMargin),
+                      Text(
+                        displayName,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isLocal)
+                  ExcludeSemantics(
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   String _personalityDisplayName(String? profileId) {
     if (profileId == null || profileId.isEmpty) {
       return 'toy_settings.personality_none'.tr();
@@ -730,6 +917,15 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
     // Fallback: capitalize the profile ID
     return profileId[0].toUpperCase() + profileId.substring(1);
+  }
+
+  String _voiceDisplayName(String? voiceId) {
+    if (voiceId == null || voiceId.isEmpty) {
+      return 'toy_settings.voice_none'.tr();
+    }
+
+    final option = findNebuVoiceOption(voiceId);
+    return option?.labelKey.tr() ?? voiceId;
   }
 
   Widget _buildStatusRow(
