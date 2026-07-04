@@ -7,6 +7,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
+import '../../widgets/nebu_voice_options.dart';
 import '../../widgets/setup_widgets.dart';
 
 class VoiceSetupScreen extends ConsumerStatefulWidget {
@@ -18,39 +19,6 @@ class VoiceSetupScreen extends ConsumerStatefulWidget {
 
 class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
   String? _selectedVoice;
-
-  final List<Map<String, dynamic>> _voices = [
-    {
-      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu',
-      'label': 'setup.voice.nebu_lyra',
-      'icon': Icons.auto_awesome,
-      'description': 'setup.voice.nebu_lyra_desc',
-    },
-    {
-      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_cat2',
-      'label': 'setup.voice.nebu_dash',
-      'icon': Icons.bolt_rounded,
-      'description': 'setup.voice.nebu_dash_desc',
-    },
-    {
-      'id': 'default-oklrorszoxbwzfdj8zjhng__nebucherry',
-      'label': 'setup.voice.nebu_cherry',
-      'icon': Icons.favorite_rounded,
-      'description': 'setup.voice.nebu_cherry_desc',
-    },
-    {
-      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_nino',
-      'label': 'setup.voice.nebu_pixel',
-      'icon': Icons.videogame_asset_rounded,
-      'description': 'setup.voice.nebu_pixel_desc',
-    },
-    {
-      'id': 'default-oklrorszoxbwzfdj8zjhng__nebu_pirat',
-      'label': 'setup.voice.nebu_orion',
-      'icon': Icons.explore_rounded,
-      'description': 'setup.voice.nebu_orion_desc',
-    },
-  ];
 
   @override
   void initState() {
@@ -111,10 +79,10 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
                     // Voice options
                     Expanded(
                       child: ListView.builder(
-                        itemCount: _voices.length,
+                        itemCount: nebuVoiceOptions.length,
                         itemBuilder: (context, index) {
-                          final voice = _voices[index];
-                          final voiceId = voice['id'] as String;
+                          final voice = nebuVoiceOptions[index];
+                          final voiceId = voice.id;
                           final isSelected = _selectedVoice == voiceId;
 
                           return Padding(
@@ -123,7 +91,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
                             ),
                             child: Semantics(
                               button: true,
-                              label: (voice['label'] as String).tr(),
+                              label: voice.labelKey.tr(),
                               selected: isSelected,
                               child: GestureDetector(
                                 onTap: () {
@@ -164,7 +132,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
                                           borderRadius: context.radius.panel,
                                         ),
                                         child: Icon(
-                                          voice['icon'] as IconData,
+                                          voice.icon,
                                           size: 24,
                                           color: isSelected
                                               ? context.colors.primary
@@ -178,7 +146,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              (voice['label'] as String).tr(),
+                                              voice.labelKey.tr(),
                                               style: theme.textTheme.titleMedium
                                                   ?.copyWith(
                                                     fontWeight: FontWeight.w600,
@@ -191,8 +159,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
                                               height: context.spacing.gapXs,
                                             ),
                                             Text(
-                                              (voice['description'] as String)
-                                                  .tr(),
+                                              voice.descriptionKey.tr(),
                                               style: theme.textTheme.bodySmall
                                                   ?.copyWith(
                                                     color: isSelected
