@@ -120,14 +120,16 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       );
 
       // Crear el Toy en el backend
-      await ref.read(toyProvider.notifier).createToy(
-        deviceId: deviceId,
-        macAddress: macAddress,
-        name: toyName,
-        status: ToyStatus.active,
-        model: 'Nebu',
-        manufacturer: 'Nebu Technologies',
-      );
+      await ref
+          .read(toyProvider.notifier)
+          .createToy(
+            deviceId: deviceId,
+            macAddress: macAddress,
+            name: toyName,
+            status: ToyStatus.active,
+            model: 'Nebu',
+            manufacturer: 'Nebu Technologies',
+          );
 
       logger.i(
         '✅ [TOY_SETUP] Device registered successfully: $deviceIdentifier',

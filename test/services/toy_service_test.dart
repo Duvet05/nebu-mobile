@@ -148,4 +148,45 @@ void main() {
       );
     },
   );
+
+  test('updateToy envía voicePreference dentro de settings', () async {
+    const voiceId = 'default-oklrorszoxbwzfdj8zjhng__nebu_pirat';
+
+    when(
+      apiService.patch<Map<String, dynamic>>(
+        '/toys/toy-voice',
+        data: anyNamed('data') as Object?,
+      ),
+    ).thenAnswer(
+      (_) async => <String, dynamic>{
+        'id': 'toy-voice',
+        'name': 'Nebu',
+        'status': 'active',
+        'settings': <String, dynamic>{
+          'voicePreference': voiceId,
+          'enableVarietyEngine': true,
+        },
+      },
+    );
+
+    await toyService.updateToy(
+      id: 'toy-voice',
+      settings: <String, dynamic>{
+        'voicePreference': voiceId,
+        'enableVarietyEngine': true,
+      },
+    );
+
+    final payload =
+        verify(
+              apiService.patch<Map<String, dynamic>>(
+                '/toys/toy-voice',
+                data: captureAnyNamed('data') as Object?,
+              ),
+            ).captured.single
+            as Map<String, dynamic>;
+
+    expect(payload['settings'], containsPair('voicePreference', voiceId));
+    expect(payload['settings'], containsPair('enableVarietyEngine', true));
+  });
 }
