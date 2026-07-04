@@ -109,6 +109,9 @@ jobs:
       - name: Build web release
         run: flutter build web --release
 
+      - name: Check web API proxy
+        run: bash scripts/check-web-api-proxy.sh
+
   android-debug:
     name: Android debug build
     runs-on: ubuntu-latest

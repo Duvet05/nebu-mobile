@@ -115,6 +115,8 @@ vercel deploy build/web --prod --archive=tgz --project nebu-web --yes
 Release web builds default to the same-origin Vercel proxy at `/api/v1`.
 Do not pass an absolute `--dart-define=API_URL=https://api.flow-telligence.com/api/v1`
 for the Vercel web build unless the backend CORS allowlist has been verified.
+CI runs `scripts/check-web-api-proxy.sh` after `flutter build web --release`
+to catch bundles that would call the backend cross-origin from the browser.
 
 The public production URL is:
 
