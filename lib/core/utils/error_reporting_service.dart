@@ -15,14 +15,14 @@ class ErrorReportingService {
 
   static bool get isEnabled => _isCollectionEnabled;
 
-  static Future<void> initialize() async {
+  static Future<void> initialize({bool collectionEnabled = true}) async {
     if (_initialized) {
       return;
     }
     _initialized = true;
 
-    if (!Config.enableCrashReporting) {
-      await _setCollectionEnabled(false);
+    if (!Config.enableCrashReporting || !collectionEnabled) {
+      await setCollectionEnabled(enabled: false);
       return;
     }
 
@@ -31,7 +31,7 @@ class ErrorReportingService {
     }
 
     await _safeExecute(() async {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+      await setCollectionEnabled(enabled: true);
       await FirebaseCrashlytics.instance.setCustomKey(
         'environment',
         Config.environment,
@@ -40,8 +40,28 @@ class ErrorReportingService {
         'app_name',
         Config.appName,
       );
-      _isCollectionEnabled = true;
     }, context: 'Firebase Crashlytics initialization');
+  }
+
+  static Future<void> setCollectionEnabled({required bool enabled}) async {
+    final shouldEnable = enabled && Config.enableCrashReporting;
+    if (Firebase.apps.isEmpty) {
+      _isCollectionEnabled = false;
+      return;
+    }
+
+    var applied = false;
+    await _safeExecute(() async {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+        shouldEnable,
+      );
+      if (!shouldEnable) {
+        await FirebaseCrashlytics.instance.deleteUnsentReports();
+      }
+      applied = true;
+    }, context: 'Crashlytics collection toggle');
+
+    _isCollectionEnabled = applied && shouldEnable;
   }
 
   static Future<void> setUserContext({
@@ -153,18 +173,6 @@ class ErrorReportingService {
         );
       }
     }, context: 'Flutter error');
-  }
-
-  static Future<void> _setCollectionEnabled(bool enabled) async {
-    if (Firebase.apps.isEmpty) {
-      return;
-    }
-
-    await _safeExecute(
-      () =>
-          FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(enabled),
-      context: 'Crashlytics collection toggle',
-    );
   }
 
   static Future<void> _safeExecute(

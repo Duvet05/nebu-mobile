@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
@@ -192,11 +193,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       _logger.i('Requesting Bluetooth permissions...');
       final permissions = defaultTargetPlatform == TargetPlatform.iOS
           ? await [Permission.bluetooth].request()
-          : await [
-              Permission.bluetoothScan,
-              Permission.bluetoothConnect,
-              Permission.location,
-            ].request();
+          : await (await _androidBluetoothPermissions()).request();
       final granted = permissions.values.every((status) => status.isGranted);
       _logger.i('All permissions granted: $granted');
       if (!granted && mounted) {
@@ -208,6 +205,25 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       _logger.e('Error requesting permissions: $e');
       return false;
     }
+  }
+
+  Future<List<Permission>> _androidBluetoothPermissions() async {
+    final permissions = <Permission>[
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+    ];
+
+    try {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.version.sdkInt < 31) {
+        permissions.add(Permission.location);
+      }
+    } on Exception catch (e) {
+      _logger.w('Could not read Android SDK version: $e');
+      permissions.add(Permission.location);
+    }
+
+    return permissions;
   }
 
   Future<void> _startScan() async {

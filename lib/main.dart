@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config/config.dart';
+import 'core/constants/storage_keys.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/error_reporting_service.dart';
@@ -52,7 +54,12 @@ void main() async {
     }(),
   ]);
 
-  await ErrorReportingService.initialize();
+  final prefs = await SharedPreferences.getInstance();
+  final crashReportingAllowed =
+      prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
+  await ErrorReportingService.initialize(
+    collectionEnabled: crashReportingAllowed,
+  );
   ErrorReportingService.installGlobalErrorHandlers();
 
   runZonedGuarded(

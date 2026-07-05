@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
@@ -43,14 +44,13 @@ class BluetoothService {
     }
     try {
       if (defaultTargetPlatform == TargetPlatform.android) {
-        final bluetoothScan = await Permission.bluetoothScan.request();
-        final bluetoothConnect = await Permission.bluetoothConnect.request();
-        final location = await Permission.location.request();
-
-        final granted =
-            bluetoothScan.isGranted &&
-            bluetoothConnect.isGranted &&
-            location.isGranted;
+        final permissions = <Permission>[
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+          if (await _requiresLocationForBluetoothScan()) Permission.location,
+        ];
+        final statuses = await permissions.request();
+        final granted = statuses.values.every((status) => status.isGranted);
 
         if (!granted) {
           _logger.w('Bluetooth permissions not granted');
@@ -68,6 +68,16 @@ class BluetoothService {
     } on Exception catch (e) {
       _logger.e('Error requesting Bluetooth permissions: $e');
       return false;
+    }
+  }
+
+  Future<bool> _requiresLocationForBluetoothScan() async {
+    try {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      return androidInfo.version.sdkInt < 31;
+    } on Exception catch (e) {
+      _logger.w('Could not read Android SDK version: $e');
+      return true;
     }
   }
 
