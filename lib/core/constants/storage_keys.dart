@@ -10,6 +10,8 @@ class StorageKeys {
   static const String language = 'language';
   static const String themeMode = 'theme_mode';
   static const String currentDeviceId = 'current_device_id';
+  static const String privacyShareActivityData = 'privacy_share_activity_data';
+  static const String privacyAnalyticsEnabled = 'privacy_analytics_enabled';
 
   // Setup Wizard
   static const String setupLanguage = 'setup_language';

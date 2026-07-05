@@ -8,7 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/storage_keys.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/error_reporting_service.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
@@ -24,9 +26,6 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
-  static const _kShareActivityData = 'privacy_share_activity_data';
-  static const _kAnalyticsEnabled = 'privacy_analytics_enabled';
-
   bool _shareActivityData = false;
   bool _analyticsEnabled = true;
 
@@ -45,8 +44,10 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       return;
     }
     setState(() {
-      _shareActivityData = prefs.getBool(_kShareActivityData) ?? false;
-      _analyticsEnabled = prefs.getBool(_kAnalyticsEnabled) ?? true;
+      _shareActivityData =
+          prefs.getBool(StorageKeys.privacyShareActivityData) ?? false;
+      _analyticsEnabled =
+          prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
     });
   }
 
@@ -98,7 +99,10 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 value: _shareActivityData,
                 onChanged: (value) {
                   setState(() => _shareActivityData = value);
-                  _savePrivacyPreference(_kShareActivityData, value);
+                  _savePrivacyPreference(
+                    StorageKeys.privacyShareActivityData,
+                    value,
+                  );
                 },
               ),
               const Divider(),
@@ -108,7 +112,13 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 value: _analyticsEnabled,
                 onChanged: (value) {
                   setState(() => _analyticsEnabled = value);
-                  _savePrivacyPreference(_kAnalyticsEnabled, value);
+                  _savePrivacyPreference(
+                    StorageKeys.privacyAnalyticsEnabled,
+                    value,
+                  );
+                  unawaited(
+                    ErrorReportingService.setCollectionEnabled(enabled: value),
+                  );
                 },
               ),
             ],

@@ -189,6 +189,15 @@ jobs:
             exit 1
           fi
 
+          aps_environment="$(
+            /usr/libexec/PlistBuddy -c 'Print :Entitlements:aps-environment' \
+              "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
+          )"
+          if [ -z "${aps_environment}" ]; then
+            echo "Provisioning profile must include Push Notifications / aps-environment for FCM." >&2
+            exit 1
+          fi
+
           cat > ios/ExportOptions.plist <<PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">

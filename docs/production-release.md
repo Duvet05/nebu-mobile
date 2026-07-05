@@ -50,8 +50,9 @@ capabilities for the app identifier in Apple Developer:
 
 - Associated Domains, including `applinks:nebu.flow-telligence.com`
 - Sign in with Apple
+- Push Notifications, required for FCM/APNs delivery
 
-The iOS workflow validates both capabilities before building the signed IPA.
+The iOS workflow validates these capabilities before building the signed IPA.
 
 Encode local files without newlines before adding them as GitHub secrets:
 
@@ -176,6 +177,9 @@ returns `200` after deploy.
 
 ## Store notes
 
+- Before publishing beyond internal testing, review
+  [`docs/google-play-compliance.md`](google-play-compliance.md) and update Play
+  Console Data safety plus Target audience and content answers.
 - Google Play requires every uploaded Android `versionCode` to be greater than
   all previously uploaded bundles. The Android CI workflow now overrides the
   Flutter build number with `ANDROID_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER`
