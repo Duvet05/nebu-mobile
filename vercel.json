@@ -10,11 +10,17 @@
       "destination": "https://api.flow-telligence.com/health/:path*"
     },
     {
-      "source": "/((?!assets|canvaskit|icons|favicon\\.ico|flutter\\.js|flutter_bootstrap\\.js|flutter_service_worker\\.js|main\\.dart\\.js|manifest\\.json|version\\.json).*)",
+      "source": "/((?!\\.well-known|assets|canvaskit|icons|favicon\\.ico|flutter\\.js|flutter_bootstrap\\.js|flutter_service_worker\\.js|main\\.dart\\.js|manifest\\.json|version\\.json).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/.well-known/assetlinks.json",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, must-revalidate" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

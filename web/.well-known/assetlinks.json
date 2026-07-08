@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.nebu.mobile",
+      "sha256_cert_fingerprints": [
+        "45:8E:AA:45:6C:C7:05:F9:56:51:9B:FE:D7:FF:9A:17:25:F8:C6:45:58:77:AA:D5:DF:58:C7:C9:3B:E3:EC:14",
+        "91:8E:41:BB:EA:B5:49:32:1D:26:8C:AB:87:5C:59:02:B3:B2:22:C5:2C:1A:51:8A:BC:C9:7F:08:B4:D0:AD:74"
+      ]
+    }
+  }
+]
