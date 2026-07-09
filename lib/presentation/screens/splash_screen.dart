@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/brand_backdrop.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -114,75 +115,83 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: context.colors.primary,
-    body: SafeArea(
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Ícono del gatito animado
-            AnimatedBuilder(
-              animation: _iconController,
-              builder: (context, child) => Opacity(
-                opacity: _iconOpacityAnimation.value,
-                child: Transform.scale(
-                  scale: _iconScaleAnimation.value,
-                  child: Icon(
-                    Icons.smart_toy,
-                    size: 120,
-                    color: context.colors.textOnFilled,
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(height: context.spacing.paragraphBottomMargin),
-
-            // Texto "FLOW" animado
-            AnimatedBuilder(
-              animation: _textController,
-              builder: (context, child) => SlideTransition(
-                position: _textSlideAnimation,
-                child: Opacity(
-                  opacity: _textOpacityAnimation.value,
-                  child: Text(
-                    'splash.app_name'.tr(),
-                    style: context.theme.textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: context.colors.textOnFilled,
-                      letterSpacing: 6,
-                      shadows: [
-                        Shadow(
-                          color: context.colors.textNormal.withValues(
-                            alpha: 0.25,
-                          ),
-                          offset: const Offset(0, 4),
-                          blurRadius: 12,
-                        ),
-                      ],
+    body: NebuBrandBackdrop(
+      showBlobs: false,
+      patternOpacity: 0.1,
+      child: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Ícono del gatito animado
+              AnimatedBuilder(
+                animation: _iconController,
+                builder: (context, child) => Opacity(
+                  opacity: _iconOpacityAnimation.value,
+                  child: Transform.scale(
+                    scale: _iconScaleAnimation.value,
+                    child: Image.asset(
+                      'assets/images/renders/nebu-dino-render.png',
+                      width: 132,
+                      height: 132,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.smart_toy,
+                        size: 112,
+                        color: AppColors.flowInk,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
-            SizedBox(height: context.spacing.paragraphBottomMarginSm),
+              SizedBox(height: context.spacing.paragraphBottomMargin),
 
-            // Subtítulo animado
-            AnimatedBuilder(
-              animation: _textController,
-              builder: (context, child) => Opacity(
-                opacity: _textOpacityAnimation.value,
-                child: Text(
-                  'splash.powered_by'.tr(),
-                  style: context.theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w300,
-                    color: context.colors.textOnFilled.withValues(alpha: 0.85),
-                    letterSpacing: 2,
+              // Texto "FLOW" animado
+              AnimatedBuilder(
+                animation: _textController,
+                builder: (context, child) => SlideTransition(
+                  position: _textSlideAnimation,
+                  child: Opacity(
+                    opacity: _textOpacityAnimation.value,
+                    child: Text(
+                      'splash.app_name'.tr(),
+                      style: context.theme.textTheme.displayLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.flowInk,
+                        letterSpacing: 6,
+                        shadows: [
+                          Shadow(
+                            color: Colors.white.withValues(alpha: 0.45),
+                            offset: const Offset(0, 4),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+
+              SizedBox(height: context.spacing.paragraphBottomMarginSm),
+
+              // Subtítulo animado
+              AnimatedBuilder(
+                animation: _textController,
+                builder: (context, child) => Opacity(
+                  opacity: _textOpacityAnimation.value,
+                  child: Text(
+                    'splash.powered_by'.tr(),
+                    style: context.theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.flowInk.withValues(alpha: 0.72),
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ),

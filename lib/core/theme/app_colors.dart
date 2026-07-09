@@ -8,47 +8,56 @@ export 'app_spacing.dart';
 class AppColors {
   AppColors._();
 
+  // Brand tokens shared with the Nebu web experience.
+  static const Color flowYellow = Color(0xFFF9DF56);
+  static const Color flowWarmLight = Color(0xFFFFFBE6);
+  static const Color flowWarmMid = Color(0xFFFFF5BF);
+  static const Color flowInk = Color(0xFF111318);
+  static const Color flowTextSecondary = Color(0xFF5E6472);
+  static const Color flowPageBg = Color(0xFFF6F7FB);
+  static const Color flowTeal = Color(0xFF60BFB2);
+
   // ═══════════════════════════════════════════════════════════
-  // PRIMARY (Purple)
+  // PRIMARY (Flow Yellow)
   // ═══════════════════════════════════════════════════════════
 
   // --- Light Mode ---
-  static const Color primaryMainLight = Color(0xFF704ADD);
-  static const Color primaryN300Light = Color(0xFF270F6A);
-  static const Color primaryN200Light = Color(0xFF412590);
-  static const Color primaryN100Light = Color(0xFF5B36C2);
-  static const Color primary100Light = Color(0xFF916AFF);
-  static const Color primary200Light = Color(0xFFA788FF);
-  static const Color primary300Light = Color(0xFFBDA6FF);
-  static const Color primary400Light = Color(0xFFD3C3FF);
-  static const Color primary500Light = Color(0xFFE9E1FF);
-  static const Color primary600Light = Color(0xFFF4F1FF);
+  static const Color primaryMainLight = flowYellow;
+  static const Color primaryN300Light = Color(0xFF5B4700);
+  static const Color primaryN200Light = Color(0xFF806500);
+  static const Color primaryN100Light = Color(0xFFB08A00);
+  static const Color primary100Light = Color(0xFFFFE77A);
+  static const Color primary200Light = Color(0xFFFFEFA4);
+  static const Color primary300Light = flowWarmMid;
+  static const Color primary400Light = Color(0xFFFFF8D6);
+  static const Color primary500Light = flowWarmLight;
+  static const Color primary600Light = Color(0xFFFFFEF3);
 
   // Transparent variants (Light)
-  static const Color primary200TLight = Color(0xCC916AFF); // 80%
-  static const Color primary300TLight = Color(0x99916AFF); // 60%
-  static const Color primary400TLight = Color(0x66916AFF); // 40%
-  static const Color primary500TLight = Color(0x33916AFF); // 20%
-  static const Color primary600TLight = Color(0x1A916AFF); // 10%
+  static const Color primary200TLight = Color(0xCCF9DF56); // 80%
+  static const Color primary300TLight = Color(0x99F9DF56); // 60%
+  static const Color primary400TLight = Color(0x66F9DF56); // 40%
+  static const Color primary500TLight = Color(0x33F9DF56); // 20%
+  static const Color primary600TLight = Color(0x1AF9DF56); // 10%
 
   // --- Dark Mode ---
-  static const Color primaryMainDark = Color(0xFFAF94FF);
-  static const Color primaryN300Dark = Color(0xFFE8DFFF);
-  static const Color primaryN200Dark = Color(0xFFD8CBFF);
-  static const Color primaryN100Dark = Color(0xFFBDA6FF);
-  static const Color primary100Dark = Color(0xFFA281FF);
-  static const Color primary200Dark = Color(0xFF886CD6);
-  static const Color primary300Dark = Color(0xFF6C57AC);
-  static const Color primary400Dark = Color(0xFF524483);
-  static const Color primary500Dark = Color(0xFF362F59);
-  static const Color primary600Dark = Color(0xFF292444);
+  static const Color primaryMainDark = flowYellow;
+  static const Color primaryN300Dark = Color(0xFFFFFBE6);
+  static const Color primaryN200Dark = Color(0xFFFFF5BF);
+  static const Color primaryN100Dark = Color(0xFFFFE77A);
+  static const Color primary100Dark = Color(0xFFF9DF56);
+  static const Color primary200Dark = Color(0xFFD1B635);
+  static const Color primary300Dark = Color(0xFFA48D24);
+  static const Color primary400Dark = Color(0xFF74651F);
+  static const Color primary500Dark = Color(0xFF4A421E);
+  static const Color primary600Dark = Color(0xFF2A271B);
 
   // Transparent variants (Dark)
-  static const Color primary200TDark = Color(0xCCA281FF); // 80%
-  static const Color primary300TDark = Color(0x99A281FF); // 60%
-  static const Color primary400TDark = Color(0x66A281FF); // 40%
-  static const Color primary500TDark = Color(0x33A281FF); // 20%
-  static const Color primary600TDark = Color(0x1AA281FF); // 10%
+  static const Color primary200TDark = Color(0xCCF9DF56); // 80%
+  static const Color primary300TDark = Color(0x99F9DF56); // 60%
+  static const Color primary400TDark = Color(0x66F9DF56); // 40%
+  static const Color primary500TDark = Color(0x33F9DF56); // 20%
+  static const Color primary600TDark = Color(0x1AF9DF56); // 10%
 
   // ═══════════════════════════════════════════════════════════
   // SECONDARY (Blue)
@@ -227,15 +236,15 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════
 
   // --- Light Mode ---
-  static const Color textNormalLight = Color(0xFF253059);
-  static const Color textLowPriorityLight = Color(0xFF5C6483);
-  static const Color textFilledButtonLight = Color(0xFFFFFFFF);
-  static const Color textNormalDisabledLight = Color(0x80253059); // 50%
+  static const Color textNormalLight = flowInk;
+  static const Color textLowPriorityLight = flowTextSecondary;
+  static const Color textFilledButtonLight = flowInk;
+  static const Color textNormalDisabledLight = Color(0x80111318); // 50%
 
   // --- Dark Mode ---
   static const Color textNormalDark = Color(0xE6FFFFFF); // 90%
   static const Color textLowPriorityDark = Color(0xB3FFFFFF); // 70%
-  static const Color textFilledButtonDark = Color(0xCC000000); // 80%
+  static const Color textFilledButtonDark = flowInk;
   static const Color textNormalDisabledDark = Color(0x80FFFFFF); // 50%
 
   // ═══════════════════════════════════════════════════════════
@@ -243,8 +252,8 @@ class AppColors {
   // ═══════════════════════════════════════════════════════════
 
   // --- Light Mode ---
-  static const Color bgPrimaryLight = Color(0xFFFFFFFF);
-  static const Color bgSecondaryLight = Color(0xFFEFF0F2);
+  static const Color bgPrimaryLight = flowPageBg;
+  static const Color bgSecondaryLight = Color(0xFFFFFFFF);
   static const Color bgModalLight = Color(0x99191131); // 60%
   static const Color bgModalBorderLight = Color(0x00FFFFFF); // 0%
   static const Color bgPopoverLight = Color(0xFF191131);

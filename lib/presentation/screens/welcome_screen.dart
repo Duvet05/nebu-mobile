@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../widgets/brand_backdrop.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -12,11 +13,12 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = context.theme;
 
+    final mascotHeight = MediaQuery.sizeOf(context).height < 700
+        ? 132.0
+        : 168.0;
+
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: context.colors.primary,
+      body: NebuBrandBackdrop(
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(
@@ -24,16 +26,28 @@ class WelcomeScreen extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Spacer(flex: 2),
+                const Spacer(),
+
+                Image.asset(
+                  'assets/images/renders/nebu-dino-render.png',
+                  height: mascotHeight,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.smart_toy,
+                    size: mascotHeight * 0.58,
+                    color: AppColors.flowInk,
+                  ),
+                ),
+
+                SizedBox(height: context.spacing.alertPadding),
 
                 // Título
                 Text(
                   'welcome.title'.tr(),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineMedium?.copyWith(
-                    color: context.colors.textOnFilled,
+                    color: AppColors.flowInk,
                     fontWeight: FontWeight.w600,
-                    letterSpacing: -0.5,
                     height: 1.2,
                   ),
                 ),
@@ -45,7 +59,7 @@ class WelcomeScreen extends StatelessWidget {
                   'welcome.subtitle'.tr(),
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: context.colors.textOnFilled.withValues(alpha: 0.8),
+                    color: AppColors.flowInk.withValues(alpha: 0.72),
                     fontWeight: FontWeight.w400,
                     height: 1.5,
                   ),
@@ -80,12 +94,12 @@ class WelcomeScreen extends StatelessWidget {
                   onPressed: () => context.push(AppRoutes.connectionSetup.path),
                   style: TextButton.styleFrom(
                     minimumSize: const Size(double.infinity, 48),
-                    foregroundColor: context.colors.textOnFilled,
+                    foregroundColor: AppColors.flowInk,
                   ),
                   child: Text(
                     'welcome.continue_without_account'.tr(),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: context.colors.textOnFilled.withValues(alpha: 0.7),
+                      color: AppColors.flowInk.withValues(alpha: 0.68),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -121,9 +135,12 @@ class _PrimaryButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: context.colors.bgPrimary,
             borderRadius: context.radius.panel,
+            border: Border.all(
+              color: AppColors.flowInk.withValues(alpha: 0.08),
+            ),
             boxShadow: [
               BoxShadow(
-                color: context.colors.textNormal.withValues(alpha: 0.15),
+                color: AppColors.flowInk.withValues(alpha: 0.16),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -133,9 +150,8 @@ class _PrimaryButton extends StatelessWidget {
             child: Text(
               text,
               style: context.textTheme.bodyLarge?.copyWith(
-                color: context.colors.primary,
+                color: AppColors.flowInk,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
               ),
             ),
           ),
@@ -165,12 +181,12 @@ class _SecondaryButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(
               context,
-            ).colorScheme.onPrimary.withValues(alpha: 0.1),
+            ).colorScheme.primary.withValues(alpha: 0.08),
             borderRadius: context.radius.panel,
             border: Border.all(
               color: Theme.of(
                 context,
-              ).colorScheme.onPrimary.withValues(alpha: 0.4),
+              ).colorScheme.primary.withValues(alpha: 0.18),
               width: 1.5,
             ),
           ),
@@ -178,9 +194,8 @@ class _SecondaryButton extends StatelessWidget {
             child: Text(
               text,
               style: context.textTheme.bodyLarge?.copyWith(
-                color: context.colors.textOnFilled.withValues(alpha: 0.95),
+                color: AppColors.flowInk,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
               ),
             ),
           ),

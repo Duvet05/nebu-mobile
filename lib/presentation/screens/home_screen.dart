@@ -57,7 +57,7 @@ class HomeScreen extends ConsumerWidget {
 
               SizedBox(height: context.spacing.panelPadding),
 
-              // Hero gradient card
+              // Brand hero card
               _buildHeroCard(context, ref, theme),
 
               SizedBox(height: context.spacing.panelPadding),
@@ -145,56 +145,97 @@ class HomeScreen extends ConsumerWidget {
 
     final hasDevices = deviceCount > 0;
 
+    final imageSize = MediaQuery.sizeOf(context).width < 380 ? 86.0 : 104.0;
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(context.spacing.panelPadding),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [context.colors.primary, context.colors.secondary],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: context.colors.primary,
         borderRadius: context.radius.panel,
+        border: Border.all(color: AppColors.flowInk.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: context.colors.primary.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.flowInk.withValues(alpha: 0.11),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
+      child: Stack(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.14,
+              child: Image.asset(
+                'assets/images/decoration-strokes-scattered.png',
+                alignment: Alignment.topLeft,
+                repeat: ImageRepeat.repeat,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(context.spacing.panelPadding),
+            child: Row(
               children: [
-                Text(
-                  hasDevices
-                      ? 'home.toys_connected'.tr(args: [deviceCount.toString()])
-                      : 'home.no_toys_hero'.tr(),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: context.colors.textOnFilled,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        hasDevices
+                            ? 'home.toys_connected'.tr(
+                                args: [deviceCount.toString()],
+                              )
+                            : 'home.no_toys_hero'.tr(),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: AppColors.flowInk,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.labelBottomMargin),
+                      Text(
+                        hasDevices
+                            ? 'home.all_good'.tr()
+                            : 'home.no_toys_hero_hint'.tr(),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.flowInk.withValues(alpha: 0.7),
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: context.spacing.labelBottomMargin),
-                Text(
-                  hasDevices
-                      ? 'home.all_good'.tr()
-                      : 'home.no_toys_hero_hint'.tr(),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: context.colors.textOnFilled.withValues(alpha: 0.85),
+                SizedBox(width: context.spacing.alertPadding),
+                Container(
+                  width: imageSize,
+                  height: imageSize,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: context.radius.tile,
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      width: 3,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.flowInk.withValues(alpha: 0.14),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: context.radius.tile,
+                    child: Image.asset(
+                      'assets/images/renders/nebu-stock.png',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.centerRight,
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
-          SizedBox(width: context.spacing.alertPadding),
-          Icon(
-            Icons.smart_toy,
-            size: 48,
-            color: context.colors.textOnFilled.withValues(alpha: 0.85),
           ),
         ],
       ),

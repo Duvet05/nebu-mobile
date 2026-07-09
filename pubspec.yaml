@@ -103,6 +103,11 @@ flutter:
   assets:
     # Keep runtime assets explicit; broad directories inflate store bundles.
     - assets/images/google_logo.png
+    - assets/images/decoration-blob-teal.png
+    - assets/images/decoration-blob-yellow.png
+    - assets/images/decoration-strokes-scattered.png
+    - assets/images/renders/nebu-dino-render.png
+    - assets/images/renders/nebu-stock.png
     - assets/translations/
     - assets/icon_nebu_1024.png
     - assets/google_fonts/
@@ -116,6 +121,6 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/icon_nebu_1024.png"
-  adaptive_icon_background: "#6B4EFF"
+  adaptive_icon_background: "#F9DF56"
   adaptive_icon_foreground: "assets/icon_nebu_1024.png"
   remove_alpha_ios: true
