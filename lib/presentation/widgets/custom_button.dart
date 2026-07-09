@@ -31,10 +31,15 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = context.theme.colorScheme;
     final effectiveRadius = borderRadius ?? context.radius.button;
-
-    final spinnerColor = variant == ButtonVariant.dangerOutline
-        ? context.colors.error
+    final filledForeground = variant == ButtonVariant.danger
+        ? Colors.white
         : context.colors.textOnFilled;
+
+    final spinnerColor = switch (variant) {
+      ButtonVariant.danger || ButtonVariant.dangerOutline =>
+        variant == ButtonVariant.danger ? Colors.white : context.colors.error,
+      _ => filledForeground,
+    };
 
     final Widget buttonChild = Row(
       mainAxisSize: isFullWidth ? MainAxisSize.max : MainAxisSize.min,
@@ -81,7 +86,7 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              foregroundColor: context.colors.textOnFilled,
+              foregroundColor: filledForeground,
               shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: EdgeInsets.symmetric(
@@ -101,7 +106,7 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.surface,
-              foregroundColor: colorScheme.primary,
+              foregroundColor: context.colors.textNormal,
               elevation: 2,
               shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: EdgeInsets.symmetric(
@@ -120,7 +125,7 @@ class CustomButton extends StatelessWidget {
           child: OutlinedButton(
             onPressed: isLoading ? null : onPressed,
             style: OutlinedButton.styleFrom(
-              foregroundColor: colorScheme.primary,
+              foregroundColor: context.colors.textNormal,
               side: BorderSide(color: colorScheme.primary, width: 2),
               shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: EdgeInsets.symmetric(
@@ -139,7 +144,7 @@ class CustomButton extends StatelessWidget {
           child: TextButton(
             onPressed: isLoading ? null : onPressed,
             style: TextButton.styleFrom(
-              foregroundColor: colorScheme.primary,
+              foregroundColor: context.colors.textNormal,
               shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: EdgeInsets.symmetric(
                 horizontal: context.spacing.gapXl,
@@ -171,7 +176,7 @@ class CustomButton extends StatelessWidget {
             onPressed: isLoading ? null : onPressed,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
-              foregroundColor: context.colors.textOnFilled,
+              foregroundColor: filledForeground,
               shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
               padding: EdgeInsets.symmetric(

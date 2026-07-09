@@ -8,31 +8,32 @@ class AppTheme {
 
   // ----------------- Color Definitions -----------------
 
-  // Light Theme Colors (Figma Design System)
-  static const Color primaryLight = AppColors.primaryMainLight; // #704ADD
-  static const Color secondaryLight = AppColors.secondaryMainLight; // #01649C
-  static const Color backgroundLight = AppColors.bgPrimaryLight; // #FFFFFF
-  static const Color surfaceLight = AppColors.bgPrimaryLight; // #FFFFFF
+  // Light Theme Colors
+  static const Color primaryLight = AppColors.flowInk; // #111318
+  static const Color secondaryLight = AppColors.primaryMainLight; // #F9DF56
+  static const Color backgroundLight = AppColors.bgPrimaryLight; // #F6F7FB
+  static const Color surfaceLight = AppColors.bgSecondaryLight; // #FFFFFF
   static const Color errorLight = AppColors.redMainLight; // #D61134
-  static const Color onPrimaryLight =
-      AppColors.textFilledButtonLight; // #FFFFFF
-  static const Color onBackgroundLight = AppColors.textNormalLight; // #253059
+  static const Color onPrimaryLight = Colors.white; // #FFFFFF
+  static const Color onBackgroundLight = AppColors.textNormalLight; // #111318
 
-  // Dark Theme Colors (Figma Design System)
-  static const Color primaryDark = AppColors.primaryMainDark; // #AF94FF
-  static const Color secondaryDark = AppColors.secondaryMainDark; // #28B2FF
-  static const Color backgroundDark = AppColors.bgPrimaryDark; // #1C1A30
-  static const Color surfaceDark = AppColors.bgSecondaryDark; // #0B0B12
+  // Dark Theme Colors
+  static const Color primaryDark = AppColors.primaryMainDark; // #F9DF56
+  static const Color secondaryDark = AppColors.flowWarmLight; // #FFFBE6
+  static const Color backgroundDark = Color(0xFF0F1219);
+  static const Color surfaceDark = Color(0xFF1A1E2E);
   static const Color errorDark = AppColors.redMainDark; // #FF6984
-  static const Color onPrimaryDark =
-      AppColors.textFilledButtonDark; // #000000 80%
+  static const Color onPrimaryDark = AppColors.textFilledButtonDark; // #111318
   static const Color onBackgroundDark = AppColors.textNormalDark; // #FFFFFF 90%
 
   // Gradient Colors
-  static const List<Color> primaryGradient = [primaryLight, secondaryLight];
+  static const List<Color> primaryGradient = [
+    AppColors.primaryMainLight,
+    AppColors.primary300Light,
+  ];
   static const List<Color> secondaryGradient = [
-    secondaryLight,
-    AppColors.primary100Light, // #916AFF
+    AppColors.primaryMainLight,
+    AppColors.flowWarmLight,
   ];
 
   // ----------------- Color Schemes -----------------
@@ -51,6 +52,7 @@ class AppTheme {
     surface: surfaceDark,
     error: errorDark,
     onPrimary: onPrimaryDark,
+    onSecondary: onPrimaryDark,
     onSurface: onBackgroundDark,
   );
 
@@ -254,7 +256,7 @@ class AppTheme {
     ColorScheme colorScheme,
   ) => OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onSurface,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.button),
