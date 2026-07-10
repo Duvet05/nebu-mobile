@@ -19,6 +19,7 @@ import '../../../data/services/web_wifi_config.dart';
 import '../../../data/services/wifi_qr_parser.dart';
 import '../../../data/services/wifi_service.dart';
 import '../../providers/api_provider.dart';
+import '../../providers/qr_scanner_provider.dart';
 import '../../widgets/custom_input.dart';
 import '../../widgets/setup_widgets.dart';
 import '../../widgets/wifi_networks_sheet.dart';
@@ -331,7 +332,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   // ─── Actions ───
 
   Future<void> _scanQrCode() async {
-    final result = await context.push<String>(AppRoutes.qrScanner.path);
+    final result = await context.push<String>(
+      AppRoutes.qrScanner.path,
+      extra: QRScannerMode.wifi,
+    );
     if (result != null && mounted) {
       final parsed = WiFiQrParser.parse(result);
       if (parsed != null) {

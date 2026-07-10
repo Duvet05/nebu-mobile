@@ -37,6 +37,16 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
     setState(() => _selectedVoice = saved);
   }
 
+  Future<void> _skipVoice() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    await prefs.remove(StorageKeys.setupVoicePreference);
+    if (mounted) {
+      await context.push(AppRoutes.favoritesSetup.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -218,9 +228,7 @@ class _VoiceSetupScreenState extends ConsumerState<VoiceSetupScreen> {
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    SetupSkipButton(
-                      onTap: () => context.go(AppRoutes.home.path),
-                    ),
+                    SetupSkipButton(onTap: _skipVoice),
 
                     SizedBox(height: context.spacing.panelPadding),
                   ],

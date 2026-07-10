@@ -15,10 +15,42 @@ import '../../providers/person_provider.dart';
 import '../../providers/toy_provider.dart';
 import '../../widgets/setup_widgets.dart';
 
-class WorldInfoSetupScreen extends ConsumerWidget {
+class WorldInfoSetupScreen extends ConsumerStatefulWidget {
   const WorldInfoSetupScreen({super.key});
 
-  Future<void> _finishSetup(BuildContext context, WidgetRef ref) async {
+  @override
+  ConsumerState<WorldInfoSetupScreen> createState() =>
+      _WorldInfoSetupScreenState();
+}
+
+class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
+  bool _isFinishing = false;
+
+  Future<void> _finishSetup() async {
+    if (_isFinishing) {
+      return;
+    }
+    setState(() => _isFinishing = true);
+    try {
+      await _performFinishSetup();
+    } on Exception catch (e) {
+      ref.read(loggerProvider).e('Failed to finish setup: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('setup.wifi.error_generic'.tr()),
+            backgroundColor: context.colors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isFinishing = false);
+      }
+    }
+  }
+
+  Future<void> _performFinishSetup() async {
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
     );
@@ -50,55 +82,72 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       // and create a Person (child) to link as owner
       try {
         final toys = ref.read(toyProvider).value;
-        if (toys != null && toys.isNotEmpty) {
-          final toy = toys.last;
-          final hasPersonality =
-              personalityId != null && personalityId.isNotEmpty;
-          final hasSettings = setupSettings.isNotEmpty;
-
-          // Create a Person (child) for the toy owner so the agent
-          // receives proper context (name, age, interests).
-          // Estimate birthDate from the age-range selection.
-          String? ownerId;
-          final authState = ref.read(auth_provider.authProvider);
-          if (authState.value != null) {
-            try {
-              final birthDate = _estimateBirthDate(childAge);
-              final child = await ref
-                  .read(personProvider.notifier)
-                  .createPerson(
-                    givenName: childName != null && childName.isNotEmpty
-                        ? childName
-                        : 'setup.world_info.default_child_name'.tr(),
-                    birthDate: birthDate,
-                  );
-              ownerId = child.id;
-              logger.d('Child Person created: ${child.id}');
-            } on Exception catch (e) {
-              logger.e('Failed to create child Person: $e');
-              // Non-blocking — toy settings still get applied below
+        if (toys == null || toys.isEmpty) {
+          throw StateError('Registered setup toy is missing from local state');
+        }
+        final setupToyId = prefs.getString(StorageKeys.setupToyId);
+        Toy? toy;
+        if (setupToyId != null) {
+          for (final candidate in toys) {
+            if (candidate.id == setupToyId) {
+              toy = candidate;
+              break;
             }
           }
+        } else if (toys.length == 1) {
+          // Compatibility for a wizard started before setupToyId existed.
+          toy = toys.first;
+        }
+        if (toy == null) {
+          throw StateError('Registered setup toy could not be resolved');
+        }
+        final hasPersonality =
+            personalityId != null && personalityId.isNotEmpty;
+        final hasSettings = setupSettings.isNotEmpty;
 
-          if (hasPersonality || hasSettings || ownerId != null) {
-            await ref
-                .read(toyProvider.notifier)
-                .updateToy(
-                  id: toy.id,
-                  personalityProfile: hasPersonality ? personalityId : null,
-                  settings: hasSettings ? setupSettings : null,
-                  ownerId: ownerId,
+        // Create a Person (child) for the toy owner so the agent
+        // receives proper context (name, age, interests).
+        // Estimate birthDate from the age-range selection.
+        String? ownerId = prefs.getString(StorageKeys.setupOwnerId);
+        final authState = ref.read(auth_provider.authProvider);
+        if (authState.value != null && ownerId == null) {
+          try {
+            final birthDate = _estimateBirthDate(childAge);
+            final child = await ref
+                .read(personProvider.notifier)
+                .createPerson(
+                  givenName: childName != null && childName.isNotEmpty
+                      ? childName
+                      : 'setup.world_info.default_child_name'.tr(),
+                  birthDate: birthDate,
                 );
-            logger.d(
-              'Setup preferences applied to toy: '
-              'personality=$personalityId, settings=$setupSettings, '
-              'ownerId=$ownerId',
-            );
+            ownerId = child.id;
+            await prefs.setString(StorageKeys.setupOwnerId, child.id);
+            logger.d('Child Person created: ${child.id}');
+          } on Exception catch (e) {
+            logger.e('Failed to create child Person: $e');
+            rethrow;
           }
+        }
+
+        if (hasPersonality || hasSettings || ownerId != null) {
+          await ref
+              .read(toyProvider.notifier)
+              .updateToy(
+                id: toy.id,
+                personalityProfile: hasPersonality ? personalityId : null,
+                settings: hasSettings ? setupSettings : null,
+                ownerId: ownerId,
+              );
+          logger.d(
+            'Setup preferences applied to toy: '
+            'personality=$personalityId, settings=$setupSettings, '
+            'ownerId=$ownerId',
+          );
         }
       } on Exception catch (e) {
         logger.e('Failed to apply setup preferences to toy: $e');
-        // Non-blocking — toy was created, preferences can be set later
+        rethrow;
       }
     } else {
       // Device was NOT registered — save as local toy with pending status
@@ -116,11 +165,25 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       );
 
       await ref.read(toyProvider.notifier).saveLocalToy(localToy);
+      if (childName != null &&
+          childName.isNotEmpty &&
+          childAge != null &&
+          personalityId != null &&
+          personalityId.isNotEmpty) {
+        await Future.wait([
+          prefs.setString(StorageKeys.localChildName, childName),
+          prefs.setString(StorageKeys.localChildAge, childAge),
+          prefs.setString(StorageKeys.localChildPersonality, personalityId),
+          prefs.setBool(StorageKeys.setupCompletedLocally, true),
+        ]);
+      }
     }
 
     // Clean up temporary setup flags in parallel
     await Future.wait([
       prefs.remove(StorageKeys.setupDeviceRegistered),
+      prefs.remove(StorageKeys.setupToyId),
+      prefs.remove(StorageKeys.setupOwnerId),
       prefs.remove(StorageKeys.setupPersonalityId),
       prefs.remove(StorageKeys.setupChildName),
       prefs.remove(StorageKeys.setupChildAge),
@@ -129,15 +192,30 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       prefs.setBool(StorageKeys.setupCompleted, true),
     ]);
 
-    if (context.mounted) {
-      context.go(AppRoutes.home.path);
+    if (!mounted) {
+      return;
     }
+    context.go(AppRoutes.home.path);
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
+    final prefs = ref.watch(auth_provider.sharedPreferencesProvider).value;
+    final summaries = <String>[
+      if (prefs?.getBool(StorageKeys.setupDeviceRegistered) ?? false)
+        'setup.world_info.device_connected'.tr(),
+      if ((prefs?.getString(StorageKeys.setupChildName)?.isNotEmpty ?? false) &&
+          (prefs?.getString(StorageKeys.setupChildAge)?.isNotEmpty ?? false))
+        'setup.world_info.profile_configured'.tr(),
+      if ((prefs?.getString(StorageKeys.setupPersonalityId)?.isNotEmpty ??
+              false) ||
+          (prefs?.getString(StorageKeys.setupVoicePreference)?.isNotEmpty ??
+              false) ||
+          (prefs?.getString(StorageKeys.setupFavorites)?.isNotEmpty ?? false))
+        'setup.world_info.preferences_saved'.tr(),
+    ];
 
     return Scaffold(
       body: SafeArea(
@@ -195,33 +273,24 @@ class WorldInfoSetupScreen extends ConsumerWidget {
                     SizedBox(height: context.spacing.largePageBottomMargin),
 
                     // Features summary
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.device_connected'.tr(),
-                    ),
-                    SizedBox(height: context.spacing.gapXl),
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.profile_configured'.tr(),
-                    ),
-                    SizedBox(height: context.spacing.gapXl),
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.preferences_saved'.tr(),
-                    ),
+                    for (var index = 0; index < summaries.length; index++) ...[
+                      if (index > 0) SizedBox(height: context.spacing.gapXl),
+                      _buildFeatureSummary(
+                        context,
+                        theme,
+                        Icons.check_circle,
+                        summaries[index],
+                      ),
+                    ],
 
                     const Spacer(),
 
                     // Finish button
                     SetupPrimaryButton(
                       text: 'setup.world_info.start_using'.tr(),
-                      onPressed: () => _finishSetup(context, ref),
+                      onPressed: _finishSetup,
+                      isEnabled: !_isFinishing,
+                      isLoading: _isFinishing,
                     ),
 
                     SizedBox(height: context.spacing.panelPadding),

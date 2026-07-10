@@ -65,6 +65,16 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
     }
   }
 
+  Future<void> _skipFavorites() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    await prefs.remove(StorageKeys.setupFavorites);
+    if (mounted) {
+      await context.push(AppRoutes.worldInfoSetup.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -212,9 +222,7 @@ class _FavoritesSetupScreenState extends ConsumerState<FavoritesSetupScreen> {
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    SetupSkipButton(
-                      onTap: () => context.go(AppRoutes.home.path),
-                    ),
+                    SetupSkipButton(onTap: _skipFavorites),
 
                     SizedBox(height: context.spacing.panelPadding),
                   ],

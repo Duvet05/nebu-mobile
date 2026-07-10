@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -8,13 +10,21 @@ import '../../core/theme/app_colors.dart';
 import '../providers/qr_scanner_provider.dart';
 
 class QRScannerScreen extends ConsumerStatefulWidget {
-  const QRScannerScreen({super.key});
+  const QRScannerScreen({this.mode = QRScannerMode.claimToy, super.key});
+
+  final QRScannerMode mode;
 
   @override
   ConsumerState<QRScannerScreen> createState() => _QRScannerScreenState();
 }
 
 class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
+  @override
+  void dispose() {
+    ref.read(qrScannerProvider.notifier).reset();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -42,7 +52,9 @@ class _QRScannerScreenState extends ConsumerState<QRScannerScreen> {
         children: [
           QRCodeDartScanView(
             onCapture: (result) {
-              notifier.handleQRCode(result.text, context);
+              unawaited(
+                notifier.handleQRCode(result.text, context, mode: widget.mode),
+              );
             },
           ),
           _buildScannerOverlay(),

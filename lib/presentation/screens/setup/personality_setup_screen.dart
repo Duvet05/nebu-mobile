@@ -64,6 +64,16 @@ class _PersonalitySetupScreenState
     }
   }
 
+  Future<void> _skipPersonality() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    await prefs.remove(StorageKeys.setupPersonalityId);
+    if (mounted) {
+      await context.push(AppRoutes.voiceSetup.path);
+    }
+  }
+
   void _selectDefaultIfNeeded(List<Personality> personalities) {
     if (personalities.isEmpty) {
       return;
@@ -216,9 +226,7 @@ class _PersonalitySetupScreenState
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    SetupSkipButton(
-                      onTap: () => context.go(AppRoutes.home.path),
-                    ),
+                    SetupSkipButton(onTap: _skipPersonality),
 
                     SizedBox(height: context.spacing.panelPadding),
                   ],

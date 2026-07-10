@@ -120,7 +120,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
       );
 
       // Crear el Toy en el backend
-      await ref
+      final toy = await ref
           .read(toyProvider.notifier)
           .createToy(
             deviceId: deviceId,
@@ -130,6 +130,7 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
             model: 'Nebu',
             manufacturer: 'Nebu Technologies',
           );
+      await prefs.setString(StorageKeys.setupToyId, toy.id);
 
       logger.i(
         '✅ [TOY_SETUP] Device registered successfully: $deviceIdentifier',
@@ -182,7 +183,9 @@ class _ToyNameSetupScreenState extends ConsumerState<ToyNameSetupScreen> {
 
         if (response.toy == null) {
           await ref.read(toyProvider.notifier).loadMyToys();
+          throw StateError('Assigned toy response did not include a toy');
         }
+        await prefs.setString(StorageKeys.setupToyId, response.toy!.id);
 
         await _markDeviceRegistered(prefs);
 

@@ -6,6 +6,8 @@ import '../../core/theme/app_colors.dart';
 import 'api_provider.dart';
 import 'auth_provider.dart';
 
+enum QRScannerMode { claimToy, wifi }
+
 class QRScannerState {
   QRScannerState({required this.scannedCode, required this.isProcessing});
   final String scannedCode;
@@ -23,14 +25,31 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
   QRScannerState build() =>
       QRScannerState(scannedCode: '', isProcessing: false);
 
-  void handleQRCode(String? code, BuildContext context) {
+  Future<void> handleQRCode(
+    String? code,
+    BuildContext context, {
+    required QRScannerMode mode,
+  }) async {
     if (code == null || code.isEmpty || state.isProcessing) {
       return;
     }
 
     state = state.copyWith(isProcessing: true, scannedCode: code);
+    try {
+      if (mode == QRScannerMode.wifi) {
+        if (context.mounted) {
+          Navigator.of(context).pop(code.trim());
+        }
+        return;
+      }
+      await _processQRCode(code, context);
+    } finally {
+      state = state.copyWith(isProcessing: false);
+    }
+  }
 
-    _processQRCode(code, context);
+  void reset() {
+    state = QRScannerState(scannedCode: '', isProcessing: false);
   }
 
   Future<void> _processQRCode(String code, BuildContext context) async {
@@ -65,7 +84,6 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
             TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
-                state = state.copyWith(isProcessing: false);
               },
               child: Text('qr_scanner.scan_again'.tr()),
             ),
@@ -109,7 +127,6 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
           actions: [
             ElevatedButton(
               onPressed: () {
-                state = state.copyWith(isProcessing: false);
                 Navigator.of(ctx).pop();
                 if (context.mounted) {
                   Navigator.of(context).pop();
@@ -135,7 +152,6 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
             TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
-                state = state.copyWith(isProcessing: false);
               },
               child: Text('qr_scanner.scan_again'.tr()),
             ),

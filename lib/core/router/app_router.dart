@@ -7,6 +7,7 @@ import '../../data/models/personality.dart';
 import '../../data/models/toy.dart';
 import '../../data/models/user.dart';
 import '../../presentation/providers/auth_provider.dart';
+import '../../presentation/providers/qr_scanner_provider.dart';
 import '../../presentation/providers/toy_provider.dart';
 import '../../presentation/screens/activity_log_screen.dart';
 import '../../presentation/screens/child_profile_screen.dart';
@@ -222,7 +223,11 @@ class AppRouter {
     // Common Apps
     GoRoute(
       path: AppRoutes.qrScanner.path,
-      builder: (_, _) => const QRScannerScreen(),
+      builder: (_, state) => QRScannerScreen(
+        mode: state.extra is QRScannerMode
+            ? state.extra! as QRScannerMode
+            : QRScannerMode.claimToy,
+      ),
     ),
     GoRoute(
       path: AppRoutes.editProfile.path,

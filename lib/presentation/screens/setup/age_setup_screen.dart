@@ -53,6 +53,19 @@ class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
     });
   }
 
+  Future<void> _skipProfile() async {
+    final prefs = await ref.read(
+      auth_provider.sharedPreferencesProvider.future,
+    );
+    await Future.wait([
+      prefs.remove(StorageKeys.setupChildAge),
+      prefs.remove(StorageKeys.setupChildName),
+    ]);
+    if (mounted) {
+      await context.push(AppRoutes.personalitySetup.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
@@ -234,9 +247,7 @@ class _AgeSetupScreenState extends ConsumerState<AgeSetupScreen> {
 
                     SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-                    SetupSkipButton(
-                      onTap: () => context.go(AppRoutes.home.path),
-                    ),
+                    SetupSkipButton(onTap: _skipProfile),
 
                     SizedBox(height: context.spacing.panelPadding),
                   ],
