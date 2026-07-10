@@ -42,10 +42,15 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _secureStorage.read(key: StorageKeys.accessToken);
-
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
+          if (options.extra['skipAuthHeader'] == true) {
+            options.headers.remove('Authorization');
+          } else {
+            final token = await _secureStorage.read(
+              key: StorageKeys.accessToken,
+            );
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
 
           _logger.d('Request: ${options.method} ${options.path}');
@@ -70,6 +75,8 @@ class ApiService {
 
           // Only attempt refresh on 401 if we haven't already retried
           if (error.response?.statusCode == 401 &&
+              path != '/auth/refresh' &&
+              error.requestOptions.extra['skipAuthRefresh'] != true &&
               error.requestOptions.extra['retried'] != true) {
             try {
               final newToken = await _refreshToken();
@@ -83,11 +90,12 @@ class ApiService {
                 );
                 return handler.resolve(retryResponse);
               }
+              await _expireSession();
             } on Exception catch (e, st) {
               _logger.e('Token refresh failed, clearing session: $e');
               unawaited(
                 ErrorReportingService.recordError(
-                  e,
+                  _safeReportableError(e),
                   st,
                   reason: 'Token refresh failed while handling 401',
                   context: {
@@ -97,8 +105,7 @@ class ApiService {
                   },
                 ),
               );
-              await _clearTokens();
-              onSessionExpired?.call();
+              await _expireSession();
             }
           }
 
@@ -138,19 +145,23 @@ class ApiService {
       return _refreshCompleter!.future;
     }
 
-    final refreshToken = await _secureStorage.read(
-      key: StorageKeys.refreshToken,
-    );
-    if (refreshToken == null || refreshToken.isEmpty) {
-      return null;
-    }
-
-    _refreshCompleter = Completer<String?>();
+    final completer = Completer<String?>();
+    _refreshCompleter = completer;
     try {
+      final refreshToken = await _secureStorage.read(
+        key: StorageKeys.refreshToken,
+      );
+      if (refreshToken == null || refreshToken.isEmpty) {
+        completer.complete(null);
+        return null;
+      }
+
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/refresh',
         data: {'refreshToken': refreshToken},
-        options: Options(headers: {'Authorization': null}),
+        options: Options(
+          extra: const {'skipAuthHeader': true, 'skipAuthRefresh': true},
+        ),
       );
 
       final newAccessToken = response.data?['accessToken'] as String?;
@@ -175,27 +186,39 @@ class ApiService {
         );
       }
 
-      _refreshCompleter!.complete(newAccessToken);
+      completer.complete(newAccessToken);
       return newAccessToken;
     } on Exception catch (e, st) {
       unawaited(
         ErrorReportingService.recordError(
-          e,
+          _safeReportableError(e),
           st,
           reason: 'Token refresh request failed',
           context: {'handler': 'api_service_refresh'},
         ),
       );
-      _refreshCompleter!.completeError(e);
+      if (!completer.isCompleted) {
+        // Piggybacking requests receive null and expire their session. The
+        // initiating request still rethrows below, avoiding an unhandled
+        // Completer error when there are no other waiters.
+        completer.complete(null);
+      }
       rethrow;
     } finally {
-      _refreshCompleter = null;
+      if (identical(_refreshCompleter, completer)) {
+        _refreshCompleter = null;
+      }
     }
   }
 
   Future<void> _clearTokens() async {
     await _secureStorage.delete(key: StorageKeys.accessToken);
     await _secureStorage.delete(key: StorageKeys.refreshToken);
+  }
+
+  Future<void> _expireSession() async {
+    await _clearTokens();
+    onSessionExpired?.call();
   }
 
   // ---------------------------------------------------------------------------
@@ -374,7 +397,7 @@ class ApiService {
       if (_shouldReportError(e)) {
         unawaited(
           ErrorReportingService.recordError(
-            e,
+            _safeReportableError(e),
             st,
             reason: 'API request failed',
             context: {'method': method, 'path': path},
@@ -401,5 +424,19 @@ class ApiService {
     }
 
     return true;
+  }
+
+  static Object _safeReportableError(Object error) {
+    if (error is DioException) {
+      final mapped = error.error;
+      if (mapped is AppException) {
+        return mapped;
+      }
+      return ServerException(
+        'HTTP request failed',
+        statusCode: error.response?.statusCode,
+      );
+    }
+    return error;
   }
 }
