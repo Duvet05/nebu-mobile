@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
@@ -14,6 +16,9 @@ class FirebasePushService {
   final ApiService _apiService;
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   bool _initialized = false;
+  StreamSubscription<String>? _tokenRefreshSubscription;
+  StreamSubscription<RemoteMessage>? _foregroundSubscription;
+  StreamSubscription<RemoteMessage>? _openedAppSubscription;
 
   Future<void> initialize() async {
     if (_initialized) {
@@ -29,6 +34,9 @@ class FirebasePushService {
         await _registerToken();
         _listenForTokenRefresh();
         _setupForegroundHandler();
+      } else {
+        // A later settings change/login must be allowed to retry.
+        _initialized = false;
       }
     } on Exception catch (e) {
       _initialized = false;
@@ -77,7 +85,9 @@ class FirebasePushService {
       defaultTargetPlatform == TargetPlatform.macOS;
 
   void _listenForTokenRefresh() {
-    _messaging.onTokenRefresh.listen((token) async {
+    _tokenRefreshSubscription ??= _messaging.onTokenRefresh.listen((
+      token,
+    ) async {
       _logger.d('FCM token refreshed');
       try {
         await _apiService.post<dynamic>(
@@ -91,7 +101,7 @@ class FirebasePushService {
   }
 
   void _setupForegroundHandler() {
-    FirebaseMessaging.onMessage.listen((message) {
+    _foregroundSubscription ??= FirebaseMessaging.onMessage.listen((message) {
       _logger
         ..d('Foreground message: ${message.messageId}')
         ..d('Notification title: ${message.notification?.title}')
@@ -99,8 +109,41 @@ class FirebasePushService {
         ..d('Data: ${message.data}');
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    _openedAppSubscription ??= FirebaseMessaging.onMessageOpenedApp.listen((
+      message,
+    ) {
       _logger.d('Message opened app: ${message.messageId}');
     });
+  }
+
+  /// Unregister while the access token still belongs to the current account.
+  Future<void> unregister() async {
+    try {
+      final token = await _getMessagingToken();
+      if (token != null) {
+        await _apiService.post<dynamic>(
+          '/notifications/unregister-device',
+          data: {'token': token},
+        );
+      }
+    } on Exception catch (e) {
+      _logger.w('Remote FCM unregister failed (clearing locally): $e');
+    }
+    await resetLocal();
+  }
+
+  Future<void> resetLocal() async {
+    try {
+      await _messaging.deleteToken();
+    } on Exception catch (e) {
+      _logger.w('Local FCM token cleanup failed: $e');
+    }
+    await _tokenRefreshSubscription?.cancel();
+    await _foregroundSubscription?.cancel();
+    await _openedAppSubscription?.cancel();
+    _tokenRefreshSubscription = null;
+    _foregroundSubscription = null;
+    _openedAppSubscription = null;
+    _initialized = false;
   }
 }

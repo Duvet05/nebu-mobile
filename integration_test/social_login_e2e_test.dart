@@ -182,4 +182,10 @@ class _NoopFirebasePushService implements FirebasePushService {
 
   @override
   Future<void> initialize() => Future<void>.value();
+
+  @override
+  Future<void> resetLocal() => Future<void>.value();
+
+  @override
+  Future<void> unregister() => Future<void>.value();
 }

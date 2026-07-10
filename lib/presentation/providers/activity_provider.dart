@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants/storage_keys.dart';
 import '../../core/errors/app_exception.dart';
 import '../../data/models/activity.dart';
 import '../../data/services/activity_service.dart';
 import 'api_provider.dart';
+import 'auth_provider.dart';
 
 /// Estado del log de actividades
 class ActivityState {
@@ -44,7 +46,11 @@ class ActivityNotifier extends Notifier<ActivityState> {
   ActivityService get _activityService => ref.read(activityServiceProvider);
 
   @override
-  ActivityState build() => const ActivityState();
+  ActivityState build() {
+    // Do not retain another account's activities after auth transitions.
+    ref.watch(authProvider);
+    return const ActivityState();
+  }
 
   /// Cargar actividades con filtros opcionales
   Future<void> loadActivities({
@@ -137,6 +143,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
     DateTime? timestamp,
   }) async {
     try {
+      final prefs = await ref.read(sharedPreferencesProvider.future);
+      final sharingEnabled =
+          prefs.getBool(StorageKeys.privacyShareActivityData) ?? false;
+      if (!sharingEnabled) {
+        return false;
+      }
       final activity = await _activityService.createActivity(
         userId: userId,
         toyId: toyId,

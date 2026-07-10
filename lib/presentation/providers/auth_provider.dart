@@ -31,12 +31,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
           final user = User.fromJson(
             json.decode(userJson) as Map<String, dynamic>,
           );
-          unawaited(
-            ErrorReportingService.setUserContext(
-              userId: user.id,
-              email: user.email,
-            ),
-          );
+          unawaited(ErrorReportingService.setUserContext(userId: user.id));
+          await _removeLegacyVoiceCaches();
           unawaited(ref.read(firebasePushServiceProvider).initialize());
           return user;
         }
@@ -69,9 +65,8 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> _onAuthSuccess(User user) async {
-    unawaited(
-      ErrorReportingService.setUserContext(userId: user.id, email: user.email),
-    );
+    unawaited(ErrorReportingService.setUserContext(userId: user.id));
+    await _removeLegacyVoiceCaches();
     await ref
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
@@ -147,21 +142,94 @@ class AuthNotifier extends AsyncNotifier<User?> {
 
   /// Force logout without backend call — used when session expired.
   Future<void> forceLogout() async {
-    await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    await ref.read(firebasePushServiceProvider).resetLocal();
+    final storage = ref.read(secureStorageProvider);
+    await Future.wait([
+      storage.delete(key: StorageKeys.accessToken),
+      storage.delete(key: StorageKeys.refreshToken),
+      storage.delete(key: StorageKeys.user),
+    ]);
+    await _purgeLocalUserData();
     unawaited(ErrorReportingService.clearUserContext());
     state = const AsyncValue.data(null);
   }
 
   Future<void> logout() async {
     state = const AsyncValue.loading();
+    await ref.read(firebasePushServiceProvider).unregister();
     try {
       await (await ref.read(authServiceProvider.future)).logout();
     } on Exception catch (e) {
       ref.read(loggerProvider).w('Backend logout failed: $e');
     }
     await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
+    await _purgeLocalUserData();
     unawaited(ErrorReportingService.clearUserContext());
     state = const AsyncValue.data(null);
+  }
+
+  Future<void> _removeLegacyVoiceCaches() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    for (final key in const [
+      StorageKeys.voiceMetricsCache,
+      StorageKeys.voiceMetricsCacheTs,
+      StorageKeys.voiceSessionsCache,
+      StorageKeys.voiceSessionsCacheTs,
+      StorageKeys.userLimitsCache,
+      StorageKeys.userLimitsCacheTs,
+    ]) {
+      await prefs.remove(key);
+    }
+  }
+
+  Future<void> _purgeLocalUserData() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    const exactKeys = <String>{
+      StorageKeys.localChildName,
+      StorageKeys.localChildAge,
+      StorageKeys.localChildPersonality,
+      StorageKeys.localCustomPrompt,
+      StorageKeys.localToys,
+      StorageKeys.localAvatar,
+      StorageKeys.localUserId,
+      StorageKeys.activitiesMigrated,
+      StorageKeys.setupSkipped,
+      StorageKeys.setupCompleted,
+      StorageKeys.setupCompletedLocally,
+      StorageKeys.setupDeviceRegistered,
+      StorageKeys.setupToyName,
+      StorageKeys.setupToyId,
+      StorageKeys.setupOwnerId,
+      StorageKeys.setupMacAddress,
+      StorageKeys.setupChildName,
+      StorageKeys.setupChildAge,
+      StorageKeys.setupPersonalityId,
+      StorageKeys.setupVoicePreference,
+      StorageKeys.setupFavorites,
+      StorageKeys.voiceMetricsCache,
+      StorageKeys.voiceMetricsCacheTs,
+      StorageKeys.voiceSessionsCache,
+      StorageKeys.voiceSessionsCacheTs,
+      StorageKeys.userLimitsCache,
+      StorageKeys.userLimitsCacheTs,
+    };
+    const scopedPrefixes = <String>[
+      '${StorageKeys.voiceMetricsCache}:',
+      '${StorageKeys.voiceMetricsCacheTs}:',
+      '${StorageKeys.voiceSessionsCache}:',
+      '${StorageKeys.voiceSessionsCacheTs}:',
+      '${StorageKeys.userLimitsCache}:',
+      '${StorageKeys.userLimitsCacheTs}:',
+    ];
+
+    final keysToRemove = prefs.getKeys().where(
+      (key) =>
+          exactKeys.contains(key) ||
+          scopedPrefixes.any((prefix) => key.startsWith(prefix)),
+    );
+    for (final key in keysToRemove.toList()) {
+      await prefs.remove(key);
+    }
   }
 
   Future<bool> requestPasswordReset(String email) async =>

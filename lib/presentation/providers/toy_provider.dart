@@ -16,7 +16,11 @@ final toyProvider = AsyncNotifierProvider<ToyNotifier, List<Toy>>(
 
 class ToyNotifier extends AsyncNotifier<List<Toy>> {
   @override
-  Future<List<Toy>> build() => Future.value([]);
+  Future<List<Toy>> build() {
+    // Rebuild to an empty state immediately on logout/account switch.
+    ref.watch(auth_provider.authProvider);
+    return Future.value([]);
+  }
 
   ToyService get _toyService => ref.read(toyServiceProvider);
 

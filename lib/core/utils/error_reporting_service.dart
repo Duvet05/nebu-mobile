@@ -64,19 +64,14 @@ class ErrorReportingService {
     _isCollectionEnabled = applied && shouldEnable;
   }
 
-  static Future<void> setUserContext({
-    required String userId,
-    String? email,
-  }) async {
+  static Future<void> setUserContext({required String userId}) async {
     if (!_isCollectionEnabled) {
       return;
     }
 
     await _safeExecute(() async {
       await FirebaseCrashlytics.instance.setUserIdentifier(userId);
-      if (email != null && email.isNotEmpty) {
-        await FirebaseCrashlytics.instance.setCustomKey('user_email', email);
-      }
+      await FirebaseCrashlytics.instance.setCustomKey('user_email', '');
     }, context: 'Crashlytics setUser');
   }
 
@@ -88,6 +83,10 @@ class ErrorReportingService {
     await _safeExecute(
       () => FirebaseCrashlytics.instance.setUserIdentifier('anonymous'),
       context: 'Crashlytics clearUser',
+    );
+    await _safeExecute(
+      () => FirebaseCrashlytics.instance.setCustomKey('user_email', ''),
+      context: 'Crashlytics clear email',
     );
     await _safeExecute(
       () => FirebaseCrashlytics.instance.deleteUnsentReports(),

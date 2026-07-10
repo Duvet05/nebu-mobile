@@ -27,7 +27,7 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   bool _shareActivityData = false;
-  bool _analyticsEnabled = true;
+  bool _analyticsEnabled = false;
 
   Map<Permission, bool> _permissions = {};
 
@@ -47,7 +47,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       _shareActivityData =
           prefs.getBool(StorageKeys.privacyShareActivityData) ?? false;
       _analyticsEnabled =
-          prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
+          prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? false;
     });
   }
 
@@ -161,23 +161,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 'privacy.microphone'.tr(),
                 'privacy.microphone_desc'.tr(),
                 _permissions[Permission.microphone] ?? false,
-              ),
-            ],
-          ),
-
-          SizedBox(height: context.spacing.panelPadding),
-
-          // Account Data Section
-          _buildSectionHeader('privacy.account_data'.tr(), theme),
-          _buildCard(
-            theme,
-            children: [
-              ListTile(
-                leading: Icon(Icons.download, color: theme.colorScheme.primary),
-                title: Text('privacy.download_data'.tr()),
-                subtitle: Text('privacy.download_data_desc'.tr()),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _showDownloadDataDialog,
               ),
             ],
           ),
@@ -311,36 +294,6 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             );
           },
   );
-
-  void _showDownloadDataDialog() {
-    final parentContext = context;
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: Text('privacy.download_data'.tr()),
-          content: Text('privacy.download_data_info'.tr()),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text('common.cancel'.tr()),
-            ),
-            CustomButton(
-              text: 'privacy.download'.tr(),
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                if (mounted) {
-                  parentContext.showInfoSnackBar(
-                    'privacy.download_started'.tr(),
-                  );
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showDeleteAccountDialog() {
     unawaited(

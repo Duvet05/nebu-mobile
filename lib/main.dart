@@ -56,7 +56,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final crashReportingAllowed =
-      prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
+      prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? false;
   await ErrorReportingService.initialize(
     collectionEnabled: crashReportingAllowed,
   );
