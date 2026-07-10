@@ -9,6 +9,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/toy.dart';
+import '../../../data/services/local_toy_store.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
 import '../../providers/person_provider.dart';
@@ -55,6 +56,9 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
       auth_provider.sharedPreferencesProvider.future,
     );
     final logger = ref.read(loggerProvider);
+    final userId = ref.read(auth_provider.authProvider).value?.id;
+    String localKey(String base) =>
+        userId == null ? base : StorageKeys.scoped(base, userId);
 
     final deviceRegistered =
         prefs.getBool(StorageKeys.setupDeviceRegistered) ?? false;
@@ -76,27 +80,51 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
       'voicePreference': ?voicePreference,
       if (favorites.isNotEmpty) 'interests': favorites,
     };
+    final hasChildProfile = childAge != null && childAge.isNotEmpty;
+    var savedLocalToy = false;
 
     if (deviceRegistered) {
       // Toy was registered at step 3 — PATCH it with personality + settings
       // and create a Person (child) to link as owner
       try {
-        final toys = ref.read(toyProvider).value;
-        if (toys == null || toys.isEmpty) {
-          throw StateError('Registered setup toy is missing from local state');
-        }
         final setupToyId = prefs.getString(StorageKeys.setupToyId);
+        final toyNotifier = ref.read(toyProvider.notifier);
+        var toys = ref.read(toyProvider).value ?? const <Toy>[];
         Toy? toy;
-        if (setupToyId != null) {
+        if (setupToyId != null && setupToyId.isNotEmpty) {
           for (final candidate in toys) {
             if (candidate.id == setupToyId) {
               toy = candidate;
               break;
             }
           }
-        } else if (toys.length == 1) {
-          // Compatibility for a wizard started before setupToyId existed.
-          toy = toys.first;
+          if (toy == null) {
+            try {
+              toy = await toyNotifier.getToyById(setupToyId);
+            } on Exception catch (e) {
+              logger.w(
+                'Could not restore setup toy $setupToyId directly; '
+                'reloading account toys: $e',
+              );
+              await toyNotifier.loadMyToys();
+              toys = ref.read(toyProvider).value ?? const <Toy>[];
+              for (final candidate in toys) {
+                if (candidate.id == setupToyId) {
+                  toy = candidate;
+                  break;
+                }
+              }
+            }
+          }
+        } else {
+          if (toys.isEmpty) {
+            await toyNotifier.loadMyToys();
+            toys = ref.read(toyProvider).value ?? const <Toy>[];
+          }
+          if (toys.length == 1) {
+            // Compatibility for a wizard started before setupToyId existed.
+            toy = toys.first;
+          }
         }
         if (toy == null) {
           throw StateError('Registered setup toy could not be resolved');
@@ -109,8 +137,13 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
         // receives proper context (name, age, interests).
         // Estimate birthDate from the age-range selection.
         String? ownerId = prefs.getString(StorageKeys.setupOwnerId);
+        if (ownerId == null || ownerId.isEmpty) {
+          ownerId = toy.ownerId;
+        }
         final authState = ref.read(auth_provider.authProvider);
-        if (authState.value != null && ownerId == null) {
+        if (authState.value != null &&
+            (ownerId == null || ownerId.isEmpty) &&
+            hasChildProfile) {
           try {
             final birthDate = _estimateBirthDate(childAge);
             final child = await ref
@@ -152,9 +185,15 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
     } else {
       // Device was NOT registered — save as local toy with pending status
       final toyName = prefs.getString(StorageKeys.setupToyName) ?? 'Nebu';
+      final storedSetupToyId = prefs.getString(StorageKeys.setupToyId);
+      final localToyId = stableLocalSetupToyId(
+        storedSetupToyId,
+        fallbackId: 'local_${DateTime.now().millisecondsSinceEpoch}',
+      );
+      await prefs.setString(StorageKeys.setupToyId, localToyId);
 
       final localToy = Toy(
-        id: 'local_${DateTime.now().millisecondsSinceEpoch}',
+        id: localToyId,
         name: toyName,
         status: ToyStatus.pending,
         model: 'Nebu',
@@ -165,16 +204,20 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
       );
 
       await ref.read(toyProvider.notifier).saveLocalToy(localToy);
+      savedLocalToy = true;
       if (childName != null &&
           childName.isNotEmpty &&
           childAge != null &&
           personalityId != null &&
           personalityId.isNotEmpty) {
         await Future.wait([
-          prefs.setString(StorageKeys.localChildName, childName),
-          prefs.setString(StorageKeys.localChildAge, childAge),
-          prefs.setString(StorageKeys.localChildPersonality, personalityId),
-          prefs.setBool(StorageKeys.setupCompletedLocally, true),
+          prefs.setString(localKey(StorageKeys.localChildName), childName),
+          prefs.setString(localKey(StorageKeys.localChildAge), childAge),
+          prefs.setString(
+            localKey(StorageKeys.localChildPersonality),
+            personalityId,
+          ),
+          prefs.setBool(localKey(StorageKeys.setupCompletedLocally), true),
         ]);
       }
     }
@@ -192,6 +235,14 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
       prefs.setBool(StorageKeys.setupCompleted, true),
     ]);
 
+    if (savedLocalToy) {
+      ref.invalidate(hasLocalToysProvider);
+      final hasLocalToys = await ref.read(hasLocalToysProvider.future);
+      if (!hasLocalToys) {
+        throw StateError('Local setup toy was not persisted');
+      }
+    }
+
     if (!mounted) {
       return;
     }
@@ -203,19 +254,28 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
     final theme = context.theme;
     final colorScheme = theme.colorScheme;
     final prefs = ref.watch(auth_provider.sharedPreferencesProvider).value;
-    final summaries = <String>[
-      if (prefs?.getBool(StorageKeys.setupDeviceRegistered) ?? false)
-        'setup.world_info.device_connected'.tr(),
-      if ((prefs?.getString(StorageKeys.setupChildName)?.isNotEmpty ?? false) &&
-          (prefs?.getString(StorageKeys.setupChildAge)?.isNotEmpty ?? false))
-        'setup.world_info.profile_configured'.tr(),
-      if ((prefs?.getString(StorageKeys.setupPersonalityId)?.isNotEmpty ??
-              false) ||
-          (prefs?.getString(StorageKeys.setupVoicePreference)?.isNotEmpty ??
-              false) ||
-          (prefs?.getString(StorageKeys.setupFavorites)?.isNotEmpty ?? false))
-        'setup.world_info.preferences_saved'.tr(),
-    ];
+    final deviceRegistered =
+        prefs?.getBool(StorageKeys.setupDeviceRegistered) ?? false;
+    final hasProfile =
+        prefs?.getString(StorageKeys.setupChildAge)?.isNotEmpty ?? false;
+    final hasPreferences =
+        (prefs?.getString(StorageKeys.setupPersonalityId)?.isNotEmpty ??
+            false) ||
+        (prefs?.getString(StorageKeys.setupVoicePreference)?.isNotEmpty ??
+            false) ||
+        (prefs?.getString(StorageKeys.setupFavorites)?.isNotEmpty ?? false);
+    final summaries = prefs == null
+        ? <String>[]
+        : <String>[
+            if (deviceRegistered)
+              'setup.world_info.device_ready'.tr()
+            else
+              'setup.world_info.local_toy_ready'.tr(),
+            if (hasProfile) 'setup.world_info.profile_ready'.tr(),
+            if (hasPreferences) 'setup.world_info.preferences_ready'.tr(),
+            if (!hasProfile && !hasPreferences)
+              'setup.world_info.optional_skipped'.tr(),
+          ];
 
     return Scaffold(
       body: SafeArea(
@@ -231,7 +291,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
                   children: [
                     const Spacer(),
 
-                    // Completion icon
+                    // Review icon
                     Center(
                       child: Container(
                         width: 120,
@@ -241,7 +301,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.check,
+                          Icons.fact_check_outlined,
                           size: 60,
                           color: context.colors.primary,
                         ),
@@ -252,7 +312,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
 
                     // Title
                     Text(
-                      'setup.world_info.all_set'.tr(),
+                      'setup.world_info.review_title'.tr(),
                       style: theme.textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.5,
@@ -263,7 +323,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
                     SizedBox(height: context.spacing.titleBottomMarginSm),
 
                     Text(
-                      'setup.world_info.ready_message'.tr(),
+                      'setup.world_info.review_message'.tr(),
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -278,7 +338,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
                       _buildFeatureSummary(
                         context,
                         theme,
-                        Icons.check_circle,
+                        Icons.pending_actions_outlined,
                         summaries[index],
                       ),
                     ],
@@ -287,7 +347,7 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
 
                     // Finish button
                     SetupPrimaryButton(
-                      text: 'setup.world_info.start_using'.tr(),
+                      text: 'setup.world_info.finish_setup'.tr(),
                       onPressed: _finishSetup,
                       isEnabled: !_isFinishing,
                       isLoading: _isFinishing,
@@ -337,9 +397,13 @@ class _WorldInfoSetupScreenState extends ConsumerState<WorldInfoSetupScreen> {
     children: [
       Icon(icon, color: context.colors.primary, size: 24),
       SizedBox(width: context.spacing.gapLg),
-      Text(
-        text,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+      Expanded(
+        child: Text(
+          text,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     ],
   );

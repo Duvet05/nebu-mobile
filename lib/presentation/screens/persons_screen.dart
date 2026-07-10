@@ -9,6 +9,7 @@ import '../../data/models/person.dart';
 import '../../data/models/toy.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../providers/api_provider.dart';
+import '../providers/auth_provider.dart';
 import '../providers/person_provider.dart';
 import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
@@ -168,7 +169,8 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
   );
 
   Widget _buildSyncBanner(BuildContext context) {
-    final localChildService = ref.watch(localChildDataServiceProvider);
+    final userId = ref.watch(authProvider).value?.id;
+    final localChildService = ref.watch(localChildDataServiceProvider(userId));
 
     return localChildService.when(
       data: (service) {

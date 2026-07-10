@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../data/services/wifi_qr_parser.dart';
 import 'api_provider.dart';
 import 'auth_provider.dart';
 
@@ -37,9 +38,14 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
     state = state.copyWith(isProcessing: true, scannedCode: code);
     try {
       if (mode == QRScannerMode.wifi) {
-        if (context.mounted) {
-          Navigator.of(context).pop(code.trim());
+        final normalizedCode = code.trim();
+        if (WiFiQrParser.parse(normalizedCode) != null) {
+          if (context.mounted) {
+            Navigator.of(context).pop(normalizedCode);
+          }
+          return;
         }
+        await _showUnrecognizedCode(normalizedCode, context);
         return;
       }
       await _processQRCode(code, context);
@@ -59,38 +65,40 @@ class QRScannerNotifier extends Notifier<QRScannerState> {
     if (isMacAddress) {
       await _assignToyByMac(code.trim(), context);
     } else {
-      if (!context.mounted) {
-        return;
-      }
-      await showDialog<String>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('qr_scanner.scanned'.tr()),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('qr_scanner.unrecognized_format'.tr()),
-              SizedBox(height: context.spacing.titleBottomMarginSm),
-              Text(
-                code,
-                style: context.theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                ),
+      await _showUnrecognizedCode(code, context);
+    }
+  }
+
+  Future<void> _showUnrecognizedCode(String code, BuildContext context) async {
+    if (!context.mounted) {
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('qr_scanner.scanned'.tr()),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('qr_scanner.unrecognized_format'.tr()),
+            SizedBox(height: context.spacing.titleBottomMarginSm),
+            Text(
+              code,
+              style: context.theme.textTheme.bodySmall?.copyWith(
+                fontFamily: 'monospace',
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(ctx).pop();
-              },
-              child: Text('qr_scanner.scan_again'.tr()),
             ),
           ],
         ),
-      );
-    }
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('qr_scanner.scan_again'.tr()),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _assignToyByMac(String macAddress, BuildContext context) async {

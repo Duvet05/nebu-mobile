@@ -37,6 +37,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
 
   Future<void> _loadToys() async {
     final user = ref.read(authProvider).value;
+    final expectedUserId = user?.id;
     final notifier = ref.read(toyProvider.notifier);
 
     // Always load local toys first so we never flash a false empty state
@@ -54,12 +55,12 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
             ...current.where((t) => !localIds.contains(t.id)),
             ...localToys,
           ];
-          notifier.setToys(merged);
+          notifier.setToys(merged, expectedUserId: expectedUserId);
         }
       }
     } else {
       // Unauthenticated: only local toys
-      notifier.setToys(localToys);
+      notifier.setToys(localToys, expectedUserId: expectedUserId);
     }
   }
 

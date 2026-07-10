@@ -149,12 +149,14 @@
       "select_at_least": "Select at least 2"
     },
     "world_info": {
-      "all_set": "All Set!",
-      "ready_message": "Your Nebu companion is ready to meet you!",
-      "device_connected": "Device connected",
-      "profile_configured": "Profile configured",
-      "preferences_saved": "Preferences saved",
-      "start_using": "Start Using Nebu",
+      "review_title": "Review your setup",
+      "review_message": "We'll save these choices when you finish setup.",
+      "device_ready": "Connected toy ready to finalize",
+      "local_toy_ready": "A local toy will be saved on this device",
+      "profile_ready": "Child profile ready to apply",
+      "preferences_ready": "Selected preferences ready to apply",
+      "optional_skipped": "Optional profile and preferences were skipped",
+      "finish_setup": "Finish Setup",
       "default_child_name": "My child"
     }
   },
@@ -623,6 +625,7 @@
     "share_activity_desc": "Help us improve by sharing usage data",
     "analytics": "Analytics & Statistics",
     "analytics_desc": "Allow crash diagnostics and app health data to improve reliability",
+    "preference_save_error": "We couldn't save that privacy choice. Please try again.",
     "permissions": "App Permissions",
     "bluetooth": "Bluetooth",
     "bluetooth_desc": "Required to connect with toys",

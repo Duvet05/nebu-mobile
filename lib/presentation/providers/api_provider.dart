@@ -170,12 +170,11 @@ final deviceTokenServiceProvider = Provider<DeviceTokenService>((ref) {
   return DeviceTokenService(logger: logger, apiService: apiService);
 });
 
-final localChildDataServiceProvider = FutureProvider<LocalChildDataService>((
-  ref,
-) async {
-  final prefs = await ref.watch(sharedPreferencesProvider.future);
-  return LocalChildDataService(prefs);
-});
+final localChildDataServiceProvider =
+    FutureProvider.family<LocalChildDataService, String?>((ref, userId) async {
+      final prefs = await ref.watch(sharedPreferencesProvider.future);
+      return LocalChildDataService(prefs, userId: userId);
+    });
 
 final healthServiceProvider = Provider<HealthService>((ref) {
   final logger = ref.watch(loggerProvider);

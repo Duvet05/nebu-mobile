@@ -1,18 +1,17 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../core/constants/storage_keys.dart';
+
 /// Service for managing locally stored child information
 /// This is used when the user configures the app without connecting a device
 class LocalChildDataService {
-  LocalChildDataService(this._prefs);
+  LocalChildDataService(this._prefs, {String? userId}) : _userId = userId;
 
   final SharedPreferences _prefs;
+  final String? _userId;
 
-  // Storage keys
-  static const String _keyChildName = 'local_child_name';
-  static const String _keyChildAge = 'local_child_age';
-  static const String _keyChildPersonality = 'local_child_personality';
-  static const String _keyCustomPrompt = 'local_custom_prompt';
-  static const String _keySetupCompleted = 'setup_completed_locally';
+  String _key(String base) =>
+      _userId == null ? base : StorageKeys.scoped(base, _userId);
 
   /// Save child information
   Future<void> saveChildInfo({
@@ -21,33 +20,39 @@ class LocalChildDataService {
     required String personality,
     String? customPrompt,
   }) async {
-    await _prefs.setString(_keyChildName, name);
-    await _prefs.setString(_keyChildAge, age);
-    await _prefs.setString(_keyChildPersonality, personality);
+    await _prefs.setString(_key(StorageKeys.localChildName), name);
+    await _prefs.setString(_key(StorageKeys.localChildAge), age);
+    await _prefs.setString(
+      _key(StorageKeys.localChildPersonality),
+      personality,
+    );
 
     if (customPrompt != null && customPrompt.isNotEmpty) {
-      await _prefs.setString(_keyCustomPrompt, customPrompt);
+      await _prefs.setString(_key(StorageKeys.localCustomPrompt), customPrompt);
     } else {
-      await _prefs.remove(_keyCustomPrompt);
+      await _prefs.remove(_key(StorageKeys.localCustomPrompt));
     }
 
-    await _prefs.setBool(_keySetupCompleted, true);
+    await _prefs.setBool(_key(StorageKeys.setupCompletedLocally), true);
   }
 
   /// Get child name
-  String? getChildName() => _prefs.getString(_keyChildName);
+  String? getChildName() => _prefs.getString(_key(StorageKeys.localChildName));
 
   /// Get child age group
-  String? getChildAge() => _prefs.getString(_keyChildAge);
+  String? getChildAge() => _prefs.getString(_key(StorageKeys.localChildAge));
 
   /// Get child personality preference
-  String? getChildPersonality() => _prefs.getString(_keyChildPersonality);
+  String? getChildPersonality() =>
+      _prefs.getString(_key(StorageKeys.localChildPersonality));
 
   /// Get custom prompt
-  String? getCustomPrompt() => _prefs.getString(_keyCustomPrompt);
+  String? getCustomPrompt() =>
+      _prefs.getString(_key(StorageKeys.localCustomPrompt));
 
   /// Check if local setup was completed
-  bool isSetupCompleted() => _prefs.getBool(_keySetupCompleted) ?? false;
+  bool isSetupCompleted() =>
+      _prefs.getBool(_key(StorageKeys.setupCompletedLocally)) ?? false;
 
   /// Get all child data as a map
   Map<String, String?> getChildData() => {
@@ -133,34 +138,37 @@ Communication style:
 
   /// Clear all local child data
   Future<void> clearChildData() async {
-    await _prefs.remove(_keyChildName);
-    await _prefs.remove(_keyChildAge);
-    await _prefs.remove(_keyChildPersonality);
-    await _prefs.remove(_keyCustomPrompt);
-    await _prefs.remove(_keySetupCompleted);
+    await _prefs.remove(_key(StorageKeys.localChildName));
+    await _prefs.remove(_key(StorageKeys.localChildAge));
+    await _prefs.remove(_key(StorageKeys.localChildPersonality));
+    await _prefs.remove(_key(StorageKeys.localCustomPrompt));
+    await _prefs.remove(_key(StorageKeys.setupCompletedLocally));
   }
 
   /// Update child name only
   Future<void> updateChildName(String name) async {
-    await _prefs.setString(_keyChildName, name);
+    await _prefs.setString(_key(StorageKeys.localChildName), name);
   }
 
   /// Update child age only
   Future<void> updateChildAge(String age) async {
-    await _prefs.setString(_keyChildAge, age);
+    await _prefs.setString(_key(StorageKeys.localChildAge), age);
   }
 
   /// Update personality only
   Future<void> updateChildPersonality(String personality) async {
-    await _prefs.setString(_keyChildPersonality, personality);
+    await _prefs.setString(
+      _key(StorageKeys.localChildPersonality),
+      personality,
+    );
   }
 
   /// Update custom prompt only
   Future<void> updateCustomPrompt(String? prompt) async {
     if (prompt != null && prompt.isNotEmpty) {
-      await _prefs.setString(_keyCustomPrompt, prompt);
+      await _prefs.setString(_key(StorageKeys.localCustomPrompt), prompt);
     } else {
-      await _prefs.remove(_keyCustomPrompt);
+      await _prefs.remove(_key(StorageKeys.localCustomPrompt));
     }
   }
 

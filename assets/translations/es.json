@@ -149,12 +149,14 @@
       "select_at_least": "Selecciona al menos 2"
     },
     "world_info": {
-      "all_set": "¡Todo Listo!",
-      "ready_message": "¡Tu compañero Nebu está listo para conocerte!",
-      "device_connected": "Dispositivo conectado",
-      "profile_configured": "Perfil configurado",
-      "preferences_saved": "Preferencias guardadas",
-      "start_using": "Comenzar a Usar Nebu",
+      "review_title": "Revisa tu configuración",
+      "review_message": "Guardaremos estas opciones cuando finalices la configuración.",
+      "device_ready": "Juguete conectado listo para finalizar",
+      "local_toy_ready": "Se guardará un juguete local en este dispositivo",
+      "profile_ready": "Perfil infantil listo para aplicar",
+      "preferences_ready": "Preferencias seleccionadas listas para aplicar",
+      "optional_skipped": "Se omitieron el perfil y las preferencias opcionales",
+      "finish_setup": "Finalizar Configuración",
       "default_child_name": "Mi niño"
     }
   },
@@ -622,6 +624,7 @@
     "share_activity_desc": "Ayúdanos a mejorar compartiendo datos de uso",
     "analytics": "Análisis y Estadísticas",
     "analytics_desc": "Permitir diagnósticos de fallos y datos de salud de la app para mejorar la estabilidad",
+    "preference_save_error": "No pudimos guardar esa preferencia de privacidad. Inténtalo de nuevo.",
     "permissions": "Permisos de la App",
     "bluetooth": "Bluetooth",
     "bluetooth_desc": "Necesario para conectar con los juguetes",

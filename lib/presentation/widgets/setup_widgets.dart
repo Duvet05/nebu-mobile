@@ -186,13 +186,13 @@ class SetupSkipButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     button: true,
-    label: 'setup.connection.skip_setup'.tr(),
+    label: 'setup.connection.skip_for_now'.tr(),
     child: GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: context.spacing.gapMd),
         child: Text(
-          'setup.connection.skip_setup'.tr(),
+          'setup.connection.skip_for_now'.tr(),
           style: context.theme.textTheme.bodyMedium?.copyWith(
             color: context.theme.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,

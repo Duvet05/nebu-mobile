@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../../data/services/local_child_data_service.dart';
 import '../providers/api_provider.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
 
 class ChildProfileScreen extends ConsumerStatefulWidget {
@@ -20,7 +21,10 @@ class ChildProfileScreen extends ConsumerStatefulWidget {
 class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
   @override
   Widget build(BuildContext context) {
-    final localChildDataService = ref.watch(localChildDataServiceProvider);
+    final userId = ref.watch(authProvider).value?.id;
+    final localChildDataService = ref.watch(
+      localChildDataServiceProvider(userId),
+    );
     final colorScheme = context.theme.colorScheme;
 
     return Scaffold(
@@ -44,7 +48,8 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
               SizedBox(height: context.spacing.panelPadding),
               CustomButton(
                 text: 'common.retry'.tr(),
-                onPressed: () => ref.invalidate(localChildDataServiceProvider),
+                onPressed: () =>
+                    ref.invalidate(localChildDataServiceProvider(userId)),
                 variant: ButtonVariant.outline,
               ),
             ],
@@ -215,6 +220,7 @@ class _ChildProfileScreenState extends ConsumerState<ChildProfileScreen> {
     if (!mounted) {
       return;
     }
-    ref.invalidate(localChildDataServiceProvider);
+    final userId = ref.read(authProvider).value?.id;
+    ref.invalidate(localChildDataServiceProvider(userId));
   }
 }
