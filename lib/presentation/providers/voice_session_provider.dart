@@ -40,15 +40,19 @@ class VoiceMetricsNotifier extends AsyncNotifier<VoiceMetrics> {
   }
 
   Future<void> refresh() async {
+    final user = ref.read(authProvider).value;
+    if (user == null) {
+      state = const AsyncValue.data(VoiceMetrics());
+      return;
+    }
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    final result = await AsyncValue.guard(() async {
       final prefs = await ref.read(sharedPreferencesProvider.future);
-      final user = ref.read(authProvider).value;
-      if (user == null) {
-        return const VoiceMetrics();
-      }
       return _fetchAndCache(prefs, user.id);
     });
+    if (ref.read(authProvider).value?.id == user.id) {
+      state = result;
+    }
   }
 
   VoiceMetrics? _loadFromCache(SharedPreferences prefs, String userId) {
@@ -145,14 +149,16 @@ class UserVoiceSessionsNotifier extends AsyncNotifier<List<VoiceSession>> {
   }
 
   Future<void> refresh() async {
+    final user = ref.read(authProvider).value;
+    if (user == null) {
+      state = const AsyncValue.data([]);
+      return;
+    }
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final user = ref.read(authProvider).value;
-      if (user == null) {
-        return [];
-      }
-      return _fetchFromApi(user.id);
-    });
+    final result = await AsyncValue.guard(() => _fetchFromApi(user.id));
+    if (ref.read(authProvider).value?.id == user.id) {
+      state = result;
+    }
   }
 
   Future<List<VoiceSession>> _fetchFromApi(String userId) {
@@ -190,15 +196,19 @@ class UserLimitsNotifier extends AsyncNotifier<UserLimits> {
   }
 
   Future<void> refresh() async {
+    final user = ref.read(authProvider).value;
+    if (user == null) {
+      state = const AsyncValue.data(UserLimits());
+      return;
+    }
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    final result = await AsyncValue.guard(() async {
       final prefs = await ref.read(sharedPreferencesProvider.future);
-      final user = ref.read(authProvider).value;
-      if (user == null) {
-        return const UserLimits();
-      }
       return _fetchAndCache(prefs, user.id);
     });
+    if (ref.read(authProvider).value?.id == user.id) {
+      state = result;
+    }
   }
 
   UserLimits? _loadFromCache(SharedPreferences prefs, String userId) {

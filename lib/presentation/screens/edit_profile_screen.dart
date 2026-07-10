@@ -14,13 +14,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/local_avatar_provider.dart';
 import '../widgets/custom_input.dart';
-
-/// Local avatar path, stored in secure storage.
-final localAvatarProvider = FutureProvider<String?>((ref) async {
-  final storage = ref.watch(secureStorageProvider);
-  return storage.read(key: StorageKeys.localAvatar);
-});
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   const EditProfileScreen({super.key});
@@ -158,13 +153,21 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       if (kIsWeb) {
         return;
       }
+      final userId = ref.read(authProvider).value?.id;
+      if (userId == null) {
+        return;
+      }
       final appDir = await getApplicationDocumentsDirectory();
-      final avatarFile = File('${appDir.path}/avatar.jpg');
+      final safeUserId = userId.replaceAll(RegExp('[^A-Za-z0-9_-]'), '_');
+      final avatarFile = File('${appDir.path}/avatar_$safeUserId.jpg');
       await File(image.path).copy(avatarFile.path);
 
       await ref
           .read(secureStorageProvider)
-          .write(key: StorageKeys.localAvatar, value: avatarFile.path);
+          .write(
+            key: StorageKeys.scoped(StorageKeys.localAvatar, userId),
+            value: avatarFile.path,
+          );
 
       // Refresh the provider so UI updates everywhere
       ref.invalidate(localAvatarProvider);

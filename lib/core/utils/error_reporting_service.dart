@@ -76,7 +76,7 @@ class ErrorReportingService {
   }
 
   static Future<void> clearUserContext() async {
-    if (!_isCollectionEnabled) {
+    if (Firebase.apps.isEmpty) {
       return;
     }
 

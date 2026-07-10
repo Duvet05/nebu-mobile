@@ -10,8 +10,8 @@ import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/auth_provider.dart';
+import '../providers/local_avatar_provider.dart';
 import '../providers/theme_provider.dart';
-import '../screens/edit_profile_screen.dart';
 import '../widgets/custom_button.dart';
 
 class ProfileScreen extends ConsumerWidget {

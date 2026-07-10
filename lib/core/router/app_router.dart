@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,6 +56,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   final authChange = ValueNotifier<AsyncValue<User?>>(
     const AsyncValue.loading(),
   );
+  var handlingSessionExpiration = false;
   ref
     ..listen(authProvider, (_, next) => authChange.value = next)
     // Re-assign current value to trigger refreshListenable
@@ -64,9 +67,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       authChange.value = ref.read(authProvider);
     })
     ..listen(sessionExpiredProvider, (_, expired) {
-      if (expired == true) {
-        ref.read(sessionExpiredProvider.notifier).reset();
-        ref.read(authProvider.notifier).forceLogout();
+      if (expired == true && !handlingSessionExpiration) {
+        handlingSessionExpiration = true;
+        unawaited(
+          ref.read(authProvider.notifier).forceLogout().whenComplete(() {
+            ref.read(sessionExpiredProvider.notifier).reset();
+            handlingSessionExpiration = false;
+          }),
+        );
       }
     });
 

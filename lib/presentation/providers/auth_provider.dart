@@ -17,6 +17,8 @@ final authProvider = AsyncNotifierProvider<AuthNotifier, User?>(
 );
 
 class AuthNotifier extends AsyncNotifier<User?> {
+  int _operationGeneration = 0;
+
   @override
   Future<User?> build() => _loadUserFromStorage();
 
@@ -31,8 +33,10 @@ class AuthNotifier extends AsyncNotifier<User?> {
           final user = User.fromJson(
             json.decode(userJson) as Map<String, dynamic>,
           );
-          unawaited(ErrorReportingService.setUserContext(userId: user.id));
+          await _adoptLegacyLocalData(user.id);
           await _removeLegacyVoiceCaches();
+          await _applyPrivacyContext(user.id);
+          ref.read(apiServiceProvider).markSessionActive();
           unawaited(ref.read(firebasePushServiceProvider).initialize());
           return user;
         }
@@ -50,26 +54,39 @@ class AuthNotifier extends AsyncNotifier<User?> {
     )
     authCall,
   ) async {
+    final operation = ++_operationGeneration;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    try {
       final authService = await ref.read(authServiceProvider.future);
       final response = await authCall(authService);
+      if (operation != _operationGeneration) {
+        return;
+      }
       if (response.success && response.user != null) {
         await _onAuthSuccess(response.user!);
-        return response.user;
+        if (operation == _operationGeneration) {
+          state = AsyncValue.data(response.user);
+        }
+        return;
       }
       final error = response.error ?? 'auth.login_error';
       // Translate if it's an i18n key (contains dots), otherwise show raw backend message
       throw Exception(error.contains('.') ? error.tr() : error);
-    });
+    } on Object catch (error, stackTrace) {
+      if (operation == _operationGeneration) {
+        state = AsyncValue.error(error, stackTrace);
+      }
+    }
   }
 
   Future<void> _onAuthSuccess(User user) async {
-    unawaited(ErrorReportingService.setUserContext(userId: user.id));
+    await _adoptLegacyLocalData(user.id);
     await _removeLegacyVoiceCaches();
     await ref
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
+    ref.read(apiServiceProvider).markSessionActive();
+    await _applyPrivacyContext(user.id);
     // Fire-and-forget: migration must never block login
     unawaited(() async {
       try {
@@ -134,38 +151,77 @@ class AuthNotifier extends AsyncNotifier<User?> {
   });
 
   Future<void> updateUser(User user) async {
+    if (state.value?.id != user.id) {
+      return;
+    }
     await ref
         .read(secureStorageProvider)
         .write(key: StorageKeys.user, value: json.encode(user.toJson()));
-    state = AsyncValue.data(user);
+    if (state.value?.id == user.id) {
+      state = AsyncValue.data(user);
+    }
   }
 
   /// Force logout without backend call — used when session expired.
   Future<void> forceLogout() async {
-    await ref.read(firebasePushServiceProvider).resetLocal();
+    final operation = ++_operationGeneration;
+    await _clearRuntimeConnections(unregisterPush: false);
     final storage = ref.read(secureStorageProvider);
     await Future.wait([
       storage.delete(key: StorageKeys.accessToken),
       storage.delete(key: StorageKeys.refreshToken),
       storage.delete(key: StorageKeys.user),
     ]);
-    await _purgeLocalUserData();
-    unawaited(ErrorReportingService.clearUserContext());
-    state = const AsyncValue.data(null);
+    await _clearTransientSetupData();
+    await ErrorReportingService.clearUserContext();
+    await ErrorReportingService.setCollectionEnabled(enabled: false);
+    if (operation == _operationGeneration) {
+      state = const AsyncValue.data(null);
+    }
   }
 
   Future<void> logout() async {
+    final operation = ++_operationGeneration;
     state = const AsyncValue.loading();
-    await ref.read(firebasePushServiceProvider).unregister();
+    await _clearRuntimeConnections(unregisterPush: true);
     try {
       await (await ref.read(authServiceProvider.future)).logout();
     } on Exception catch (e) {
       ref.read(loggerProvider).w('Backend logout failed: $e');
     }
     await ref.read(secureStorageProvider).delete(key: StorageKeys.user);
-    await _purgeLocalUserData();
-    unawaited(ErrorReportingService.clearUserContext());
-    state = const AsyncValue.data(null);
+    await _clearTransientSetupData();
+    await ErrorReportingService.clearUserContext();
+    await ErrorReportingService.setCollectionEnabled(enabled: false);
+    if (operation == _operationGeneration) {
+      state = const AsyncValue.data(null);
+    }
+  }
+
+  Future<void> _clearRuntimeConnections({required bool unregisterPush}) async {
+    final pushService = ref.read(firebasePushServiceProvider);
+    final bluetoothService = ref.read(bluetoothServiceProvider);
+    final liveKitService = ref.read(liveKitServiceProvider);
+    ref.read(deviceTokenServiceProvider).clearTokenCache();
+
+    await Future.wait([
+      if (unregisterPush)
+        pushService.unregister()
+      else
+        pushService.resetLocal(),
+      () async {
+        await bluetoothService.stopScan();
+        await bluetoothService.disconnect();
+      }(),
+      () async {
+        try {
+          await liveKitService.setMicrophoneEnabled(enabled: false);
+        } on Exception catch (e) {
+          ref.read(loggerProvider).w('Microphone cleanup failed: $e');
+        }
+        await liveKitService.disconnect();
+      }(),
+    ]);
   }
 
   Future<void> _removeLegacyVoiceCaches() async {
@@ -182,20 +238,61 @@ class AuthNotifier extends AsyncNotifier<User?> {
     }
   }
 
-  Future<void> _purgeLocalUserData() async {
+  Future<void> _adoptLegacyLocalData(String userId) async {
     final prefs = await ref.read(sharedPreferencesProvider.future);
-    const exactKeys = <String>{
+    for (final baseKey in const <String>[
       StorageKeys.localChildName,
       StorageKeys.localChildAge,
       StorageKeys.localChildPersonality,
       StorageKeys.localCustomPrompt,
       StorageKeys.localToys,
-      StorageKeys.localAvatar,
-      StorageKeys.localUserId,
-      StorageKeys.activitiesMigrated,
-      StorageKeys.setupSkipped,
-      StorageKeys.setupCompleted,
       StorageKeys.setupCompletedLocally,
+    ]) {
+      final scopedKey = StorageKeys.scoped(baseKey, userId);
+      if (prefs.containsKey(scopedKey) || !prefs.containsKey(baseKey)) {
+        continue;
+      }
+      final value = prefs.get(baseKey);
+      final saved = switch (value) {
+        final String value => await prefs.setString(scopedKey, value),
+        final bool value => await prefs.setBool(scopedKey, value),
+        final int value => await prefs.setInt(scopedKey, value),
+        final double value => await prefs.setDouble(scopedKey, value),
+        final List<String> value => await prefs.setStringList(scopedKey, value),
+        _ => false,
+      };
+      if (saved) {
+        await prefs.remove(baseKey);
+      }
+    }
+
+    final storage = ref.read(secureStorageProvider);
+    final legacyAvatar = await storage.read(key: StorageKeys.localAvatar);
+    final scopedAvatarKey = StorageKeys.scoped(StorageKeys.localAvatar, userId);
+    final scopedAvatar = await storage.read(key: scopedAvatarKey);
+    if (scopedAvatar == null && legacyAvatar != null) {
+      await storage.write(key: scopedAvatarKey, value: legacyAvatar);
+      await storage.delete(key: StorageKeys.localAvatar);
+    }
+  }
+
+  Future<void> _applyPrivacyContext(String userId) async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final enabled =
+        prefs.getBool(
+          StorageKeys.scoped(StorageKeys.privacyAnalyticsEnabled, userId),
+        ) ??
+        false;
+    await ErrorReportingService.clearUserContext();
+    await ErrorReportingService.setCollectionEnabled(enabled: enabled);
+    if (enabled) {
+      await ErrorReportingService.setUserContext(userId: userId);
+    }
+  }
+
+  Future<void> _clearTransientSetupData() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    for (final key in const <String>[
       StorageKeys.setupDeviceRegistered,
       StorageKeys.setupToyName,
       StorageKeys.setupToyId,
@@ -212,22 +309,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       StorageKeys.voiceSessionsCacheTs,
       StorageKeys.userLimitsCache,
       StorageKeys.userLimitsCacheTs,
-    };
-    const scopedPrefixes = <String>[
-      '${StorageKeys.voiceMetricsCache}:',
-      '${StorageKeys.voiceMetricsCacheTs}:',
-      '${StorageKeys.voiceSessionsCache}:',
-      '${StorageKeys.voiceSessionsCacheTs}:',
-      '${StorageKeys.userLimitsCache}:',
-      '${StorageKeys.userLimitsCacheTs}:',
-    ];
-
-    final keysToRemove = prefs.getKeys().where(
-      (key) =>
-          exactKeys.contains(key) ||
-          scopedPrefixes.any((prefix) => key.startsWith(prefix)),
-    );
-    for (final key in keysToRemove.toList()) {
+    ]) {
       await prefs.remove(key);
     }
   }
@@ -245,10 +327,19 @@ class AuthNotifier extends AsyncNotifier<User?> {
   /// Re-fetch user profile from backend and update local state.
   /// Used after email verification to pick up emailVerified: true.
   Future<bool> refreshUser() async {
+    final operation = _operationGeneration;
+    final expectedUserId = state.value?.id;
     try {
       final userService = ref.read(userServiceProvider);
       final user = await userService.getCurrentUserProfile();
+      if (operation != _operationGeneration ||
+          (expectedUserId != null && expectedUserId != user.id)) {
+        return false;
+      }
       await _onAuthSuccess(user);
+      if (operation != _operationGeneration) {
+        return false;
+      }
       state = AsyncValue.data(user);
       return true;
     } on Exception catch (e) {

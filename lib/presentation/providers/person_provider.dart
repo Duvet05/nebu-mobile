@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/person.dart';
 import '../../data/services/person_service.dart';
 import 'api_provider.dart';
+import 'auth_provider.dart';
 
 final personProvider = AsyncNotifierProvider<PersonNotifier, List<Person>>(
   PersonNotifier.new,
@@ -10,16 +11,25 @@ final personProvider = AsyncNotifierProvider<PersonNotifier, List<Person>>(
 
 class PersonNotifier extends AsyncNotifier<List<Person>> {
   @override
-  Future<List<Person>> build() => Future.value([]);
+  Future<List<Person>> build() {
+    ref.watch(authProvider).value?.id;
+    return Future.value([]);
+  }
 
   PersonService get _personService => ref.read(personServiceProvider);
+  String? get _userId => ref.read(authProvider).value?.id;
 
   /// Returns the current list, reloading from API if state has error.
-  Future<List<Person>> _currentPersons() async {
+  Future<List<Person>> _currentPersons(String userId) async {
+    if (_userId != userId) {
+      return [];
+    }
     if (state.hasError) {
       ref.read(loggerProvider).w('Person state was error, reloading from API');
       final persons = await _personService.getMyPersons();
-      state = AsyncValue.data(persons);
+      if (_userId == userId) {
+        state = AsyncValue.data(persons);
+      }
       return persons;
     }
     return state.value ?? [];
@@ -27,12 +37,20 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
   /// Load all persons for the current user
   Future<void> loadMyPersons() async {
+    final userId = _userId;
+    if (userId == null) {
+      state = const AsyncValue.data([]);
+      return;
+    }
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    final result = await AsyncValue.guard(() async {
       final persons = await _personService.getMyPersons();
       ref.read(loggerProvider).d('Loaded ${persons.length} persons');
       return persons;
     });
+    if (_userId == userId) {
+      state = result;
+    }
   }
 
   /// Create a new person (child)
@@ -42,6 +60,7 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
     String? gender,
     DateTime? birthDate,
   }) async {
+    final userId = _userId;
     try {
       final person = await _personService.createPerson(
         givenName: givenName,
@@ -51,8 +70,14 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
       );
 
       ref.read(loggerProvider).d('Person created: ${person.givenName}');
+      if (userId == null || _userId != userId) {
+        return person;
+      }
 
-      final current = await _currentPersons();
+      final current = await _currentPersons(userId);
+      if (_userId != userId) {
+        return person;
+      }
       // Deduplicate: API reload may already include the new person
       if (current.any((p) => p.id == person.id)) {
         state = AsyncValue.data(current);
@@ -75,6 +100,7 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
     String? gender,
     DateTime? birthDate,
   }) async {
+    final userId = _userId;
     try {
       final updated = await _personService.updatePerson(
         id: id,
@@ -85,8 +111,14 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
       );
 
       ref.read(loggerProvider).d('Person updated: ${updated.givenName}');
+      if (userId == null || _userId != userId) {
+        return updated;
+      }
 
-      final current = await _currentPersons();
+      final current = await _currentPersons(userId);
+      if (_userId != userId) {
+        return updated;
+      }
       final index = current.indexWhere((p) => p.id == updated.id);
       final newList = [...current];
       if (index != -1) {
@@ -105,12 +137,18 @@ class PersonNotifier extends AsyncNotifier<List<Person>> {
 
   /// Delete a person
   Future<void> deletePerson(String id) async {
+    final userId = _userId;
     try {
       await _personService.deletePerson(id);
       ref.read(loggerProvider).d('Person deleted: $id');
+      if (userId == null || _userId != userId) {
+        return;
+      }
 
-      final current = await _currentPersons();
-      state = AsyncValue.data(current.where((p) => p.id != id).toList());
+      final current = await _currentPersons(userId);
+      if (_userId == userId) {
+        state = AsyncValue.data(current.where((p) => p.id != id).toList());
+      }
     } on Exception catch (e) {
       ref.read(loggerProvider).e('Error deleting person: $e');
       rethrow;

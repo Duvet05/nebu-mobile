@@ -210,6 +210,103 @@ void main() {
     expect(adapter.callCountByPath['/auth/refresh'], 1);
   });
 
+  test('401 concurrentes con refresh rechazado expiran una sola vez', () async {
+    final bothRequestsStarted = Completer<void>();
+    var initialRequests = 0;
+    adapter.handle = (options) async {
+      if (options.path == '/one' || options.path == '/two') {
+        initialRequests++;
+        if (initialRequests == 2 && !bothRequestsStarted.isCompleted) {
+          bothRequestsStarted.complete();
+        }
+        return _jsonResponse({'message': 'expired'}, 401);
+      }
+      if (options.path == '/auth/refresh') {
+        await bothRequestsStarted.future;
+        return _jsonResponse({'message': 'refresh rejected'}, 401);
+      }
+      throw Exception('Unexpected request ${options.path}');
+    };
+
+    when(
+      secureStorage.read(key: StorageKeys.accessToken),
+    ).thenAnswer((_) async => 'old-token' as String?);
+    when(
+      secureStorage.read(key: StorageKeys.refreshToken),
+    ).thenAnswer((_) async => 'rejected-refresh' as String?);
+    var expiredCalls = 0;
+    final apiService = ApiService(
+      dio: dio,
+      secureStorage: secureStorage,
+      logger: logger,
+      onSessionExpired: () => expiredCalls++,
+    );
+
+    final results = await Future.wait<Object>([
+      apiService
+          .get<Map<String, dynamic>>('/one')
+          .then<Object>((value) => value, onError: (Object e) => e),
+      apiService
+          .get<Map<String, dynamic>>('/two')
+          .then<Object>((value) => value, onError: (Object e) => e),
+    ]).timeout(const Duration(seconds: 2));
+
+    expect(results, everyElement(isA<AuthException>()));
+    expect(adapter.callCountByPath['/auth/refresh'], 1);
+    expect(expiredCalls, 1);
+    verify(secureStorage.delete(key: StorageKeys.accessToken)).called(1);
+    verify(secureStorage.delete(key: StorageKeys.refreshToken)).called(1);
+  });
+
+  test(
+    'respuesta refresh mal tipada no bloquea solicitudes concurrentes',
+    () async {
+      final bothRequestsStarted = Completer<void>();
+      var initialRequests = 0;
+      adapter.handle = (options) async {
+        if (options.path == '/one' || options.path == '/two') {
+          initialRequests++;
+          if (initialRequests == 2 && !bothRequestsStarted.isCompleted) {
+            bothRequestsStarted.complete();
+          }
+          return _jsonResponse({'message': 'expired'}, 401);
+        }
+        if (options.path == '/auth/refresh') {
+          await bothRequestsStarted.future;
+          return _jsonResponse({'accessToken': 42}, 200);
+        }
+        throw Exception('Unexpected request ${options.path}');
+      };
+
+      when(
+        secureStorage.read(key: StorageKeys.accessToken),
+      ).thenAnswer((_) async => 'old-token' as String?);
+      when(
+        secureStorage.read(key: StorageKeys.refreshToken),
+      ).thenAnswer((_) async => 'refresh-token' as String?);
+      var expiredCalls = 0;
+      final apiService = ApiService(
+        dio: dio,
+        secureStorage: secureStorage,
+        logger: logger,
+        onSessionExpired: () => expiredCalls++,
+      );
+
+      final results = await Future.wait<Object>([
+        apiService
+            .get<Map<String, dynamic>>('/one')
+            .then<Object>((value) => value, onError: (Object e) => e),
+        apiService
+            .get<Map<String, dynamic>>('/two')
+            .then<Object>((value) => value, onError: (Object e) => e),
+      ]).timeout(const Duration(seconds: 2));
+
+      expect(results, everyElement(isA<AuthException>()));
+      expect(adapter.callCountByPath['/auth/refresh'], 1);
+      expect(expiredCalls, 1);
+    },
+  );
+
   test(
     '401 con refresh disponible reintenta request y finalmente retorna respuesta',
     () async {

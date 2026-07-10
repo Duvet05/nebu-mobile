@@ -28,6 +28,8 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   bool _shareActivityData = false;
   bool _analyticsEnabled = false;
+  bool _savingActivityPreference = false;
+  bool _savingAnalyticsPreference = false;
 
   Map<Permission, bool> _permissions = {};
 
@@ -39,21 +41,101 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   }
 
   Future<void> _loadPrivacyPreferences() async {
+    final userId = ref.read(authProvider).value?.id;
+    if (userId == null) {
+      return;
+    }
     final prefs = await ref.read(sharedPreferencesProvider.future);
     if (!mounted) {
       return;
     }
     setState(() {
       _shareActivityData =
-          prefs.getBool(StorageKeys.privacyShareActivityData) ?? false;
+          prefs.getBool(
+            StorageKeys.scoped(StorageKeys.privacyShareActivityData, userId),
+          ) ??
+          false;
       _analyticsEnabled =
-          prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? false;
+          prefs.getBool(
+            StorageKeys.scoped(StorageKeys.privacyAnalyticsEnabled, userId),
+          ) ??
+          false;
     });
   }
 
-  Future<void> _savePrivacyPreference(String key, bool value) async {
+  Future<void> _savePrivacyPreference(
+    String key,
+    String userId,
+    bool value,
+  ) async {
     final prefs = await ref.read(sharedPreferencesProvider.future);
-    await prefs.setBool(key, value);
+    final saved = await prefs.setBool(StorageKeys.scoped(key, userId), value);
+    if (!saved) {
+      throw StateError('Privacy preference was not persisted');
+    }
+  }
+
+  Future<void> _updateActivitySharing(bool value) async {
+    final userId = ref.read(authProvider).value?.id;
+    if (userId == null || _savingActivityPreference) {
+      return;
+    }
+    final previous = _shareActivityData;
+    setState(() {
+      _shareActivityData = value;
+      _savingActivityPreference = true;
+    });
+    try {
+      await _savePrivacyPreference(
+        StorageKeys.privacyShareActivityData,
+        userId,
+        value,
+      );
+    } on Exception {
+      if (mounted) {
+        setState(() => _shareActivityData = previous);
+        context.showErrorSnackBar('privacy.preference_save_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _savingActivityPreference = false);
+      }
+    }
+  }
+
+  Future<void> _updateAnalytics(bool value) async {
+    final userId = ref.read(authProvider).value?.id;
+    if (userId == null || _savingAnalyticsPreference) {
+      return;
+    }
+    final previous = _analyticsEnabled;
+    setState(() {
+      _analyticsEnabled = value;
+      _savingAnalyticsPreference = true;
+    });
+    try {
+      await _savePrivacyPreference(
+        StorageKeys.privacyAnalyticsEnabled,
+        userId,
+        value,
+      );
+      if (value) {
+        await ErrorReportingService.setCollectionEnabled(enabled: true);
+        await ErrorReportingService.setUserContext(userId: userId);
+      } else {
+        await ErrorReportingService.clearUserContext();
+        await ErrorReportingService.setCollectionEnabled(enabled: false);
+      }
+    } on Exception {
+      if (mounted) {
+        setState(() => _analyticsEnabled = previous);
+        context.showErrorSnackBar('privacy.preference_save_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _savingAnalyticsPreference = false);
+      }
+    }
   }
 
   Future<void> _loadPermissions() async {
@@ -97,29 +179,18 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 title: Text('privacy.share_activity'.tr()),
                 subtitle: Text('privacy.share_activity_desc'.tr()),
                 value: _shareActivityData,
-                onChanged: (value) {
-                  setState(() => _shareActivityData = value);
-                  _savePrivacyPreference(
-                    StorageKeys.privacyShareActivityData,
-                    value,
-                  );
-                },
+                onChanged: _savingActivityPreference
+                    ? null
+                    : (value) => unawaited(_updateActivitySharing(value)),
               ),
               const Divider(),
               SwitchListTile(
                 title: Text('privacy.analytics'.tr()),
                 subtitle: Text('privacy.analytics_desc'.tr()),
                 value: _analyticsEnabled,
-                onChanged: (value) {
-                  setState(() => _analyticsEnabled = value);
-                  _savePrivacyPreference(
-                    StorageKeys.privacyAnalyticsEnabled,
-                    value,
-                  );
-                  unawaited(
-                    ErrorReportingService.setCollectionEnabled(enabled: value),
-                  );
-                },
+                onChanged: _savingAnalyticsPreference
+                    ? null
+                    : (value) => unawaited(_updateAnalytics(value)),
               ),
             ],
           ),

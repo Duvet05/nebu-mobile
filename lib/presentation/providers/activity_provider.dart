@@ -48,9 +48,12 @@ class ActivityNotifier extends Notifier<ActivityState> {
   @override
   ActivityState build() {
     // Do not retain another account's activities after auth transitions.
-    ref.watch(authProvider);
+    ref.watch(authProvider).value?.id;
     return const ActivityState();
   }
+
+  bool _isCurrentUser(String userId) =>
+      ref.read(authProvider).value?.id == userId;
 
   /// Cargar actividades con filtros opcionales
   Future<void> loadActivities({
@@ -63,7 +66,7 @@ class ActivityNotifier extends Notifier<ActivityState> {
     int limit = 20,
     bool append = false,
   }) async {
-    if (state.isLoading) {
+    if (state.isLoading || !_isCurrentUser(userId)) {
       return;
     }
 
@@ -79,6 +82,9 @@ class ActivityNotifier extends Notifier<ActivityState> {
         page: page,
         limit: limit,
       );
+      if (!_isCurrentUser(userId)) {
+        return;
+      }
 
       final newActivities = append
           ? [...state.activities, ...response.activities]
@@ -93,18 +99,25 @@ class ActivityNotifier extends Notifier<ActivityState> {
         currentPage: page,
       );
     } on NotFoundException {
+      if (!_isCurrentUser(userId)) {
+        return;
+      }
       state = state.copyWith(
         activities: append ? state.activities : [],
         isLoading: false,
         hasMore: false,
       );
     } on Exception catch (e) {
-      state = state.copyWith(isLoading: false, error: _mapErrorMessage(e));
+      if (_isCurrentUser(userId)) {
+        state = state.copyWith(isLoading: false, error: _mapErrorMessage(e));
+      }
     } on Object catch (_) {
-      state = state.copyWith(
-        isLoading: false,
-        error: 'activity_log.error_loading',
-      );
+      if (_isCurrentUser(userId)) {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'activity_log.error_loading',
+        );
+      }
     }
   }
 
@@ -143,9 +156,15 @@ class ActivityNotifier extends Notifier<ActivityState> {
     DateTime? timestamp,
   }) async {
     try {
+      if (!_isCurrentUser(userId)) {
+        return false;
+      }
       final prefs = await ref.read(sharedPreferencesProvider.future);
       final sharingEnabled =
-          prefs.getBool(StorageKeys.privacyShareActivityData) ?? false;
+          prefs.getBool(
+            StorageKeys.scoped(StorageKeys.privacyShareActivityData, userId),
+          ) ??
+          false;
       if (!sharingEnabled) {
         return false;
       }
@@ -157,24 +176,36 @@ class ActivityNotifier extends Notifier<ActivityState> {
         metadata: metadata,
         timestamp: timestamp,
       );
+      if (!_isCurrentUser(userId)) {
+        return false;
+      }
 
       // Agregar al inicio de la lista
       state = state.copyWith(activities: [activity, ...state.activities]);
 
       return true;
     } on Exception catch (e) {
-      state = state.copyWith(error: _mapErrorMessage(e));
+      if (_isCurrentUser(userId)) {
+        state = state.copyWith(error: _mapErrorMessage(e));
+      }
       return false;
     }
   }
 
   /// Cargar estadísticas de actividades
   Future<void> loadStats(String userId) async {
+    if (!_isCurrentUser(userId)) {
+      return;
+    }
     try {
       final stats = await _activityService.getActivityStats(userId);
-      state = state.copyWith(stats: stats);
+      if (_isCurrentUser(userId)) {
+        state = state.copyWith(stats: stats);
+      }
     } on Exception catch (e) {
-      state = state.copyWith(error: _mapErrorMessage(e));
+      if (_isCurrentUser(userId)) {
+        state = state.copyWith(error: _mapErrorMessage(e));
+      }
     }
   }
 

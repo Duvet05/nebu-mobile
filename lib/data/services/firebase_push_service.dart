@@ -19,8 +19,11 @@ class FirebasePushService {
   StreamSubscription<String>? _tokenRefreshSubscription;
   StreamSubscription<RemoteMessage>? _foregroundSubscription;
   StreamSubscription<RemoteMessage>? _openedAppSubscription;
+  Future<void> _operationTail = Future<void>.value();
 
-  Future<void> initialize() async {
+  Future<void> initialize() => _enqueue(_initialize);
+
+  Future<void> _initialize() async {
     if (_initialized) {
       return;
     }
@@ -102,11 +105,7 @@ class FirebasePushService {
 
   void _setupForegroundHandler() {
     _foregroundSubscription ??= FirebaseMessaging.onMessage.listen((message) {
-      _logger
-        ..d('Foreground message: ${message.messageId}')
-        ..d('Notification title: ${message.notification?.title}')
-        ..d('Notification body: ${message.notification?.body}')
-        ..d('Data: ${message.data}');
+      _logger.d('Foreground push received: ${message.messageId}');
     });
 
     _openedAppSubscription ??= FirebaseMessaging.onMessageOpenedApp.listen((
@@ -117,7 +116,9 @@ class FirebasePushService {
   }
 
   /// Unregister while the access token still belongs to the current account.
-  Future<void> unregister() async {
+  Future<void> unregister() => _enqueue(_unregister);
+
+  Future<void> _unregister() async {
     try {
       final token = await _getMessagingToken();
       if (token != null) {
@@ -129,10 +130,12 @@ class FirebasePushService {
     } on Exception catch (e) {
       _logger.w('Remote FCM unregister failed (clearing locally): $e');
     }
-    await resetLocal();
+    await _resetLocal();
   }
 
-  Future<void> resetLocal() async {
+  Future<void> resetLocal() => _enqueue(_resetLocal);
+
+  Future<void> _resetLocal() async {
     try {
       await _messaging.deleteToken();
     } on Exception catch (e) {
@@ -145,5 +148,14 @@ class FirebasePushService {
     _foregroundSubscription = null;
     _openedAppSubscription = null;
     _initialized = false;
+  }
+
+  Future<void> _enqueue(Future<void> Function() operation) {
+    final result = _operationTail.then((_) => operation());
+    _operationTail = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return result;
   }
 }

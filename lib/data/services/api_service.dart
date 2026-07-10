@@ -32,6 +32,13 @@ class ApiService {
   /// When non-null, a refresh is already in progress — other 401 handlers
   /// await the same future instead of firing a second refresh.
   Completer<String?>? _refreshCompleter;
+  Future<void>? _sessionExpiration;
+  bool _sessionExpiredNotified = false;
+
+  /// Called after a login or token rotation stores fresh credentials.
+  void markSessionActive() {
+    _sessionExpiredNotified = false;
+  }
 
   void _setupDio() {
     _dio.options.baseUrl = Config.apiBaseUrl;
@@ -91,7 +98,7 @@ class ApiService {
                 return handler.resolve(retryResponse);
               }
               await _expireSession();
-            } on Exception catch (e, st) {
+            } on Object catch (e, st) {
               _logger.e('Token refresh failed, clearing session: $e');
               unawaited(
                 ErrorReportingService.recordError(
@@ -164,13 +171,14 @@ class ApiService {
         ),
       );
 
-      final newAccessToken = response.data?['accessToken'] as String?;
-      if (newAccessToken == null) {
+      final accessTokenValue = response.data?['accessToken'];
+      if (accessTokenValue is! String || accessTokenValue.isEmpty) {
         throw const AuthException(
-          'No access token in refresh response',
+          'Invalid access token in refresh response',
           statusCode: 401,
         );
       }
+      final newAccessToken = accessTokenValue;
 
       await _secureStorage.write(
         key: StorageKeys.accessToken,
@@ -178,17 +186,24 @@ class ApiService {
       );
 
       // Update refresh token if backend rotated it
-      final newRefreshToken = response.data?['refreshToken'] as String?;
-      if (newRefreshToken != null) {
+      final refreshTokenValue = response.data?['refreshToken'];
+      if (refreshTokenValue != null && refreshTokenValue is! String) {
+        throw const AuthException(
+          'Invalid refresh token in refresh response',
+          statusCode: 401,
+        );
+      }
+      if (refreshTokenValue is String && refreshTokenValue.isNotEmpty) {
         await _secureStorage.write(
           key: StorageKeys.refreshToken,
-          value: newRefreshToken,
+          value: refreshTokenValue,
         );
       }
 
+      markSessionActive();
       completer.complete(newAccessToken);
       return newAccessToken;
-    } on Exception catch (e, st) {
+    } catch (e, st) {
       unawaited(
         ErrorReportingService.recordError(
           _safeReportableError(e),
@@ -217,8 +232,26 @@ class ApiService {
   }
 
   Future<void> _expireSession() async {
-    await _clearTokens();
-    onSessionExpired?.call();
+    final currentExpiration = _sessionExpiration;
+    if (currentExpiration != null) {
+      return currentExpiration;
+    }
+
+    final expiration = () async {
+      await _clearTokens();
+      if (!_sessionExpiredNotified) {
+        _sessionExpiredNotified = true;
+        onSessionExpired?.call();
+      }
+    }();
+    _sessionExpiration = expiration;
+    try {
+      await expiration;
+    } finally {
+      if (identical(_sessionExpiration, expiration)) {
+        _sessionExpiration = null;
+      }
+    }
   }
 
   // ---------------------------------------------------------------------------

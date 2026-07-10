@@ -15,7 +15,9 @@ import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/language_provider.dart';
+import '../providers/local_avatar_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -292,19 +294,24 @@ Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
 
   final prefs = await ref.read(sharedPreferencesProvider.future);
   final secureStorage = ref.read(secureStorageProvider);
+  final userId = ref.read(authProvider).value?.id;
+  String localKey(String base) =>
+      userId == null ? base : StorageKeys.scoped(base, userId);
+  final avatarKey = localKey(StorageKeys.localAvatar);
+  final avatarPath = await secureStorage.read(key: avatarKey);
 
   await Future.wait([
     // Local toys
-    prefs.remove(StorageKeys.localToys),
+    prefs.remove(localKey(StorageKeys.localToys)),
     // Child data
-    prefs.remove(StorageKeys.localChildName),
-    prefs.remove(StorageKeys.localChildAge),
-    prefs.remove(StorageKeys.localChildPersonality),
-    prefs.remove(StorageKeys.localCustomPrompt),
+    prefs.remove(localKey(StorageKeys.localChildName)),
+    prefs.remove(localKey(StorageKeys.localChildAge)),
+    prefs.remove(localKey(StorageKeys.localChildPersonality)),
+    prefs.remove(localKey(StorageKeys.localCustomPrompt)),
     // Setup wizard
     prefs.remove(StorageKeys.setupSkipped),
     prefs.remove(StorageKeys.setupCompleted),
-    prefs.remove(StorageKeys.setupCompletedLocally),
+    prefs.remove(localKey(StorageKeys.setupCompletedLocally)),
     prefs.remove(StorageKeys.setupToyName),
     prefs.remove(StorageKeys.setupDeviceRegistered),
     prefs.remove(StorageKeys.setupLanguage),
@@ -321,13 +328,13 @@ Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
     prefs.remove(StorageKeys.localUserId),
     prefs.remove(StorageKeys.activitiesMigrated),
     // Avatar (secure storage path + file)
-    secureStorage.delete(key: StorageKeys.localAvatar),
+    secureStorage.delete(key: avatarKey),
   ]);
 
   if (!kIsWeb) {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final avatarFile = File('${appDir.path}/avatar.jpg');
+      final avatarFile = File(avatarPath ?? '${appDir.path}/avatar.jpg');
       if (avatarFile.existsSync()) {
         avatarFile.deleteSync();
       }
@@ -339,6 +346,10 @@ Future<void> _handleClearLocalData(BuildContext context, WidgetRef ref) async {
   if (!context.mounted) {
     return;
   }
+  ref
+    ..invalidate(localAvatarProvider)
+    ..invalidate(hasLocalToysProvider)
+    ..invalidate(localChildDataServiceProvider(userId));
   context.showSuccessSnackBar('settings.clear_local_data_success'.tr());
 }
 
