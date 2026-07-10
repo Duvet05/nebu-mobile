@@ -4,14 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/microphone_intent_guard.dart';
 import '../../data/models/toy.dart';
 import '../../data/services/api_service.dart';
 import '../../data/services/livekit_service.dart';
-import '../../data/services/voice_session_service.dart';
 import 'api_provider.dart';
 import 'auth_provider.dart';
 
 final _logger = Logger();
+const _notProvided = Object();
 
 enum WalkieTalkiePhase { idle, connecting, connected, error, disconnecting }
 
@@ -22,7 +23,6 @@ class WalkieTalkieState {
     this.isRemoteConnected = false,
     this.isRemoteMuted = false,
     this.remoteParticipantName,
-    this.sessionId,
     this.roomName,
     this.error,
   });
@@ -32,7 +32,6 @@ class WalkieTalkieState {
   final bool isRemoteConnected;
   final bool isRemoteMuted;
   final String? remoteParticipantName;
-  final String? sessionId;
   final String? roomName;
   final String? error;
 
@@ -41,8 +40,7 @@ class WalkieTalkieState {
     bool? isTalking,
     bool? isRemoteConnected,
     bool? isRemoteMuted,
-    String? remoteParticipantName,
-    String? sessionId,
+    Object? remoteParticipantName = _notProvided,
     String? roomName,
     String? error,
   }) => WalkieTalkieState(
@@ -50,8 +48,9 @@ class WalkieTalkieState {
     isTalking: isTalking ?? this.isTalking,
     isRemoteConnected: isRemoteConnected ?? this.isRemoteConnected,
     isRemoteMuted: isRemoteMuted ?? this.isRemoteMuted,
-    remoteParticipantName: remoteParticipantName ?? this.remoteParticipantName,
-    sessionId: sessionId ?? this.sessionId,
+    remoteParticipantName: identical(remoteParticipantName, _notProvided)
+        ? this.remoteParticipantName
+        : remoteParticipantName as String?,
     roomName: roomName ?? this.roomName,
     error: error,
   );
@@ -65,7 +64,7 @@ final walkieTalkieProvider =
 class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   late LiveKitService _liveKitService;
   late ApiService _apiService;
-  late VoiceSessionService _voiceSessionService;
+  late MicrophoneIntentGuard _microphoneIntent;
 
   StreamSubscription<LiveKitConnectionStatus>? _statusSub;
   StreamSubscription<dynamic>? _participantsSub;
@@ -74,9 +73,15 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   WalkieTalkieState build() {
     _liveKitService = ref.read(liveKitServiceProvider);
     _apiService = ref.read(apiServiceProvider);
-    _voiceSessionService = ref.read(voiceSessionServiceProvider);
+    _microphoneIntent = MicrophoneIntentGuard(
+      ({required enabled}) =>
+          _liveKitService.setMicrophoneEnabled(enabled: enabled),
+    );
 
-    ref.onDispose(_cleanup);
+    ref.onDispose(() {
+      _microphoneIntent.invalidate();
+      unawaited(_shutdown());
+    });
 
     return const WalkieTalkieState();
   }
@@ -109,17 +114,10 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         throw Exception('Missing token fields from server');
       }
 
-      // 2. Create voice session on backend
       final user = ref.read(authProvider).value;
-      final session = await _voiceSessionService.createSession(
-        userId: user?.id ?? 'anonymous',
-        sessionToken: token,
-        roomName: roomName,
-        toyId: toy.id,
-      );
-      final sessionId = session.id;
-
-      // 3. Connect to LiveKit room using server URL from backend
+      // The IoT room session is created and ended by trusted LiveKit webhooks.
+      // A parent joining walkie-talkie must not create or end a second session.
+      _listenToRoomState();
       await _liveKitService.connect(
         LiveKitConfig(
           serverUrl: serverUrl,
@@ -129,22 +127,10 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         ),
       );
 
-      // 4. Listen to status and participant changes
-      _statusSub = _liveKitService.statusStream.listen(_onStatusChanged);
-      _participantsSub = _liveKitService.participantsStream.listen((
-        participants,
-      ) {
-        state = state.copyWith(
-          isRemoteConnected: participants.isNotEmpty,
-          remoteParticipantName: participants.isNotEmpty
-              ? participants.first.identity
-              : null,
-        );
-      });
+      _updateParticipants(_liveKitService.participants);
 
       state = state.copyWith(
         phase: WalkieTalkiePhase.connected,
-        sessionId: sessionId,
         roomName: roomName,
       );
     } on NotFoundException {
@@ -169,12 +155,38 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         phase: WalkieTalkiePhase.error,
         error: 'connection_failed',
       );
+    } finally {
+      if (state.phase == WalkieTalkiePhase.error) {
+        _cleanupSubscriptions();
+        await _liveKitService.disconnect();
+      }
+    }
+  }
+
+  void _listenToRoomState() {
+    _cleanupSubscriptions();
+    _statusSub = _liveKitService.statusStream.listen(_onStatusChanged);
+    _participantsSub = _liveKitService.participantsStream.listen(
+      _updateParticipants,
+    );
+  }
+
+  void _updateParticipants(List<dynamic> participants) {
+    state = state.copyWith(
+      isRemoteConnected: participants.isNotEmpty,
+      remoteParticipantName: participants.isNotEmpty
+          ? participants.first.identity as String?
+          : null,
+    );
+    if (participants.isEmpty && state.isTalking) {
+      unawaited(suspendAudio());
     }
   }
 
   void _onStatusChanged(LiveKitConnectionStatus status) {
     if (status == LiveKitConnectionStatus.disconnected &&
         state.phase == WalkieTalkiePhase.connected) {
+      unawaited(_disableMicrophoneAfterDisconnect());
       state = state.copyWith(
         phase: WalkieTalkiePhase.error,
         error: 'connection_lost',
@@ -183,12 +195,19 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   }
 
   Future<void> startTalking() async {
-    if (state.phase != WalkieTalkiePhase.connected) {
+    if (state.phase != WalkieTalkiePhase.connected ||
+        !state.isRemoteConnected) {
       return;
     }
     try {
-      await _liveKitService.setMicrophoneEnabled(enabled: true);
-      state = state.copyWith(isTalking: true);
+      final enabled = await _microphoneIntent.setEnabled(enabled: true);
+      if (enabled &&
+          state.phase == WalkieTalkiePhase.connected &&
+          state.isRemoteConnected) {
+        state = state.copyWith(isTalking: true);
+      } else if (enabled) {
+        await _microphoneIntent.forceDisable();
+      }
     } on Exception catch (e) {
       _logger.e('Failed to enable microphone: $e');
       state = state.copyWith(isTalking: false);
@@ -198,7 +217,7 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   Future<void> stopTalking() async {
     state = state.copyWith(isTalking: false);
     try {
-      await _liveKitService.setMicrophoneEnabled(enabled: false);
+      await _microphoneIntent.setEnabled(enabled: false);
     } on Exception catch (e) {
       _logger.w('Failed to disable microphone: $e');
     }
@@ -228,7 +247,7 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     state = state.copyWith(phase: WalkieTalkiePhase.disconnecting);
 
     try {
-      await _liveKitService.setMicrophoneEnabled(enabled: false);
+      await _microphoneIntent.forceDisable();
     } on Exception catch (e) {
       _logger.w('Failed to disable mic during cleanup: $e');
     }
@@ -239,19 +258,38 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
       _logger.w('Failed to disconnect LiveKit during cleanup: $e');
     }
 
-    if (state.sessionId != null) {
-      try {
-        await _voiceSessionService.endSession(state.sessionId!);
-      } on Exception catch (e) {
-        _logger.w('Failed to end voice session during cleanup: $e');
-      }
-    }
-
-    _cleanup();
+    _cleanupSubscriptions();
     state = const WalkieTalkieState();
   }
 
-  void _cleanup() {
+  Future<void> suspendAudio() async {
+    state = state.copyWith(isTalking: false);
+    try {
+      await _microphoneIntent.forceDisable();
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic while app is inactive: $e');
+    }
+  }
+
+  Future<void> _disableMicrophoneAfterDisconnect() async {
+    try {
+      await _microphoneIntent.forceDisable();
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic after disconnect: $e');
+    }
+  }
+
+  Future<void> _shutdown() async {
+    try {
+      await _microphoneIntent.forceDisable();
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic during provider disposal: $e');
+    }
+    await _liveKitService.disconnect();
+    _cleanupSubscriptions();
+  }
+
+  void _cleanupSubscriptions() {
     _statusSub?.cancel();
     _participantsSub?.cancel();
     _statusSub = null;

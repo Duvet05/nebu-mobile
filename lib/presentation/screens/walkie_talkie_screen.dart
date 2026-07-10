@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -23,11 +25,32 @@ class WalkieTalkieScreen extends ConsumerStatefulWidget {
   ConsumerState<WalkieTalkieScreen> createState() => _WalkieTalkieScreenState();
 }
 
-class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
+class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen>
+    with WidgetsBindingObserver {
+  bool _micPermissionDenied = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) => _initSession());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    unawaited(ref.read(walkieTalkieProvider.notifier).suspendAudio());
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      unawaited(ref.read(walkieTalkieProvider.notifier).suspendAudio());
+    }
   }
 
   Future<void> _initSession() async {
@@ -39,9 +62,17 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
     }
     try {
       final micStatus = await Permission.microphone.request();
-      if (!micStatus.isGranted && mounted) {
-        context.showErrorSnackBar('walkie_talkie.mic_permission_required'.tr());
+      if (!micStatus.isGranted) {
+        if (mounted) {
+          setState(() => _micPermissionDenied = true);
+          context.showErrorSnackBar(
+            'walkie_talkie.mic_permission_required'.tr(),
+          );
+        }
         return;
+      }
+      if (mounted) {
+        setState(() => _micPermissionDenied = false);
       }
       await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
     } on Exception catch (e) {
@@ -110,6 +141,8 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                 // Main content based on phase
                 if (state.phase == WalkieTalkiePhase.connecting)
                   const CircularProgressIndicator()
+                else if (_micPermissionDenied)
+                  _buildPermissionError()
                 else if (state.phase == WalkieTalkiePhase.error)
                   _buildErrorState(state)
                 else if (state.phase == WalkieTalkiePhase.connected) ...[
@@ -119,7 +152,7 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
                     onTalkEnd: () =>
                         ref.read(walkieTalkieProvider.notifier).stopTalking(),
                     isTalking: state.isTalking,
-                    isEnabled: state.phase == WalkieTalkiePhase.connected,
+                    isEnabled: state.isRemoteConnected,
                   ),
                   if (state.isRemoteConnected) ...[
                     SizedBox(height: context.spacing.panelPadding),
@@ -162,6 +195,31 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
     onPressed: () => ref.read(walkieTalkieProvider.notifier).toggleRemoteMute(),
     icon: state.isRemoteMuted ? Icons.volume_off : Icons.volume_up,
     variant: ButtonVariant.outline,
+  );
+
+  Widget _buildPermissionError() => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.mic_off_outlined, size: 48, color: context.colors.error),
+      SizedBox(height: context.spacing.paragraphBottomMarginSm),
+      Text(
+        'walkie_talkie.mic_permission_required'.tr(),
+        style: context.theme.textTheme.bodyLarge?.copyWith(
+          color: context.colors.error,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      SizedBox(height: context.spacing.sectionTitleBottomMargin),
+      CustomButton(
+        text: 'walkie_talkie.retry'.tr(),
+        onPressed: _initSession,
+        icon: Icons.refresh,
+      ),
+      TextButton(
+        onPressed: openAppSettings,
+        child: Text('settings.title'.tr()),
+      ),
+    ],
   );
 
   Widget _buildErrorState(WalkieTalkieState state) {
