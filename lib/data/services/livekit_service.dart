@@ -7,6 +7,8 @@ import 'package:logger/logger.dart';
 import '../../core/config/config.dart';
 import 'api_service.dart';
 
+typedef LiveKitRoomFactory = Room Function();
+
 /// LiveKit room configuration
 class LiveKitConfig {
   const LiveKitConfig({
@@ -55,15 +57,21 @@ enum LiveKitConnectionStatus { disconnected, connecting, connected, error }
 /// LiveKit service for IoT real-time communication.
 /// Uses ApiService for backend API calls (token generation, room management).
 class LiveKitService {
-  LiveKitService({required Logger logger, required ApiService apiService})
-    : _logger = logger,
-      _apiService = apiService;
+  LiveKitService({
+    required Logger logger,
+    required ApiService apiService,
+    LiveKitRoomFactory? roomFactory,
+  }) : _logger = logger,
+       _apiService = apiService,
+       _roomFactory = roomFactory ?? Room.new;
   final Logger _logger;
   final ApiService _apiService;
+  final LiveKitRoomFactory _roomFactory;
 
-  Room? _room;
-  EventsListener<RoomEvent>? _roomListener;
+  _LiveKitConnection? _connection;
   LiveKitConnectionStatus _status = LiveKitConnectionStatus.disconnected;
+  int _connectionGeneration = 0;
+  bool _disposed = false;
 
   final StreamController<LiveKitConnectionStatus> _statusController =
       StreamController<LiveKitConnectionStatus>.broadcast();
@@ -76,60 +84,109 @@ class LiveKitService {
   void Function(LiveKitConnectionStatus)? onConnectionStatusCallback;
 
   /// Connect to a LiveKit room.
-  Future<void> connect(LiveKitConfig config) async {
-    try {
-      _setStatus(LiveKitConnectionStatus.connecting);
+  Future<bool> connect(LiveKitConfig config) async {
+    if (_disposed) {
+      return false;
+    }
 
+    final generation = ++_connectionGeneration;
+    final previousConnection = _connection;
+    _connection = null;
+    _emitParticipants(const []);
+    _setStatus(LiveKitConnectionStatus.connecting);
+
+    // Close the previous room before publishing another one. The connection
+    // handle makes this safe even when a stale connect is also cleaning up.
+    await previousConnection?.close(_logger);
+    if (!_isCurrentGeneration(generation)) {
+      return false;
+    }
+
+    _LiveKitConnection? candidate;
+    try {
       final serverUrl = config.serverUrl ?? Config.livekitUrl;
       final token =
           config.token ??
           await _fetchToken(config.participantName, config.roomName);
+      if (!_isCurrentGeneration(generation)) {
+        return false;
+      }
 
-      _room = Room();
-      _setupRoomEventHandlers();
+      final room = _roomFactory();
+      final listener = _createRoomEventHandlers(room, generation);
+      candidate = _LiveKitConnection(room: room, listener: listener);
+      _connection = candidate;
 
-      await _room!.connect(serverUrl, token);
+      await room.connect(serverUrl, token);
+      if (!_ownsRoom(generation, room)) {
+        await candidate.close(_logger);
+        return false;
+      }
       _setStatus(LiveKitConnectionStatus.connected);
 
       _logger.d('Connected to LiveKit room: ${config.roomName}');
-    } catch (error) {
+      return true;
+    } on Object catch (error) {
+      if (candidate != null) {
+        if (identical(_connection, candidate)) {
+          _connection = null;
+        }
+        await candidate.close(_logger);
+      }
+      if (!_isCurrentGeneration(generation)) {
+        return false;
+      }
       _logger.e('Failed to connect to LiveKit: $error');
       _setStatus(LiveKitConnectionStatus.error);
       rethrow;
     }
   }
 
-  void _setupRoomEventHandlers() {
-    if (_room == null) {
-      return;
-    }
+  EventsListener<RoomEvent> _createRoomEventHandlers(
+    Room room,
+    int generation,
+  ) => room.createListener()
+    ..on<RoomConnectedEvent>((event) {
+      if (!_ownsRoom(generation, room)) {
+        return;
+      }
+      _logger.d('LiveKit room connected');
+      _setStatus(LiveKitConnectionStatus.connected);
+    })
+    ..on<RoomDisconnectedEvent>((event) {
+      if (!_ownsRoom(generation, room)) {
+        return;
+      }
+      _logger.d('LiveKit room disconnected');
+      _emitParticipants(const []);
+      _setStatus(LiveKitConnectionStatus.disconnected);
+    })
+    ..on<DataReceivedEvent>((event) {
+      if (!_ownsRoom(generation, room)) {
+        return;
+      }
+      _handleDataReceived(event.data);
+    })
+    ..on<ParticipantConnectedEvent>((event) {
+      if (!_ownsRoom(generation, room)) {
+        return;
+      }
+      _logger.d('Participant connected: ${event.participant.identity}');
+      _emitParticipants(room.remoteParticipants.values.toList());
+    })
+    ..on<ParticipantDisconnectedEvent>((event) {
+      if (!_ownsRoom(generation, room)) {
+        return;
+      }
+      _logger.d('Participant disconnected: ${event.participant.identity}');
+      _emitParticipants(room.remoteParticipants.values.toList());
+    });
 
-    unawaited(_roomListener?.dispose());
-    _roomListener = _room!.createListener()
-      ..on<RoomConnectedEvent>((event) {
-        _logger.d('LiveKit room connected');
-        _setStatus(LiveKitConnectionStatus.connected);
-      })
-      ..on<RoomDisconnectedEvent>((event) {
-        _logger.d('LiveKit room disconnected');
-        _setStatus(LiveKitConnectionStatus.disconnected);
-      })
-      ..on<DataReceivedEvent>((event) {
-        _handleDataReceived(event.data);
-      })
-      ..on<ParticipantConnectedEvent>((event) {
-        _logger.d('Participant connected: ${event.participant.identity}');
-        _participantsController.add(
-          _room?.remoteParticipants.values.toList() ?? [],
-        );
-      })
-      ..on<ParticipantDisconnectedEvent>((event) {
-        _logger.d('Participant disconnected: ${event.participant.identity}');
-        _participantsController.add(
-          _room?.remoteParticipants.values.toList() ?? [],
-        );
-      });
-  }
+  bool _isCurrentGeneration(int generation) =>
+      !_disposed && generation == _connectionGeneration;
+
+  bool _ownsRoom(int generation, Room room) =>
+      _isCurrentGeneration(generation) && identical(_connection?.room, room);
 
   void _handleDataReceived(List<int> data) {
     try {
@@ -149,8 +206,16 @@ class LiveKitService {
 
   void _setStatus(LiveKitConnectionStatus status) {
     _status = status;
-    _statusController.add(status);
+    if (!_statusController.isClosed) {
+      _statusController.add(status);
+    }
     onConnectionStatusCallback?.call(status);
+  }
+
+  void _emitParticipants(List<RemoteParticipant> participants) {
+    if (!_participantsController.isClosed) {
+      _participantsController.add(participants);
+    }
   }
 
   /// Fetch token from backend via the user-accessible endpoint.
@@ -185,15 +250,24 @@ class LiveKitService {
   }
 
   Future<void> setMicrophoneEnabled({required bool enabled}) async {
-    if (_room == null) {
+    final connection = _connection;
+    final participant = connection?.room.localParticipant;
+    if (connection == null || participant == null) {
       return;
     }
-    await _room!.localParticipant?.setMicrophoneEnabled(enabled);
+    await participant.setMicrophoneEnabled(enabled);
+
+    // An enable that completes after this room was replaced must never leave
+    // the abandoned local participant publishing audio.
+    if (enabled && !identical(_connection, connection)) {
+      await participant.setMicrophoneEnabled(false);
+      return;
+    }
     _logger.d('Microphone ${enabled ? 'enabled' : 'disabled'}');
   }
 
   List<RemoteParticipant> get participants =>
-      _room?.remoteParticipants.values.toList() ?? [];
+      _connection?.room.remoteParticipants.values.toList() ?? [];
 
   LiveKitConnectionStatus get status => _status;
 
@@ -203,22 +277,54 @@ class LiveKitService {
       _participantsController.stream;
 
   Future<void> disconnect() async {
-    try {
-      await _roomListener?.dispose();
-      _roomListener = null;
-      await _room?.disconnect();
-      _room = null;
+    final generation = ++_connectionGeneration;
+    final connection = _connection;
+    _connection = null;
+    _emitParticipants(const []);
+
+    await connection?.close(_logger);
+    if (generation == _connectionGeneration) {
       _setStatus(LiveKitConnectionStatus.disconnected);
       _logger.d('Disconnected from LiveKit');
-    } on Exception catch (e) {
-      _logger.e('Error disconnecting from LiveKit: $e');
     }
   }
 
   Future<void> dispose() async {
+    if (_disposed) {
+      return;
+    }
+    _disposed = true;
     await disconnect();
     await _statusController.close();
     await _deviceDataController.close();
     await _participantsController.close();
+  }
+}
+
+class _LiveKitConnection {
+  _LiveKitConnection({required this.room, required this.listener});
+
+  final Room room;
+  final EventsListener<RoomEvent> listener;
+  Future<void>? _closeFuture;
+
+  Future<void> close(Logger logger) => _closeFuture ??= _close(logger);
+
+  Future<void> _close(Logger logger) async {
+    try {
+      await listener.dispose();
+    } on Object catch (error) {
+      logger.w('Failed to dispose LiveKit room listener: $error');
+    }
+    try {
+      await room.disconnect();
+    } on Object catch (error) {
+      logger.w('Failed to disconnect LiveKit room: $error');
+    }
+    try {
+      await room.dispose();
+    } on Object catch (error) {
+      logger.w('Failed to dispose LiveKit room: $error');
+    }
   }
 }

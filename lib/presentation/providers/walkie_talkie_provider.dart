@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:livekit_client/livekit_client.dart' show RemoteParticipant;
 import 'package:logger/logger.dart';
 
 import '../../core/errors/app_exception.dart';
+import '../../core/utils/livekit_participant_selector.dart';
 import '../../core/utils/microphone_intent_guard.dart';
 import '../../data/models/toy.dart';
 import '../../data/services/api_service.dart';
@@ -67,7 +69,11 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   late MicrophoneIntentGuard _microphoneIntent;
 
   StreamSubscription<LiveKitConnectionStatus>? _statusSub;
-  StreamSubscription<dynamic>? _participantsSub;
+  StreamSubscription<List<RemoteParticipant>>? _participantsSub;
+  int _sessionGeneration = 0;
+  int _remoteParticipantGeneration = 0;
+  String? _deviceIdentity;
+  bool _isDisposed = false;
 
   @override
   WalkieTalkieState build() {
@@ -79,6 +85,8 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     );
 
     ref.onDispose(() {
+      _isDisposed = true;
+      _sessionGeneration++;
       _microphoneIntent.invalidate();
       unawaited(_shutdown());
     });
@@ -87,15 +95,29 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   }
 
   Future<void> startSession(Toy toy) async {
-    if (toy.iotDeviceId == null) {
-      state = state.copyWith(
-        phase: WalkieTalkiePhase.error,
-        error: 'no_iot_device',
-      );
+    final generation = ++_sessionGeneration;
+    _remoteParticipantGeneration++;
+    _deviceIdentity = null;
+    state = const WalkieTalkieState(phase: WalkieTalkiePhase.connecting);
+    _cleanupSubscriptions();
+
+    // Cancel any previous or in-flight connection before starting another
+    // token request. LiveKitService detaches its current room synchronously.
+    final disconnectFuture = _liveKitService.disconnect();
+    try {
+      await _microphoneIntent.forceDisable();
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic before connecting: $e');
+    }
+    await disconnectFuture;
+    if (!_isCurrentSession(generation)) {
       return;
     }
 
-    state = state.copyWith(phase: WalkieTalkiePhase.connecting);
+    if (toy.iotDeviceId == null) {
+      await _failStart(generation, 'no_iot_device');
+      return;
+    }
 
     try {
       // 1. Get parent token to join the toy's active LiveKit room.
@@ -106,6 +128,9 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
         '/livekit/token/user',
         data: {'toyId': toy.id},
       );
+      if (!_isCurrentSession(generation)) {
+        return;
+      }
 
       final token = tokenResponse['token'] as String?;
       final roomName = tokenResponse['roomName'] as String?;
@@ -113,12 +138,17 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
       if (token == null || roomName == null || serverUrl == null) {
         throw Exception('Missing token fields from server');
       }
+      final rawDeviceIdentity = tokenResponse['deviceIdentity'];
+      _deviceIdentity =
+          rawDeviceIdentity is String && rawDeviceIdentity.trim().isNotEmpty
+          ? rawDeviceIdentity.trim()
+          : null;
 
       final user = ref.read(authProvider).value;
       // The IoT room session is created and ended by trusted LiveKit webhooks.
       // A parent joining walkie-talkie must not create or end a second session.
-      _listenToRoomState();
-      await _liveKitService.connect(
+      _listenToRoomState(generation);
+      final connected = await _liveKitService.connect(
         LiveKitConfig(
           serverUrl: serverUrl,
           roomName: roomName,
@@ -126,69 +156,110 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
           token: token,
         ),
       );
+      if (!connected || !_isCurrentSession(generation)) {
+        return;
+      }
 
-      _updateParticipants(_liveKitService.participants);
+      _updateParticipants(_liveKitService.participants, generation);
+      if (!_isCurrentSession(generation)) {
+        return;
+      }
 
       state = state.copyWith(
         phase: WalkieTalkiePhase.connected,
         roomName: roomName,
       );
     } on NotFoundException {
-      state = state.copyWith(
-        phase: WalkieTalkiePhase.error,
-        error: 'no_iot_device',
-      );
+      await _failStart(generation, 'no_iot_device');
     } on ValidationException {
-      state = state.copyWith(
-        phase: WalkieTalkiePhase.error,
-        error: 'toy_not_connected',
-      );
+      await _failStart(generation, 'toy_not_connected');
     } on AppException catch (e) {
       _logger.e('Walkie-talkie session failed: $e');
-      state = state.copyWith(
-        phase: WalkieTalkiePhase.error,
-        error: e is NetworkException ? 'no_connection' : 'connection_failed',
+      await _failStart(
+        generation,
+        e is NetworkException ? 'no_connection' : 'connection_failed',
       );
     } on Exception catch (e) {
       _logger.e('Walkie-talkie session failed: $e');
-      state = state.copyWith(
-        phase: WalkieTalkiePhase.error,
-        error: 'connection_failed',
-      );
-    } finally {
-      if (state.phase == WalkieTalkiePhase.error) {
-        _cleanupSubscriptions();
-        await _liveKitService.disconnect();
-      }
+      await _failStart(generation, 'connection_failed');
     }
   }
 
-  void _listenToRoomState() {
+  bool _isCurrentSession(int generation) =>
+      !_isDisposed && generation == _sessionGeneration;
+
+  Future<void> _failStart(int generation, String error) async {
+    if (!_isCurrentSession(generation)) {
+      return;
+    }
+    _deviceIdentity = null;
+    state = WalkieTalkieState(phase: WalkieTalkiePhase.error, error: error);
     _cleanupSubscriptions();
-    _statusSub = _liveKitService.statusStream.listen(_onStatusChanged);
+    final disconnectFuture = _liveKitService.disconnect();
+    try {
+      await _microphoneIntent.forceDisable();
+    } on Exception catch (e) {
+      _logger.w('Failed to disable mic after connection failure: $e');
+    }
+    await disconnectFuture;
+  }
+
+  void _listenToRoomState(int generation) {
+    _cleanupSubscriptions();
+    _statusSub = _liveKitService.statusStream.listen(
+      (status) => _onStatusChanged(status, generation),
+    );
     _participantsSub = _liveKitService.participantsStream.listen(
-      _updateParticipants,
+      (participants) => _updateParticipants(participants, generation),
     );
   }
 
-  void _updateParticipants(List<dynamic> participants) {
-    state = state.copyWith(
-      isRemoteConnected: participants.isNotEmpty,
-      remoteParticipantName: participants.isNotEmpty
-          ? participants.first.identity as String?
-          : null,
+  void _updateParticipants(
+    List<RemoteParticipant> participants,
+    int generation,
+  ) {
+    if (!_isCurrentSession(generation) ||
+        (state.phase != WalkieTalkiePhase.connecting &&
+            state.phase != WalkieTalkiePhase.connected)) {
+      return;
+    }
+    final selectedIdentity = selectLiveKitDeviceIdentity(
+      participants.map((participant) => participant.identity),
+      expectedIdentity: _deviceIdentity,
     );
-    if (participants.isEmpty && state.isTalking) {
+    final wasTalking = state.isTalking;
+    final participantChanged =
+        selectedIdentity == null ||
+        selectedIdentity != state.remoteParticipantName;
+    if (participantChanged) {
+      _remoteParticipantGeneration++;
+    }
+    state = state.copyWith(
+      isRemoteConnected: selectedIdentity != null,
+      isRemoteMuted: !participantChanged && state.isRemoteMuted,
+      remoteParticipantName: selectedIdentity,
+    );
+    if (selectedIdentity == null && wasTalking) {
       unawaited(suspendAudio());
     }
   }
 
-  void _onStatusChanged(LiveKitConnectionStatus status) {
+  void _onStatusChanged(LiveKitConnectionStatus status, int generation) {
+    if (!_isCurrentSession(generation)) {
+      return;
+    }
     if (status == LiveKitConnectionStatus.disconnected &&
         state.phase == WalkieTalkiePhase.connected) {
+      _remoteParticipantGeneration++;
+      _deviceIdentity = null;
+      _cleanupSubscriptions();
       unawaited(_disableMicrophoneAfterDisconnect());
       state = state.copyWith(
         phase: WalkieTalkiePhase.error,
+        isTalking: false,
+        isRemoteConnected: false,
+        isRemoteMuted: false,
+        remoteParticipantName: null,
         error: 'connection_lost',
       );
     }
@@ -231,20 +302,35 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
     }
 
     final newMuted = !state.isRemoteMuted;
+    final generation = _sessionGeneration;
+    final participantGeneration = _remoteParticipantGeneration;
+    final roomName = state.roomName!;
+    final identity = state.remoteParticipantName!;
     try {
       await _liveKitService.muteParticipant(
-        roomName: state.roomName!,
-        identity: state.remoteParticipantName!,
+        roomName: roomName,
+        identity: identity,
         mute: newMuted,
       );
-      state = state.copyWith(isRemoteMuted: newMuted);
+      if (_isCurrentSession(generation) &&
+          participantGeneration == _remoteParticipantGeneration &&
+          state.phase == WalkieTalkiePhase.connected &&
+          state.roomName == roomName &&
+          state.remoteParticipantName == identity) {
+        state = state.copyWith(isRemoteMuted: newMuted);
+      }
     } on Exception catch (e) {
       _logger.e('Failed to toggle mute: $e');
     }
   }
 
   Future<void> endSession() async {
+    final generation = ++_sessionGeneration;
+    _remoteParticipantGeneration++;
+    _deviceIdentity = null;
     state = state.copyWith(phase: WalkieTalkiePhase.disconnecting);
+    _cleanupSubscriptions();
+    final disconnectFuture = _liveKitService.disconnect();
 
     try {
       await _microphoneIntent.forceDisable();
@@ -252,14 +338,10 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
       _logger.w('Failed to disable mic during cleanup: $e');
     }
 
-    try {
-      await _liveKitService.disconnect();
-    } on Exception catch (e) {
-      _logger.w('Failed to disconnect LiveKit during cleanup: $e');
+    await disconnectFuture;
+    if (_isCurrentSession(generation)) {
+      state = const WalkieTalkieState();
     }
-
-    _cleanupSubscriptions();
-    state = const WalkieTalkieState();
   }
 
   Future<void> suspendAudio() async {
@@ -280,13 +362,15 @@ class WalkieTalkieNotifier extends Notifier<WalkieTalkieState> {
   }
 
   Future<void> _shutdown() async {
+    _deviceIdentity = null;
+    _cleanupSubscriptions();
+    final disconnectFuture = _liveKitService.disconnect();
     try {
       await _microphoneIntent.forceDisable();
     } on Exception catch (e) {
       _logger.w('Failed to disable mic during provider disposal: $e');
     }
-    await _liveKitService.disconnect();
-    _cleanupSubscriptions();
+    await disconnectFuture;
   }
 
   void _cleanupSubscriptions() {

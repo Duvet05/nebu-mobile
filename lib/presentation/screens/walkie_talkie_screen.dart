@@ -28,6 +28,7 @@ class WalkieTalkieScreen extends ConsumerStatefulWidget {
 class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen>
     with WidgetsBindingObserver {
   bool _micPermissionDenied = false;
+  bool _sessionEnded = false;
 
   @override
   void initState() {
@@ -39,7 +40,10 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(ref.read(walkieTalkieProvider.notifier).suspendAudio());
+    if (!_sessionEnded) {
+      _sessionEnded = true;
+      unawaited(ref.read(walkieTalkieProvider.notifier).endSession());
+    }
     super.dispose();
   }
 
@@ -71,9 +75,10 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen>
         }
         return;
       }
-      if (mounted) {
-        setState(() => _micPermissionDenied = false);
+      if (!mounted || _sessionEnded) {
+        return;
       }
+      setState(() => _micPermissionDenied = false);
       await ref.read(walkieTalkieProvider.notifier).startSession(widget.toy);
     } on Exception catch (e) {
       ref.read(loggerProvider).e('WalkieTalkie init error: $e');
@@ -84,6 +89,10 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen>
   }
 
   Future<void> _endSession() async {
+    if (_sessionEnded) {
+      return;
+    }
+    _sessionEnded = true;
     await ref.read(walkieTalkieProvider.notifier).endSession();
   }
 
