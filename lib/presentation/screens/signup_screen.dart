@@ -127,6 +127,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         children: [
                           Expanded(
                             child: AuthTextField(
+                              key: const ValueKey<String>(
+                                'signup.firstNameField',
+                              ),
                               controller: _firstNameController,
                               label: 'auth.first_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
@@ -144,6 +147,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           SizedBox(width: context.spacing.gapLg),
                           Expanded(
                             child: AuthTextField(
+                              key: const ValueKey<String>(
+                                'signup.lastNameField',
+                              ),
                               controller: _lastNameController,
                               label: 'auth.last_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
@@ -165,6 +171,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // Email field
                       AuthTextField(
+                        key: const ValueKey<String>('signup.emailField'),
                         controller: _emailController,
                         label: 'auth.email'.tr(),
                         keyboardType: TextInputType.emailAddress,
@@ -186,6 +193,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // Password field
                       AuthTextField(
+                        key: const ValueKey<String>('signup.passwordField'),
                         controller: _passwordController,
                         label: 'auth.password'.tr(),
                         obscureText: _obscurePassword,
@@ -206,6 +214,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // Confirm Password field
                       AuthTextField(
+                        key: const ValueKey<String>(
+                          'signup.confirmPasswordField',
+                        ),
                         controller: _confirmPasswordController,
                         label: 'auth.confirm_password'.tr(),
                         obscureText: _obscureConfirmPassword,
@@ -241,6 +252,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                       // Sign up button
                       AuthPrimaryButton(
+                        key: const ValueKey<String>('signup.submitButton'),
                         text: 'auth.create_account'.tr(),
                         isLoading: authState.isLoading,
                         onPressed: _handleEmailSignUp,
