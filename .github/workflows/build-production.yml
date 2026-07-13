@@ -141,6 +141,11 @@ jobs:
             "storeFile=../upload-keystore.jks" \
             > android/key.properties
 
+      - name: Validate Android Google OAuth upload-key configuration
+        env:
+          GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
+        run: bash scripts/check-android-google-oauth.sh --release --web-client-id "${GOOGLE_WEB_CLIENT_ID}"
+
       - name: Build AAB
         env:
           API_URL: ${{ vars.API_URL }}
