@@ -255,3 +255,4 @@ jobs:
           script: |
             flutter test integration_test/social_login_e2e_test.dart -d emulator-5554
             flutter test integration_test/account_lifecycle_e2e_test.dart -d emulator-5554
+            flutter test integration_test/toy_voice_settings_e2e_test.dart -d emulator-5554
