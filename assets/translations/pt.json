@@ -665,6 +665,7 @@
     "enter_password": "Digite sua senha",
     "password_required": "A senha é obrigatória",
     "delete_hint": "DELETE",
+    "account_deleted_success": "Sua conta foi excluída com sucesso",
     "device_android": "Dispositivo Android",
     "device_web": "Navegador Web",
     "location_placeholder": "São Paulo, Brasil",

@@ -220,6 +220,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             theme,
             children: [
               ListTile(
+                key: const ValueKey<String>('privacy.deleteAccountTile'),
                 leading: Icon(
                   Icons.delete_forever,
                   color: context.colors.error,
@@ -347,6 +348,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
+          key: const ValueKey<String>('privacy.deleteAccountWarningDialog'),
           title: Text(
             'privacy.delete_account'.tr(),
             style: context.textTheme.titleLarge?.copyWith(
@@ -378,6 +380,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
               child: Text('common.cancel'.tr()),
             ),
             CustomButton(
+              key: const ValueKey<String>(
+                'privacy.deleteAccountContinueButton',
+              ),
               text: 'privacy.delete_permanently'.tr(),
               variant: ButtonVariant.danger,
               onPressed: () async {
@@ -413,67 +418,87 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     }
   }
 
-  Future<String?> _confirmDeleteAccount() async {
-    final confirmController = TextEditingController();
-    final passwordController = TextEditingController();
-    try {
-      return await showDialog<String?>(
-        context: context,
-        builder: (dialogCtx) => AlertDialog(
-          title: Text('privacy.confirm_deletion'.tr()),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('privacy.type_delete_to_confirm'.tr()),
-              SizedBox(height: context.spacing.sectionTitleBottomMargin),
-              CustomInput(
-                controller: confirmController,
-                hint: 'privacy.delete_hint'.tr(),
-              ),
-              SizedBox(height: context.spacing.sectionTitleBottomMargin),
-              CustomInput(
-                controller: passwordController,
-                hint: 'privacy.enter_password'.tr(),
-                obscureText: true,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx),
-              child: Text('common.cancel'.tr()),
-            ),
-            CustomButton(
-              text: 'common.delete'.tr(),
-              variant: ButtonVariant.danger,
-              onPressed: () {
-                if (confirmController.text.toUpperCase() != 'DELETE') {
-                  ScaffoldMessenger.of(dialogCtx).showSnackBar(
-                    SnackBar(
-                      content: Text('privacy.incorrect_confirmation'.tr()),
-                      backgroundColor: context.colors.error,
-                    ),
-                  );
-                  return;
-                }
-                if (passwordController.text.isEmpty) {
-                  ScaffoldMessenger.of(dialogCtx).showSnackBar(
-                    SnackBar(
-                      content: Text('privacy.password_required'.tr()),
-                      backgroundColor: context.colors.error,
-                    ),
-                  );
-                  return;
-                }
-                Navigator.pop(dialogCtx, passwordController.text);
-              },
-            ),
-          ],
-        ),
-      );
-    } finally {
-      confirmController.dispose();
-      passwordController.dispose();
-    }
+  Future<String?> _confirmDeleteAccount() => showDialog<String?>(
+    context: context,
+    builder: (context) => const _DeleteAccountConfirmationDialog(),
+  );
+}
+
+class _DeleteAccountConfirmationDialog extends StatefulWidget {
+  const _DeleteAccountConfirmationDialog();
+
+  @override
+  State<_DeleteAccountConfirmationDialog> createState() =>
+      _DeleteAccountConfirmationDialogState();
+}
+
+class _DeleteAccountConfirmationDialogState
+    extends State<_DeleteAccountConfirmationDialog> {
+  final _confirmController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _confirmController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    key: const ValueKey<String>('privacy.deleteAccountConfirmDialog'),
+    scrollable: true,
+    title: Text('privacy.confirm_deletion'.tr()),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('privacy.type_delete_to_confirm'.tr()),
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        CustomInput(
+          key: const ValueKey<String>('privacy.deleteConfirmationField'),
+          controller: _confirmController,
+          hint: 'privacy.delete_hint'.tr(),
+        ),
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
+        CustomInput(
+          key: const ValueKey<String>('privacy.deletePasswordField'),
+          controller: _passwordController,
+          hint: 'privacy.enter_password'.tr(),
+          obscureText: true,
+        ),
+      ],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: Text('common.cancel'.tr()),
+      ),
+      CustomButton(
+        key: const ValueKey<String>('privacy.deleteAccountSubmitButton'),
+        text: 'common.delete'.tr(),
+        variant: ButtonVariant.danger,
+        onPressed: () {
+          if (_confirmController.text.toUpperCase() != 'DELETE') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('privacy.incorrect_confirmation'.tr()),
+                backgroundColor: context.colors.error,
+              ),
+            );
+            return;
+          }
+          if (_passwordController.text.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('privacy.password_required'.tr()),
+                backgroundColor: context.colors.error,
+              ),
+            );
+            return;
+          }
+          Navigator.pop(context, _passwordController.text);
+        },
+      ),
+    ],
+  );
 }
