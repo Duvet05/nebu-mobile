@@ -33,6 +33,7 @@ class _EmailVerificationScreenState
   _ResendStatus _resendStatus = _ResendStatus.idle;
   int _cooldownSeconds = 0;
   Timer? _cooldownTimer;
+  String? _lastProcessedToken;
 
   String get _email =>
       widget.email ?? ref.read(authProvider).value?.email ?? '';
@@ -40,9 +41,21 @@ class _EmailVerificationScreenState
   @override
   void initState() {
     super.initState();
-    if (widget.token != null) {
-      _autoVerify(widget.token!);
+    _processVerificationToken(widget.token);
+  }
+
+  @override
+  void didUpdateWidget(covariant EmailVerificationScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _processVerificationToken(widget.token);
+  }
+
+  void _processVerificationToken(String? token) {
+    if (token == null || token == _lastProcessedToken) {
+      return;
     }
+    _lastProcessedToken = token;
+    unawaited(_autoVerify(token));
   }
 
   Future<void> _autoVerify(String token) async {
@@ -59,12 +72,18 @@ class _EmailVerificationScreenState
       return;
     }
 
+    if (_lastProcessedToken != token) {
+      return;
+    }
+
     final user = ref.read(authProvider).value;
     if (user?.emailVerified ?? false) {
       // Router will redirect away automatically
       return;
     }
 
+    // Allow the same deep link to be retried after a transient failure.
+    _lastProcessedToken = null;
     setState(() => _isCheckingStatus = false);
     context.showErrorSnackBar('auth.verify_email_not_yet'.tr());
   }
@@ -171,151 +190,160 @@ class _EmailVerificationScreenState
       body: SafeArea(
         child: Padding(
           padding: context.constrainedPageEdgeInsets,
-          child: Column(
-            children: [
-              SizedBox(height: context.spacing.largePageBottomMargin),
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  children: [
+                    SizedBox(height: context.spacing.largePageBottomMargin),
 
-              // Mail icon
-              ExcludeSemantics(
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: context.theme.colorScheme.primary.withValues(
-                      alpha: 0.1,
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.mark_email_unread_outlined,
-                    size: 48,
-                    color: context.theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: context.spacing.largePageBottomMargin),
-
-              // Title
-              Text(
-                'auth.verify_email_title'.tr(),
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.5,
-                  color: context.colors.textNormal,
-                ),
-                textAlign: TextAlign.center,
-              ),
-
-              SizedBox(height: context.spacing.titleBottomMargin),
-
-              // Subtitle with email
-              if (email.isNotEmpty)
-                Text(
-                  'auth.verify_email_subtitle'.tr(args: [email]),
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: context.colors.grey400,
-                  ),
-                  textAlign: TextAlign.center,
-                )
-              else
-                Text(
-                  'auth.verify_email_subtitle_no_email'.tr(),
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: context.colors.grey400,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-              SizedBox(height: context.spacing.largePageBottomMargin),
-
-              // Success banner
-              if (_resendStatus == _ResendStatus.success) ...[
-                Container(
-                  padding: EdgeInsets.all(context.spacing.alertPadding),
-                  decoration: BoxDecoration(
-                    color: context.colors.successBg,
-                    borderRadius: context.radius.tile,
-                    border: Border.all(color: context.colors.success),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline_rounded,
-                        color: context.colors.success,
-                        size: 22,
-                      ),
-                      SizedBox(width: context.spacing.gapLg),
-                      Expanded(
-                        child: Text(
-                          'auth.verify_email_resent'.tr(),
-                          style: textTheme.bodyMedium?.copyWith(
-                            color: context.colors.success,
-                            fontWeight: FontWeight.w500,
+                    // Mail icon
+                    ExcludeSemantics(
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: context.theme.colorScheme.primary.withValues(
+                            alpha: 0.1,
                           ),
+                          shape: BoxShape.circle,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: context.spacing.titleBottomMargin),
-              ],
-
-              // Error banner
-              if (_resendStatus == _ResendStatus.error) ...[
-                AuthErrorBanner(message: 'auth.verify_email_resend_error'.tr()),
-                SizedBox(height: context.spacing.titleBottomMargin),
-              ],
-
-              const Spacer(),
-
-              // "I've already verified" button
-              AuthPrimaryButton(
-                text: 'auth.verify_email_check_status'.tr(),
-                isLoading: _isCheckingStatus,
-                onPressed: _handleCheckStatus,
-              ),
-
-              SizedBox(height: context.spacing.titleBottomMargin),
-
-              // Resend button
-              TextButton(
-                onPressed: _cooldownSeconds > 0 || _isResending
-                    ? null
-                    : _handleResend,
-                child: _isResending
-                    ? SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
+                        child: Icon(
+                          Icons.mark_email_unread_outlined,
+                          size: 48,
                           color: context.theme.colorScheme.primary,
                         ),
+                      ),
+                    ),
+
+                    SizedBox(height: context.spacing.largePageBottomMargin),
+
+                    // Title
+                    Text(
+                      'auth.verify_email_title'.tr(),
+                      style: textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
+                        color: context.colors.textNormal,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(height: context.spacing.titleBottomMargin),
+
+                    // Subtitle with email
+                    if (email.isNotEmpty)
+                      Text(
+                        'auth.verify_email_subtitle'.tr(args: [email]),
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: context.colors.grey400,
+                        ),
+                        textAlign: TextAlign.center,
                       )
-                    : Text(
-                        _cooldownSeconds > 0
-                            ? 'auth.verify_email_resend_countdown'.tr(
-                                args: ['$_cooldownSeconds'],
-                              )
-                            : 'auth.verify_email_resend'.tr(),
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: context.theme.colorScheme.primary,
-                          fontWeight: FontWeight.w600,
+                    else
+                      Text(
+                        'auth.verify_email_subtitle_no_email'.tr(),
+                        style: textTheme.bodyLarge?.copyWith(
+                          color: context.colors.grey400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                    SizedBox(height: context.spacing.largePageBottomMargin),
+
+                    // Success banner
+                    if (_resendStatus == _ResendStatus.success) ...[
+                      Container(
+                        padding: EdgeInsets.all(context.spacing.alertPadding),
+                        decoration: BoxDecoration(
+                          color: context.colors.successBg,
+                          borderRadius: context.radius.tile,
+                          border: Border.all(color: context.colors.success),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline_rounded,
+                              color: context.colors.success,
+                              size: 22,
+                            ),
+                            SizedBox(width: context.spacing.gapLg),
+                            Expanded(
+                              child: Text(
+                                'auth.verify_email_resent'.tr(),
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: context.colors.success,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      SizedBox(height: context.spacing.titleBottomMargin),
+                    ],
+
+                    // Error banner
+                    if (_resendStatus == _ResendStatus.error) ...[
+                      AuthErrorBanner(
+                        message: 'auth.verify_email_resend_error'.tr(),
+                      ),
+                      SizedBox(height: context.spacing.titleBottomMargin),
+                    ],
+
+                    const Spacer(),
+
+                    // "I've already verified" button
+                    AuthPrimaryButton(
+                      text: 'auth.verify_email_check_status'.tr(),
+                      isLoading: _isCheckingStatus,
+                      onPressed: _handleCheckStatus,
+                    ),
+
+                    SizedBox(height: context.spacing.titleBottomMargin),
+
+                    // Resend button
+                    TextButton(
+                      onPressed: _cooldownSeconds > 0 || _isResending
+                          ? null
+                          : _handleResend,
+                      child: _isResending
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: context.theme.colorScheme.primary,
+                              ),
+                            )
+                          : Text(
+                              _cooldownSeconds > 0
+                                  ? 'auth.verify_email_resend_countdown'.tr(
+                                      args: ['$_cooldownSeconds'],
+                                    )
+                                  : 'auth.verify_email_resend'.tr(),
+                              style: context.textTheme.bodyLarge?.copyWith(
+                                color: context.theme.colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+
+                    SizedBox(height: context.spacing.paragraphBottomMargin),
+
+                    // Logout link
+                    AuthSwitchLink(
+                      prompt: 'auth.verify_email_wrong_email'.tr(),
+                      action: 'auth.verify_email_logout'.tr(),
+                      enabled: !_isLoggingOut,
+                      onTap: _handleLogout,
+                    ),
+
+                    SizedBox(height: context.spacing.panelPadding),
+                  ],
+                ),
               ),
-
-              SizedBox(height: context.spacing.paragraphBottomMargin),
-
-              // Logout link
-              AuthSwitchLink(
-                prompt: 'auth.verify_email_wrong_email'.tr(),
-                action: 'auth.verify_email_logout'.tr(),
-                enabled: !_isLoggingOut,
-                onTap: _handleLogout,
-              ),
-
-              SizedBox(height: context.spacing.panelPadding),
             ],
           ),
         ),

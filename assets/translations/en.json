@@ -666,6 +666,7 @@
     "enter_password": "Enter your password",
     "password_required": "Password is required",
     "delete_hint": "DELETE",
+    "account_deleted_success": "Your account was deleted successfully",
     "device_android": "Android Device",
     "device_web": "Web Browser",
     "location_placeholder": "Lima, Peru",
