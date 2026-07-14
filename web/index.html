@@ -6,6 +6,7 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Nebu Mobile Flutter Application">
+  <meta name="theme-color" content="#704ADD">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,16 +27,167 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <style>
+    :root {
+      color-scheme: light;
+    }
+
+    html,
     body {
+      width: 100%;
+      height: 100%;
       margin: 0;
       padding: 0;
-      background-color: #FFFFFF;
+      overflow: hidden;
+      background-color: #704ADD;
     }
-    .loading {
+
+    .nebu-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      gap: 28px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 84% 84%, rgba(1, 100, 156, 0.32), transparent 34%),
+        #704ADD;
+      opacity: 1;
+      pointer-events: none;
+      transition: opacity 220ms ease-out, visibility 220ms;
+    }
+
+    .nebu-loading--complete {
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .nebu-loading::before,
+    .nebu-loading::after {
+      position: absolute;
+      content: "";
+      border-radius: 48% 52% 58% 42%;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nebu-loading::before {
+      top: -120px;
+      right: -90px;
+      width: 320px;
+      height: 280px;
+      transform: rotate(18deg);
+    }
+
+    .nebu-loading::after {
+      bottom: -145px;
+      left: -110px;
+      width: 360px;
+      height: 320px;
+      transform: rotate(-16deg);
+    }
+
+    .nebu-loading__content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      animation: nebu-enter 500ms ease-out both;
+    }
+
+    .nebu-loading__logo {
+      display: block;
+      width: min(76vw, 280px);
+      height: auto;
+      filter: brightness(0) invert(1);
+      animation: nebu-breathe 1800ms ease-in-out infinite;
+    }
+
+    .nebu-loading__dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      height: 10px;
+    }
+
+    .nebu-loading__dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      animation: nebu-dot 1200ms ease-in-out infinite;
+    }
+
+    .nebu-loading__dots span:nth-child(2) {
+      animation-delay: 150ms;
+    }
+
+    .nebu-loading__dots span:nth-child(3) {
+      animation-delay: 300ms;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes nebu-enter {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes nebu-breathe {
+      0%,
+      100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.025);
+      }
+    }
+
+    @keyframes nebu-dot {
+      0%,
+      60%,
+      100% {
+        opacity: 0.35;
+        transform: translateY(0) scale(0.85);
+      }
+      30% {
+        opacity: 1;
+        transform: translateY(-3px) scale(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .nebu-loading__content,
+      .nebu-loading__logo,
+      .nebu-loading__dots span {
+        animation: none;
+      }
+
+      .nebu-loading {
+        transition: none;
+      }
     }
   </style>
   <script>
@@ -49,9 +201,41 @@
   </script>
 </head>
 <body>
-  <div class="loading">
-    <p>Loading Nebu...</p>
+  <div class="nebu-loading" role="status" aria-live="polite">
+    <div class="nebu-loading__content">
+      <img
+        class="nebu-loading__logo"
+        src="assets/assets/logos/nebu.svg"
+        alt=""
+        aria-hidden="true"
+      >
+      <div class="nebu-loading__dots" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <span class="visually-hidden">Loading Nebu</span>
+    </div>
   </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var loader = document.querySelector('.nebu-loading');
+      if (!loader) {
+        return;
+      }
+
+      loader.classList.add('nebu-loading--complete');
+
+      var removeLoader = function () {
+        if (loader.isConnected) {
+          loader.remove();
+        }
+      };
+
+      loader.addEventListener('transitionend', removeLoader, { once: true });
+      window.setTimeout(removeLoader, 400);
+    }, { once: true });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
