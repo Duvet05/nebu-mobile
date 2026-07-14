@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../widgets/brand_backdrop.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -14,10 +15,7 @@ class WelcomeScreen extends StatelessWidget {
     final theme = context.theme;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: context.colors.primary,
+      body: NebuBrandBackdrop(
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -74,6 +72,10 @@ class WelcomeScreen extends StatelessWidget {
                             'assets/icons/dino.svg',
                             width: 280,
                             height: artworkHeight,
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
                             excludeFromSemantics: true,
                           ),
                         ),

@@ -104,6 +104,9 @@ flutter:
   assets:
     # Keep runtime assets explicit; broad directories inflate store bundles.
     - assets/images/google_logo.png
+    - assets/images/decoration-blob-teal.png
+    - assets/images/decoration-blob-yellow.png
+    - assets/images/decoration-strokes-scattered.png
     - assets/icons/dino.svg
     - assets/logos/nebu.svg
     - assets/translations/
