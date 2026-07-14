@@ -4,8 +4,8 @@
   "description": "Nebu Mobile Flutter Application",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#7B68EE",
+  "background_color": "#704ADD",
+  "theme_color": "#704ADD",
   "orientation": "portrait-primary",
   "icons": [
     {
