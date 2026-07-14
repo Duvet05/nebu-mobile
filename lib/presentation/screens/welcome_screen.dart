@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
@@ -69,11 +70,10 @@ class WelcomeScreen extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                             vertical: context.spacing.gapMd,
                           ),
-                          child: Image.asset(
-                            'assets/images/renders/nebu-dino-welcome.webp',
+                          child: SvgPicture.asset(
+                            'assets/icons/dino.svg',
                             width: 280,
                             height: artworkHeight,
-                            fit: BoxFit.contain,
                             excludeFromSemantics: true,
                           ),
                         ),
