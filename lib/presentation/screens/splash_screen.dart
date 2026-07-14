@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
@@ -119,17 +120,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Ícono del gatito animado
+            // Logo de Nebu animado
             AnimatedBuilder(
               animation: _iconController,
               builder: (context, child) => Opacity(
                 opacity: _iconOpacityAnimation.value,
                 child: Transform.scale(
                   scale: _iconScaleAnimation.value,
-                  child: Icon(
-                    Icons.smart_toy,
-                    size: 120,
-                    color: context.colors.textOnFilled,
+                  child: SvgPicture.asset(
+                    'assets/logos/nebu.svg',
+                    width: 240,
+                    height: 115,
+                    colorFilter: ColorFilter.mode(
+                      context.colors.textOnFilled,
+                      BlendMode.srcIn,
+                    ),
+                    semanticsLabel: 'Nebu',
                   ),
                 ),
               ),
