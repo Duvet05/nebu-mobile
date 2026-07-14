@@ -18,82 +18,113 @@ class WelcomeScreen extends StatelessWidget {
         height: double.infinity,
         color: context.colors.primary,
         child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: context.spacing.panelPadding,
-            ),
-            child: Column(
-              children: [
-                const Spacer(flex: 2),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final showArtwork = constraints.maxHeight >= 480;
+              final artworkHeight = (constraints.maxHeight * 0.45 - 100).clamp(
+                96.0,
+                320.0,
+              );
 
-                // Título
-                Text(
-                  'welcome.title'.tr(),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: context.colors.textOnFilled,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.5,
-                    height: 1.2,
+              return SingleChildScrollView(
+                padding: context.constrainedPageEdgeInsets,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: context.spacing.gapLg),
+                        child: Column(
+                          children: [
+                            Text(
+                              'welcome.title'.tr(),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.headlineMedium?.copyWith(
+                                color: context.colors.textOnFilled,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.5,
+                                height: 1.2,
+                              ),
+                            ),
+                            SizedBox(
+                              height: context.spacing.sectionTitleBottomMargin,
+                            ),
+                            Text(
+                              'welcome.subtitle'.tr(),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: context.colors.textOnFilled.withValues(
+                                  alpha: 0.8,
+                                ),
+                                fontWeight: FontWeight.w400,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (showArtwork)
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.spacing.gapMd,
+                          ),
+                          child: Image.asset(
+                            'assets/images/renders/nebu-dino-welcome.webp',
+                            width: 280,
+                            height: artworkHeight,
+                            fit: BoxFit.contain,
+                            excludeFromSemantics: true,
+                          ),
+                        ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: context.spacing.panelPadding,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _PrimaryButton(
+                              text: 'welcome.sign_in'.tr(),
+                              onPressed: () =>
+                                  context.push(AppRoutes.login.path),
+                            ),
+                            SizedBox(
+                              height: context.spacing.sectionTitleBottomMargin,
+                            ),
+                            _SecondaryButton(
+                              text: 'welcome.sign_up'.tr(),
+                              onPressed: () =>
+                                  context.push(AppRoutes.signUp.path),
+                            ),
+                            SizedBox(
+                              height: context.spacing.paragraphBottomMargin,
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  context.push(AppRoutes.connectionSetup.path),
+                              style: TextButton.styleFrom(
+                                minimumSize: const Size(double.infinity, 48),
+                                foregroundColor: context.colors.textOnFilled,
+                              ),
+                              child: Text(
+                                'welcome.continue_without_account'.tr(),
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: context.colors.textOnFilled.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-
-                SizedBox(height: context.spacing.sectionTitleBottomMargin),
-
-                // Subtítulo
-                Text(
-                  'welcome.subtitle'.tr(),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: context.colors.textOnFilled.withValues(alpha: 0.8),
-                    fontWeight: FontWeight.w400,
-                    height: 1.5,
-                  ),
-                ),
-
-                const Spacer(flex: 3),
-
-                // Botones
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Sign In - Botón principal
-                    _PrimaryButton(
-                      text: 'welcome.sign_in'.tr(),
-                      onPressed: () => context.push(AppRoutes.login.path),
-                    ),
-
-                    SizedBox(height: context.spacing.sectionTitleBottomMargin),
-
-                    // Sign Up - Botón secundario
-                    _SecondaryButton(
-                      text: 'welcome.sign_up'.tr(),
-                      onPressed: () => context.push(AppRoutes.signUp.path),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: context.spacing.paragraphBottomMargin),
-
-                // Continuar sin cuenta
-                TextButton(
-                  onPressed: () => context.push(AppRoutes.connectionSetup.path),
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 48),
-                    foregroundColor: context.colors.textOnFilled,
-                  ),
-                  child: Text(
-                    'welcome.continue_without_account'.tr(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: context.colors.textOnFilled.withValues(alpha: 0.7),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: context.spacing.panelPadding),
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
