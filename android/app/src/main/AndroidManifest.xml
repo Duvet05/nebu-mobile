@@ -26,6 +26,8 @@
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
 
     <application
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:label="Nebu Mobile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
