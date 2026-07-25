@@ -25,14 +25,14 @@ PODS:
   - Firebase/Messaging (12.15.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 12.15.0)
-  - firebase_core (4.11.0):
+  - firebase_core (4.12.1):
     - Firebase/CoreOnly (= 12.15.0)
     - Flutter
-  - firebase_crashlytics (5.2.4):
+  - firebase_crashlytics (5.2.6):
     - Firebase/Crashlytics (= 12.15.0)
     - firebase_core
     - Flutter
-  - firebase_messaging (16.4.1):
+  - firebase_messaging (16.4.3):
     - Firebase/Messaging (= 12.15.0)
     - firebase_core
     - Flutter
@@ -263,9 +263,9 @@ SPEC CHECKSUMS:
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
   Firebase: a8539b633d474fbeb654c7043f9c1649e274045b
-  firebase_core: fc23178af8ea070194d09031ae4198a9608a3d22
-  firebase_crashlytics: 344bb168f55aee1086c6cdd0b105a9db018cd344
-  firebase_messaging: 870b2939a7f7cc52bc38ca0250127c45b42f4bad
+  firebase_core: 1c1e250a77e2df9e80bb8bf0875c8b427044a697
+  firebase_crashlytics: 4d38aa785af57b2687a460778303d3b459707192
+  firebase_messaging: 90cf2b62f5058120ab19f29ceff1503ba0f51ba7
   FirebaseCore: 2e86a4ea1684d4381707069e4a6d89ac808e901e
   FirebaseCoreExtension: 10d2a627977b39418759ad88ada80fbbd34f1c4f
   FirebaseCoreInternal: 6ab6a02c94446c026d2cf35cf5383842ebaa4992
@@ -302,4 +302,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 9c46fd01abff66081b39f5fa5767b3f1d0b11d76
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.17.0
