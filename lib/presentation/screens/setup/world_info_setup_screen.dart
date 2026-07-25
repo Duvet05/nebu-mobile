@@ -147,85 +147,100 @@ class WorldInfoSetupScreen extends ConsumerWidget {
 
             // Content
             Expanded(
-              child: Padding(
-                padding: context.constrainedPageEdgeInsets,
-                child: Column(
-                  children: [
-                    const Spacer(),
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: context.constrainedPageEdgeInsets,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          const Spacer(),
 
-                    // Completion icon
-                    Center(
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          color: context.colors.primary.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.check,
-                          size: 60,
-                          color: context.colors.primary,
-                        ),
+                          // Completion icon
+                          Center(
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: context.colors.primary.withValues(
+                                  alpha: 0.1,
+                                ),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.check,
+                                size: 60,
+                                color: context.colors.primary,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: context.spacing.largePageBottomMargin,
+                          ),
+
+                          // Title
+                          Text(
+                            'setup.world_info.all_set'.tr(),
+                            style: theme.textTheme.displaySmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          SizedBox(height: context.spacing.titleBottomMarginSm),
+
+                          Text(
+                            'setup.world_info.ready_message'.tr(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          SizedBox(
+                            height: context.spacing.largePageBottomMargin,
+                          ),
+
+                          // Features summary
+                          _buildFeatureSummary(
+                            context,
+                            theme,
+                            Icons.check_circle,
+                            'setup.world_info.device_connected'.tr(),
+                          ),
+                          SizedBox(height: context.spacing.gapXl),
+                          _buildFeatureSummary(
+                            context,
+                            theme,
+                            Icons.check_circle,
+                            'setup.world_info.profile_configured'.tr(),
+                          ),
+                          SizedBox(height: context.spacing.gapXl),
+                          _buildFeatureSummary(
+                            context,
+                            theme,
+                            Icons.check_circle,
+                            'setup.world_info.preferences_saved'.tr(),
+                          ),
+
+                          const Spacer(),
+
+                          // Finish button
+                          SetupPrimaryButton(
+                            text: 'setup.world_info.start_using'.tr(),
+                            onPressed: () => _finishSetup(context, ref),
+                          ),
+
+                          SizedBox(height: context.spacing.panelPadding),
+                        ],
                       ),
                     ),
-
-                    SizedBox(height: context.spacing.largePageBottomMargin),
-
-                    // Title
-                    Text(
-                      'setup.world_info.all_set'.tr(),
-                      style: theme.textTheme.displaySmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    SizedBox(height: context.spacing.titleBottomMarginSm),
-
-                    Text(
-                      'setup.world_info.ready_message'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    SizedBox(height: context.spacing.largePageBottomMargin),
-
-                    // Features summary
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.device_connected'.tr(),
-                    ),
-                    SizedBox(height: context.spacing.gapXl),
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.profile_configured'.tr(),
-                    ),
-                    SizedBox(height: context.spacing.gapXl),
-                    _buildFeatureSummary(
-                      context,
-                      theme,
-                      Icons.check_circle,
-                      'setup.world_info.preferences_saved'.tr(),
-                    ),
-
-                    const Spacer(),
-
-                    // Finish button
-                    SetupPrimaryButton(
-                      text: 'setup.world_info.start_using'.tr(),
-                      onPressed: () => _finishSetup(context, ref),
-                    ),
-
-                    SizedBox(height: context.spacing.panelPadding),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -268,9 +283,13 @@ class WorldInfoSetupScreen extends ConsumerWidget {
     children: [
       Icon(icon, color: context.colors.primary, size: 24),
       SizedBox(width: context.spacing.gapLg),
-      Text(
-        text,
-        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+      Flexible(
+        child: Text(
+          text,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     ],
   );

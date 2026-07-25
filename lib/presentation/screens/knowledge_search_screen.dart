@@ -222,38 +222,60 @@ class _KnowledgeCard extends StatelessWidget {
 
             SizedBox(height: context.spacing.labelBottomMargin),
 
-            // Footer: category + verified badge
-            Row(
-              children: [
-                if (entry.category != null)
-                  Chip(
-                    label: Text(
-                      entry.category!,
-                      style: theme.textTheme.labelSmall,
-                    ),
-                    visualDensity: VisualDensity.compact,
+            // Footer: remote metadata can contain arbitrarily long strings.
+            LayoutBuilder(
+              builder: (context, constraints) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    spacing: context.spacing.labelBottomMargin,
+                    runSpacing: context.spacing.gapXs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (entry.category != null)
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: constraints.maxWidth,
+                          ),
+                          child: Chip(
+                            label: Text(
+                              entry.category!,
+                              style: theme.textTheme.labelSmall,
+                            ),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                        ),
+                      if (entry.verified)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.verified,
+                              size: 16,
+                              color: context.colors.success,
+                            ),
+                            SizedBox(width: context.spacing.gapXs),
+                            Text(
+                              'knowledge.verified'.tr(),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: context.colors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
-                if (entry.verified) ...[
-                  SizedBox(width: context.spacing.labelBottomMargin),
-                  Icon(Icons.verified, size: 16, color: context.colors.success),
-                  SizedBox(width: context.spacing.gapXs),
-                  Text(
-                    'knowledge.verified'.tr(),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: context.colors.success,
+                  if (entry.source != null) ...[
+                    SizedBox(height: context.spacing.gapXs),
+                    Text(
+                      entry.source!,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-                if (entry.source != null) ...[
-                  const Spacer(),
-                  Text(
-                    entry.source!,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ],
+              ),
             ),
           ],
         ),

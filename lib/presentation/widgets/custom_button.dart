@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -24,6 +26,9 @@ class CustomButton extends StatelessWidget {
   final bool isFullWidth;
   final IconData? icon;
   final double? width;
+
+  /// Minimum button height. The effective value never drops below the
+  /// platform's minimum interactive dimension.
   final double? height;
   final BorderRadius? borderRadius;
 
@@ -57,13 +62,13 @@ class CustomButton extends StatelessWidget {
     );
 
     final buttonWidth = width ?? (isFullWidth ? double.infinity : null);
-    final buttonHeight = height ?? 56.0;
+    final buttonHeight = math.max(height ?? 56.0, kMinInteractiveDimension);
 
     switch (variant) {
       case ButtonVariant.primary:
         return Container(
           width: buttonWidth,
-          height: buttonHeight,
+          constraints: BoxConstraints(minHeight: buttonHeight),
           decoration: BoxDecoration(
             color: context.colors.primary,
             borderRadius: effectiveRadius,
@@ -94,66 +99,72 @@ class CustomButton extends StatelessWidget {
         );
 
       case ButtonVariant.secondary:
-        return SizedBox(
-          width: buttonWidth,
-          height: buttonHeight,
-          child: ElevatedButton(
-            onPressed: isLoading ? null : onPressed,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: colorScheme.surface,
-              foregroundColor: colorScheme.primary,
-              elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.spacing.gapXxl,
-                vertical: context.spacing.gapXl,
+        return ConstrainedBox(
+          constraints: BoxConstraints(minHeight: buttonHeight),
+          child: SizedBox(
+            width: buttonWidth,
+            child: ElevatedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colorScheme.surface,
+                foregroundColor: colorScheme.primary,
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapXxl,
+                  vertical: context.spacing.gapXl,
+                ),
               ),
+              child: buttonChild,
             ),
-            child: buttonChild,
           ),
         );
 
       case ButtonVariant.outline:
-        return SizedBox(
-          width: buttonWidth,
-          height: buttonHeight,
-          child: OutlinedButton(
-            onPressed: isLoading ? null : onPressed,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: colorScheme.primary,
-              side: BorderSide(color: colorScheme.primary, width: 2),
-              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.spacing.gapXxl,
-                vertical: context.spacing.gapXl,
+        return ConstrainedBox(
+          constraints: BoxConstraints(minHeight: buttonHeight),
+          child: SizedBox(
+            width: buttonWidth,
+            child: OutlinedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: colorScheme.primary,
+                side: BorderSide(color: colorScheme.primary, width: 2),
+                shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapXxl,
+                  vertical: context.spacing.gapXl,
+                ),
               ),
+              child: buttonChild,
             ),
-            child: buttonChild,
           ),
         );
 
       case ButtonVariant.text:
-        return SizedBox(
-          width: buttonWidth,
-          height: buttonHeight,
-          child: TextButton(
-            onPressed: isLoading ? null : onPressed,
-            style: TextButton.styleFrom(
-              foregroundColor: colorScheme.primary,
-              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.spacing.gapXl,
-                vertical: context.spacing.gapMd,
+        return ConstrainedBox(
+          constraints: BoxConstraints(minHeight: buttonHeight),
+          child: SizedBox(
+            width: buttonWidth,
+            child: TextButton(
+              onPressed: isLoading ? null : onPressed,
+              style: TextButton.styleFrom(
+                foregroundColor: colorScheme.primary,
+                shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapXl,
+                  vertical: context.spacing.gapMd,
+                ),
               ),
+              child: buttonChild,
             ),
-            child: buttonChild,
           ),
         );
 
       case ButtonVariant.danger:
         return Container(
           width: buttonWidth,
-          height: buttonHeight,
+          constraints: BoxConstraints(minHeight: buttonHeight),
           decoration: BoxDecoration(
             color: context.colors.error,
             borderRadius: effectiveRadius,
@@ -184,21 +195,23 @@ class CustomButton extends StatelessWidget {
         );
 
       case ButtonVariant.dangerOutline:
-        return SizedBox(
-          width: buttonWidth,
-          height: buttonHeight,
-          child: OutlinedButton(
-            onPressed: isLoading ? null : onPressed,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: context.colors.error,
-              side: BorderSide(color: context.colors.error),
-              shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.spacing.gapXxl,
-                vertical: context.spacing.gapXl,
+        return ConstrainedBox(
+          constraints: BoxConstraints(minHeight: buttonHeight),
+          child: SizedBox(
+            width: buttonWidth,
+            child: OutlinedButton(
+              onPressed: isLoading ? null : onPressed,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: context.colors.error,
+                side: BorderSide(color: context.colors.error),
+                shape: RoundedRectangleBorder(borderRadius: effectiveRadius),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.spacing.gapXxl,
+                  vertical: context.spacing.gapXl,
+                ),
               ),
+              child: buttonChild,
             ),
-            child: buttonChild,
           ),
         );
     }
