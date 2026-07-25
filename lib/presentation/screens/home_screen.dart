@@ -63,22 +63,28 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.spacing.panelPadding),
 
               // My Toys Section
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'home.my_active_toys'.tr(),
-                    style: theme.textTheme.titleLarge,
-                  ),
-                  CustomButton(
-                    text: 'home.add_toy'.tr(),
-                    onPressed: () =>
-                        context.push(AppRoutes.connectionSetup.path),
-                    icon: Icons.add,
-                    variant: ButtonVariant.text,
-                    height: 40,
-                  ),
-                ],
+              SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: context.spacing.gapLg,
+                  runSpacing: context.spacing.gapSm,
+                  children: [
+                    Text(
+                      'home.my_active_toys'.tr(),
+                      style: theme.textTheme.titleLarge,
+                    ),
+                    CustomButton(
+                      text: 'home.add_toy'.tr(),
+                      onPressed: () =>
+                          context.push(AppRoutes.connectionSetup.path),
+                      icon: Icons.add,
+                      variant: ButtonVariant.text,
+                      height: 40,
+                    ),
+                  ],
+                ),
               ),
 
               SizedBox(height: context.spacing.sectionTitleBottomMargin),

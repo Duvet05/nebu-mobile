@@ -74,80 +74,91 @@ class _WalkieTalkieScreenState extends ConsumerState<WalkieTalkieScreen> {
       },
       child: Scaffold(
         appBar: AppBar(title: Text('walkie_talkie.title'.tr())),
-        body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(context.spacing.pageMargin),
-            child: Column(
-              children: [
-                SizedBox(height: context.spacing.panelPadding),
+        body: LayoutBuilder(
+          builder: (context, viewportConstraints) => SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+              ),
+              child: IntrinsicHeight(
+                child: Padding(
+                  padding: EdgeInsets.all(context.spacing.pageMargin),
+                  child: Column(
+                    children: [
+                      SizedBox(height: context.spacing.panelPadding),
 
-                // Toy info
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: context.colors.primary.withValues(
-                    alpha: 0.2,
-                  ),
-                  child: Icon(
-                    Icons.smart_toy,
-                    size: 48,
-                    color: context.colors.primary,
+                      // Toy info
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: context.colors.primary.withValues(
+                          alpha: 0.2,
+                        ),
+                        child: Icon(
+                          Icons.smart_toy,
+                          size: 48,
+                          color: context.colors.primary,
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.paragraphBottomMarginSm),
+                      Text(widget.toy.name, style: theme.textTheme.titleLarge),
+
+                      SizedBox(height: context.spacing.panelPadding),
+
+                      // Connection status
+                      ConnectionStatusIndicator(
+                        phase: state.phase.name,
+                        isRemoteConnected: state.isRemoteConnected,
+                        remoteName: state.remoteParticipantName,
+                      ),
+
+                      const Spacer(),
+
+                      // Main content based on phase
+                      if (state.phase == WalkieTalkiePhase.connecting)
+                        const CircularProgressIndicator()
+                      else if (state.phase == WalkieTalkiePhase.error)
+                        _buildErrorState(state)
+                      else if (state.phase == WalkieTalkiePhase.connected) ...[
+                        PushToTalkButton(
+                          onTalkStart: () => ref
+                              .read(walkieTalkieProvider.notifier)
+                              .startTalking(),
+                          onTalkEnd: () => ref
+                              .read(walkieTalkieProvider.notifier)
+                              .stopTalking(),
+                          isTalking: state.isTalking,
+                          isEnabled: state.phase == WalkieTalkiePhase.connected,
+                        ),
+                        if (state.isRemoteConnected) ...[
+                          SizedBox(height: context.spacing.panelPadding),
+                          _buildRemoteMuteButton(state),
+                        ],
+                      ],
+
+                      const Spacer(),
+
+                      // End session button
+                      if (state.phase == WalkieTalkiePhase.connected ||
+                          state.phase == WalkieTalkiePhase.error)
+                        CustomButton(
+                          text: 'walkie_talkie.end_session'.tr(),
+                          onPressed: () async {
+                            await _endSession();
+                            if (context.mounted) {
+                              context.pop();
+                            }
+                          },
+                          icon: Icons.call_end,
+                          variant: ButtonVariant.outline,
+                          isFullWidth: true,
+                          height: 48,
+                        ),
+
+                      SizedBox(height: context.spacing.panelPadding),
+                    ],
                   ),
                 ),
-                SizedBox(height: context.spacing.paragraphBottomMarginSm),
-                Text(widget.toy.name, style: theme.textTheme.titleLarge),
-
-                SizedBox(height: context.spacing.panelPadding),
-
-                // Connection status
-                ConnectionStatusIndicator(
-                  phase: state.phase.name,
-                  isRemoteConnected: state.isRemoteConnected,
-                  remoteName: state.remoteParticipantName,
-                ),
-
-                const Spacer(),
-
-                // Main content based on phase
-                if (state.phase == WalkieTalkiePhase.connecting)
-                  const CircularProgressIndicator()
-                else if (state.phase == WalkieTalkiePhase.error)
-                  _buildErrorState(state)
-                else if (state.phase == WalkieTalkiePhase.connected) ...[
-                  PushToTalkButton(
-                    onTalkStart: () =>
-                        ref.read(walkieTalkieProvider.notifier).startTalking(),
-                    onTalkEnd: () =>
-                        ref.read(walkieTalkieProvider.notifier).stopTalking(),
-                    isTalking: state.isTalking,
-                    isEnabled: state.phase == WalkieTalkiePhase.connected,
-                  ),
-                  if (state.isRemoteConnected) ...[
-                    SizedBox(height: context.spacing.panelPadding),
-                    _buildRemoteMuteButton(state),
-                  ],
-                ],
-
-                const Spacer(),
-
-                // End session button
-                if (state.phase == WalkieTalkiePhase.connected ||
-                    state.phase == WalkieTalkiePhase.error)
-                  CustomButton(
-                    text: 'walkie_talkie.end_session'.tr(),
-                    onPressed: () async {
-                      await _endSession();
-                      if (context.mounted) {
-                        context.pop();
-                      }
-                    },
-                    icon: Icons.call_end,
-                    variant: ButtonVariant.outline,
-                    isFullWidth: true,
-                    height: 48,
-                  ),
-
-                SizedBox(height: context.spacing.panelPadding),
-              ],
+              ),
             ),
           ),
         ),

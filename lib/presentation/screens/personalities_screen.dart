@@ -52,19 +52,38 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
       );
     }
 
-    return GridView.builder(
-      padding: EdgeInsets.all(context.spacing.alertPadding),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: context.spacing.gapLg,
-        mainAxisSpacing: context.spacing.gapLg,
-        childAspectRatio: 0.78,
-      ),
-      itemCount: personalities.length,
-      itemBuilder: (context, index) => _PersonalityCard(
-        personality: personalities[index],
-        onTap: () => _showDetailModal(context, personalities[index]),
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(1);
+        final useSingleColumn = constraints.maxWidth < 360 || textScale > 1.3;
+
+        Widget buildCard(BuildContext context, int index) => _PersonalityCard(
+          personality: personalities[index],
+          onTap: () => _showDetailModal(context, personalities[index]),
+        );
+
+        if (useSingleColumn) {
+          return ListView.separated(
+            padding: EdgeInsets.all(context.spacing.alertPadding),
+            itemCount: personalities.length,
+            itemBuilder: buildCard,
+            separatorBuilder: (context, index) =>
+                SizedBox(height: context.spacing.gapLg),
+          );
+        }
+
+        return GridView.builder(
+          padding: EdgeInsets.all(context.spacing.alertPadding),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: context.spacing.gapLg,
+            mainAxisSpacing: context.spacing.gapLg,
+            childAspectRatio: 0.78,
+          ),
+          itemCount: personalities.length,
+          itemBuilder: buildCard,
+        );
+      },
     );
   }
 
@@ -341,15 +360,25 @@ class _PersonalitiesScreenState extends ConsumerState<PersonalitiesScreen> {
   ) => Padding(
     padding: EdgeInsets.symmetric(vertical: context.spacing.labelBottomMargin),
     child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
         SizedBox(width: context.spacing.labelBottomMargin),
-        Text(label, style: theme.textTheme.bodyMedium),
-        const Spacer(),
-        Text(
-          value,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+        Expanded(
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: context.spacing.gapLg,
+            runSpacing: context.spacing.gapXs,
+            children: [
+              Text(label, style: theme.textTheme.bodyMedium),
+              Text(
+                value,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ],

@@ -144,7 +144,11 @@ class SetupPrimaryButton extends StatelessWidget {
       child: GestureDetector(
         onTap: effectiveEnabled ? onPressed : null,
         child: Container(
-          height: 56,
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.spacing.gapXl,
+            vertical: context.spacing.gapLg,
+          ),
           decoration: BoxDecoration(
             gradient: gradient,
             color: bgColor,
@@ -163,13 +167,16 @@ class SetupPrimaryButton extends StatelessWidget {
                       ),
                     ),
                   )
-                : Text(
-                    text,
-                    style: context.theme.textTheme.titleMedium?.copyWith(
-                      color: effectiveEnabled
-                          ? context.colors.textOnFilled
-                          : context.theme.colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+                : ExcludeSemantics(
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: context.theme.textTheme.titleMedium?.copyWith(
+                        color: effectiveEnabled
+                            ? context.colors.textOnFilled
+                            : context.theme.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
           ),

@@ -225,8 +225,10 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
                 ),
               ),
               SizedBox(height: context.spacing.gapLg),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              Wrap(
+                alignment: WrapAlignment.end,
+                spacing: context.spacing.gapMd,
+                runSpacing: context.spacing.gapMd,
                 children: [
                   CustomButton(
                     text: 'persons.sync_dismiss'.tr(),
@@ -235,7 +237,6 @@ class _PersonsScreenState extends ConsumerState<PersonsScreen> {
                       setState(() => _syncDismissed = true);
                     },
                   ),
-                  SizedBox(width: context.spacing.gapMd),
                   CustomButton(
                     text: 'persons.sync_now'.tr(),
                     isLoading: _isSyncing,

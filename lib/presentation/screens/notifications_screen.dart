@@ -81,12 +81,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         elevation: 0,
         actions: [
           if (unreadCount > 0)
-            CustomButton(
-              text: 'notifications.mark_all_read'.tr(),
+            IconButton(
+              tooltip: 'notifications.mark_all_read'.tr(),
               onPressed: (_isBusy || _isDismissing) ? null : _markAllAsRead,
-              isLoading: _isBusy,
-              variant: ButtonVariant.text,
-              height: 48,
+              icon: _isBusy
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.done_all),
             ),
         ],
       ),
