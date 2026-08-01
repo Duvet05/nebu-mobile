@@ -46,14 +46,16 @@ App Store (signed upload) release:
 If the workflow runs with `upload_to_app_store=true` and any of these are missing,
 it fails fast with explicit `Missing GitHub secret ...` messages.
 
-The App Store provisioning profile must be regenerated after enabling these
-capabilities for the app identifier in Apple Developer:
+For full releases, the App Store provisioning profile must be regenerated after
+enabling these capabilities for the app identifier in Apple Developer:
 
 - Associated Domains, including `applinks:nebu.flow-telligence.com`
 - Sign in with Apple
 - Push Notifications, required for FCM/APNs delivery
 
 The iOS workflow validates these capabilities before building the signed IPA.
+Minimum releases omit Associated Domains so they can use the current profile;
+Sign in with Apple and Push Notifications remain required.
 
 Encode local files without newlines before adding them as GitHub secrets:
 
@@ -249,7 +251,9 @@ Manual iOS upload:
 
 1. Run `Build iOS` with `upload_to_app_store=true`.
 2. Set `minimal_ios_release=true` for the limited iPhone-only release. This
-   is compiled into the IPA; it does not use remote feature flags.
+   is compiled into the IPA; it does not use remote feature flags. Universal
+   Links are omitted in this mode, so email verification uses its status-check
+   fallback and password reset can use the token-entry fallback.
 3. Provide `build_number` only when you need a specific `CFBundleVersion`; it
    must be greater than the last uploaded build for that app version.
 
