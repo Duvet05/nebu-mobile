@@ -47,6 +47,7 @@ import '../../presentation/screens/usage_limits_screen.dart';
 import '../../presentation/screens/voice_sessions_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
+import '../config/config.dart';
 import '../constants/app_routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -86,6 +87,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       final path = state.matchedLocation;
       final hasToys = toysAsync.value ?? false;
       final skippedSetup = setupAsync.value ?? false;
+
+      // The minimum iPhone release removes optional features from both the UI
+      // and navigation. Keep this local to the compiled build, never remote.
+      if (!Config.isRouteEnabled(path)) {
+        return AppRoutes.home.path;
+      }
 
       final isVerifyPage = path == AppRoutes.verifyEmail.path;
       final isResetPasswordPage = path == AppRoutes.resetPassword.path;

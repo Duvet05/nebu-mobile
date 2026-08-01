@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import 'release_feature_policy.dart';
+
 /// Configuración centralizada de la aplicación
 /// Úsala en lugar de EnvConfig o AppConfig
 
@@ -61,6 +63,9 @@ abstract final class Config {
   );
   static const bool _crashReportingOverride = bool.fromEnvironment(
     'ENABLE_CRASH_REPORTING',
+  );
+  static const bool _minimalIosReleaseOverride = bool.fromEnvironment(
+    'MINIMAL_IOS_RELEASE',
   );
 
   // ============================================
@@ -129,6 +134,26 @@ abstract final class Config {
   static bool get enableDebugLogs => _enableDebugLogs;
   static bool get enableCrashReporting =>
       _hasCrashReportingOverride ? _crashReportingOverride : kReleaseMode;
+
+  // ============================================
+  // Minimum iPhone release
+  // ============================================
+  /// Enables the small, reviewable iPhone-only release surface.
+  ///
+  /// This is compiled into the app and is intentionally not remotely
+  /// configurable. New functionality is released in a new App Store build.
+  static bool get isMinimalIosRelease =>
+      _minimalIosReleaseOverride &&
+      !kIsWeb &&
+      defaultTargetPlatform == TargetPlatform.iOS;
+
+  static bool isFeatureEnabled(ReleaseFeature feature) => ReleaseFeaturePolicy(
+    minimalRelease: isMinimalIosRelease,
+  ).isFeatureEnabled(feature);
+
+  static bool isRouteEnabled(String routePath) => ReleaseFeaturePolicy(
+    minimalRelease: isMinimalIosRelease,
+  ).isRouteEnabled(routePath);
 
   // ============================================
   // Validation

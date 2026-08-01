@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/config/config.dart';
+import '../../core/config/release_feature_policy.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/theme/app_colors.dart';
@@ -156,29 +157,31 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () => context.push(AppRoutes.helpSupport.path),
                     ),
 
-                    _SettingsTile(
-                      theme: theme,
-                      icon: Icons.monitor_heart_outlined,
-                      iconColor: context.colors.info,
-                      title: 'health_check.title'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: context.colors.grey400,
+                    if (Config.isFeatureEnabled(ReleaseFeature.healthCheck))
+                      _SettingsTile(
+                        theme: theme,
+                        icon: Icons.monitor_heart_outlined,
+                        iconColor: context.colors.info,
+                        title: 'health_check.title'.tr(),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: context.colors.grey400,
+                        ),
+                        onTap: () => context.push(AppRoutes.healthCheck.path),
                       ),
-                      onTap: () => context.push(AppRoutes.healthCheck.path),
-                    ),
 
-                    _SettingsTile(
-                      theme: theme,
-                      icon: Icons.timer_outlined,
-                      iconColor: context.colors.primary,
-                      title: 'limits.title'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: context.colors.grey400,
+                    if (Config.isFeatureEnabled(ReleaseFeature.usageLimits))
+                      _SettingsTile(
+                        theme: theme,
+                        icon: Icons.timer_outlined,
+                        iconColor: context.colors.primary,
+                        title: 'limits.title'.tr(),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: context.colors.grey400,
+                        ),
+                        onTap: () => context.push(AppRoutes.usageLimits.path),
                       ),
-                      onTap: () => context.push(AppRoutes.usageLimits.path),
-                    ),
 
                     _SettingsTile(
                       theme: theme,

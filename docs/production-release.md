@@ -11,6 +11,7 @@ These values are compiled into the Flutter app with `--dart-define`.
 - `GOOGLE_WEB_CLIENT_ID`
 - `GOOGLE_IOS_CLIENT_ID`
 - `FACEBOOK_APP_ID` if Facebook auth is enabled
+- `IOS_MINIMAL_RELEASE` (`true` to use the limited iPhone-only feature set for tag builds)
 
 The app has production defaults for the Flow Telligence API, WebSocket, LiveKit,
 and Google web client ID, so only override values that differ by environment.
@@ -247,7 +248,9 @@ Upload a build to App Store Connect/TestFlight:
 Manual iOS upload:
 
 1. Run `Build iOS` with `upload_to_app_store=true`.
-2. Provide `build_number` only when you need a specific `CFBundleVersion`; it
+2. Set `minimal_ios_release=true` for the limited iPhone-only release. This
+   is compiled into the IPA; it does not use remote feature flags.
+3. Provide `build_number` only when you need a specific `CFBundleVersion`; it
    must be greater than the last uploaded build for that app version.
 
 ## Android release runbook

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/config.dart';
+import '../../core/config/release_feature_policy.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/ui_helpers.dart';
@@ -150,54 +152,62 @@ class ProfileScreen extends ConsumerWidget {
                             );
                           },
                         ),
-                        Divider(
-                          height: 1,
-                          indent: 56,
-                          color: theme.dividerColor,
-                        ),
-                        _SettingsTile(
-                          theme: theme,
-                          icon: Icons.timer_outlined,
-                          title: 'profile.usage_limits'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: context.colors.grey400,
+                        if (Config.isFeatureEnabled(
+                          ReleaseFeature.usageLimits,
+                        )) ...[
+                          Divider(
+                            height: 1,
+                            indent: 56,
+                            color: theme.dividerColor,
                           ),
-                          onTap: () {
-                            context.push(AppRoutes.usageLimits.path);
-                          },
-                        ),
-                        Divider(
-                          height: 1,
-                          indent: 56,
-                          color: theme.dividerColor,
-                        ),
-                        _SettingsTile(
-                          theme: theme,
-                          icon: Icons.notifications_outlined,
-                          title: 'profile.notifications'.tr(),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: context.colors.error,
-                                  shape: BoxShape.circle,
+                          _SettingsTile(
+                            theme: theme,
+                            icon: Icons.timer_outlined,
+                            title: 'profile.usage_limits'.tr(),
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: context.colors.grey400,
+                            ),
+                            onTap: () {
+                              context.push(AppRoutes.usageLimits.path);
+                            },
+                          ),
+                        ],
+                        if (Config.isFeatureEnabled(
+                          ReleaseFeature.notifications,
+                        )) ...[
+                          Divider(
+                            height: 1,
+                            indent: 56,
+                            color: theme.dividerColor,
+                          ),
+                          _SettingsTile(
+                            theme: theme,
+                            icon: Icons.notifications_outlined,
+                            title: 'profile.notifications'.tr(),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: context.colors.error,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: context.spacing.gapMd),
-                              Icon(
-                                Icons.chevron_right,
-                                color: context.colors.grey400,
-                              ),
-                            ],
+                                SizedBox(width: context.spacing.gapMd),
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: context.colors.grey400,
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              context.push(AppRoutes.notifications.path);
+                            },
                           ),
-                          onTap: () {
-                            context.push(AppRoutes.notifications.path);
-                          },
-                        ),
+                        ],
                       ],
                     ),
 
