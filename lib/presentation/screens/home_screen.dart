@@ -4,6 +4,8 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/config.dart';
+import '../../core/config/release_feature_policy.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
@@ -92,48 +94,51 @@ class HomeScreen extends ConsumerWidget {
               // Active Toys List
               _buildActiveToysList(context, ref),
 
-              SizedBox(height: context.spacing.panelPadding),
+              if (Config.isFeatureEnabled(ReleaseFeature.homeQuickActions)) ...[
+                SizedBox(height: context.spacing.panelPadding),
 
-              // Quick Actions
-              Text(
-                'home.quick_actions'.tr(),
-                style: theme.textTheme.titleLarge,
-              ),
+                // Quick Actions
+                Text(
+                  'home.quick_actions'.tr(),
+                  style: theme.textTheme.titleLarge,
+                ),
 
-              SizedBox(height: context.spacing.sectionTitleBottomMargin),
+                SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: _QuickActionCard(
-                      icon: Icons.record_voice_over,
-                      label: 'home.voice_history'.tr(),
-                      color: context.colors.success,
-                      onTap: () => context.push(AppRoutes.voiceHistory.path),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _QuickActionCard(
+                        icon: Icons.record_voice_over,
+                        label: 'home.voice_history'.tr(),
+                        color: context.colors.success,
+                        onTap: () => context.push(AppRoutes.voiceHistory.path),
+                      ),
                     ),
-                  ),
-                  SizedBox(width: context.spacing.labelBottomMargin),
-                  Expanded(
-                    child: _QuickActionCard(
-                      icon: Icons.menu_book_rounded,
-                      label: 'home.knowledge'.tr(),
-                      color: context.colors.warning,
-                      onTap: () => context.push(AppRoutes.knowledgeSearch.path),
+                    SizedBox(width: context.spacing.labelBottomMargin),
+                    Expanded(
+                      child: _QuickActionCard(
+                        icon: Icons.menu_book_rounded,
+                        label: 'home.knowledge'.tr(),
+                        color: context.colors.warning,
+                        onTap: () =>
+                            context.push(AppRoutes.knowledgeSearch.path),
+                      ),
                     ),
-                  ),
-                  SizedBox(width: context.spacing.labelBottomMargin),
-                  Expanded(
-                    child: _QuickActionCard(
-                      icon: Icons.auto_awesome,
-                      label: 'home.personalities'.tr(),
-                      color: context.colors.secondary,
-                      onTap: () => context.push(AppRoutes.personalities.path),
+                    SizedBox(width: context.spacing.labelBottomMargin),
+                    Expanded(
+                      child: _QuickActionCard(
+                        icon: Icons.auto_awesome,
+                        label: 'home.personalities'.tr(),
+                        color: context.colors.secondary,
+                        onTap: () => context.push(AppRoutes.personalities.path),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              SizedBox(height: context.spacing.panelPadding),
+                SizedBox(height: context.spacing.panelPadding),
+              ],
             ],
           ),
         ),

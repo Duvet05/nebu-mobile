@@ -22,6 +22,14 @@ on:
         options:
           - "true"
           - "false"
+      minimal_ios_release:
+        description: "Build the limited iPhone-only release surface"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
 
 env:
   FLUTTER_VERSION: "3.41.7"
@@ -29,6 +37,7 @@ env:
   APP_STORE_UPLOAD: ${{ github.event.inputs.upload_to_app_store || (startsWith(github.ref, 'refs/tags/') && 'true' || 'false') }}
   APP_STORE_TEAM_ID: ${{ vars.APP_STORE_TEAM_ID || 'L7D2JCR89T' }}
   APP_STORE_BUNDLE_ID: ${{ vars.APP_STORE_BUNDLE_ID || 'com.nebu.nebuMobileFlutter' }}
+  IOS_MINIMAL_RELEASE: ${{ github.event.inputs.minimal_ios_release || vars.IOS_MINIMAL_RELEASE || 'false' }}
 
 jobs:
   build-ios:
@@ -106,6 +115,10 @@ jobs:
             echo "iOS build number must be a positive integer: ${build_number}" >&2
             exit 1
           fi
+          if [ "${IOS_MINIMAL_RELEASE}" != "true" ] && [ "${IOS_MINIMAL_RELEASE}" != "false" ]; then
+            echo "IOS_MINIMAL_RELEASE must be true or false: ${IOS_MINIMAL_RELEASE}" >&2
+            exit 1
+          fi
 
           {
             echo "BUILD_NAME=${build_name}"
@@ -117,6 +130,7 @@ jobs:
             echo "- Build name: ${build_name}"
             echo "- Build number: ${build_number}"
             echo "- Upload to App Store Connect: ${APP_STORE_UPLOAD}"
+            echo "- Minimum iPhone release: ${IOS_MINIMAL_RELEASE}"
           } >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Setup signing keychain
@@ -227,6 +241,7 @@ jobs:
           GOOGLE_WEB_CLIENT_ID: ${{ vars.GOOGLE_WEB_CLIENT_ID }}
           GOOGLE_IOS_CLIENT_ID: ${{ vars.GOOGLE_IOS_CLIENT_ID }}
           FACEBOOK_APP_ID: ${{ vars.FACEBOOK_APP_ID }}
+          MINIMAL_IOS_RELEASE: ${{ env.IOS_MINIMAL_RELEASE }}
         run: |
           set -euo pipefail
           ENV=production
@@ -249,6 +264,7 @@ jobs:
           add_define ENV
           add_define ENABLE_CRASH_REPORTING
           add_define ENABLE_DEBUG_LOGS
+          add_define MINIMAL_IOS_RELEASE
           add_define API_URL
           add_define SERVER_URL
           add_define WS_URL
