@@ -142,8 +142,10 @@ abstract final class Config {
   ///
   /// This is compiled into the app and is intentionally not remotely
   /// configurable. New functionality is released in a new App Store build.
+  static const bool isMinimalIosReleaseConfigured = _minimalIosReleaseOverride;
+
   static bool get isMinimalIosRelease =>
-      _minimalIosReleaseOverride &&
+      isMinimalIosReleaseConfigured &&
       !kIsWeb &&
       defaultTargetPlatform == TargetPlatform.iOS;
 

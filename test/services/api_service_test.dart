@@ -44,6 +44,7 @@ ResponseBody _jsonResponse(Object payload, int statusCode) =>
     );
 
 void main() {
+  const minimumRelease = bool.fromEnvironment('MINIMAL_IOS_RELEASE');
   late MockFlutterSecureStorage secureStorage;
   late MockLogger logger;
   late _TestAdapter adapter;
@@ -87,6 +88,7 @@ void main() {
         'Bearer token-123',
       );
     },
+    skip: minimumRelease,
   );
 
   test('get con 401 sin refresh token retorna AuthException', () async {
@@ -118,7 +120,7 @@ void main() {
         ),
       ),
     );
-  });
+  }, skip: minimumRelease);
 
   test(
     '401 con refresh disponible reintenta request y finalmente retorna respuesta',
@@ -158,5 +160,35 @@ void main() {
       expect(adapter.callCountByPath['/secure'], 2);
       expect(adapter.callCountByPath['/auth/refresh'], 1);
     },
+    skip: minimumRelease,
+  );
+
+  test(
+    'minimum release never reads or attaches account credentials',
+    () async {
+      adapter.handle = (options) {
+        if (options.path == '/health') {
+          return _jsonResponse({'ok': true}, 200);
+        }
+        throw Exception('Unexpected request ${options.path}');
+      };
+
+      when(
+        secureStorage.read(key: StorageKeys.accessToken),
+      ).thenAnswer((_) async => 'must-not-be-used' as String?);
+
+      final apiService = ApiService(
+        dio: dio,
+        secureStorage: secureStorage,
+        logger: logger,
+      );
+
+      expect(await apiService.get<Map<String, dynamic>>('/health'), const {
+        'ok': true,
+      });
+      expect(adapter.requests.single.headers['Authorization'], isNull);
+      verifyNever(secureStorage.read(key: StorageKeys.accessToken));
+    },
+    skip: !minimumRelease,
   );
 }

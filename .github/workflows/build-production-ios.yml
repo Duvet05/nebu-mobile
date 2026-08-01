@@ -17,7 +17,7 @@ on:
       upload_to_app_store:
         description: "Upload to App Store / TestFlight"
         required: false
-        default: "true"
+        default: "false"
         type: choice
         options:
           - "true"
@@ -25,7 +25,7 @@ on:
       minimal_ios_release:
         description: "Build the limited iPhone-only release surface"
         required: false
-        default: "false"
+        default: "true"
         type: choice
         options:
           - "true"
@@ -65,6 +65,7 @@ jobs:
           printf '%s' "${GOOGLE_SERVICE_INFO_PLIST_BASE64}" | base64 --decode > ios/Runner/GoogleService-Info.plist
 
       - name: Patch Google Sign-In URL scheme
+        if: env.IOS_MINIMAL_RELEASE != 'true'
         run: |
           set -euo pipefail
           ios_client_id="$(/usr/libexec/PlistBuddy -c 'Print :CLIENT_ID' ios/Runner/GoogleService-Info.plist 2>/dev/null || true)"
@@ -99,6 +100,11 @@ jobs:
 
       - name: Analyze
         run: flutter analyze
+
+      - name: Test compiled release policy
+        run: >-
+          flutter test
+          --dart-define=MINIMAL_IOS_RELEASE=${IOS_MINIMAL_RELEASE}
 
       - name: Resolve iOS build metadata
         env:
@@ -138,16 +144,70 @@ jobs:
         if: env.IOS_MINIMAL_RELEASE == 'true'
         run: |
           set -euo pipefail
-          /usr/libexec/PlistBuddy \
-            -c 'Delete :com.apple.developer.associated-domains' \
-            ios/Runner/Runner.entitlements
+          for entitlement in \
+            com.apple.developer.associated-domains \
+            com.apple.developer.applesignin \
+            aps-environment; do
+            /usr/libexec/PlistBuddy \
+              -c "Delete :${entitlement}" \
+              ios/Runner/Runner.entitlements 2>/dev/null || true
+          done
 
-          if /usr/libexec/PlistBuddy \
-            -c 'Print :com.apple.developer.associated-domains' \
-            ios/Runner/Runner.entitlements 2>/dev/null; then
-            echo "Minimum iOS release must not contain Associated Domains." >&2
-            exit 1
-          fi
+          for entitlement in \
+            com.apple.developer.associated-domains \
+            com.apple.developer.applesignin \
+            aps-environment; do
+            if /usr/libexec/PlistBuddy \
+              -c "Print :${entitlement}" \
+              ios/Runner/Runner.entitlements 2>/dev/null; then
+              echo "Minimum iOS release must not contain ${entitlement}." >&2
+              exit 1
+            fi
+          done
+
+          for plist_key in UIBackgroundModes CFBundleURLTypes; do
+            /usr/libexec/PlistBuddy \
+              -c "Delete :${plist_key}" \
+              ios/Runner/Info.plist 2>/dev/null || true
+            if /usr/libexec/PlistBuddy \
+              -c "Print :${plist_key}" \
+              ios/Runner/Info.plist 2>/dev/null; then
+              echo "Minimum iOS release must not contain ${plist_key}." >&2
+              exit 1
+            fi
+          done
+
+          for firebase_key in \
+            FirebaseCrashlyticsCollectionEnabled \
+            FirebaseMessagingAutoInitEnabled; do
+            /usr/libexec/PlistBuddy \
+              -c "Delete :${firebase_key}" \
+              ios/Runner/Info.plist 2>/dev/null || true
+            /usr/libexec/PlistBuddy \
+              -c "Add :${firebase_key} bool false" \
+              ios/Runner/Info.plist
+            firebase_value="$(
+              /usr/libexec/PlistBuddy \
+                -c "Print :${firebase_key}" \
+                ios/Runner/Info.plist
+            )"
+            if [ "${firebase_value}" != "false" ]; then
+              echo "Minimum iOS release must disable ${firebase_key}." >&2
+              exit 1
+            fi
+          done
+
+          ruby -rjson -e '
+            ARGV.each do |path|
+              data = JSON.parse(File.read(path))
+              data.delete("auth")
+              welcome = data.fetch("welcome")
+              %w[sign_in sign_up continue_without_account].each do |key|
+                welcome.delete(key)
+              end
+              File.write(path, JSON.pretty_generate(data) + "\n")
+            end
+          ' assets/translations/*.json
 
       - name: Setup signing keychain
         env:
@@ -203,31 +263,40 @@ jobs:
 
           security cms -D -i "$RUNNER_TEMP/AppStore.mobileprovision" > "$RUNNER_TEMP/AppStore.mobileprovision.plist"
 
-          apple_sign_in="$(
-            /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.applesignin:0' \
+          wifi_info="$(
+            /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.networking.wifi-info' \
               "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
           )"
-          if [ "${apple_sign_in}" != "Default" ]; then
-            echo "Provisioning profile must include Sign in with Apple entitlement (Default)." >&2
+          if [ "${wifi_info}" != "true" ]; then
+            echo "Provisioning profile must include Access WiFi Information." >&2
             exit 1
           fi
 
           if [ "${IOS_MINIMAL_RELEASE}" != "true" ]; then
+            apple_sign_in="$(
+              /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.applesignin:0' \
+                "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
+            )"
+            if [ "${apple_sign_in}" != "Default" ]; then
+              echo "Provisioning profile must include Sign in with Apple entitlement (Default)." >&2
+              exit 1
+            fi
+
             if ! /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.associated-domains' \
               "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null |
               grep -q 'applinks:nebu.flow-telligence.com'; then
               echo "Provisioning profile must include applinks:nebu.flow-telligence.com." >&2
               exit 1
             fi
-          fi
 
-          aps_environment="$(
-            /usr/libexec/PlistBuddy -c 'Print :Entitlements:aps-environment' \
-              "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
-          )"
-          if [ -z "${aps_environment}" ]; then
-            echo "Provisioning profile must include Push Notifications / aps-environment for FCM." >&2
-            exit 1
+            aps_environment="$(
+              /usr/libexec/PlistBuddy -c 'Print :Entitlements:aps-environment' \
+                "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null || true
+            )"
+            if [ -z "${aps_environment}" ]; then
+              echo "Provisioning profile must include Push Notifications / aps-environment for FCM." >&2
+              exit 1
+            fi
           fi
 
           cat > ios/ExportOptions.plist <<PLIST
@@ -265,6 +334,9 @@ jobs:
           ENV=production
           ENABLE_CRASH_REPORTING=true
           ENABLE_DEBUG_LOGS=false
+          if [ "${MINIMAL_IOS_RELEASE}" = "true" ]; then
+            ENABLE_CRASH_REPORTING=false
+          fi
           if [ -z "${GOOGLE_IOS_CLIENT_ID:-}" ] && [ -n "${FIREBASE_IOS_CLIENT_ID:-}" ]; then
             GOOGLE_IOS_CLIENT_ID="${FIREBASE_IOS_CLIENT_ID}"
           fi

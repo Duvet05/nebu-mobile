@@ -250,10 +250,13 @@ Upload a build to App Store Connect/TestFlight:
 Manual iOS upload:
 
 1. Run `Build iOS` with `upload_to_app_store=true`.
-2. Set `minimal_ios_release=true` for the limited iPhone-only release. This
-   is compiled into the IPA; it does not use remote feature flags. Universal
-   Links are omitted in this mode, so email verification uses its status-check
-   fallback and password reset can use the token-entry fallback.
+2. Keep `minimal_ios_release=true` for the limited iPhone-only release. This
+   is the safe default and is compiled into the IPA; it does not use remote
+   feature flags. The minimum build is guest-only: login, registration,
+   account restoration, social-login URL schemes and strings, push
+   notifications, background modes, Crashlytics, Sign in with Apple, and
+   Universal Links are disabled. Select `false` only for an intentional
+   full-feature build.
 3. Provide `build_number` only when you need a specific `CFBundleVersion`; it
    must be greater than the last uploaded build for that app version.
 

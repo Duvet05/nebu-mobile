@@ -23,44 +23,48 @@ void main() async {
   // Inicialización paralela (más rápido que secuencial)
   await Future.wait([
     EasyLocalization.ensureInitialized(),
-    () async {
-      try {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-        // ignore: avoid_catching_errors
-      } on UnsupportedError {
-        // Linux and other desktop platforms not configured for Firebase
-      } on Exception catch (e) {
-        debugPrint('Firebase skip: $e');
-      }
-    }(),
-    () async {
-      try {
-        await GoogleSignIn.instance.initialize(
-          clientId: Config.googleIosClientId.isNotEmpty
-              ? Config.googleIosClientId
-              : null,
-          serverClientId: Config.googleWebClientId.isNotEmpty
-              ? Config.googleWebClientId
-              : null,
-        );
-        // ignore: avoid_catching_errors
-      } on UnimplementedError {
-        // Platform doesn't support Google Sign In (e.g. Linux desktop)
-      } on Exception catch (e) {
-        debugPrint('GoogleSignIn init skip: $e');
-      }
-    }(),
+    if (!Config.isMinimalIosReleaseConfigured)
+      () async {
+        try {
+          await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+          // ignore: avoid_catching_errors
+        } on UnsupportedError {
+          // Linux and other desktop platforms not configured for Firebase
+        } on Exception catch (e) {
+          debugPrint('Firebase skip: $e');
+        }
+      }(),
+    if (!Config.isMinimalIosReleaseConfigured)
+      () async {
+        try {
+          await GoogleSignIn.instance.initialize(
+            clientId: Config.googleIosClientId.isNotEmpty
+                ? Config.googleIosClientId
+                : null,
+            serverClientId: Config.googleWebClientId.isNotEmpty
+                ? Config.googleWebClientId
+                : null,
+          );
+          // ignore: avoid_catching_errors
+        } on UnimplementedError {
+          // Platform doesn't support Google Sign In (e.g. Linux desktop)
+        } on Exception catch (e) {
+          debugPrint('GoogleSignIn init skip: $e');
+        }
+      }(),
   ]);
 
-  final prefs = await SharedPreferences.getInstance();
-  final crashReportingAllowed =
-      prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
-  await ErrorReportingService.initialize(
-    collectionEnabled: crashReportingAllowed,
-  );
-  ErrorReportingService.installGlobalErrorHandlers();
+  if (!Config.isMinimalIosReleaseConfigured) {
+    final prefs = await SharedPreferences.getInstance();
+    final crashReportingAllowed =
+        prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
+    await ErrorReportingService.initialize(
+      collectionEnabled: crashReportingAllowed,
+    );
+    ErrorReportingService.installGlobalErrorHandlers();
+  }
 
   runZonedGuarded(
     () => runApp(
@@ -72,14 +76,16 @@ void main() async {
       ),
     ),
     (error, stack) {
-      unawaited(
-        ErrorReportingService.recordError(
-          error,
-          stack,
-          reason: 'Unhandled error in root zone',
-          fatal: true,
-        ),
-      );
+      if (!Config.isMinimalIosReleaseConfigured) {
+        unawaited(
+          ErrorReportingService.recordError(
+            error,
+            stack,
+            reason: 'Unhandled error in root zone',
+            fatal: true,
+          ),
+        );
+      }
       debugPrint('Unhandled app error: $error\n$stack');
     },
   );

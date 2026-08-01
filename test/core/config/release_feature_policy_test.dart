@@ -28,6 +28,14 @@ void main() {
 
     test('blocks optional routes only in the minimum release', () {
       final optionalRoutes = [
+        AppRoutes.login,
+        AppRoutes.signUp,
+        AppRoutes.verifyEmail,
+        AppRoutes.resetPassword,
+        AppRoutes.profile,
+        AppRoutes.editProfile,
+        AppRoutes.privacySettings,
+        AppRoutes.persons,
         AppRoutes.voiceHistory,
         AppRoutes.knowledgeSearch,
         AppRoutes.personalities,
@@ -50,6 +58,18 @@ void main() {
         const ReleaseFeaturePolicy(
           minimalRelease: true,
         ).isRouteEnabled(AppRoutes.connectionSetup.path),
+        isTrue,
+      );
+      expect(
+        const ReleaseFeaturePolicy(
+          minimalRelease: true,
+        ).isRouteEnabled(AppRoutes.privacyPolicy.path),
+        isTrue,
+      );
+      expect(
+        const ReleaseFeaturePolicy(
+          minimalRelease: true,
+        ).isRouteEnabled(AppRoutes.termsOfService.path),
         isTrue,
       );
     });

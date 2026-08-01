@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/config/config.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/utils/error_reporting_service.dart';
 import '../../data/models/user.dart';
@@ -21,6 +22,13 @@ class AuthNotifier extends AsyncNotifier<User?> {
   Future<User?> build() => _loadUserFromStorage();
 
   Future<User?> _loadUserFromStorage() async {
+    // The minimum iPhone build is intentionally guest-only. Preserve any
+    // existing credentials for a future full build, but never restore the
+    // account, initialize push, or attach user context in this release.
+    if (Config.isMinimalIosReleaseConfigured) {
+      return null;
+    }
+
     try {
       final authService = await ref.watch(authServiceProvider.future);
       if (await authService.isAuthenticated()) {

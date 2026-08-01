@@ -94,78 +94,116 @@ final routerProvider = Provider<GoRouter>((ref) {
         return AppRoutes.home.path;
       }
 
-      final isVerifyPage = path == AppRoutes.verifyEmail.path;
-      final isResetPasswordPage = path == AppRoutes.resetPassword.path;
-      final isAuthPage =
-          path == AppRoutes.login.path ||
-          path == AppRoutes.signUp.path ||
-          path == AppRoutes.welcome.path;
-      final isPublicPage = path == AppRoutes.helpSupport.path;
-
-      // 1. Email verification gate (runs before splash to prevent bypass)
-      //    emailVerified != true catches both false and null (social login edge case)
-      if (user != null && user.emailVerified != true && !isPublicPage) {
-        if (!isVerifyPage) {
-          return AppRoutes.verifyEmail.path;
-        }
-        return null;
-      }
-      if (user != null && isVerifyPage) {
-        // Already verified — leave verification screen
-        return hasToys ? AppRoutes.home.path : AppRoutes.connectionSetup.path;
+      if (Config.isMinimalIosReleaseConfigured) {
+        return _redirectMinimumRelease(
+          path: path,
+          hasToys: hasToys,
+          skippedSetup: skippedSetup,
+        );
       }
 
-      // 2. Splash Logic
-      if (path == AppRoutes.splash.path) {
-        return (user != null || hasToys || skippedSetup)
-            ? AppRoutes.home.path
-            : AppRoutes.welcome.path;
-      }
-
-      // 3. Auth Routes
-      if (user != null && isAuthPage) {
-        // No toys yet → setup flow (works for all auth methods)
-        if (!hasToys) {
-          return AppRoutes.connectionSetup.path;
-        }
-        return AppRoutes.home.path;
-      }
-
-      // 3. After logout: redirect to welcome if no user and no local toys
-      //    Allow setup routes so "continue without account" works
-      final isSetupPage = path.startsWith('/setup/');
-      if (user == null &&
-          !isAuthPage &&
-          !isVerifyPage &&
-          !isResetPasswordPage &&
-          !isPublicPage &&
-          !isSetupPage &&
-          !hasToys &&
-          !skippedSetup) {
-        return AppRoutes.welcome.path;
-      }
-
-      // 4. Security: Check if route requires a real account
-      final needsAccount = [
-        AppRoutes.editProfile.path,
-        AppRoutes.usageLimits.path,
-        AppRoutes.notifications.path,
-        AppRoutes.privacySettings.path,
-        AppRoutes.persons.path,
-      ].contains(path);
-
-      if (needsAccount && user == null) {
-        return AppRoutes.login.path;
-      }
-
-      // 4. Default: Let it flow
-      return null;
+      return _redirectFullRelease(
+        user: user,
+        path: path,
+        hasToys: hasToys,
+        skippedSetup: skippedSetup,
+      );
     },
     routes: AppRouter._getRoutes(),
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('errors.route_not_found'.tr()))),
   );
 });
+
+String? _redirectMinimumRelease({
+  required String path,
+  required bool hasToys,
+  required bool skippedSetup,
+}) {
+  if (path == AppRoutes.splash.path) {
+    return (hasToys || skippedSetup)
+        ? AppRoutes.home.path
+        : AppRoutes.welcome.path;
+  }
+
+  final isWelcomePage = path == AppRoutes.welcome.path;
+  final isSetupPage = path.startsWith('/setup/');
+  final isPublicPage = {
+    AppRoutes.helpSupport.path,
+    AppRoutes.privacyPolicy.path,
+    AppRoutes.termsOfService.path,
+  }.contains(path);
+
+  if (!isWelcomePage &&
+      !isSetupPage &&
+      !isPublicPage &&
+      !hasToys &&
+      !skippedSetup) {
+    return AppRoutes.welcome.path;
+  }
+
+  return null;
+}
+
+String? _redirectFullRelease({
+  required User? user,
+  required String path,
+  required bool hasToys,
+  required bool skippedSetup,
+}) {
+  final isVerifyPage = path == AppRoutes.verifyEmail.path;
+  final isResetPasswordPage = path == AppRoutes.resetPassword.path;
+  final isAuthPage =
+      path == AppRoutes.login.path ||
+      path == AppRoutes.signUp.path ||
+      path == AppRoutes.welcome.path;
+  final isPublicPage = {
+    AppRoutes.helpSupport.path,
+    AppRoutes.privacyPolicy.path,
+    AppRoutes.termsOfService.path,
+  }.contains(path);
+
+  // Email verification runs before splash to prevent bypass. Checking for
+  // true also covers the null value returned by some social providers.
+  if (user != null && user.emailVerified != true && !isPublicPage) {
+    return isVerifyPage ? null : AppRoutes.verifyEmail.path;
+  }
+  if (user != null && isVerifyPage) {
+    return hasToys ? AppRoutes.home.path : AppRoutes.connectionSetup.path;
+  }
+
+  if (path == AppRoutes.splash.path) {
+    return (user != null || hasToys || skippedSetup)
+        ? AppRoutes.home.path
+        : AppRoutes.welcome.path;
+  }
+
+  if (user != null && isAuthPage) {
+    return hasToys ? AppRoutes.home.path : AppRoutes.connectionSetup.path;
+  }
+
+  final isSetupPage = path.startsWith('/setup/');
+  if (user == null &&
+      !isAuthPage &&
+      !isVerifyPage &&
+      !isResetPasswordPage &&
+      !isPublicPage &&
+      !isSetupPage &&
+      !hasToys &&
+      !skippedSetup) {
+    return AppRoutes.welcome.path;
+  }
+
+  final needsAccount = {
+    AppRoutes.editProfile.path,
+    AppRoutes.usageLimits.path,
+    AppRoutes.notifications.path,
+    AppRoutes.privacySettings.path,
+    AppRoutes.persons.path,
+  }.contains(path);
+
+  return needsAccount && user == null ? AppRoutes.login.path : null;
+}
 
 class AppRouter {
   AppRouter._();
@@ -179,24 +217,35 @@ class AppRouter {
       path: AppRoutes.welcome.path,
       builder: (_, _) => const WelcomeScreen(),
     ),
-    GoRoute(path: AppRoutes.login.path, builder: (_, _) => const LoginScreen()),
-    GoRoute(
-      path: AppRoutes.signUp.path,
-      builder: (_, _) => const SignUpScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.verifyEmail.path,
-      builder: (_, s) => EmailVerificationScreen(
-        email: s.extra as String?,
-        token: s.uri.queryParameters['token'],
+    if (Config.isMinimalIosReleaseConfigured) ...[
+      _redirectRoute(AppRoutes.login.path, AppRoutes.welcome.path),
+      _redirectRoute(AppRoutes.signUp.path, AppRoutes.welcome.path),
+      _redirectRoute(AppRoutes.verifyEmail.path, AppRoutes.welcome.path),
+      _redirectRoute(AppRoutes.resetPassword.path, AppRoutes.welcome.path),
+    ] else ...[
+      GoRoute(
+        path: AppRoutes.login.path,
+        builder: (_, _) => const LoginScreen(),
       ),
-    ),
-    GoRoute(
-      path: AppRoutes.resetPassword.path,
-      builder: (_, s) => ResetPasswordScreen(
-        token: s.uri.queryParameters['token'] ?? s.uri.queryParameters['code'],
+      GoRoute(
+        path: AppRoutes.signUp.path,
+        builder: (_, _) => const SignUpScreen(),
       ),
-    ),
+      GoRoute(
+        path: AppRoutes.verifyEmail.path,
+        builder: (_, s) => EmailVerificationScreen(
+          email: s.extra as String?,
+          token: s.uri.queryParameters['token'],
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword.path,
+        builder: (_, s) => ResetPasswordScreen(
+          token:
+              s.uri.queryParameters['token'] ?? s.uri.queryParameters['code'],
+        ),
+      ),
+    ],
 
     ShellRoute(
       builder: (context, state, child) => MainScreen(child: child),
@@ -214,10 +263,14 @@ class AppRouter {
           path: AppRoutes.myToys.path,
           pageBuilder: (_, _) => const NoTransitionPage(child: MyToysScreen()),
         ),
-        GoRoute(
-          path: AppRoutes.profile.path,
-          pageBuilder: (_, _) => const NoTransitionPage(child: ProfileScreen()),
-        ),
+        if (Config.isMinimalIosReleaseConfigured)
+          _redirectRoute(AppRoutes.profile.path, AppRoutes.settings.path)
+        else
+          GoRoute(
+            path: AppRoutes.profile.path,
+            pageBuilder: (_, _) =>
+                const NoTransitionPage(child: ProfileScreen()),
+          ),
         GoRoute(
           path: AppRoutes.settings.path,
           pageBuilder: (_, _) =>
@@ -231,14 +284,19 @@ class AppRouter {
       path: AppRoutes.qrScanner.path,
       builder: (_, _) => const QRScannerScreen(),
     ),
-    GoRoute(
-      path: AppRoutes.editProfile.path,
-      builder: (_, _) => const EditProfileScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.privacySettings.path,
-      builder: (_, _) => const PrivacySettingsScreen(),
-    ),
+    if (Config.isMinimalIosReleaseConfigured) ...[
+      _redirectRoute(AppRoutes.editProfile.path, AppRoutes.settings.path),
+      _redirectRoute(AppRoutes.privacySettings.path, AppRoutes.settings.path),
+    ] else ...[
+      GoRoute(
+        path: AppRoutes.editProfile.path,
+        builder: (_, _) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.privacySettings.path,
+        builder: (_, _) => const PrivacySettingsScreen(),
+      ),
+    ],
     GoRoute(
       path: AppRoutes.privacyPolicy.path,
       builder: (_, _) => const PrivacyPolicyScreen(),
@@ -263,10 +321,13 @@ class AppRouter {
       path: AppRoutes.childProfile.path,
       builder: (_, _) => const ChildProfileScreen(),
     ),
-    GoRoute(
-      path: AppRoutes.persons.path,
-      builder: (_, _) => const PersonsScreen(),
-    ),
+    if (Config.isMinimalIosReleaseConfigured)
+      _redirectRoute(AppRoutes.persons.path, AppRoutes.settings.path)
+    else
+      GoRoute(
+        path: AppRoutes.persons.path,
+        builder: (_, _) => const PersonsScreen(),
+      ),
     GoRoute(
       path: AppRoutes.personalities.path,
       builder: (_, _) => const PersonalitiesScreen(),
@@ -355,4 +416,7 @@ class AppRouter {
       builder: (_, _) => const WorldInfoSetupScreen(),
     ),
   ];
+
+  static GoRoute _redirectRoute(String path, String destination) =>
+      GoRoute(path: path, redirect: (_, _) => destination);
 }

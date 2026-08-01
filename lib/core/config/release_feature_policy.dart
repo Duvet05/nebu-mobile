@@ -2,6 +2,7 @@ import '../constants/app_routes.dart';
 
 /// Features that can be omitted from a deliberately small store release.
 enum ReleaseFeature {
+  accountAuthentication,
   homeQuickActions,
   healthCheck,
   usageLimits,
@@ -20,6 +21,7 @@ final class ReleaseFeaturePolicy {
     }
 
     return switch (feature) {
+      ReleaseFeature.accountAuthentication ||
       ReleaseFeature.homeQuickActions ||
       ReleaseFeature.healthCheck ||
       ReleaseFeature.usageLimits ||
@@ -31,6 +33,14 @@ final class ReleaseFeaturePolicy {
       !minimalRelease || !_minimalReleaseDisabledRoutes.contains(routePath);
 
   static final Set<String> _minimalReleaseDisabledRoutes = {
+    AppRoutes.login.path,
+    AppRoutes.signUp.path,
+    AppRoutes.verifyEmail.path,
+    AppRoutes.resetPassword.path,
+    AppRoutes.profile.path,
+    AppRoutes.editProfile.path,
+    AppRoutes.privacySettings.path,
+    AppRoutes.persons.path,
     AppRoutes.voiceHistory.path,
     AppRoutes.knowledgeSearch.path,
     AppRoutes.personalities.path,
