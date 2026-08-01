@@ -42,10 +42,14 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await _secureStorage.read(key: StorageKeys.accessToken);
+          if (!Config.isMinimalIosReleaseConfigured) {
+            final token = await _secureStorage.read(
+              key: StorageKeys.accessToken,
+            );
 
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
           }
 
           _logger.d('Request: ${options.method} ${options.path}');
@@ -69,7 +73,8 @@ class ApiService {
           );
 
           // Only attempt refresh on 401 if we haven't already retried
-          if (error.response?.statusCode == 401 &&
+          if (!Config.isMinimalIosReleaseConfigured &&
+              error.response?.statusCode == 401 &&
               error.requestOptions.extra['retried'] != true) {
             try {
               final newToken = await _refreshToken();

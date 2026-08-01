@@ -25,6 +25,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(authProvider).value != null;
+    const authenticationEnabled = !Config.isMinimalIosReleaseConfigured;
     final appVersion =
         ref.watch(packageInfoProvider).whenData((info) => info.version).value ??
         '';
@@ -157,6 +158,30 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () => context.push(AppRoutes.helpSupport.path),
                     ),
 
+                    _SettingsTile(
+                      theme: theme,
+                      icon: Icons.policy_outlined,
+                      iconColor: context.colors.primary,
+                      title: 'privacy.privacy_policy'.tr(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: context.colors.grey400,
+                      ),
+                      onTap: () => context.push(AppRoutes.privacyPolicy.path),
+                    ),
+
+                    _SettingsTile(
+                      theme: theme,
+                      icon: Icons.description_outlined,
+                      iconColor: context.colors.secondary,
+                      title: 'privacy.terms_of_service'.tr(),
+                      trailing: Icon(
+                        Icons.chevron_right,
+                        color: context.colors.grey400,
+                      ),
+                      onTap: () => context.push(AppRoutes.termsOfService.path),
+                    ),
+
                     if (Config.isFeatureEnabled(ReleaseFeature.healthCheck))
                       _SettingsTile(
                         theme: theme,
@@ -222,7 +247,7 @@ class SettingsScreen extends ConsumerWidget {
             ),
 
             // Conditional Sign In button at bottom
-            if (!isLoggedIn)
+            if (authenticationEnabled && !isLoggedIn)
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(

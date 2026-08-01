@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/config/config.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../widgets/brand_backdrop.dart';
@@ -13,6 +14,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = context.theme;
+    const showAuthentication = !Config.isMinimalIosReleaseConfigured;
 
     return Scaffold(
       body: NebuBrandBackdrop(
@@ -86,39 +88,48 @@ class WelcomeScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _PrimaryButton(
-                              text: 'welcome.sign_in'.tr(),
-                              onPressed: () =>
-                                  context.push(AppRoutes.login.path),
-                            ),
-                            SizedBox(
-                              height: context.spacing.sectionTitleBottomMargin,
-                            ),
-                            _SecondaryButton(
-                              text: 'welcome.sign_up'.tr(),
-                              onPressed: () =>
-                                  context.push(AppRoutes.signUp.path),
-                            ),
-                            SizedBox(
-                              height: context.spacing.paragraphBottomMargin,
-                            ),
-                            TextButton(
-                              onPressed: () =>
-                                  context.push(AppRoutes.connectionSetup.path),
-                              style: TextButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 48),
-                                foregroundColor: context.colors.textOnFilled,
+                            if (showAuthentication) ...[
+                              _PrimaryButton(
+                                text: 'welcome.sign_in'.tr(),
+                                onPressed: () =>
+                                    context.push(AppRoutes.login.path),
                               ),
-                              child: Text(
-                                'welcome.continue_without_account'.tr(),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: context.colors.textOnFilled.withValues(
-                                    alpha: 0.7,
+                              SizedBox(
+                                height:
+                                    context.spacing.sectionTitleBottomMargin,
+                              ),
+                              _SecondaryButton(
+                                text: 'welcome.sign_up'.tr(),
+                                onPressed: () =>
+                                    context.push(AppRoutes.signUp.path),
+                              ),
+                              SizedBox(
+                                height: context.spacing.paragraphBottomMargin,
+                              ),
+                              TextButton(
+                                onPressed: () => context.push(
+                                  AppRoutes.connectionSetup.path,
+                                ),
+                                style: TextButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
+                                  foregroundColor: context.colors.textOnFilled,
+                                ),
+                                child: Text(
+                                  'welcome.continue_without_account'.tr(),
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: context.colors.textOnFilled
+                                        .withValues(alpha: 0.7),
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            ),
+                            ] else
+                              _PrimaryButton(
+                                text: 'common.continue'.tr(),
+                                onPressed: () => context.push(
+                                  AppRoutes.connectionSetup.path,
+                                ),
+                              ),
                           ],
                         ),
                       ),
