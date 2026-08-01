@@ -86,6 +86,7 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string ${reversed_client_id}" ios/Runner/Info.plist
 
       - name: Verify Apple associated domain
+        if: env.IOS_MINIMAL_RELEASE != 'true'
         env:
           APP_STORE_TEAM_ID: ${{ env.APP_STORE_TEAM_ID }}
           APP_STORE_BUNDLE_ID: ${{ env.APP_STORE_BUNDLE_ID }}
@@ -132,6 +133,21 @@ jobs:
             echo "- Upload to App Store Connect: ${APP_STORE_UPLOAD}"
             echo "- Minimum iPhone release: ${IOS_MINIMAL_RELEASE}"
           } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Prepare minimum iOS entitlements
+        if: env.IOS_MINIMAL_RELEASE == 'true'
+        run: |
+          set -euo pipefail
+          /usr/libexec/PlistBuddy \
+            -c 'Delete :com.apple.developer.associated-domains' \
+            ios/Runner/Runner.entitlements
+
+          if /usr/libexec/PlistBuddy \
+            -c 'Print :com.apple.developer.associated-domains' \
+            ios/Runner/Runner.entitlements 2>/dev/null; then
+            echo "Minimum iOS release must not contain Associated Domains." >&2
+            exit 1
+          fi
 
       - name: Setup signing keychain
         env:
@@ -196,11 +212,13 @@ jobs:
             exit 1
           fi
 
-          if ! /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.associated-domains' \
-            "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null |
-            grep -q 'applinks:nebu.flow-telligence.com'; then
-            echo "Provisioning profile must include applinks:nebu.flow-telligence.com." >&2
-            exit 1
+          if [ "${IOS_MINIMAL_RELEASE}" != "true" ]; then
+            if ! /usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.associated-domains' \
+              "$RUNNER_TEMP/AppStore.mobileprovision.plist" 2>/dev/null |
+              grep -q 'applinks:nebu.flow-telligence.com'; then
+              echo "Provisioning profile must include applinks:nebu.flow-telligence.com." >&2
+              exit 1
+            fi
           fi
 
           aps_environment="$(
