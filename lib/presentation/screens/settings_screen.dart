@@ -36,7 +36,7 @@ class SettingsScreen extends ConsumerWidget {
     final theme = context.theme;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,

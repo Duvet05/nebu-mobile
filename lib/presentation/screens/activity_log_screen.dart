@@ -85,6 +85,7 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final state = ref.watch(activityNotifierProvider);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(title: Text('activity_log.title'.tr())),
       body: _buildBody(state, theme),
     );

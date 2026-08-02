@@ -16,7 +16,10 @@ class MainScreen extends ConsumerWidget {
     final isLoggedIn = user != null;
 
     return Scaffold(
-      body: child,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [const _MainPatternBackground(), child],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _calculateSelectedIndex(context, isLoggedIn),
         onTap: (index) => _onItemTapped(index, context, isLoggedIn),
@@ -105,5 +108,28 @@ class MainScreen extends ConsumerWidget {
           context.go(AppRoutes.settings.path);
         }
     }
+  }
+}
+
+class _MainPatternBackground extends StatelessWidget {
+  const _MainPatternBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return DecoratedBox(
+      key: const ValueKey('main-pattern-background'),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        image: DecorationImage(
+          image: const AssetImage('assets/images/background-pattern.webp'),
+          alignment: Alignment.topCenter,
+          repeat: ImageRepeat.repeat,
+          scale: 2,
+          opacity: theme.brightness == Brightness.dark ? 0.12 : 0.42,
+        ),
+      ),
+    );
   }
 }

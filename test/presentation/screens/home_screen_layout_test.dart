@@ -99,6 +99,16 @@ void main() {
               findsNothing,
               reason: scenario,
             );
+            expect(
+              find.byKey(const ValueKey('home-hero-dino')),
+              findsOneWidget,
+              reason: scenario,
+            );
+            expect(
+              find.byKey(const ValueKey('home-empty-dino')),
+              findsOneWidget,
+              reason: scenario,
+            );
 
             final actionButton = find.ancestor(
               of: actionLabel,
