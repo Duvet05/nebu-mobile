@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/config/config.dart';
@@ -12,6 +13,8 @@ import '../providers/auth_provider.dart';
 import '../providers/bluetooth_provider.dart';
 import '../providers/device_provider.dart';
 import '../widgets/custom_button.dart';
+
+const _homeDinoAsset = 'assets/icons/dino.svg';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -25,6 +28,7 @@ class HomeScreen extends ConsumerWidget {
         : 'home.greeting_default'.tr();
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(context.spacing.alertPadding),
@@ -202,10 +206,13 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
           SizedBox(width: context.spacing.alertPadding),
-          Icon(
-            Icons.smart_toy,
-            size: 48,
-            color: context.colors.textOnFilled.withValues(alpha: 0.85),
+          SvgPicture.asset(
+            _homeDinoAsset,
+            key: const ValueKey('home-hero-dino'),
+            width: 56,
+            height: 68,
+            colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+            excludeFromSemantics: true,
           ),
         ],
       ),
@@ -291,10 +298,18 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.smart_toy_outlined,
-                  size: 40,
-                  color: context.colors.primary.withValues(alpha: 0.5),
+                child: Center(
+                  child: SvgPicture.asset(
+                    _homeDinoAsset,
+                    key: const ValueKey('home-empty-dino'),
+                    width: 74,
+                    height: 82,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.black,
+                      BlendMode.srcIn,
+                    ),
+                    excludeFromSemantics: true,
+                  ),
                 ),
               ),
               SizedBox(height: context.spacing.alertPadding),

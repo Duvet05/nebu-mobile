@@ -378,7 +378,7 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
     });
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: theme.appBarTheme.backgroundColor,
         elevation: 0,

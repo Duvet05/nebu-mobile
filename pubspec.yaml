@@ -107,6 +107,7 @@ flutter:
     - assets/images/decoration-blob-teal.png
     - assets/images/decoration-blob-yellow.png
     - assets/images/decoration-strokes-scattered.png
+    - assets/images/background-pattern.webp
     - assets/icons/dino.svg
     - assets/logos/nebu.svg
     - assets/translations/
