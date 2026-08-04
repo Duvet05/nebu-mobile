@@ -75,6 +75,7 @@
       "scan_networks": "Buscar WiFi",
       "no_networks_found": "Nenhuma rede encontrada",
       "scan_error": "Erro ao buscar redes",
+      "scan_unsupported": "O iOS não permite buscar redes próximas. Use o botão WiFi Atual para escolher a rede à qual seu iPhone já está conectado.",
       "hotspot_hint": "Se está usando o hotspot do celular, digite o nome da rede manualmente — ele não aparecerá na busca.",
       "qr_scan_label": "QR Scan",
       "current_wifi_label": "WiFi Atual",

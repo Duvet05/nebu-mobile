@@ -803,7 +803,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           label: 'setup.wifi.current_wifi_label'.tr(),
           onPressed: _getCurrentWifi,
         ),
-      if (!kIsWeb)
+      // En iOS no se ofrece escaneo: Apple no expone API para listar redes
+      // cercanas. Ahi el flujo es "WiFi actual" (boton de arriba) y escribir
+      // solo la contrasena. Ver [WiFiService.isScanSupported].
+      if (WiFiService.isScanSupported)
         _QuickActionButton(
           icon: Icons.wifi_find,
           label: 'setup.wifi.scan_networks'.tr(),

@@ -92,6 +92,18 @@ class WiFiService {
       ? Permission.locationWhenInUse
       : Permission.location;
 
+  /// Indica si la plataforma permite enumerar redes WiFi cercanas.
+  ///
+  /// Solo Android. iOS no expone ninguna API publica de escaneo: la unica via
+  /// es `NEHotspotHelper`, que exige un entitlement de uso restringido que
+  /// Apple concede caso por caso. En iOS el flujo correcto es leer el SSID de
+  /// la red ya conectada con `network_info_plus` y pedir solo la contrasena.
+  ///
+  /// [scanNetworks] lanza si se le llama cuando esto es `false`, asi que la UI
+  /// debe consultarlo antes de ofrecer la accion.
+  static bool get isScanSupported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
   bool _isScanning = false;
   WiFiNetwork? _currentNetwork;
 
@@ -103,9 +115,10 @@ class WiFiService {
 
   /// Escanear redes WiFi disponibles
   Future<List<WiFiNetwork>> scanNetworks() async {
-    // iOS does not expose an API for enumerating nearby Wi-Fi networks.
-    // Stop before requesting a location permission that cannot enable it.
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+    // Contrato: los llamadores deben filtrar con [isScanSupported]. Se lanza un
+    // Error, no una Exception, porque llegar aqui es un fallo de programacion,
+    // no una condicion recuperable en runtime.
+    if (!isScanSupported) {
       throw UnsupportedError(
         'WiFi scanning is only available on Android devices',
       );
