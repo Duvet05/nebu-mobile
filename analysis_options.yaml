@@ -8,6 +8,8 @@ analyzer:
     invalid_annotation_target: ignore
   exclude:
     - "build/**"
+    # Checkouts de SPM que deja `flutter build ios`: son fuentes de terceros
+    - "ios/build/**"
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "**/*.gr.dart"
