@@ -1,0 +1,19 @@
+name: wifi_scan
+description: Android-only Wi-Fi scanner used by Nebu.
+version: 0.4.1+3
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: dev.flutternetwork.wifi.wifi_scan
+        pluginClass: WifiScanPlugin

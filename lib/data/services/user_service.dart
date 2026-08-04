@@ -4,9 +4,7 @@ import '../models/user.dart';
 import 'api_service.dart';
 
 class UserService {
-  UserService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  UserService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;

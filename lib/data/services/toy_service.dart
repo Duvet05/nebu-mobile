@@ -5,9 +5,7 @@ import '../models/toy.dart';
 import 'api_service.dart';
 
 class ToyService {
-  ToyService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  ToyService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;

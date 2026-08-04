@@ -2,11 +2,13 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/apple_auth_helper.dart';
 import '../../core/utils/google_auth_helper.dart';
+import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
 
@@ -19,6 +21,10 @@ const _pendingVerificationKeywords = [
   'pendiente',
   'error_email_not_verified',
 ];
+
+/// Build identifier shown to users when reporting login issues.
+String _supportVersionLabel(PackageInfo info) =>
+    'Nebu v${info.version} · Build ${info.buildNumber}';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -83,6 +89,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final textTheme = context.theme.textTheme;
+    final packageInfo = ref.watch(packageInfoProvider).value;
 
     return Scaffold(
       backgroundColor: context.colors.bgPrimary,
@@ -201,7 +208,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         isLoading: authState.isLoading,
                         onPressed: () => handleAppleAuth(context, ref),
                       ),
-                      SizedBox(height: context.spacing.panelPadding),
+                      SizedBox(height: context.spacing.paragraphBottomMargin),
+                      Text(
+                        packageInfo == null
+                            ? ''
+                            : _supportVersionLabel(packageInfo),
+                        key: const ValueKey('login.supportVersion'),
+                        style: textTheme.labelSmall?.copyWith(
+                          color: context.colors.grey400,
+                        ),
+                      ),
+                      SizedBox(height: context.spacing.labelBottomMargin),
                     ],
                   ),
                 ),

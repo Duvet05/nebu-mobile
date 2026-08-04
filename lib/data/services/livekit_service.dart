@@ -55,9 +55,7 @@ enum LiveKitConnectionStatus { disconnected, connecting, connected, error }
 /// LiveKit service for IoT real-time communication.
 /// Uses ApiService for backend API calls (token generation, room management).
 class LiveKitService {
-  LiveKitService({required Logger logger, required ApiService apiService})
-    : _logger = logger,
-      _apiService = apiService;
+  LiveKitService({required this._logger, required this._apiService});
   final Logger _logger;
   final ApiService _apiService;
 

@@ -12,11 +12,10 @@ class BleCharacteristicHandler {
   BleCharacteristicHandler({
     required this.uuid,
     required this.tag,
-    required BluetoothService bluetoothService,
-    required Logger logger,
+    required this._bluetoothService,
+    required this._logger,
     this.optional = false,
-  }) : _bluetoothService = bluetoothService,
-       _logger = logger;
+  });
 
   final String uuid;
   final String tag;

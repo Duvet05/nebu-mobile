@@ -6,9 +6,7 @@ import 'package:logger/logger.dart';
 import 'api_service.dart';
 
 class FirebasePushService {
-  FirebasePushService({required Logger logger, required ApiService apiService})
-    : _logger = logger,
-      _apiService = apiService;
+  FirebasePushService({required this._logger, required this._apiService});
 
   final Logger _logger;
   final ApiService _apiService;

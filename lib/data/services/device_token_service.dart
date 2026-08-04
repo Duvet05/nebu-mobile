@@ -32,9 +32,7 @@ class DeviceTokenResponse {
 
 /// Device token service — uses ApiService for auth-aware requests.
 class DeviceTokenService {
-  DeviceTokenService({required Logger logger, required ApiService apiService})
-    : _logger = logger,
-      _apiService = apiService;
+  DeviceTokenService({required this._logger, required this._apiService});
   final Logger _logger;
   final ApiService _apiService;
 

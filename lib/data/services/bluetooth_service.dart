@@ -11,9 +11,8 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/constants/ble_constants.dart';
 
 class BluetoothService {
-  BluetoothService({required Logger logger})
-    : _logger = logger,
-      _scanResultsController =
+  BluetoothService({required this._logger})
+    : _scanResultsController =
           StreamController<List<fbp.ScanResult>>.broadcast(),
       _connectionStateController =
           StreamController<fbp.BluetoothConnectionState>.broadcast();
@@ -57,9 +56,18 @@ class BluetoothService {
           return false;
         }
       } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-        final bluetooth = await Permission.bluetooth.request();
-        if (!bluetooth.isGranted) {
-          _logger.w('Bluetooth permission not granted on iOS');
+        // FlutterBluePlus owns CoreBluetooth on iOS. Its adapter state is the
+        // source of truth for the system prompt and authorization status.
+        await fbp.FlutterBluePlus.isSupported;
+        final adapterState = await fbp.FlutterBluePlus.adapterState
+            .where((state) => state != fbp.BluetoothAdapterState.unknown)
+            .first
+            .timeout(
+              const Duration(seconds: 5),
+              onTimeout: () => fbp.FlutterBluePlus.adapterStateNow,
+            );
+        if (adapterState == fbp.BluetoothAdapterState.unauthorized) {
+          _logger.w('CoreBluetooth access is unauthorized on iOS');
           return false;
         }
       }
