@@ -11,13 +11,11 @@ import '../../core/utils/error_reporting_service.dart';
 
 class ApiService {
   ApiService({
-    required Dio dio,
-    required FlutterSecureStorage secureStorage,
-    required Logger logger,
+    required this._dio,
+    required this._secureStorage,
+    required this._logger,
     this.onSessionExpired,
-  }) : _dio = dio,
-       _secureStorage = secureStorage,
-       _logger = logger {
+  }) {
     _setupDio();
   }
 

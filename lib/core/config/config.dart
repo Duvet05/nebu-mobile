@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show appFlavor;
 
 import 'release_feature_policy.dart';
 
@@ -46,11 +47,13 @@ abstract final class Config {
     'GOOGLE_WEB_CLIENT_ID',
     defaultValue: _defaultGoogleWebClientId,
   );
-  static const String _googleIosClientId = String.fromEnvironment(
+  static const String _googleIosClientIdOverride = String.fromEnvironment(
     'GOOGLE_IOS_CLIENT_ID',
-    defaultValue:
-        '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com',
   );
+  static const String _productionGoogleIosClientId =
+      '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com';
+  static const String _devGoogleIosClientId =
+      '874117365573-5jt9pothit1ujdvqh1hgt8o8n42tgfnv.apps.googleusercontent.com';
   static const String _facebookAppId = String.fromEnvironment(
     'FACEBOOK_APP_ID',
   );
@@ -125,7 +128,15 @@ abstract final class Config {
   // Social Auth
   // ============================================
   static String get googleWebClientId => _googleWebClientId;
-  static String get googleIosClientId => _googleIosClientId;
+  static String get googleIosClientId {
+    if (_googleIosClientIdOverride.isNotEmpty) {
+      return _googleIosClientIdOverride;
+    }
+    return appFlavor == 'dev'
+        ? _devGoogleIosClientId
+        : _productionGoogleIosClientId;
+  }
+
   static String get facebookAppId => _facebookAppId;
 
   // ============================================

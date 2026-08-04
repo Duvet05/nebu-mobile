@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Nebu</string>
+	<string>$(APP_DISPLAY_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8</string>
+				<string>$(GOOGLE_REVERSED_CLIENT_ID)</string>
 			</array>
 		</dict>
 	</array>
@@ -50,7 +50,7 @@
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>We need local network access to communicate with your device during the initial configuration.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to scan for nearby Bluetooth devices during the connection process.</string>
+	<string>Nebu uses your location while you configure your device to read the name of the Wi-Fi network your iPhone is connected to. Nebu does not track your location.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone access is required for the real-time AI voice interaction with your Nebu toy.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

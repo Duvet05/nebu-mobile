@@ -46,10 +46,9 @@ class ESP32WifiConfigService {
   ESP32WifiConfigService({
     required BluetoothService bluetoothService,
     required Logger logger,
-    required SharedPreferences prefs,
+    required this._prefs,
   }) : _bluetoothService = bluetoothService,
        _logger = logger,
-       _prefs = prefs,
        _statusController = StreamController<ESP32WifiStatus>.broadcast(),
        _deviceIdController = StreamController<String>.broadcast(),
        _ssid = BleCharacteristicHandler(

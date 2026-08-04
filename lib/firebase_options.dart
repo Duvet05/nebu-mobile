@@ -3,6 +3,7 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/services.dart' show appFlavor;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -23,7 +24,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        return appFlavor == 'dev' ? iosDev : ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -71,5 +72,14 @@ class DefaultFirebaseOptions {
     projectId: 'nebu-b65d4',
     storageBucket: 'nebu-b65d4.firebasestorage.app',
     iosBundleId: 'com.nebu.nebuMobileFlutter',
+  );
+
+  static const FirebaseOptions iosDev = FirebaseOptions(
+    apiKey: 'AIzaSyA8a_PkTUg-XZG0Pw06QZuXDPC44b6Z8g8',
+    appId: '1:874117365573:ios:98b2e948ce2862d1bec82c',
+    messagingSenderId: '874117365573',
+    projectId: 'nebu-b65d4',
+    storageBucket: 'nebu-b65d4.firebasestorage.app',
+    iosBundleId: 'com.nebu.nebuMobileFlutter.dev',
   );
 }

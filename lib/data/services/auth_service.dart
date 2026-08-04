@@ -9,12 +9,10 @@ import '../models/user.dart';
 
 class AuthService {
   AuthService({
-    required Dio dio,
-    required FlutterSecureStorage secureStorage,
-    required Logger logger,
-  }) : _dio = dio,
-       _secureStorage = secureStorage,
-       _logger = logger {
+    required this._dio,
+    required this._secureStorage,
+    required this._logger,
+  }) {
     _dio.options.baseUrl = Config.apiBaseUrl;
     _dio.options.connectTimeout = Config.apiTimeout;
     _dio.options.receiveTimeout = Config.apiTimeout;

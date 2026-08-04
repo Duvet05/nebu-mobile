@@ -31,9 +31,7 @@ final sharedPreferencesProvider = FutureProvider<SharedPreferences>(
 );
 
 final secureStorageProvider = Provider<FlutterSecureStorage>(
-  (ref) => const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  ),
+  (ref) => const FlutterSecureStorage(),
 );
 
 final dioProvider = Provider<Dio>((ref) => Dio());

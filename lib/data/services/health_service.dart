@@ -7,9 +7,7 @@ import 'api_service.dart';
 /// Service for checking backend health and connectivity.
 /// Uses Dio directly for public endpoints and ApiService for authenticated ones.
 class HealthService {
-  HealthService({required Logger logger, ApiService? apiService})
-    : _logger = logger,
-      _apiService = apiService;
+  HealthService({required this._logger, this._apiService});
 
   final Logger _logger;
   final ApiService? _apiService;

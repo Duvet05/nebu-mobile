@@ -4,9 +4,7 @@ import '../models/user_setup.dart';
 import 'api_service.dart';
 
 class UserSetupService {
-  UserSetupService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  UserSetupService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;

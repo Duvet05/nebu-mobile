@@ -38,6 +38,7 @@
       "unknown_device": "Dispositivo Desconocido",
       "skip_for_now": "Omitir por ahora",
       "permissions_denied_desc": "Se necesitan permisos de Bluetooth para encontrar tu dispositivo. Las versiones antiguas de Android también pueden requerir ubicación.",
+      "permissions_denied_desc_ios": "Nebu necesita acceso a Bluetooth para encontrar tu dispositivo. Actívalo en Configuración > Apps > Nebu > Bluetooth.",
       "web_bluetooth_notice": "Web Bluetooth solo funciona en Chrome o Edge. Safari y Firefox no están soportados."
     },
     "wifi": {

@@ -5,9 +5,7 @@ import '../models/app_notification.dart';
 import 'api_service.dart';
 
 class NotificationService {
-  NotificationService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  NotificationService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;

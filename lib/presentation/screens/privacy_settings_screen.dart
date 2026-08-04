@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,6 +32,11 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   bool _analyticsEnabled = true;
 
   Map<Permission, bool> _permissions = {};
+
+  Permission get _locationPermission =>
+      defaultTargetPlatform == TargetPlatform.iOS
+      ? Permission.locationWhenInUse
+      : Permission.location;
 
   @override
   void initState() {
@@ -61,9 +68,9 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       return;
     }
     final results = await Future.wait([
-      Permission.bluetooth.isGranted,
+      _isBluetoothPermissionGranted(),
       Permission.camera.isGranted,
-      Permission.location.isGranted,
+      _locationPermission.isGranted,
       Permission.microphone.isGranted,
     ]);
     if (!mounted) {
@@ -73,10 +80,26 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
       _permissions = {
         Permission.bluetooth: results[0],
         Permission.camera: results[1],
-        Permission.location: results[2],
+        _locationPermission: results[2],
         Permission.microphone: results[3],
       };
     });
+  }
+
+  Future<bool> _isBluetoothPermissionGranted() async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) {
+      return Permission.bluetooth.isGranted;
+    }
+
+    await fbp.FlutterBluePlus.isSupported;
+    final state = await fbp.FlutterBluePlus.adapterState
+        .where((value) => value != fbp.BluetoothAdapterState.unknown)
+        .first
+        .timeout(
+          const Duration(seconds: 5),
+          onTimeout: () => fbp.FlutterBluePlus.adapterStateNow,
+        );
+    return state != fbp.BluetoothAdapterState.unauthorized;
   }
 
   @override
@@ -152,7 +175,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                 Icons.location_on,
                 'privacy.location'.tr(),
                 'privacy.location_desc'.tr(),
-                _permissions[Permission.location] ?? false,
+                _permissions[_locationPermission] ?? false,
               ),
               const Divider(),
               _buildPermissionTile(

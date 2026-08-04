@@ -2,10 +2,11 @@ name: nebu_mobile_flutter
 description: "Nebu — smart toy companion app with Bluetooth pairing, real-time walkie talkie (WebRTC), AI personalities, and parental controls."
 publish_to: 'none'
 
-version: 1.2.2+34
+version: 1.2.3+1055
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:
@@ -21,26 +22,29 @@ dependencies:
 
   # HTTP & API
   dio: ^5.4.3
-  json_annotation: ^4.9.0
+  json_annotation: ^4.12.0
 
   # Local Storage
   shared_preferences: ^2.2.3
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^10.3.1
 
   # Authentication - Social Login
   google_sign_in: ^7.2.0
-  sign_in_with_apple: ^6.1.0
+  sign_in_with_apple: ^8.1.0
 
   # Bluetooth
   flutter_blue_plus: ^2.0.0
 
   # Permissions
   permission_handler: ^12.0.1
-  device_info_plus: ^11.3.0
+  device_info_plus: ^12.3.0
 
   # Network Info
   network_info_plus: ^6.1.1
-  wifi_scan: ^0.4.1
+  # Android-only fork: iOS does not expose a Wi-Fi scan API. Keeping the
+  # unsupported iOS stub would force CocoaPods for no runtime functionality.
+  wifi_scan:
+    path: packages/wifi_scan_android
 
   # QR (pure Dart decoder, no ML Kit)
   qr_code_dart_scan: ^0.11.5
@@ -50,7 +54,12 @@ dependencies:
   image_picker: ^1.0.7
 
   # LiveKit (WebRTC)
-  livekit_client: ^2.4.3
+  # Pinned to the first official upstream commit with Swift Package Manager
+  # support. Replace with the next pub.dev release containing this commit.
+  livekit_client:
+    git:
+      url: https://github.com/livekit/client-sdk-flutter.git
+      ref: 4ac86745366e27694990f95f8cd910b376bd7594
 
   # Internationalization
   easy_localization: ^3.0.7
@@ -89,16 +98,20 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.1
 
 dependency_overrides:
-  # connectivity_plus 7.x uses NWPath.isUltraConstrained (iOS 18.4+ SDK)
-  # device_info_plus 12.x uses NSProcessInfo.isiOSAppOnVision (visionOS SDK)
-  # Pin both until livekit_client updates.
-  connectivity_plus: ^6.1.4
-  device_info_plus: ^11.3.0
+  # The upstream SwiftPM manifest enables the generic location strategy when
+  # NSLocationWhenInUseUsageDescription is present, which leaves
+  # requestAlwaysAuthorization in the binary. This vendored iOS implementation
+  # compiles only the foreground location strategy used by Nebu.
+  permission_handler_apple:
+    path: packages/permission_handler_apple
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 flutter:
+  config:
+    enable-swift-package-manager: true
+
   uses-material-design: true
 
   assets:

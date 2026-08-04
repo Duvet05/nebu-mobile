@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:wifi_scan/wifi_scan.dart';
@@ -82,13 +83,14 @@ class WiFiConnectionResult {
 
 /// Servicio WiFi
 class WiFiService {
-  WiFiService({
-    required Logger logger,
-    required ESP32WifiConfigService esp32WifiConfigService,
-  }) : _logger = logger,
-       _esp32WifiConfigService = esp32WifiConfigService;
+  WiFiService({required this._logger, required this._esp32WifiConfigService});
   final Logger _logger;
   final ESP32WifiConfigService _esp32WifiConfigService;
+
+  Permission get _locationPermission =>
+      defaultTargetPlatform == TargetPlatform.iOS
+      ? Permission.locationWhenInUse
+      : Permission.location;
 
   bool _isScanning = false;
   WiFiNetwork? _currentNetwork;
@@ -101,6 +103,14 @@ class WiFiService {
 
   /// Escanear redes WiFi disponibles
   Future<List<WiFiNetwork>> scanNetworks() async {
+    // iOS does not expose an API for enumerating nearby Wi-Fi networks.
+    // Stop before requesting a location permission that cannot enable it.
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      throw UnsupportedError(
+        'WiFi scanning is only available on Android devices',
+      );
+    }
+
     if (_isScanning) {
       _logger.w('WiFi scan already in progress');
       return [];
@@ -110,7 +120,7 @@ class WiFiService {
       _isScanning = true;
 
       // Solicitar permisos de ubicación (necesario para escanear WiFi en Android)
-      final locationPermission = await Permission.location.request();
+      final locationPermission = await _locationPermission.request();
       if (!locationPermission.isGranted) {
         throw Exception('Location permission required for WiFi scanning');
       }
@@ -304,7 +314,7 @@ class WiFiService {
   /// Solicitar permisos necesarios
   Future<bool> requestPermissions() async {
     try {
-      final locationStatus = await Permission.location.request();
+      final locationStatus = await _locationPermission.request();
 
       if (!locationStatus.isGranted) {
         _logger.w('Location permission was not granted');

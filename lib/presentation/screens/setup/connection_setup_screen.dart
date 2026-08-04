@@ -39,6 +39,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   bool _isScanning = false;
   bool _isConnecting = false;
   bool _isBluetoothEnabled = false;
+  bool _isBluetoothUnauthorized = false;
   bool _isBluetoothSheetOpen = false;
   StreamSubscription<fbp.BluetoothAdapterState>? _adapterStateSubscription;
   StreamSubscription<List<fbp.ScanResult>>? _scanSubscription;
@@ -93,6 +94,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       if (mounted) {
         setState(() {
           _isBluetoothEnabled = isEnabled;
+          _isBluetoothUnauthorized =
+              state == fbp.BluetoothAdapterState.unauthorized;
         });
 
         if (isEnabled && _isBluetoothSheetOpen) {
@@ -105,6 +108,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     if (mounted) {
       setState(() {
         _isBluetoothEnabled = state == fbp.BluetoothAdapterState.on;
+        _isBluetoothUnauthorized =
+            state == fbp.BluetoothAdapterState.unauthorized;
       });
     }
   }
@@ -114,7 +119,18 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       await _connectViaWebBluetooth();
       return;
     }
-    final hasPermissions = await _requestPermissions();
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      if (_isBluetoothUnauthorized) {
+        _showPermissionsDeniedSheet();
+        return;
+      }
+      if (_isBluetoothEnabled) {
+        await _startScan();
+      }
+      return;
+    }
+
+    final hasPermissions = await _requestAndroidPermissions();
     if (hasPermissions && _isBluetoothEnabled) {
       await _startScan();
     }
@@ -185,17 +201,13 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
   }
 
-  Future<bool> _requestPermissions() async {
-    if (kIsWeb) {
-      return true;
-    }
+  Future<bool> _requestAndroidPermissions() async {
     try {
-      _logger.i('Requesting Bluetooth permissions...');
-      final permissions = defaultTargetPlatform == TargetPlatform.iOS
-          ? await [Permission.bluetooth].request()
-          : await (await _androidBluetoothPermissions()).request();
+      _logger.i('Requesting Android Bluetooth permissions...');
+      final permissions = await (await _androidBluetoothPermissions())
+          .request();
       final granted = permissions.values.every((status) => status.isGranted);
-      _logger.i('All permissions granted: $granted');
+      _logger.i('Android Bluetooth permissions: $permissions');
       if (!granted && mounted) {
         _logger.w('Permissions denied, showing dialog');
         _showPermissionsDeniedSheet();
@@ -257,7 +269,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
       await fbp.FlutterBluePlus.startScan(
         timeout: const Duration(seconds: 15),
-        androidUsesFineLocation: true,
+        androidUsesFineLocation:
+            defaultTargetPlatform == TargetPlatform.android,
       );
 
       _scanTimeoutTimer?.cancel();
@@ -374,6 +387,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         description: 'setup.connection.enable_bluetooth_message'.tr(),
         primaryText: 'setup.connection.enable_bluetooth_title'.tr(),
         primaryOnPressed: () async {
+          if (defaultTargetPlatform == TargetPlatform.iOS) {
+            await openAppSettings();
+            return;
+          }
+
           final bluetoothStatus = await Permission.bluetoothConnect.status;
           final bluetoothScanStatus = await Permission.bluetoothScan.status;
 
@@ -502,6 +520,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
   }
 
   void _showPermissionsDeniedSheet() {
+    final descriptionKey = defaultTargetPlatform == TargetPlatform.iOS
+        ? 'setup.connection.permissions_denied_desc_ios'
+        : 'setup.connection.permissions_denied_desc';
+
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -509,11 +531,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         icon: Icons.security_rounded,
         iconColor: context.colors.warning,
         title: 'setup.connection.permissions_required_title'.tr(),
-        description: 'setup.connection.permissions_denied_desc'.tr(),
+        description: descriptionKey.tr(),
         primaryText: 'setup.connection.open_settings'.tr(),
-        primaryOnPressed: () {
+        primaryOnPressed: () async {
           Navigator.pop(context);
-          openAppSettings();
+          await openAppSettings();
         },
         secondaryText: 'common.cancel'.tr(),
         secondaryOnPressed: () => Navigator.pop(context),
@@ -647,6 +669,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                             AppRoutes.wifiSetup.path,
                             extra: _wifiSetupArgs,
                           );
+                        } else if (!kIsWeb && _isBluetoothUnauthorized) {
+                          _showPermissionsDeniedSheet();
                         } else if (!kIsWeb && !_isBluetoothEnabled) {
                           _showEnableBluetoothSheet();
                         } else {

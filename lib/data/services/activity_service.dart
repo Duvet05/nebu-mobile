@@ -4,9 +4,7 @@ import '../models/activity.dart';
 import 'api_service.dart';
 
 class ActivityService {
-  ActivityService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  ActivityService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;

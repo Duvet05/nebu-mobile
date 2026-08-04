@@ -6,9 +6,7 @@ import '../models/voice_session.dart';
 import 'api_service.dart';
 
 class MemoryService {
-  MemoryService({required ApiService apiService, required Logger logger})
-    : _apiService = apiService,
-      _logger = logger;
+  MemoryService({required this._apiService, required this._logger});
 
   final ApiService _apiService;
   final Logger _logger;
