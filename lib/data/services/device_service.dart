@@ -8,10 +8,7 @@ import 'bluetooth_service.dart';
 
 /// Servicio para interactuar con características estándar del dispositivo (ej. Batería)
 class DeviceService {
-  DeviceService({
-    required this._bluetoothService,
-    required this._logger,
-  });
+  DeviceService({required this._bluetoothService, required this._logger});
 
   final BluetoothService _bluetoothService;
   final Logger _logger;

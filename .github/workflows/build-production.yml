@@ -32,7 +32,7 @@ on:
         required: false
 
 env:
-  FLUTTER_VERSION: "3.41.7"
+  FLUTTER_VERSION: "3.44.8"
   ANDROID_NDK_VERSION: "28.2.13676358"
   ANDROID_VERSION_CODE_OFFSET: "1000"
   PLAY_TRACK: ${{ github.event.inputs.play_track || 'internal' }}

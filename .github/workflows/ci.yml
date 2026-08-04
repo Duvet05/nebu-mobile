@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FLUTTER_VERSION: "3.41.7"
+  FLUTTER_VERSION: "3.44.8"
   ANDROID_NDK_VERSION: "28.2.13676358"
 
 jobs:
