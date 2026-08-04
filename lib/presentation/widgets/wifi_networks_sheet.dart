@@ -28,6 +28,13 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
   @override
   void initState() {
     super.initState();
+    // Defensa en profundidad: en una plataforma sin escaneo, scanNetworks
+    // lanza UnsupportedError, que al ser un Error y no una Exception no lo
+    // captura _scanNetworks y dejaria el sheet en un spinner infinito.
+    if (!WiFiService.isScanSupported) {
+      _isLoading = false;
+      return;
+    }
     _scanNetworks();
   }
 
@@ -84,14 +91,34 @@ class _WifiNetworksSheetState extends State<WifiNetworksSheet> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  onPressed: _scanNetworks,
-                  icon: const Icon(Icons.refresh),
-                ),
+                if (WiFiService.isScanSupported)
+                  IconButton(
+                    onPressed: _scanNetworks,
+                    icon: const Icon(Icons.refresh),
+                  ),
               ],
             ),
             SizedBox(height: context.spacing.gapXxl),
-            if (_isLoading)
+            if (!WiFiService.isScanSupported)
+              Padding(
+                padding: EdgeInsets.all(context.spacing.gapXxl),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      color: context.colors.textNormal,
+                      size: 48,
+                    ),
+                    SizedBox(height: context.spacing.gapXl),
+                    Text(
+                      'setup.wifi.scan_unsupported'.tr(),
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              )
+            else if (_isLoading)
               Center(
                 child: Padding(
                   padding: EdgeInsets.all(context.spacing.gapXxl),

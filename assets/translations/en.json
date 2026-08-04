@@ -75,6 +75,7 @@
       "scan_networks": "Scan WiFi",
       "no_networks_found": "No networks found",
       "scan_error": "Error scanning networks",
+      "scan_unsupported": "iOS doesn't allow scanning for nearby networks. Use the Current WiFi button to pick the one your iPhone is already connected to.",
       "hotspot_hint": "If you're using your phone's hotspot, type the network name manually — it won't appear in the scan.",
       "qr_scan_label": "QR Scan",
       "current_wifi_label": "Current WiFi",
