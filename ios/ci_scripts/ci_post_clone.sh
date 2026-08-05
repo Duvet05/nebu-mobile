@@ -37,7 +37,7 @@ export PATH="${FLUTTER_HOME}/bin:${PATH}"
 
 flutter --version
 flutter config --enable-swift-package-manager
-retry_network_command flutter precache --ios
+retry_network_command flutter precache --ios --force
 
 cd "${REPOSITORY_ROOT}"
 
