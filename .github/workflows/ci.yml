@@ -34,6 +34,11 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Validate Xcode Cloud post-clone hook
+        run: |
+          test -x ios/ci_scripts/ci_post_clone.sh
+          sh -n ios/ci_scripts/ci_post_clone.sh
+
       - name: Install dependencies
         run: flutter pub get
 

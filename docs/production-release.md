@@ -103,6 +103,40 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
   - `CodeQL` security scan
   - `Dependency Review` on pull requests
 
+## Xcode Cloud
+
+The repository includes `ios/ci_scripts/ci_post_clone.sh` so Xcode Cloud can
+install the pinned Flutter SDK, restore Dart dependencies, generate the Swift
+Package Manager integration, and validate the production Firebase plist before
+Xcode archives the app.
+
+Configure the first workflow with:
+
+- Repository: `Duvet05/nebu-mobile`
+- Workspace: `ios/Runner.xcworkspace`
+- Scheme: `production`
+- Action: `Archive` for iOS
+- Signing: automatically managed by Xcode Cloud for `Release-production`
+- Start condition: manual while validating the first archive
+- Secret environment variable: `GOOGLE_SERVICE_INFO_PLIST_BASE64`
+- Optional environment variable: `FLUTTER_VERSION=3.44.8` (the script uses this
+  version by default)
+
+Create `GOOGLE_SERVICE_INFO_PLIST_BASE64` from the production
+`ios/Runner/GoogleService-Info.plist`, not the development plist:
+
+```sh
+base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
+```
+
+The post-clone script fails if the plist does not identify Firebase project
+`flow-nebu-prod` and bundle ID `com.nebu.nebuMobileFlutter`.
+
+Keep the GitHub `Build iOS` workflow during the first Xcode Cloud archive. Once
+Xcode Cloud successfully archives and distributes a build to internal
+TestFlight, remove iOS publishing from GitHub Actions while retaining the shared
+GitHub CI analysis, tests, security scans, and non-publishing build checks.
+
 ## Web production deploy
 
 The Flutter web production target is the JS build served from Vercel:
