@@ -43,8 +43,12 @@ class NebuBrandBackdrop extends StatelessWidget {
                   ),
                   if (!isShort)
                     Positioned(
+                      key: const ValueKey<String>(
+                        'brandBackdrop.tealDecoration',
+                      ),
                       right: isWide ? -140 : -190,
-                      bottom: constraints.maxHeight * 0.23,
+                      // Keep it clipped to the corner on tall phones too.
+                      bottom: isWide ? -80 : -48,
                       child: Opacity(
                         opacity: isWide ? 0.30 : 0.26,
                         child: Image.asset(
