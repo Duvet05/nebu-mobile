@@ -97,9 +97,10 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
       body: SafeArea(
         child: Padding(
           padding: context.constrainedPageEdgeInsets,
-          child: Form(
-            key: _formKey,
+          child: AuthAutofillForm(
+            formKey: _formKey,
             child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               slivers: [
                 SliverToBoxAdapter(
                   child: Column(
@@ -139,6 +140,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           controller: _tokenController,
                           label: 'auth.reset_password_token_hint'.tr(),
                           prefixIcon: Icons.key_outlined,
+                          textInputAction: TextInputAction.next,
                           validator: (value) =>
                               value == null || value.trim().isEmpty
                               ? 'auth.reset_password_token_required'.tr()
@@ -149,8 +151,15 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       AuthTextField(
                         controller: _passwordController,
                         label: 'auth.reset_password_new_password_hint'.tr(),
+                        keyboardType: TextInputType.visiblePassword,
                         prefixIcon: Icons.lock_outline_rounded,
                         obscureText: _obscurePassword,
+                        autofillHints: const [AutofillHints.newPassword],
+                        textInputAction: TextInputAction.next,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        helperText: 'auth.password_requirements'.tr(),
                         suffixIcon: _obscurePassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
@@ -164,8 +173,19 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                       AuthTextField(
                         controller: _confirmController,
                         label: 'auth.reset_password_confirm_hint'.tr(),
+                        keyboardType: TextInputType.visiblePassword,
                         prefixIcon: Icons.lock_outline_rounded,
                         obscureText: _obscureConfirmPassword,
+                        autofillHints: const [AutofillHints.newPassword],
+                        textInputAction: TextInputAction.done,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onFieldSubmitted: (_) {
+                          if (!_isLoading) {
+                            _handleResetPassword();
+                          }
+                        },
                         suffixIcon: _obscureConfirmPassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,

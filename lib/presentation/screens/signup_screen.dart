@@ -79,9 +79,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       body: SafeArea(
         child: Padding(
           padding: context.constrainedPageEdgeInsets,
-          child: Form(
-            key: _formKey,
+          child: AuthAutofillForm(
+            formKey: _formKey,
             child: CustomScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               slivers: [
                 SliverToBoxAdapter(
                   child: Column(
@@ -134,6 +135,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               label: 'auth.first_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
                               textCapitalization: TextCapitalization.words,
+                              autofillHints: const [AutofillHints.givenName],
+                              textInputAction: TextInputAction.next,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return null; // optional field
@@ -154,6 +157,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               label: 'auth.last_name'.tr(),
                               prefixIcon: Icons.person_outline_rounded,
                               textCapitalization: TextCapitalization.words,
+                              autofillHints: const [AutofillHints.familyName],
+                              textInputAction: TextInputAction.next,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return null; // optional field
@@ -176,6 +181,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         label: 'auth.email'.tr(),
                         keyboardType: TextInputType.emailAddress,
                         prefixIcon: Icons.mail_outline_rounded,
+                        autofillHints: const [
+                          AutofillHints.email,
+                          AutofillHints.username,
+                        ],
+                        textInputAction: TextInputAction.next,
+                        autocorrect: false,
+                        enableSuggestions: false,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'auth.email_required'.tr();
@@ -196,8 +208,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         key: const ValueKey<String>('signup.passwordField'),
                         controller: _passwordController,
                         label: 'auth.password'.tr(),
+                        keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscurePassword,
                         prefixIcon: Icons.lock_outline_rounded,
+                        autofillHints: const [AutofillHints.newPassword],
+                        textInputAction: TextInputAction.next,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        helperText: 'auth.password_requirements'.tr(),
                         suffixIcon: _obscurePassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
@@ -219,8 +238,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         ),
                         controller: _confirmPasswordController,
                         label: 'auth.confirm_password'.tr(),
+                        keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscureConfirmPassword,
                         prefixIcon: Icons.lock_outline_rounded,
+                        autofillHints: const [AutofillHints.newPassword],
+                        textInputAction: TextInputAction.done,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        onFieldSubmitted: (_) {
+                          if (!authState.isLoading) {
+                            _handleEmailSignUp();
+                          }
+                        },
                         suffixIcon: _obscureConfirmPassword
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,

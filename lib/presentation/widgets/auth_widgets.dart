@@ -21,6 +21,24 @@ class AuthBackButton extends StatelessWidget {
   );
 }
 
+/// Keeps the fields in one native autofill session so password managers can
+/// save and restore account credentials as a unit.
+class AuthAutofillForm extends StatelessWidget {
+  const AuthAutofillForm({
+    required this.formKey,
+    required this.child,
+    super.key,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AutofillGroup(
+    child: Form(key: formKey, child: child),
+  );
+}
+
 class AuthTextField extends StatelessWidget {
   const AuthTextField({
     required this.controller,
@@ -34,6 +52,17 @@ class AuthTextField extends StatelessWidget {
     this.onSuffixTap,
     this.validator,
     this.textCapitalization = TextCapitalization.none,
+    this.autofillHints,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.onChanged,
+    this.autocorrect = true,
+    this.enableSuggestions = true,
+    this.enableInteractiveSelection = true,
+    this.autovalidateMode,
+    this.helperText,
+    this.errorMaxLines = 3,
+    this.helperMaxLines = 3,
   });
   final TextEditingController controller;
   final String label;
@@ -45,6 +74,17 @@ class AuthTextField extends StatelessWidget {
   final VoidCallback? onSuffixTap;
   final String? Function(String?)? validator;
   final TextCapitalization textCapitalization;
+  final Iterable<String>? autofillHints;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final ValueChanged<String>? onChanged;
+  final bool autocorrect;
+  final bool enableSuggestions;
+  final bool enableInteractiveSelection;
+  final AutovalidateMode? autovalidateMode;
+  final String? helperText;
+  final int errorMaxLines;
+  final int helperMaxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +96,22 @@ class AuthTextField extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       textCapitalization: textCapitalization,
+      autofillHints: autofillHints,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      onChanged: onChanged,
+      autocorrect: autocorrect,
+      enableSuggestions: enableSuggestions,
+      enableInteractiveSelection: enableInteractiveSelection,
+      autovalidateMode: autovalidateMode,
+      scrollPadding: const EdgeInsets.all(32),
       style: textTheme.bodyLarge?.copyWith(color: context.colors.textNormal),
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
+        helperText: helperText,
+        errorMaxLines: errorMaxLines,
+        helperMaxLines: helperMaxLines,
         hintStyle: textTheme.bodyMedium?.copyWith(
           color: context.colors.grey500,
         ),
