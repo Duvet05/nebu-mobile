@@ -15,16 +15,21 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
     this.isFullWidth = false,
     this.icon,
+    this.leading,
     this.width,
     this.height,
     this.borderRadius,
-  });
+  }) : assert(
+         icon == null || leading == null,
+         'Provide either icon or leading, not both.',
+       );
   final String text;
   final VoidCallback? onPressed;
   final ButtonVariant variant;
   final bool isLoading;
   final bool isFullWidth;
   final IconData? icon;
+  final Widget? leading;
   final double? width;
 
   /// Minimum button height. The effective value never drops below the
@@ -56,6 +61,10 @@ class CustomButton extends StatelessWidget {
           )
         else ...[
           if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+          if (leading != null) ...[
+            SizedBox(width: 20, height: 20, child: leading),
+            const SizedBox(width: 8),
+          ],
           Flexible(child: Text(text, textAlign: TextAlign.center)),
         ],
       ],
