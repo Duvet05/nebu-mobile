@@ -35,6 +35,7 @@ void main() {
         'assets/images/decoration-strokes-scattered.png',
       }),
     );
+    _expectTealInBottomRightCorner(tester, const Size(390, 844));
     expect(tester.takeException(), isNull);
 
     await _resize(tester, const Size(390, 460));
@@ -57,6 +58,7 @@ void main() {
         'assets/images/decoration-strokes-scattered.png',
       }),
     );
+    _expectTealInBottomRightCorner(tester, const Size(1440, 900));
     expect(tester.takeException(), isNull);
   });
 
@@ -118,6 +120,18 @@ Set<String> _assetImages(WidgetTester tester) => tester
     .whereType<AssetImage>()
     .map((image) => image.assetName)
     .toSet();
+
+void _expectTealInBottomRightCorner(WidgetTester tester, Size viewport) {
+  final decoration = find.byKey(
+    const ValueKey<String>('brandBackdrop.tealDecoration'),
+  );
+  expect(decoration, findsOneWidget);
+
+  final rect = tester.getRect(decoration);
+  expect(rect.top, greaterThan(viewport.height * 0.6));
+  expect(rect.right, greaterThan(viewport.width));
+  expect(rect.bottom, greaterThan(viewport.height));
+}
 
 class _TestApp extends StatelessWidget {
   const _TestApp({required this.treeKey});
