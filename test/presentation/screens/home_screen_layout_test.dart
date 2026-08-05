@@ -101,7 +101,7 @@ void main() {
             );
             expect(
               find.byKey(const ValueKey('home-hero-dino')),
-              findsOneWidget,
+              findsNothing,
               reason: scenario,
             );
             expect(
@@ -109,6 +109,19 @@ void main() {
               findsOneWidget,
               reason: scenario,
             );
+            for (final iconKey in const [
+              'home-settings-icon',
+              'home-add-toy-icon',
+              'home-quick-action-voice-icon',
+              'home-quick-action-knowledge-icon',
+              'home-quick-action-personalities-icon',
+            ]) {
+              expect(
+                find.byKey(ValueKey(iconKey)),
+                findsOneWidget,
+                reason: '$scenario should use the frontend icon set',
+              );
+            }
 
             final actionButton = find.ancestor(
               of: actionLabel,

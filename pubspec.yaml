@@ -122,6 +122,17 @@ flutter:
     - assets/images/decoration-strokes-scattered.png
     - assets/images/background-pattern.webp
     - assets/icons/dino.svg
+    - assets/icons/lucide/settings.svg
+    - assets/icons/lucide/plus.svg
+    - assets/icons/lucide/mic.svg
+    - assets/icons/lucide/book-open.svg
+    - assets/icons/lucide/sparkles.svg
+    - assets/icons/lucide/bluetooth-connected.svg
+    - assets/icons/lucide/battery-full.svg
+    - assets/icons/lucide/battery-medium.svg
+    - assets/icons/lucide/battery-low.svg
+    - assets/icons/lucide/battery-warning.svg
+    - assets/icons/lucide/circle-alert.svg
     - assets/logos/nebu.svg
     - assets/translations/
     - assets/icon_nebu_1024.png
