@@ -39,6 +39,8 @@ jobs:
           test -x ios/ci_scripts/ci_post_clone.sh
           test -x ios/ci_scripts/configure_xcode_cloud_signing.sh
           test -x ios/ci_scripts/write_firebase_plist.sh
+          test -f ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+          cmp ios/Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
           sh -n ios/ci_scripts/ci_post_clone.sh
           sh -n ios/ci_scripts/configure_xcode_cloud_signing.sh
           sh -n ios/ci_scripts/write_firebase_plist.sh
