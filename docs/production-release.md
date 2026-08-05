@@ -27,25 +27,6 @@ Android release:
 - `KEY_ALIAS`
 - `PLAY_SERVICE_ACCOUNT_JSON`
 
-iOS release verification:
-
-- `GOOGLE_SERVICE_INFO_PLIST_BASE64`
-
-App Store (signed upload) release:
-
-- `APP_STORE_TEAM_ID` (GitHub variable) or use default from project signing config.
-- `APP_STORE_BUNDLE_ID` (GitHub variable, defaults to `com.nebu.nebuMobileFlutter`).
-- `APP_STORE_DISTRIBUTION_P12_BASE64`
-- `APP_STORE_DISTRIBUTION_P12_PASSWORD`
-- `APP_STORE_PROVISIONING_PROFILE_BASE64`
-- `APP_STORE_PROVISIONING_PROFILE_NAME`
-- `APP_STORE_CONNECT_API_KEY_ID`
-- `APP_STORE_CONNECT_API_ISSUER_ID` (`APP_STORE_CONNECT_API_KEY_ISSUER_ID` is also supported)
-- `APP_STORE_CONNECT_API_KEY_BASE64`
-
-If the workflow runs with `upload_to_app_store=true` and any of these are missing,
-it fails fast with explicit `Missing GitHub secret ...` messages.
-
 For full releases, the App Store provisioning profile must be regenerated after
 enabling these capabilities for the app identifier in Apple Developer:
 
@@ -63,10 +44,6 @@ Encode local files without newlines before adding them as GitHub secrets:
 base64 -i android/app/google-services.json | tr -d '\n'
 base64 -i android/upload-keystore.jks | tr -d '\n'
 base64 -i android/service-account.json | tr -d '\n'
-base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
-base64 -i ios/certificates/AppStoreDistribution.p12 | tr -d '\n'
-base64 -i ios/profiles/AppStore_Provisioning_Profile.mobileprovision | tr -d '\n'
-base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
 ```
 
 ## Workflows
@@ -83,16 +60,8 @@ base64 -i ios/AuthKey_{YOUR_KEY_ID}.p8 | tr -d '\n'
     custom closed-testing track) plus release status.
   - AAB artifacts are uploaded before Play publishing, so a Play API failure does
     not lose the signed bundle.
-- `Build iOS` builds a signed `Runner.ipa` (`flutter build ipa`) with App Store
-  signing:
-  - Push to `main`: build the signed IPA and keep it as a GitHub artifact. This
-    does not upload to App Store Connect.
-  - Push tag `v*.*.*`: build the signed IPA, keep it as an artifact, validate it
-    with App Store Connect, and upload it for TestFlight/App Store processing.
-  - `workflow_dispatch`: build the signed IPA and optionally upload it. Use
-    `upload_to_app_store=false` for a build-only run.
-  - IPA artifacts are uploaded before App Store Connect validation/upload, so an
-    Apple API or processing failure does not lose the signed package.
+- Xcode Cloud owns iOS archives, App Store signing, and internal TestFlight
+  distribution. GitHub Actions no longer builds or uploads signed iOS releases.
 - `CI` now includes:
   - `Analyze`
   - `Format check`
@@ -116,21 +85,24 @@ Configure the first workflow with:
 - Workspace: `ios/Runner.xcworkspace`
 - Scheme: `production`
 - Action: `Archive` for iOS
-- Signing: automatically managed by Xcode Cloud. The repository keeps manual
-  signing for the existing GitHub Actions build; the post-clone hook changes
+- Signing: automatically managed by Xcode Cloud. The post-clone hook changes
   only Xcode Cloud's temporary checkout to automatic signing.
 - Start condition: manual while validating the first archive
+- Distribution preparation: `TestFlight (Internal Testing Only)`
+- Post-action: `TestFlight Internal Testing` for the `Testers Nebu` group
 - Secret environment variables:
   `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1`,
   `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2`, and
   `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3`
+- Optional fourth fragment when the Base64 value exceeds Xcode Cloud's per-value
+  limit: `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_4`
 - Optional environment variable: `FLUTTER_VERSION=3.44.8` (the script uses this
   version by default)
 
 Create a single Base64 string from the production
 `ios/Runner/GoogleService-Info.plist`, not the development plist, and split it
-into three contiguous fragments of similar size. Store the fragments in order
-using the three Xcode Cloud secret names above:
+into three or four contiguous fragments of similar size. Store the fragments in
+order using the Xcode Cloud secret names above:
 
 ```sh
 base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
@@ -142,10 +114,9 @@ The post-clone hook still accepts the legacy single
 The post-clone script fails if the plist does not identify Firebase project
 `flow-nebu-prod` and bundle ID `com.nebu.nebuMobileFlutter`.
 
-Keep the GitHub `Build iOS` workflow during the first Xcode Cloud archive. Once
-Xcode Cloud successfully archives and distributes a build to internal
-TestFlight, remove iOS publishing from GitHub Actions while retaining the shared
-GitHub CI analysis, tests, security scans, and non-publishing build checks.
+The `Nebu iOS Production` workflow is the only automated owner of signed iOS
+releases. GitHub retains shared analysis, tests, security scans, web builds, and
+Android builds, but has no App Store Connect credentials or iOS publishing job.
 
 ## Web production deploy
 
@@ -240,11 +211,9 @@ returns `200` after deploy.
   staged for manual review in Play Console.
 - Increase the Flutter build number in `pubspec.yaml` for local store builds and
   iOS/App Store uploads. Android CI has its own monotonic build-number override.
-- App Store Connect also requires each uploaded iOS build number
-  (`CFBundleVersion`) to increase for a given app version. The iOS CI workflow
-  now overrides the Flutter build number with `IOS_BUILD_NUMBER_OFFSET +
-  GITHUB_RUN_NUMBER` unless `build_number` is provided manually. The current
-  offset is `1000`.
+- App Store Connect requires each uploaded iOS build number (`CFBundleVersion`)
+  to increase for a given app version. Keep Xcode Cloud's build-number management
+  enabled and verify the generated number before promoting a build.
 - The `nebu.flow-telligence.com` Apple App Site Association file must include
   the real app identifier:
   ```json
@@ -260,7 +229,7 @@ returns `200` after deploy.
     }
   }
   ```
-  The iOS workflow checks this before App Store builds. A placeholder such as
+  Validate this before App Store builds. A placeholder such as
   `TEAM_ID.com.nebu.nebuMobileFlutter` is not valid for universal links.
 - Uploading an IPA to App Store Connect is not the same as releasing to the App
   Store. Apple processes the build first; after processing, it can be used for
@@ -270,41 +239,19 @@ returns `200` after deploy.
 
 ## iOS release runbook
 
-Build a signed IPA without uploading to Apple:
+Upload a production build to internal TestFlight:
 
-1. Open GitHub Actions.
-2. Run `Build iOS`.
-3. Set `upload_to_app_store=false`.
-4. Download the `ios-runner-ipa-<run_id>` artifact after the job completes.
+1. Open Xcode's Report navigator and select the Cloud tab.
+2. Select `Nebu iOS Production`, click `Start Build`, and choose `main`.
+3. Confirm the `Archive - iOS` action and `TestFlight Internal Testing - iOS`
+   post-action both finish successfully.
+4. Wait for App Store Connect processing to finish. The build is assigned to
+   the `Testers Nebu` internal group automatically.
+5. Promote a processed build to external TestFlight or an App Store version only
+   as an explicit release action. External testing may require Beta App Review.
 
-Upload a build to App Store Connect/TestFlight:
-
-1. Create and push a version tag from the commit that should ship:
-   ```sh
-   git tag v1.2.3
-   git push origin v1.2.3
-   ```
-   Tags matching `v*.*.*` trigger both Android and iOS release workflows. Use
-   `workflow_dispatch` instead when you need an iOS-only upload.
-2. Confirm the workflow summary shows the expected build name, generated build
-   number, and `Upload to App Store Connect: true`.
-3. Wait for App Store Connect processing to finish.
-4. In App Store Connect, assign the processed build to the intended TestFlight
-   group or App Store version. External TestFlight distribution may require
-   Beta App Review before testers can install the build.
-
-Manual iOS upload:
-
-1. Run `Build iOS` with `upload_to_app_store=true`.
-2. Keep `minimal_ios_release=true` for the limited iPhone-only release. This
-   is the safe default and is compiled into the IPA; it does not use remote
-   feature flags. The minimum build is guest-only: login, registration,
-   account restoration, social-login URL schemes and strings, push
-   notifications, background modes, Crashlytics, Sign in with Apple, and
-   Universal Links are disabled. Select `false` only for an intentional
-   full-feature build.
-3. Provide `build_number` only when you need a specific `CFBundleVersion`; it
-   must be greater than the last uploaded build for that app version.
+Do not reintroduce an App Store upload job in GitHub Actions; this avoids two CI
+systems competing for signing credentials and iOS build numbers.
 
 ## Android release runbook
 
@@ -337,13 +284,14 @@ Manual Play upload:
 4. Provide `build_number` only when you need a specific Play version code. It
    must be greater than every existing version code in Play Console.
 
-## Remaining release tasks
+## Release ownership
 
 - Firebase, Google OAuth, and Play publishing now use the Flow-owned
   `flow-nebu-prod` project. Do not restore references to the retired PUCP
   projects or service accounts.
-- Upload the APNs authentication key to the production and development Apple
-  apps in Firebase before relying on FCM delivery to iOS devices.
-- Perform the first iOS archive manually with Xcode Organizer. After that
-  succeeds, configure Xcode Cloud for TestFlight and disable the GitHub iOS
-  publishing workflow; keep GitHub CI for Flutter analysis and tests.
+- Firebase has separate APNs authentication keys for the production and
+  development Apple apps. Verify push delivery on a physical device after each
+  credential or bundle-ID change.
+- Xcode Cloud owns production archives and internal TestFlight distribution;
+  GitHub CI owns Flutter analysis, tests, security checks, web builds, and
+  Android builds.
