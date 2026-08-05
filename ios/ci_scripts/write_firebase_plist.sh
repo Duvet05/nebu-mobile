@@ -11,11 +11,11 @@ if [ -z "${ENCODED_PLIST}" ]; then
   if [ -z "${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1:-}" ] || \
      [ -z "${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2:-}" ] || \
      [ -z "${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3:-}" ]; then
-    echo "Missing Firebase plist secret or its three Xcode Cloud fragments" >&2
+    echo "Missing Firebase plist secret or its Xcode Cloud fragments" >&2
     exit 1
   fi
 
-  ENCODED_PLIST="${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1}${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2}${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3}"
+  ENCODED_PLIST="${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1}${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2}${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3}${GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_4:-}"
 fi
 
 printf '%s' "${ENCODED_PLIST}" | base64 --decode > "${OUTPUT_PATH}"

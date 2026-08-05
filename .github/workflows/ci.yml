@@ -53,6 +53,12 @@ jobs:
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3=dA== \
             ios/ci_scripts/write_firebase_plist.sh "${firebase_fixture}"
           test "$(cat "${firebase_fixture}")" = test
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1=dG \
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2=Vz \
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3=dA \
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_4='==' \
+            ios/ci_scripts/write_firebase_plist.sh "${firebase_fixture}"
+          test "$(cat "${firebase_fixture}")" = test
 
       - name: Install dependencies
         run: flutter pub get
