@@ -61,6 +61,7 @@ captures/
 android/upload-keystore.jks
 android/key.properties
 android/service-account.json
+android/service-account-flow-nebu-prod.json
 android/app/service-account.json
 *.json.key
 

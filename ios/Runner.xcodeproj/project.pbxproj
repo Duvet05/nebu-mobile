@@ -513,7 +513,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -547,7 +547,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Nebu Dev";
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-5jt9pothit1ujdvqh1hgt8o8n42tgfnv";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-4p0hsfssi5n8fede7k4kibl60kcdnu99";
 				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -580,7 +580,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1012,7 +1012,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1047,7 +1047,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Nebu Dev";
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-5jt9pothit1ujdvqh1hgt8o8n42tgfnv";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-4p0hsfssi5n8fede7k4kibl60kcdnu99";
 				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1081,7 +1081,7 @@
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1116,7 +1116,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1165,7 +1165,7 @@
 					"@executable_path/Frameworks",
 				);
 				APP_DISPLAY_NAME = "Nebu Dev";
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-5jt9pothit1ujdvqh1hgt8o8n42tgfnv";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-4p0hsfssi5n8fede7k4kibl60kcdnu99";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nebu.nebuMobileFlutter.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -1183,7 +1183,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Nebu;
-				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.874117365573-426rtdhpadpl4dql8pia22irshjenif8";
+				GOOGLE_REVERSED_CLIENT_ID = "com.googleusercontent.apps.459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc";
 				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
