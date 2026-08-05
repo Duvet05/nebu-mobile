@@ -24,13 +24,7 @@ flutter precache --ios
 
 cd "${REPOSITORY_ROOT}"
 
-if [ -z "${GOOGLE_SERVICE_INFO_PLIST_BASE64:-}" ]; then
-  echo "Missing Xcode Cloud secret GOOGLE_SERVICE_INFO_PLIST_BASE64" >&2
-  exit 1
-fi
-
-printf '%s' "${GOOGLE_SERVICE_INFO_PLIST_BASE64}" | base64 --decode > "${FIREBASE_PLIST}"
-chmod 600 "${FIREBASE_PLIST}"
+"${REPOSITORY_ROOT}/ios/ci_scripts/write_firebase_plist.sh" "${FIREBASE_PLIST}"
 
 firebase_project_id="$(/usr/libexec/PlistBuddy -c 'Print :PROJECT_ID' "${FIREBASE_PLIST}")"
 firebase_bundle_id="$(/usr/libexec/PlistBuddy -c 'Print :BUNDLE_ID' "${FIREBASE_PLIST}")"

@@ -38,13 +38,21 @@ jobs:
         run: |
           test -x ios/ci_scripts/ci_post_clone.sh
           test -x ios/ci_scripts/configure_xcode_cloud_signing.sh
+          test -x ios/ci_scripts/write_firebase_plist.sh
           sh -n ios/ci_scripts/ci_post_clone.sh
           sh -n ios/ci_scripts/configure_xcode_cloud_signing.sh
+          sh -n ios/ci_scripts/write_firebase_plist.sh
           signing_fixture="$(mktemp)"
-          trap 'rm -f "${signing_fixture}"' EXIT
+          firebase_fixture="$(mktemp)"
+          trap 'rm -f "${signing_fixture}" "${firebase_fixture}"' EXIT
           cp ios/Runner.xcodeproj/project.pbxproj "${signing_fixture}"
           ios/ci_scripts/configure_xcode_cloud_signing.sh "${signing_fixture}"
           ! grep -Eq 'CODE_SIGN_STYLE = Manual;|PROVISIONING_PROFILE_SPECIFIER = "[^"]+";|CODE_SIGN_IDENTITY = "Apple (Development|Distribution)";|"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "Apple (Development|Distribution)";' "${signing_fixture}"
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1=dG \
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2=Vz \
+          GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3=dA== \
+            ios/ci_scripts/write_firebase_plist.sh "${firebase_fixture}"
+          test "$(cat "${firebase_fixture}")" = test
 
       - name: Install dependencies
         run: flutter pub get

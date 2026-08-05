@@ -120,16 +120,24 @@ Configure the first workflow with:
   signing for the existing GitHub Actions build; the post-clone hook changes
   only Xcode Cloud's temporary checkout to automatic signing.
 - Start condition: manual while validating the first archive
-- Secret environment variable: `GOOGLE_SERVICE_INFO_PLIST_BASE64`
+- Secret environment variables:
+  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1`,
+  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2`, and
+  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3`
 - Optional environment variable: `FLUTTER_VERSION=3.44.8` (the script uses this
   version by default)
 
-Create `GOOGLE_SERVICE_INFO_PLIST_BASE64` from the production
-`ios/Runner/GoogleService-Info.plist`, not the development plist:
+Create a single Base64 string from the production
+`ios/Runner/GoogleService-Info.plist`, not the development plist, and split it
+into three contiguous fragments of similar size. Store the fragments in order
+using the three Xcode Cloud secret names above:
 
 ```sh
 base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
 ```
+
+The post-clone hook still accepts the legacy single
+`GOOGLE_SERVICE_INFO_PLIST_BASE64` variable for local or GitHub-driven checks.
 
 The post-clone script fails if the plist does not identify Firebase project
 `flow-nebu-prod` and bundle ID `com.nebu.nebuMobileFlutter`.
