@@ -8,6 +8,23 @@ FLUTTER_VERSION="${FLUTTER_VERSION:-3.44.8}"
 FLUTTER_HOME="${FLUTTER_HOME:-${HOME}/flutter}"
 FIREBASE_PLIST="${REPOSITORY_ROOT}/ios/Runner/GoogleService-Info.plist"
 
+retry_network_command() {
+  retry_attempt=1
+  retry_limit=3
+
+  while ! "$@"; do
+    if [ "${retry_attempt}" -ge "${retry_limit}" ]; then
+      echo "Command failed after ${retry_limit} attempts: $*" >&2
+      return 1
+    fi
+
+    retry_delay=$((retry_attempt * 10))
+    echo "Network command failed; retrying in ${retry_delay}s (${retry_attempt}/${retry_limit}): $*" >&2
+    sleep "${retry_delay}"
+    retry_attempt=$((retry_attempt + 1))
+  done
+}
+
 if [ ! -x "${FLUTTER_HOME}/bin/flutter" ]; then
   git clone \
     --depth 1 \
@@ -20,7 +37,7 @@ export PATH="${FLUTTER_HOME}/bin:${PATH}"
 
 flutter --version
 flutter config --enable-swift-package-manager
-flutter precache --ios
+retry_network_command flutter precache --ios
 
 cd "${REPOSITORY_ROOT}"
 
@@ -39,7 +56,7 @@ if [ "${firebase_bundle_id}" != "com.nebu.nebuMobileFlutter" ]; then
   exit 1
 fi
 
-flutter pub get
+retry_network_command flutter pub get
 flutter build ios \
   --config-only \
   --flavor production \
