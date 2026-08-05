@@ -35,7 +35,7 @@ fi
 
 export PATH="${FLUTTER_HOME}/bin:${PATH}"
 
-flutter --version
+retry_network_command flutter --version
 flutter config --enable-swift-package-manager
 retry_network_command flutter precache --ios --force
 
