@@ -37,7 +37,14 @@ jobs:
       - name: Validate Xcode Cloud post-clone hook
         run: |
           test -x ios/ci_scripts/ci_post_clone.sh
+          test -x ios/ci_scripts/configure_xcode_cloud_signing.sh
           sh -n ios/ci_scripts/ci_post_clone.sh
+          sh -n ios/ci_scripts/configure_xcode_cloud_signing.sh
+          signing_fixture="$(mktemp)"
+          trap 'rm -f "${signing_fixture}"' EXIT
+          cp ios/Runner.xcodeproj/project.pbxproj "${signing_fixture}"
+          ios/ci_scripts/configure_xcode_cloud_signing.sh "${signing_fixture}"
+          ! grep -Eq 'CODE_SIGN_STYLE = Manual;|PROVISIONING_PROFILE_SPECIFIER = "[^"]+";|CODE_SIGN_IDENTITY = "Apple (Development|Distribution)";|"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "Apple (Development|Distribution)";' "${signing_fixture}"
 
       - name: Install dependencies
         run: flutter pub get

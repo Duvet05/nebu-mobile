@@ -116,7 +116,9 @@ Configure the first workflow with:
 - Workspace: `ios/Runner.xcworkspace`
 - Scheme: `production`
 - Action: `Archive` for iOS
-- Signing: automatically managed by Xcode Cloud for `Release-production`
+- Signing: automatically managed by Xcode Cloud. The repository keeps manual
+  signing for the existing GitHub Actions build; the post-clone hook changes
+  only Xcode Cloud's temporary checkout to automatic signing.
 - Start condition: manual while validating the first archive
 - Secret environment variable: `GOOGLE_SERVICE_INFO_PLIST_BASE64`
 - Optional environment variable: `FLUTTER_VERSION=3.44.8` (the script uses this

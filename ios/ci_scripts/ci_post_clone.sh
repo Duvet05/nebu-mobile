@@ -55,3 +55,5 @@ flutter build ios \
   --dart-define=ENABLE_CRASH_REPORTING=true \
   --dart-define=ENABLE_DEBUG_LOGS=false \
   --dart-define=MINIMAL_IOS_RELEASE=false
+
+"${REPOSITORY_ROOT}/ios/ci_scripts/configure_xcode_cloud_signing.sh"
