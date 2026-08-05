@@ -23,7 +23,7 @@ abstract final class Config {
       'wss://api.flow-telligence.com/api/v1';
   static const String _defaultLivekitUrl = 'wss://livekit.flow-telligence.com';
   static const String _defaultGoogleWebClientId =
-      '874117365573-41585jcimi2t77j0bou38e1la0ke8jk6.apps.googleusercontent.com';
+      '459591254120-6d0c81oceebh09fpt65iki3h7uif5ckd.apps.googleusercontent.com';
 
   static const String _environment = String.fromEnvironment(
     'ENV',
@@ -51,9 +51,9 @@ abstract final class Config {
     'GOOGLE_IOS_CLIENT_ID',
   );
   static const String _productionGoogleIosClientId =
-      '874117365573-426rtdhpadpl4dql8pia22irshjenif8.apps.googleusercontent.com';
+      '459591254120-34jbkjj9r7r0do54gjgea46s0v3favlc.apps.googleusercontent.com';
   static const String _devGoogleIosClientId =
-      '874117365573-5jt9pothit1ujdvqh1hgt8o8n42tgfnv.apps.googleusercontent.com';
+      '459591254120-4p0hsfssi5n8fede7k4kibl60kcdnu99.apps.googleusercontent.com';
   static const String _facebookAppId = String.fromEnvironment(
     'FACEBOOK_APP_ID',
   );

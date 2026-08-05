@@ -48,38 +48,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDfF-f6Vj6fxRxTD1gFWcKT58I872P356E',
-    appId: '1:874117365573:web:184e47354a9082b1bec82c',
-    messagingSenderId: '874117365573',
-    projectId: 'nebu-b65d4',
-    authDomain: 'nebu-b65d4.firebaseapp.com',
-    storageBucket: 'nebu-b65d4.firebasestorage.app',
-    measurementId: 'G-85YCDD836T',
+    apiKey: 'AIzaSyB60CngRsi8xx4qrbnQSzx0m3yjcGs4yDU',
+    appId: '1:459591254120:web:401f12fdbcb80500a93bdd',
+    messagingSenderId: '459591254120',
+    projectId: 'flow-nebu-prod',
+    authDomain: 'flow-nebu-prod.firebaseapp.com',
+    storageBucket: 'flow-nebu-prod.firebasestorage.app',
+    measurementId: 'G-4PMRYGEZC7',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCwiBLWDpC9RikFIhAJwU_yi2va2gJJGPw',
-    appId: '1:874117365573:android:723ca9a68be2b591bec82c',
-    messagingSenderId: '874117365573',
-    projectId: 'nebu-b65d4',
-    storageBucket: 'nebu-b65d4.firebasestorage.app',
+    apiKey: 'AIzaSyCQ-lvjYHWY8e-FOkr9QUudSE8u_D1nsqc',
+    appId: '1:459591254120:android:692beb5bf2da93c7a93bdd',
+    messagingSenderId: '459591254120',
+    projectId: 'flow-nebu-prod',
+    storageBucket: 'flow-nebu-prod.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA8a_PkTUg-XZG0Pw06QZuXDPC44b6Z8g8',
-    appId: '1:874117365573:ios:67bd0e8e27189fc8bec82c',
-    messagingSenderId: '874117365573',
-    projectId: 'nebu-b65d4',
-    storageBucket: 'nebu-b65d4.firebasestorage.app',
+    apiKey: 'AIzaSyDSNeEC_FNxcAbuMtJpiEMKZOU-hLVUNiE',
+    appId: '1:459591254120:ios:c683ef45fbd64f62a93bdd',
+    messagingSenderId: '459591254120',
+    projectId: 'flow-nebu-prod',
+    storageBucket: 'flow-nebu-prod.firebasestorage.app',
     iosBundleId: 'com.nebu.nebuMobileFlutter',
   );
 
   static const FirebaseOptions iosDev = FirebaseOptions(
-    apiKey: 'AIzaSyA8a_PkTUg-XZG0Pw06QZuXDPC44b6Z8g8',
-    appId: '1:874117365573:ios:98b2e948ce2862d1bec82c',
-    messagingSenderId: '874117365573',
-    projectId: 'nebu-b65d4',
-    storageBucket: 'nebu-b65d4.firebasestorage.app',
+    apiKey: 'AIzaSyDSNeEC_FNxcAbuMtJpiEMKZOU-hLVUNiE',
+    appId: '1:459591254120:ios:202769fc9b91ca60a93bdd',
+    messagingSenderId: '459591254120',
+    projectId: 'flow-nebu-prod',
+    storageBucket: 'flow-nebu-prod.firebasestorage.app',
     iosBundleId: 'com.nebu.nebuMobileFlutter.dev',
   );
 }

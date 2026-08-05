@@ -109,7 +109,7 @@ The Flutter web production target is the JS build served from Vercel:
 
 ```sh
 flutter build web --release
-vercel deploy build/web --prod --archive=tgz --project nebu-web --yes
+vercel deploy build/web --prod --archive=tgz --project nebu-mobile-web --yes
 ```
 
 Release web builds default to the same-origin Vercel proxy at `/api/v1`.
@@ -293,15 +293,13 @@ Manual Play upload:
 4. Provide `build_number` only when you need a specific Play version code. It
    must be greater than every existing version code in Play Console.
 
-## Technical debt
+## Remaining release tasks
 
-- **Consolidate GCP projects**: Nebu currently uses two GCP projects under the
-  PUCP organization (`pucp.pe`, org ID `642164415054`):
-  - `nebu-b65d4` — Firebase (Core, Crashlytics, FCM), Google Sign-In, OAuth clients
-  - `nebu-486902` — Play Store publishing service account (`nebu-104@nebu-486902.iam.gserviceaccount.com`)
-
-  The PUCP org enforces `iam.managed.disableServiceAccountKeyCreation`, preventing
-  new service account key creation. The existing key works but cannot be rotated.
-  Plan: migrate both projects to a personal Google account outside PUCP to gain
-  full control. This requires re-creating Firebase config, OAuth clients, and
-  updating all GitHub secrets.
+- Firebase, Google OAuth, and Play publishing now use the Flow-owned
+  `flow-nebu-prod` project. Do not restore references to the retired PUCP
+  projects or service accounts.
+- Upload the APNs authentication key to the production and development Apple
+  apps in Firebase before relying on FCM delivery to iOS devices.
+- Perform the first iOS archive manually with Xcode Organizer. After that
+  succeeds, configure Xcode Cloud for TestFlight and disable the GitHub iOS
+  publishing workflow; keep GitHub CI for Flutter analysis and tests.
