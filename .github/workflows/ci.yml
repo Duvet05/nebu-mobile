@@ -46,15 +46,22 @@ jobs:
           sh -n ios/ci_scripts/write_firebase_plist.sh
           signing_fixture="$(mktemp)"
           firebase_fixture="$(mktemp)"
-          trap 'rm -f "${signing_fixture}" "${firebase_fixture}"' EXIT
+          missing_firebase_fixture="$(mktemp)"
+          rm -f "${missing_firebase_fixture}"
+          trap 'rm -f "${signing_fixture}" "${firebase_fixture}" "${missing_firebase_fixture}"' EXIT
           cp ios/Runner.xcodeproj/project.pbxproj "${signing_fixture}"
           ios/ci_scripts/configure_xcode_cloud_signing.sh "${signing_fixture}"
           ! grep -Eq 'CODE_SIGN_STYLE = Manual;|PROVISIONING_PROFILE_SPECIFIER = "[^"]+";|CODE_SIGN_IDENTITY = "Apple (Development|Distribution)";|"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "Apple (Development|Distribution)";' "${signing_fixture}"
+          ios/ci_scripts/write_firebase_plist.sh "${firebase_fixture}"
+          cmp ios/firebase/production/GoogleService-Info.plist "${firebase_fixture}"
+          python3 -c 'import plistlib; p=plistlib.load(open("ios/firebase/production/GoogleService-Info.plist", "rb")); assert p["PROJECT_ID"] == "flow-nebu-prod"; assert p["BUNDLE_ID"] == "com.nebu.nebuMobileFlutter"; assert not ({"PRIVATE_KEY", "CLIENT_SECRET", "PRIVATE_KEY_ID"} & p.keys())'
+          FIREBASE_IOS_PRODUCTION_PLIST="${missing_firebase_fixture}" \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1=dG \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2=Vz \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3=dA== \
             ios/ci_scripts/write_firebase_plist.sh "${firebase_fixture}"
           test "$(cat "${firebase_fixture}")" = test
+          FIREBASE_IOS_PRODUCTION_PLIST="${missing_firebase_fixture}" \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1=dG \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2=Vz \
           GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3=dA \

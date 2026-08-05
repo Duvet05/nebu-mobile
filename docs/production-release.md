@@ -87,29 +87,24 @@ Configure the first workflow with:
 - Action: `Archive` for iOS
 - Signing: automatically managed by Xcode Cloud. The post-clone hook changes
   only Xcode Cloud's temporary checkout to automatic signing.
-- Start condition: manual while validating the first archive
-- Distribution preparation: `TestFlight (Internal Testing Only)`
-- Post-action: `TestFlight Internal Testing` for the `Testers Nebu` group
-- Secret environment variables:
-  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_1`,
-  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_2`, and
-  `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_3`
-- Optional fourth fragment when the Base64 value exceeds Xcode Cloud's per-value
-  limit: `GOOGLE_SERVICE_INFO_PLIST_BASE64_PART_4`
+- Start condition: manual on the `main` branch
+- Internal workflow distribution preparation: `TestFlight (Internal Testing Only)`
+- Internal post-action: `TestFlight Internal Testing` for `Testers Nebu`
+- External workflow distribution preparation: `App Store Connect`
+- External post-action: `TestFlight External Testing` for `Nebu Externos`
 - Optional environment variable: `FLUTTER_VERSION=3.44.8` (the script uses this
   version by default)
 
-Create a single Base64 string from the production
-`ios/Runner/GoogleService-Info.plist`, not the development plist, and split it
-into three or four contiguous fragments of similar size. Store the fragments in
-order using the Xcode Cloud secret names above:
+The production Firebase client configuration is tracked at
+`ios/firebase/production/GoogleService-Info.plist`. Firebase documents this
+file as containing non-secret project and app identifiers. Do not replace it
+with a Firebase Admin service-account key, APNs key, App Store Connect key, or
+any other server credential.
 
-```sh
-base64 -i ios/Runner/GoogleService-Info.plist | tr -d '\n'
-```
-
-The post-clone hook still accepts the legacy single
-`GOOGLE_SERVICE_INFO_PLIST_BASE64` variable for local or GitHub-driven checks.
+The post-clone hook copies the tracked file into the temporary Runner target.
+It temporarily retains support for the legacy single Base64 variable and the
+four Xcode Cloud fragments so existing workflows remain compatible while those
+obsolete variables are removed.
 
 The post-clone script fails if the plist does not identify Firebase project
 `flow-nebu-prod` and bundle ID `com.nebu.nebuMobileFlutter`.

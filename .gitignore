@@ -68,6 +68,9 @@ android/app/service-account.json
 # Firebase & Google services
 google-services.json
 GoogleService-Info.plist
+# Firebase client configuration contains public app identifiers, not admin
+# credentials. Keep the production Apple config explicit and auditable.
+!ios/firebase/production/GoogleService-Info.plist
 
 # Environment
 .env
