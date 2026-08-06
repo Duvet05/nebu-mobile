@@ -13,8 +13,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/app_routes.dart';
+import '../../../core/constants/ble_constants.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/services/nebu_ble_scan_result.dart';
 import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/toy_provider.dart';
@@ -254,12 +256,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       await _scanSubscription?.cancel();
       _scanSubscription = fbp.FlutterBluePlus.scanResults.listen((results) {
         final filteredResults = results
-            .where(
-              (r) =>
-                  r.device.platformName.isNotEmpty &&
-                  (r.device.platformName.toLowerCase().contains('nebu') ||
-                      r.device.platformName.toLowerCase().contains('esp32')),
-            )
+            .where((result) => result.isNebuProvisioningDevice)
             .toList();
 
         if (mounted) {
@@ -267,7 +264,18 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         }
       });
 
+      final isIOS = defaultTargetPlatform == TargetPlatform.iOS;
       await fbp.FlutterBluePlus.startScan(
+        // On iOS the custom name filters force CoreBluetooth to scan without
+        // an OS-level service restriction. FlutterBluePlus then applies OR
+        // matching, preserving compatibility with both old name-only firmware
+        // and new firmware that advertises the service UUID.
+        withServices: isIOS
+            ? [fbp.Guid(BleConstants.esp32WifiServiceUuid)]
+            : const [],
+        withKeywords: isIOS
+            ? const ['Nebu', 'nebu', 'ESP32', 'esp32']
+            : const [],
         timeout: const Duration(seconds: 15),
         androidUsesFineLocation:
             defaultTargetPlatform == TargetPlatform.android,
@@ -305,7 +313,10 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
   }
 
-  Future<void> _connectToDevice(fbp.BluetoothDevice device) async {
+  Future<void> _connectToDevice(
+    fbp.BluetoothDevice device, {
+    required String displayName,
+  }) async {
     final messenger = ScaffoldMessenger.of(context);
 
     setState(() => _isConnecting = true);
@@ -330,9 +341,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                 size: 20,
               ),
               SizedBox(width: context.spacing.gapLg),
-              Text(
-                'setup.connection.connected_to'.tr(args: [device.platformName]),
-              ),
+              Text('setup.connection.connected_to'.tr(args: [displayName])),
             ],
           ),
           backgroundColor: context.colors.success,
@@ -853,13 +862,16 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               final isConnecting = _isConnecting && isSelected;
 
               return _DeviceCard(
-                name: device.platformName.isNotEmpty
-                    ? device.platformName
-                    : 'setup.connection.unknown_device'.tr(),
+                name: result.nebuDisplayName,
                 signal: result.rssi,
                 isSelected: isSelected,
                 isConnecting: isConnecting,
-                onTap: _isConnecting ? null : () => _connectToDevice(device),
+                onTap: _isConnecting
+                    ? null
+                    : () => _connectToDevice(
+                        device,
+                        displayName: result.nebuDisplayName,
+                      ),
               );
             },
           ),
