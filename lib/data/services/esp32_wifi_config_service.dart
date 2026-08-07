@@ -131,18 +131,7 @@ class ESP32WifiConfigService {
     // Let ESP32 prepare its services
     await Future<void>.delayed(const Duration(milliseconds: 500));
 
-    final services = await _bluetoothService.discoverServicesForDevice(
-      device,
-      forceRefresh: true,
-    );
-
-    // Find WiFi service
-    final wifiService = services.firstWhere(
-      (s) =>
-          s.uuid.toString().toLowerCase() ==
-          BleConstants.esp32WifiServiceUuid.toLowerCase(),
-      orElse: () => throw Exception('WiFi configuration service not found'),
-    );
+    final wifiService = await _discoverWifiService(device);
 
     // Discover all characteristics
     for (final handler in _allHandlers) {
@@ -312,6 +301,36 @@ class ESP32WifiConfigService {
   }
 
   // -- Private helpers --
+
+  Future<fbp.BluetoothService> _discoverWifiService(
+    fbp.BluetoothDevice device,
+  ) async {
+    final expectedUuid = BleConstants.esp32WifiServiceUuid.toLowerCase();
+
+    // Older firmware could begin advertising before its GATT database was
+    // completely ready. Retry discovery so iOS does not fail the setup on the
+    // first, temporarily incomplete service list.
+    for (var attempt = 1; attempt <= 3; attempt++) {
+      final services = await _bluetoothService.discoverServicesForDevice(
+        device,
+        forceRefresh: true,
+      );
+      for (final service in services) {
+        if (service.uuid.toString().toLowerCase() == expectedUuid) {
+          return service;
+        }
+      }
+
+      if (attempt < 3) {
+        _logger.w(
+          '[ESP32] WiFi service not ready; retrying discovery ($attempt/3)',
+        );
+        await Future<void>.delayed(Duration(milliseconds: 400 * attempt));
+      }
+    }
+
+    throw Exception('WiFi configuration service not found');
+  }
 
   List<BleCharacteristicHandler> get _allHandlers => [
     _ssid,

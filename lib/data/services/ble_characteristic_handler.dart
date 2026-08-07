@@ -58,12 +58,19 @@ class BleCharacteristicHandler {
       return;
     }
 
-    await _characteristic!.setNotifyValue(true);
-    _subscription = _characteristic!.lastValueStream.listen(
-      onData,
-      onError: (Object e) => _logger.e('[$tag] Notification error: $e'),
-    );
-    _logger.d('[$tag] Subscribed to notifications');
+    try {
+      await _characteristic!.setNotifyValue(true);
+      _subscription = _characteristic!.lastValueStream.listen(
+        onData,
+        onError: (Object e) => _logger.e('[$tag] Notification error: $e'),
+      );
+      _logger.d('[$tag] Subscribed to notifications');
+    } on Exception catch (e) {
+      if (!optional) {
+        rethrow;
+      }
+      _logger.w('[$tag] Notifications unavailable on this firmware: $e');
+    }
   }
 
   /// Read raw bytes from the characteristic.
@@ -72,7 +79,15 @@ class BleCharacteristicHandler {
       return [];
     }
 
-    return _bluetoothService.readCharacteristic(_characteristic!);
+    try {
+      return await _bluetoothService.readCharacteristic(_characteristic!);
+    } on Exception catch (e) {
+      if (!optional) {
+        rethrow;
+      }
+      _logger.w('[$tag] Optional read unavailable: $e');
+      return [];
+    }
   }
 
   /// Read and decode as UTF-8 string.
