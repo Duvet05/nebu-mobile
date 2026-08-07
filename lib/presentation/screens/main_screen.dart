@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_routes.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/adaptive_icon.dart';
 
 class MainScreen extends ConsumerWidget {
   const MainScreen({required this.child, super.key});
@@ -31,38 +32,38 @@ class MainScreen extends ConsumerWidget {
 
   List<BottomNavigationBarItem> _authItems() => [
     BottomNavigationBarItem(
-      icon: const Icon(Icons.home),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.home),
       label: 'nav.home'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.dashboard),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.toys),
       label: 'nav.my_toys'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.history),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.activity),
       label: 'nav.activity'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.person),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.profile),
       label: 'nav.profile'.tr(),
     ),
   ];
 
   List<BottomNavigationBarItem> _unauthItems() => [
     BottomNavigationBarItem(
-      icon: const Icon(Icons.home),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.home),
       label: 'nav.home'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.dashboard),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.toys),
       label: 'nav.my_toys'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.history),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.activity),
       label: 'nav.activity'.tr(),
     ),
     BottomNavigationBarItem(
-      icon: const Icon(Icons.settings),
+      icon: const AdaptiveIcon(AdaptiveIconSymbol.settings),
       label: 'nav.settings'.tr(),
     ),
   ];

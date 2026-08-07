@@ -7,6 +7,7 @@ import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/adaptive_icon.dart';
 import '../widgets/auth_widgets.dart';
 
 class ResetPasswordScreen extends ConsumerStatefulWidget {
@@ -139,7 +140,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         AuthTextField(
                           controller: _tokenController,
                           label: 'auth.reset_password_token_hint'.tr(),
-                          prefixIcon: Icons.key_outlined,
+                          prefixIcon: AdaptiveIconSymbol.key,
                           textInputAction: TextInputAction.next,
                           validator: (value) =>
                               value == null || value.trim().isEmpty
@@ -152,7 +153,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         controller: _passwordController,
                         label: 'auth.reset_password_new_password_hint'.tr(),
                         keyboardType: TextInputType.visiblePassword,
-                        prefixIcon: Icons.lock_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.lock,
                         obscureText: _obscurePassword,
                         autofillHints: const [AutofillHints.newPassword],
                         textInputAction: TextInputAction.next,
@@ -161,8 +162,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         helperText: 'auth.password_requirements'.tr(),
                         suffixIcon: _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AdaptiveIconSymbol.visible
+                            : AdaptiveIconSymbol.hidden,
                         onSuffixTap: () => setState(
                           () => _obscurePassword = !_obscurePassword,
                         ),
@@ -174,7 +175,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                         controller: _confirmController,
                         label: 'auth.reset_password_confirm_hint'.tr(),
                         keyboardType: TextInputType.visiblePassword,
-                        prefixIcon: Icons.lock_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.lock,
                         obscureText: _obscureConfirmPassword,
                         autofillHints: const [AutofillHints.newPassword],
                         textInputAction: TextInputAction.done,
@@ -187,8 +188,8 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                           }
                         },
                         suffixIcon: _obscureConfirmPassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AdaptiveIconSymbol.visible
+                            : AdaptiveIconSymbol.hidden,
                         onSuffixTap: () => setState(
                           () => _obscureConfirmPassword =
                               !_obscureConfirmPassword,
