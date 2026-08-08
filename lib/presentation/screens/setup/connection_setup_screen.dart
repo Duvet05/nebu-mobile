@@ -16,10 +16,12 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/ble_constants.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/analytics_service.dart';
 import '../../../data/services/nebu_ble_scan_result.dart';
 import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/toy_provider.dart';
+import '../../widgets/adaptive_icon.dart';
 import 'setup_route_args.dart';
 
 class ConnectionSetupScreen extends ConsumerStatefulWidget {
@@ -123,6 +125,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       if (_isBluetoothUnauthorized) {
+        unawaited(
+          AnalyticsService.instance.logDeviceScanFailed(
+            AnalyticsTransport.bluetoothLe,
+            AnalyticsFailureReason.permissionDenied,
+          ),
+        );
         _showPermissionsDeniedSheet();
         return;
       }
@@ -135,11 +143,23 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     final hasPermissions = await _requestAndroidPermissions();
     if (hasPermissions && _isBluetoothEnabled) {
       await _startScan();
+    } else if (!hasPermissions) {
+      unawaited(
+        AnalyticsService.instance.logDeviceScanFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.permissionDenied,
+        ),
+      );
     }
   }
 
   Future<void> _connectViaWebBluetooth() async {
     final messenger = ScaffoldMessenger.of(context);
+    unawaited(
+      AnalyticsService.instance.logDeviceScanStarted(
+        AnalyticsTransport.webBluetooth,
+      ),
+    );
     setState(() => _isScanning = true);
     try {
       final connection = await connectToNebuWifiService();
@@ -148,12 +168,18 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         return;
       }
 
+      unawaited(
+        AnalyticsService.instance.logDevicePairSucceeded(
+          AnalyticsTransport.webBluetooth,
+        ),
+      );
+
       messenger.showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              Icon(
-                Icons.check_circle,
+              AdaptiveIcon(
+                AdaptiveIconSymbol.success,
                 color: context.colors.textOnFilled,
                 size: 20,
               ),
@@ -188,9 +214,18 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       }
     } on Object catch (e) {
       _logger.e('Web Bluetooth error: $e');
+      final wasCancelled = isWebBluetoothCancellation(e);
+      unawaited(
+        AnalyticsService.instance.logDevicePairFailed(
+          AnalyticsTransport.webBluetooth,
+          wasCancelled
+              ? AnalyticsFailureReason.cancelled
+              : AnalyticsFailureReason.connectionError,
+        ),
+      );
       if (mounted) {
         setState(() => _isScanning = false);
-        if (!isWebBluetoothCancellation(e)) {
+        if (!wasCancelled) {
           messenger.showSnackBar(
             SnackBar(
               content: Text('setup.connection.connection_failed'.tr()),
@@ -246,6 +281,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
 
     _logger.i('Starting Bluetooth scan...');
+    unawaited(
+      AnalyticsService.instance.logDeviceScanStarted(
+        AnalyticsTransport.bluetoothLe,
+      ),
+    );
     setState(() {
       _isScanning = true;
       _scanResults = [];
@@ -289,6 +329,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       });
     } on Exception catch (e) {
       _logger.e('Error starting scan: $e');
+      unawaited(
+        AnalyticsService.instance.logDeviceScanFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.scanError,
+        ),
+      );
       if (mounted) {
         setState(() => _isScanning = false);
       }
@@ -327,6 +373,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       );
       await esp32service.connectToESP32(device);
 
+      unawaited(
+        AnalyticsService.instance.logDevicePairSucceeded(
+          AnalyticsTransport.bluetoothLe,
+        ),
+      );
+
       if (!mounted) {
         return;
       }
@@ -335,8 +387,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         SnackBar(
           content: Row(
             children: [
-              Icon(
-                Icons.check_circle,
+              AdaptiveIcon(
+                AdaptiveIconSymbol.success,
                 color: context.colors.textOnFilled,
                 size: 20,
               ),
@@ -354,6 +406,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       setState(() => _selectedDevice = device);
     } on Exception catch (e) {
       _logger.e('Failed to connect: $e');
+      unawaited(
+        AnalyticsService.instance.logDevicePairFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.connectionError,
+        ),
+      );
       if (!mounted) {
         return;
       }
@@ -362,8 +420,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
         SnackBar(
           content: Row(
             children: [
-              Icon(
-                Icons.error_outline,
+              AdaptiveIcon(
+                AdaptiveIconSymbol.error,
                 color: context.colors.textOnFilled,
                 size: 20,
               ),
@@ -390,7 +448,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => _BottomSheet(
-        icon: Icons.bluetooth_disabled_rounded,
+        icon: AdaptiveIconSymbol.bluetoothOff,
         iconColor: context.colors.primary,
         title: 'setup.connection.enable_bluetooth_title'.tr(),
         description: 'setup.connection.enable_bluetooth_message'.tr(),
@@ -463,8 +521,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                     color: context.colors.primary.withValues(alpha: 0.1),
                     borderRadius: context.radius.bottomSheet,
                   ),
-                  child: Icon(
-                    Icons.settings_rounded,
+                  child: AdaptiveIcon(
+                    AdaptiveIconSymbol.settings,
                     color: context.colors.primary,
                     size: 32,
                   ),
@@ -488,7 +546,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
                 // Option 1: Configure Locally
                 _OptionCard(
-                  icon: Icons.phone_android_rounded,
+                  icon: AdaptiveIconSymbol.device,
                   title: 'setup.connection.configure_locally'.tr(),
                   description: 'setup.connection.configure_locally_desc'.tr(),
                   onTap: () {
@@ -501,7 +559,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
 
                 // Option 2: Skip
                 _OptionCard(
-                  icon: Icons.arrow_forward_rounded,
+                  icon: AdaptiveIconSymbol.forward,
                   title: 'setup.connection.skip_setup'.tr(),
                   description: 'setup.connection.skip_setup_desc'.tr(),
                   isSecondary: true,
@@ -537,7 +595,7 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => _BottomSheet(
-        icon: Icons.security_rounded,
+        icon: AdaptiveIconSymbol.shield,
         iconColor: context.colors.warning,
         title: 'setup.connection.permissions_required_title'.tr(),
         description: descriptionKey.tr(),
@@ -639,8 +697,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                         ),
                         child: Row(
                           children: [
-                            const Icon(
-                              Icons.info_outline_rounded,
+                            const AdaptiveIcon(
+                              AdaptiveIconSymbol.info,
                               color: Color(0xFF856404),
                               size: 20,
                             ),
@@ -748,8 +806,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
                       borderRadius: context.radius.button,
                     ),
                     child: Center(
-                      child: Icon(
-                        Icons.bluetooth_searching_rounded,
+                      child: AdaptiveIcon(
+                        AdaptiveIconSymbol.bluetoothSearching,
                         size: 36,
                         color: context.colors.primary,
                       ),
@@ -791,8 +849,8 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               borderRadius: context.radius.largeIcon,
             ),
-            child: Icon(
-              Icons.bluetooth_rounded,
+            child: AdaptiveIcon(
+              AdaptiveIconSymbol.bluetooth,
               size: 48,
               color: colorScheme.onSurfaceVariant,
             ),
@@ -902,8 +960,8 @@ class _BackButton extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: context.radius.tile,
           ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
+          child: AdaptiveIcon(
+            AdaptiveIconSymbol.back,
             size: 18,
             color: colorScheme.onSurfaceVariant,
           ),
@@ -1012,12 +1070,12 @@ class _DeviceCard extends StatelessWidget {
 
   IconData _getSignalIcon() {
     if (signal >= -50) {
-      return Icons.signal_cellular_4_bar_rounded;
+      return AdaptiveIconSymbol.signalHigh.iconData;
     }
     if (signal >= -70) {
-      return Icons.signal_cellular_alt_rounded;
+      return AdaptiveIconSymbol.signalMedium.iconData;
     }
-    return Icons.signal_cellular_alt_1_bar_rounded;
+    return AdaptiveIconSymbol.signalLow.iconData;
   }
 
   @override
@@ -1064,8 +1122,8 @@ class _DeviceCard extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Icon(
-                      Icons.bluetooth_rounded,
+                  : AdaptiveIcon(
+                      AdaptiveIconSymbol.bluetooth,
                       color: isSelected
                           ? context.colors.primary
                           : colorScheme.onSurfaceVariant,
@@ -1114,8 +1172,8 @@ class _DeviceCard extends StatelessWidget {
                   color: context.colors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.check_rounded,
+                child: AdaptiveIcon(
+                  AdaptiveIconSymbol.check,
                   color: context.colors.textOnFilled,
                   size: 16,
                 ),
@@ -1138,7 +1196,7 @@ class _BottomSheet extends StatelessWidget {
     required this.secondaryText,
     required this.secondaryOnPressed,
   });
-  final IconData icon;
+  final AdaptiveIconSymbol icon;
   final Color iconColor;
   final String title;
   final String description;
@@ -1178,7 +1236,7 @@ class _BottomSheet extends StatelessWidget {
                 color: iconColor.withValues(alpha: 0.1),
                 borderRadius: context.radius.bottomSheet,
               ),
-              child: Icon(icon, color: iconColor, size: 32),
+              child: AdaptiveIcon(icon, color: iconColor, size: 32),
             ),
             SizedBox(height: context.spacing.gapXxl),
             Text(
@@ -1246,7 +1304,7 @@ class _OptionCard extends StatelessWidget {
     required this.onTap,
     this.isSecondary = false,
   });
-  final IconData icon;
+  final AdaptiveIconSymbol icon;
   final String title;
   final String description;
   final bool isSecondary;
@@ -1282,7 +1340,7 @@ class _OptionCard extends StatelessWidget {
                     : context.colors.primary.withValues(alpha: 0.15),
                 borderRadius: context.radius.tile,
               ),
-              child: Icon(
+              child: AdaptiveIcon(
                 icon,
                 color: isSecondary
                     ? context.colors.grey400
@@ -1314,8 +1372,8 @@ class _OptionCard extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
+            AdaptiveIcon(
+              AdaptiveIconSymbol.forward,
               size: 16,
               color: context.colors.grey500,
             ),

@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/analytics_service.dart';
 import '../../core/utils/error_reporting_service.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../providers/api_provider.dart';
@@ -140,7 +141,14 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                     value,
                   );
                   unawaited(
-                    ErrorReportingService.setCollectionEnabled(enabled: value),
+                    Future.wait([
+                      AnalyticsService.instance.setCollectionEnabled(
+                        enabled: value,
+                      ),
+                      ErrorReportingService.setCollectionEnabled(
+                        enabled: value,
+                      ),
+                    ]),
                   );
                 },
               ),

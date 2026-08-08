@@ -10,6 +10,7 @@ import '../../core/utils/apple_auth_helper.dart';
 import '../../core/utils/google_auth_helper.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/adaptive_icon.dart';
 import '../widgets/auth_widgets.dart';
 
 /// Keywords that indicate the backend rejected login due to pending email verification.
@@ -137,7 +138,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       AuthTextField(
                         controller: _identifierController,
                         label: 'auth.username_or_email'.tr(),
-                        prefixIcon: Icons.person_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.person,
                         validator: (v) => (v == null || v.isEmpty)
                             ? 'auth.username_or_email_required'.tr()
                             : null,
@@ -147,10 +148,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         controller: _passwordController,
                         label: 'auth.password'.tr(),
                         obscureText: _obscurePassword,
-                        prefixIcon: Icons.lock_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.lock,
                         suffixIcon: _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AdaptiveIconSymbol.visible
+                            : AdaptiveIconSymbol.hidden,
                         onSuffixTap: () => setState(
                           () => _obscurePassword = !_obscurePassword,
                         ),
@@ -256,7 +257,7 @@ void _showForgotPasswordDialog(
             AuthTextField(
               controller: emailController,
               label: 'auth.email'.tr(),
-              prefixIcon: Icons.email_outlined,
+              prefixIcon: AdaptiveIconSymbol.mail,
               keyboardType: TextInputType.emailAddress,
             ),
             if (errorText != null) ...[

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../core/theme/app_colors.dart';
+import 'adaptive_icon.dart';
 
 class AuthBackButton extends StatelessWidget {
   const AuthBackButton({required this.onPressed, super.key});
@@ -13,8 +14,8 @@ class AuthBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton(
     onPressed: onPressed,
-    icon: Icon(
-      Icons.arrow_back_ios_new_rounded,
+    icon: AdaptiveIcon(
+      AdaptiveIconSymbol.back,
       size: 20,
       color: context.colors.textNormal,
     ),
@@ -69,8 +70,8 @@ class AuthTextField extends StatelessWidget {
   final String? hintText;
   final TextInputType? keyboardType;
   final bool obscureText;
-  final IconData prefixIcon;
-  final IconData? suffixIcon;
+  final AdaptiveIconSymbol prefixIcon;
+  final AdaptiveIconSymbol? suffixIcon;
   final VoidCallback? onSuffixTap;
   final String? Function(String?)? validator;
   final TextCapitalization textCapitalization;
@@ -122,12 +123,16 @@ class AuthTextField extends StatelessWidget {
           color: context.theme.colorScheme.primary,
           fontWeight: FontWeight.w500,
         ),
-        prefixIcon: Icon(prefixIcon, color: context.colors.grey500, size: 22),
+        prefixIcon: AdaptiveIcon(
+          prefixIcon,
+          color: context.colors.grey500,
+          size: 22,
+        ),
         suffixIcon: suffixIcon != null
             ? GestureDetector(
                 onTap: onSuffixTap,
-                child: Icon(
-                  suffixIcon,
+                child: AdaptiveIcon(
+                  suffixIcon!,
                   color: context.colors.grey500,
                   size: 22,
                 ),
@@ -424,8 +429,8 @@ class AuthErrorBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline_rounded,
+          AdaptiveIcon(
+            AdaptiveIconSymbol.error,
             color: context.colors.error,
             size: 22,
           ),

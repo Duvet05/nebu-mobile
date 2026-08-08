@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nebu_mobile_flutter/core/theme/app_theme.dart';
+import 'package:nebu_mobile_flutter/presentation/widgets/adaptive_icon.dart';
 import 'package:nebu_mobile_flutter/presentation/widgets/auth_widgets.dart';
 
 void main() {
@@ -36,7 +37,7 @@ void main() {
               child: AuthTextField(
                 controller: controller,
                 label: 'Contraseña',
-                prefixIcon: Icons.lock_outline,
+                prefixIcon: AdaptiveIconSymbol.lock,
                 obscureText: true,
                 keyboardType: TextInputType.visiblePassword,
                 autofillHints: const [AutofillHints.newPassword],

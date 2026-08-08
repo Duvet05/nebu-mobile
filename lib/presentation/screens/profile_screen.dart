@@ -14,6 +14,7 @@ import '../../core/utils/ui_helpers.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/edit_profile_screen.dart';
+import '../widgets/adaptive_icon.dart';
 import '../widgets/custom_button.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -114,7 +115,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           // Edit Profile Icon
                           IconButton(
-                            icon: const Icon(Icons.edit_outlined),
+                            icon: const AdaptiveIcon(AdaptiveIconSymbol.edit),
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.7,
                             ),
@@ -136,12 +137,12 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.child_care,
+                          icon: AdaptiveIconSymbol.child,
                           title: user != null
                               ? 'persons.title'.tr()
                               : 'profile.child_profile'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
@@ -162,10 +163,10 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           _SettingsTile(
                             theme: theme,
-                            icon: Icons.timer_outlined,
+                            icon: AdaptiveIconSymbol.time,
                             title: 'profile.usage_limits'.tr(),
-                            trailing: Icon(
-                              Icons.chevron_right,
+                            trailing: AdaptiveIcon(
+                              AdaptiveIconSymbol.forward,
                               color: context.colors.grey400,
                             ),
                             onTap: () {
@@ -183,7 +184,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                           _SettingsTile(
                             theme: theme,
-                            icon: Icons.notifications_outlined,
+                            icon: AdaptiveIconSymbol.notifications,
                             title: 'profile.notifications'.tr(),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -197,8 +198,8 @@ class ProfileScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 SizedBox(width: context.spacing.gapMd),
-                                Icon(
-                                  Icons.chevron_right,
+                                AdaptiveIcon(
+                                  AdaptiveIconSymbol.forward,
                                   color: context.colors.grey400,
                                 ),
                               ],
@@ -220,10 +221,10 @@ class ProfileScreen extends ConsumerWidget {
                       children: [
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.person_outline,
+                          icon: AdaptiveIconSymbol.person,
                           title: 'profile.edit_profile'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
@@ -237,10 +238,10 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.privacy_tip_outlined,
+                          icon: AdaptiveIconSymbol.privacy,
                           title: 'profile.privacy'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
@@ -254,10 +255,10 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.help_outline,
+                          icon: AdaptiveIconSymbol.help,
                           title: 'profile.help_support'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () => context.push(AppRoutes.helpSupport.path),
@@ -269,10 +270,10 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.description_outlined,
+                          icon: AdaptiveIconSymbol.document,
                           title: 'privacy.terms_of_service'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
@@ -286,10 +287,10 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.policy_outlined,
+                          icon: AdaptiveIconSymbol.privacy,
                           title: 'privacy.privacy_policy'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.grey400,
                           ),
                           onTap: () {
@@ -303,10 +304,10 @@ class ProfileScreen extends ConsumerWidget {
                         ),
                         _SettingsTile(
                           theme: theme,
-                          icon: Icons.delete_forever_outlined,
+                          icon: AdaptiveIconSymbol.delete,
                           title: 'privacy.delete_account'.tr(),
-                          trailing: Icon(
-                            Icons.chevron_right,
+                          trailing: AdaptiveIcon(
+                            AdaptiveIconSymbol.forward,
                             color: context.colors.error,
                           ),
                           onTap: () {
@@ -441,7 +442,7 @@ class _SettingsTile extends StatelessWidget {
   });
 
   final ThemeData theme;
-  final IconData icon;
+  final AdaptiveIconSymbol icon;
   final String title;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -452,7 +453,7 @@ class _SettingsTile extends StatelessWidget {
       horizontal: context.spacing.panelPadding,
       vertical: context.spacing.labelBottomMargin,
     ),
-    leading: Icon(
+    leading: AdaptiveIcon(
       icon,
       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
       size: 24,
