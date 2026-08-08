@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/config.dart';
 import '../../core/constants/storage_keys.dart';
+import '../../core/utils/analytics_service.dart';
 import '../../core/utils/error_reporting_service.dart';
 import '../../data/models/user.dart';
 import '../../data/services/activity_migration_service.dart';
@@ -60,14 +61,21 @@ class AuthNotifier extends AsyncNotifier<User?> {
     Future<({bool success, User? user, String? error})> Function(
       AuthService service,
     )
-    authCall,
-  ) async {
+    authCall, {
+    required AnalyticsAuthMethod method,
+    required bool isSignUp,
+  }) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final authService = await ref.read(authServiceProvider.future);
       final response = await authCall(authService);
       if (response.success && response.user != null) {
         await _onAuthSuccess(response.user!);
+        unawaited(
+          isSignUp
+              ? AnalyticsService.instance.logSignUp(method)
+              : AnalyticsService.instance.logLogin(method),
+        );
         return response.user;
       }
       final error = response.error ?? 'auth.login_error';
@@ -105,10 +113,14 @@ class AuthNotifier extends AsyncNotifier<User?> {
   }
 
   Future<void> login({required String identifier, required String password}) =>
-      _authenticate((s) async {
-        final r = await s.login(identifier: identifier, password: password);
-        return (success: r.success, user: r.user, error: r.error);
-      });
+      _authenticate(
+        (s) async {
+          final r = await s.login(identifier: identifier, password: password);
+          return (success: r.success, user: r.user, error: r.error);
+        },
+        method: AnalyticsAuthMethod.password,
+        isSignUp: false,
+      );
 
   Future<void> register({
     required String email,
@@ -116,35 +128,51 @@ class AuthNotifier extends AsyncNotifier<User?> {
     String? firstName,
     String? lastName,
     String? preferredLanguage,
-  }) => _authenticate((s) async {
-    final r = await s.register(
-      email: email,
-      password: password,
-      firstName: firstName,
-      lastName: lastName,
-      preferredLanguage: preferredLanguage,
-    );
-    return (success: r.success, user: r.user, error: r.error);
-  });
+  }) => _authenticate(
+    (s) async {
+      final r = await s.register(
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName,
+        preferredLanguage: preferredLanguage,
+      );
+      return (success: r.success, user: r.user, error: r.error);
+    },
+    method: AnalyticsAuthMethod.password,
+    isSignUp: true,
+  );
 
-  Future<void> loginWithGoogle(String token) => _authenticate((s) async {
-    final r = await s.googleLogin(token);
-    // Google already verified the email — ensure router doesn't gate on emailVerified
-    final user = r.user?.copyWith(emailVerified: true);
-    return (success: r.success, user: user, error: r.error);
-  });
+  Future<void> loginWithGoogle(String token) => _authenticate(
+    (s) async {
+      final r = await s.googleLogin(token);
+      // Google already verified the email — ensure router doesn't gate on emailVerified
+      final user = r.user?.copyWith(emailVerified: true);
+      return (success: r.success, user: user, error: r.error);
+    },
+    method: AnalyticsAuthMethod.google,
+    isSignUp: false,
+  );
 
-  Future<void> loginWithFacebook(String token) => _authenticate((s) async {
-    final r = await s.facebookLogin(token);
-    final user = r.user?.copyWith(emailVerified: true);
-    return (success: r.success, user: user, error: r.error);
-  });
+  Future<void> loginWithFacebook(String token) => _authenticate(
+    (s) async {
+      final r = await s.facebookLogin(token);
+      final user = r.user?.copyWith(emailVerified: true);
+      return (success: r.success, user: user, error: r.error);
+    },
+    method: AnalyticsAuthMethod.facebook,
+    isSignUp: false,
+  );
 
-  Future<void> loginWithApple(String token) => _authenticate((s) async {
-    final r = await s.appleLogin(token);
-    final user = r.user?.copyWith(emailVerified: true);
-    return (success: r.success, user: user, error: r.error);
-  });
+  Future<void> loginWithApple(String token) => _authenticate(
+    (s) async {
+      final r = await s.appleLogin(token);
+      final user = r.user?.copyWith(emailVerified: true);
+      return (success: r.success, user: user, error: r.error);
+    },
+    method: AnalyticsAuthMethod.apple,
+    isSignUp: false,
+  );
 
   Future<void> updateUser(User user) async {
     await ref

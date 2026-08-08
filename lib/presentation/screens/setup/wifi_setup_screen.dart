@@ -14,6 +14,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/constants/validation_rules.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/analytics_service.dart';
 import '../../../data/services/esp32_wifi_config_service.dart';
 import '../../../data/services/web_wifi_config.dart';
 import '../../../data/services/wifi_qr_parser.dart';
@@ -57,6 +58,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
   bool _hasPersistedWebDeviceId = false;
 
   bool get _isChangeWifiFlow => widget.args.mode == SetupFlowMode.changeWifi;
+  AnalyticsTransport get _analyticsTransport =>
+      kIsWeb ? AnalyticsTransport.webBluetooth : AnalyticsTransport.bluetoothLe;
 
   ConnectionSetupRouteArgs get _connectionSetupArgs => ConnectionSetupRouteArgs(
     mode: widget.args.mode,
@@ -163,6 +166,11 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
           break;
         }
         _hasNavigatedToNext = true;
+        unawaited(
+          AnalyticsService.instance.logWifiProvisionSucceeded(
+            _analyticsTransport,
+          ),
+        );
 
         messenger.showSnackBar(
           SnackBar(
@@ -176,6 +184,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       case ESP32WifiStatus.failed:
         _timeoutTimer?.cancel();
         setState(() => _isConnecting = false);
+        unawaited(
+          AnalyticsService.instance.logWifiProvisionFailed(
+            _analyticsTransport,
+            AnalyticsFailureReason.deviceReportedFailure,
+          ),
+        );
 
         messenger.showSnackBar(
           SnackBar(
@@ -200,6 +214,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
     _timeoutTimer?.cancel();
     if (_isConnecting) {
+      unawaited(
+        AnalyticsService.instance.logWifiProvisionFailed(
+          _analyticsTransport,
+          AnalyticsFailureReason.streamError,
+        ),
+      );
       setState(() => _isConnecting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -218,6 +238,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
     _timeoutTimer?.cancel();
     if (_isConnecting) {
+      unawaited(
+        AnalyticsService.instance.logWifiProvisionFailed(
+          _analyticsTransport,
+          AnalyticsFailureReason.streamError,
+        ),
+      );
       setState(() => _isConnecting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -427,6 +453,9 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final colors = context.colors;
 
+    unawaited(
+      AnalyticsService.instance.logWifiProvisionStarted(_analyticsTransport),
+    );
     setState(() => _isConnecting = true);
 
     try {
@@ -464,6 +493,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       unawaited(_persistWebDeviceIdIfAvailable());
       _startConnectionTimeout();
     } on TimeoutException {
+      unawaited(
+        AnalyticsService.instance.logWifiProvisionFailed(
+          _analyticsTransport,
+          AnalyticsFailureReason.timeout,
+        ),
+      );
       messenger.showSnackBar(
         SnackBar(
           content: Text('setup.wifi.error_ble_timeout'.tr()),
@@ -476,6 +511,12 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
       }
     } on Exception catch (e) {
       _logger.e('Error sending WiFi credentials: $e');
+      unawaited(
+        AnalyticsService.instance.logWifiProvisionFailed(
+          _analyticsTransport,
+          AnalyticsFailureReason.connectionError,
+        ),
+      );
 
       messenger.showSnackBar(
         SnackBar(

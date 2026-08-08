@@ -72,6 +72,7 @@ dependencies:
   firebase_core: ^4.0.0
   firebase_crashlytics: ^5.0.8
   firebase_messaging: ^16.0.0
+  firebase_analytics: ^12.4.6
 
   # Utilities
   logger: ^2.3.0

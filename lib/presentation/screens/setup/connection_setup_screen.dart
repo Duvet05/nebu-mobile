@@ -16,6 +16,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/ble_constants.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/analytics_service.dart';
 import '../../../data/services/nebu_ble_scan_result.dart';
 import '../../../data/services/web_bluetooth_connector.dart';
 import '../../providers/api_provider.dart';
@@ -124,6 +125,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       if (_isBluetoothUnauthorized) {
+        unawaited(
+          AnalyticsService.instance.logDeviceScanFailed(
+            AnalyticsTransport.bluetoothLe,
+            AnalyticsFailureReason.permissionDenied,
+          ),
+        );
         _showPermissionsDeniedSheet();
         return;
       }
@@ -136,11 +143,23 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     final hasPermissions = await _requestAndroidPermissions();
     if (hasPermissions && _isBluetoothEnabled) {
       await _startScan();
+    } else if (!hasPermissions) {
+      unawaited(
+        AnalyticsService.instance.logDeviceScanFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.permissionDenied,
+        ),
+      );
     }
   }
 
   Future<void> _connectViaWebBluetooth() async {
     final messenger = ScaffoldMessenger.of(context);
+    unawaited(
+      AnalyticsService.instance.logDeviceScanStarted(
+        AnalyticsTransport.webBluetooth,
+      ),
+    );
     setState(() => _isScanning = true);
     try {
       final connection = await connectToNebuWifiService();
@@ -148,6 +167,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       if (!mounted) {
         return;
       }
+
+      unawaited(
+        AnalyticsService.instance.logDevicePairSucceeded(
+          AnalyticsTransport.webBluetooth,
+        ),
+      );
 
       messenger.showSnackBar(
         SnackBar(
@@ -189,9 +214,18 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       }
     } on Object catch (e) {
       _logger.e('Web Bluetooth error: $e');
+      final wasCancelled = isWebBluetoothCancellation(e);
+      unawaited(
+        AnalyticsService.instance.logDevicePairFailed(
+          AnalyticsTransport.webBluetooth,
+          wasCancelled
+              ? AnalyticsFailureReason.cancelled
+              : AnalyticsFailureReason.connectionError,
+        ),
+      );
       if (mounted) {
         setState(() => _isScanning = false);
-        if (!isWebBluetoothCancellation(e)) {
+        if (!wasCancelled) {
           messenger.showSnackBar(
             SnackBar(
               content: Text('setup.connection.connection_failed'.tr()),
@@ -247,6 +281,11 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
     }
 
     _logger.i('Starting Bluetooth scan...');
+    unawaited(
+      AnalyticsService.instance.logDeviceScanStarted(
+        AnalyticsTransport.bluetoothLe,
+      ),
+    );
     setState(() {
       _isScanning = true;
       _scanResults = [];
@@ -290,6 +329,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       });
     } on Exception catch (e) {
       _logger.e('Error starting scan: $e');
+      unawaited(
+        AnalyticsService.instance.logDeviceScanFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.scanError,
+        ),
+      );
       if (mounted) {
         setState(() => _isScanning = false);
       }
@@ -328,6 +373,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       );
       await esp32service.connectToESP32(device);
 
+      unawaited(
+        AnalyticsService.instance.logDevicePairSucceeded(
+          AnalyticsTransport.bluetoothLe,
+        ),
+      );
+
       if (!mounted) {
         return;
       }
@@ -355,6 +406,12 @@ class _ConnectionSetupScreenState extends ConsumerState<ConnectionSetupScreen>
       setState(() => _selectedDevice = device);
     } on Exception catch (e) {
       _logger.e('Failed to connect: $e');
+      unawaited(
+        AnalyticsService.instance.logDevicePairFailed(
+          AnalyticsTransport.bluetoothLe,
+          AnalyticsFailureReason.connectionError,
+        ),
+      );
       if (!mounted) {
         return;
       }

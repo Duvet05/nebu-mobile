@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,6 +51,7 @@ import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
 import '../config/config.dart';
 import '../constants/app_routes.dart';
+import '../utils/analytics_service.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authChange = ValueNotifier<AsyncValue<User?>>(
@@ -70,7 +73,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
     });
 
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: AppRoutes.splash.path,
     refreshListenable: authChange,
     redirect: (context, state) {
@@ -113,6 +116,22 @@ final routerProvider = Provider<GoRouter>((ref) {
     errorBuilder: (context, state) =>
         Scaffold(body: Center(child: Text('errors.route_not_found'.tr()))),
   );
+
+  String? lastTrackedPath;
+  void trackCurrentRoute() {
+    final path = router.routerDelegate.currentConfiguration.uri.path;
+    if (path == lastTrackedPath) {
+      return;
+    }
+    lastTrackedPath = path;
+    unawaited(AnalyticsService.instance.logScreenView(path));
+  }
+
+  router.routerDelegate.addListener(trackCurrentRoute);
+  ref.onDispose(() => router.routerDelegate.removeListener(trackCurrentRoute));
+  scheduleMicrotask(trackCurrentRoute);
+
+  return router;
 });
 
 String? _redirectMinimumRelease({
