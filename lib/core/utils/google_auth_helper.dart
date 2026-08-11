@@ -131,42 +131,72 @@ String _googleSignInFailureMessage(GoogleSignInException exception) {
   return description == null || description.isEmpty ? fallback : description;
 }
 
-/// Shared Google sign-in handler for login and signup screens.
-Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) async {
+void handleGoogleAuthenticationError(BuildContext context, Object error) {
+  if (error case final GoogleSignInException exception) {
+    if (!shouldReportGoogleSignInException(exception)) {
+      return;
+    }
+    _logGoogleSignInException(exception);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_googleSignInFailureMessage(exception))),
+      );
+    }
+    return;
+  }
+
+  debugPrint('Google sign-in failed: $error');
+  if (context.mounted) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('auth.google_signin_failed_detail'.tr())),
+    );
+  }
+}
+
+Future<void> _runGoogleAuth(
+  BuildContext context,
+  WidgetRef ref,
+  Future<String> Function() getIdToken,
+) async {
   if (_googleAuthInProgress) {
     return;
   }
   _googleAuthInProgress = true;
 
   try {
-    final idToken = await ref
-        .read(googleAuthClientProvider)
-        .authenticateIdToken();
+    final idToken = await getIdToken();
 
     if (!context.mounted) {
       return;
     }
 
     await ref.read(authProvider.notifier).loginWithGoogle(idToken);
-  } on GoogleSignInException catch (e) {
-    final shouldReport = shouldReportGoogleSignInException(e);
-    if (!shouldReport) {
-      return;
-    }
-    _logGoogleSignInException(e);
+  } on Exception catch (error) {
     if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(_googleSignInFailureMessage(e))));
-    }
-  } on Exception catch (e) {
-    debugPrint('Google sign-in failed: $e');
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('auth.google_signin_failed_detail'.tr())),
-      );
+      handleGoogleAuthenticationError(context, error);
     }
   } finally {
     _googleAuthInProgress = false;
   }
 }
+
+/// Starts the native Android/iOS Google authentication flow.
+Future<void> handleGoogleAuth(BuildContext context, WidgetRef ref) =>
+    _runGoogleAuth(
+      context,
+      ref,
+      ref.read(googleAuthClientProvider).authenticateIdToken,
+    );
+
+/// Forwards a browser credential emitted by the Google-rendered web button to
+/// the same backend authentication pipeline used by the native apps.
+Future<void> handleGoogleIdToken(
+  BuildContext context,
+  WidgetRef ref,
+  String? idToken,
+) => _runGoogleAuth(context, ref, () async {
+  if (idToken == null || idToken.isEmpty) {
+    throw Exception('Google authentication returned no ID token');
+  }
+  return idToken;
+});

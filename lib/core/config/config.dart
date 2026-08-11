@@ -137,6 +137,25 @@ abstract final class Config {
         : _productionGoogleIosClientId;
   }
 
+  /// OAuth client ID consumed by the current platform SDK.
+  ///
+  /// Google Identity Services on web expects the Web application client ID,
+  /// while iOS expects its native client ID. Android discovers its native
+  /// client from google-services.json and only needs the server client ID.
+  static String? googleClientIdForPlatform({
+    required bool isWeb,
+    required TargetPlatform platform,
+  }) {
+    if (isWeb) {
+      return googleWebClientId;
+    }
+    return platform == TargetPlatform.iOS ? googleIosClientId : null;
+  }
+
+  /// Server client ID used to mint an ID token accepted by the Nebu API.
+  static String? googleServerClientIdForPlatform({required bool isWeb}) =>
+      isWeb ? null : googleWebClientId;
+
   static String get facebookAppId => _facebookAppId;
 
   // ============================================

@@ -7,10 +7,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/apple_auth_helper.dart';
-import '../../core/utils/google_auth_helper.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
+import '../widgets/google_auth_button.dart';
 
 /// Keywords that indicate the backend rejected login due to pending email verification.
 const _pendingVerificationKeywords = [
@@ -198,11 +198,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       SizedBox(height: context.spacing.panelPadding),
                       const AuthOrDivider(),
                       SizedBox(height: context.spacing.panelPadding),
-                      AuthGoogleButton(
+                      GoogleAuthButton(
                         key: const ValueKey('login.googleButton'),
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
-                        onPressed: () => handleGoogleAuth(context, ref),
                       ),
                       AuthAppleButton(
                         isLoading: authState.isLoading,

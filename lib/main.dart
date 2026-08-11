@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
@@ -40,12 +41,13 @@ void main() async {
       () async {
         try {
           await GoogleSignIn.instance.initialize(
-            clientId: Config.googleIosClientId.isNotEmpty
-                ? Config.googleIosClientId
-                : null,
-            serverClientId: Config.googleWebClientId.isNotEmpty
-                ? Config.googleWebClientId
-                : null,
+            clientId: Config.googleClientIdForPlatform(
+              isWeb: kIsWeb,
+              platform: defaultTargetPlatform,
+            ),
+            serverClientId: Config.googleServerClientIdForPlatform(
+              isWeb: kIsWeb,
+            ),
           );
           // ignore: avoid_catching_errors
         } on UnimplementedError {
