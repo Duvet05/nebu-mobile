@@ -373,11 +373,12 @@ class AuthSwitchLink extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = context.theme.textTheme;
 
-    return Wrap(
-      alignment: WrapAlignment.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          '$prompt ',
+          prompt,
+          textAlign: TextAlign.center,
           style: textTheme.bodyMedium?.copyWith(color: context.colors.grey400),
         ),
         Semantics(
@@ -387,11 +388,15 @@ class AuthSwitchLink extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             onTap: enabled ? onTap : null,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: context.spacing.labelBottomMargin,
+              padding: EdgeInsets.fromLTRB(
+                context.spacing.labelBottomMargin,
+                context.spacing.labelBottomMargin / 2,
+                context.spacing.labelBottomMargin,
+                context.spacing.labelBottomMargin,
               ),
               child: Text(
                 action,
+                textAlign: TextAlign.center,
                 style: textTheme.bodyMedium?.copyWith(
                   color: enabled
                       ? context.theme.colorScheme.primary
