@@ -1,0 +1,154 @@
+name: Promote Android 1062 to Production
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: play-production-promotion
+  cancel-in-progress: false
+
+env:
+  FLUTTER_VERSION: "3.44.8"
+  EXPECTED_VERSION_CODE: "1062"
+  FROM_TRACK: "alpha"
+  TO_TRACK: "production"
+
+jobs:
+  promote:
+    name: Promote Alpha 1062 to Production
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate with Google Play
+        id: play_auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+
+      - name: Verify Alpha contains build 1062
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play_auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+
+          edit_response=$(curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data '{}' \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits")
+          edit_id=$(printf '%s' "${edit_response}" | jq -r '.id')
+
+          cleanup() {
+            curl --silent --request DELETE \
+              --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+              "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits/${edit_id}" \
+              >/dev/null || true
+          }
+          trap cleanup EXIT
+
+          alpha_response=$(curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits/${edit_id}/tracks/${FROM_TRACK}")
+
+          matching_release_count=$(printf '%s' "${alpha_response}" | jq \
+            --arg expected "${EXPECTED_VERSION_CODE}" \
+            '[.releases[]? | select(.status == "completed") | select(.versionCodes | index($expected))] | length')
+
+          if [ "${matching_release_count}" -ne 1 ]; then
+            echo "Expected exactly one completed Alpha release containing version code ${EXPECTED_VERSION_CODE}." >&2
+            printf '%s' "${alpha_response}" | jq '{track, releases: [.releases[]? | {status, versionCodes}]}' >&2
+            exit 1
+          fi
+
+          echo "Verified completed Alpha release ${EXPECTED_VERSION_CODE}."
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Prepare Flutter project
+        run: |
+          set -euo pipefail
+          flutter pub get
+          flutter_root="$(dirname "$(dirname "$(command -v flutter)")")"
+          printf 'sdk.dir=%s\nflutter.sdk=%s\n' "${ANDROID_HOME}" "${flutter_root}" > android/local.properties
+
+      - name: Decode Play Store service account
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PLAY_SERVICE_ACCOUNT_JSON}" ]; then
+            echo "Missing GitHub secret PLAY_SERVICE_ACCOUNT_JSON" >&2
+            exit 1
+          fi
+          printf '%s' "${PLAY_SERVICE_ACCOUNT_JSON}" > android/service-account.json
+
+      - name: Promote verified release to Production
+        run: |
+          set -euo pipefail
+          cd android
+          ./gradlew promoteArtifact \
+            --from-track "${FROM_TRACK}" \
+            --promote-track "${TO_TRACK}" \
+            --release-status completed
+
+      - name: Verify Production contains build 1062
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play_auth.outputs.access_token }}
+        run: |
+          set -euo pipefail
+
+          edit_response=$(curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+            --header "Content-Type: application/json" \
+            --data '{}' \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits")
+          edit_id=$(printf '%s' "${edit_response}" | jq -r '.id')
+
+          cleanup() {
+            curl --silent --request DELETE \
+              --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+              "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits/${edit_id}" \
+              >/dev/null || true
+          }
+          trap cleanup EXIT
+
+          production_response=$(curl --fail-with-body --silent --show-error \
+            --header "Authorization: Bearer ${PLAY_ACCESS_TOKEN}" \
+            "https://androidpublisher.googleapis.com/androidpublisher/v3/applications/com.nebu.mobile/edits/${edit_id}/tracks/${TO_TRACK}")
+
+          matching_release_count=$(printf '%s' "${production_response}" | jq \
+            --arg expected "${EXPECTED_VERSION_CODE}" \
+            '[.releases[]? | select(.status == "completed") | select(.versionCodes | index($expected))] | length')
+
+          if [ "${matching_release_count}" -ne 1 ]; then
+            echo "Production does not contain completed version code ${EXPECTED_VERSION_CODE}." >&2
+            printf '%s' "${production_response}" | jq '{track, releases: [.releases[]? | {status, versionCodes}]}' >&2
+            exit 1
+          fi
+
+          {
+            echo "### Google Play promotion"
+            echo "- Promoted existing build: ${EXPECTED_VERSION_CODE}"
+            echo "- From: ${FROM_TRACK}"
+            echo "- To: ${TO_TRACK}"
+            echo "- Status: completed"
+            echo "- No new AAB was built or uploaded."
+          } >> "${GITHUB_STEP_SUMMARY}"
