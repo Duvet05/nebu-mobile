@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
-import '../../core/utils/google_auth_helper.dart';
 import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/auth_widgets.dart';
+import '../widgets/google_auth_button.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -312,10 +312,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       SizedBox(height: context.spacing.panelPadding),
 
                       // Google button
-                      AuthGoogleButton(
+                      GoogleAuthButton(
                         text: 'auth.continue_with_google'.tr(),
                         isLoading: authState.isLoading,
-                        onPressed: () => handleGoogleAuth(context, ref),
                       ),
 
                       SizedBox(height: context.spacing.panelPadding),

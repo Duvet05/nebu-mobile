@@ -35,4 +35,10 @@ if ! grep -Eq '"destination"[[:space:]]*:[[:space:]]*"https://api\.flow-telligen
   fail "${vercel_config} is missing the production API rewrite destination."
 fi
 
+for oauth_config in vercel.json "${vercel_config}"; do
+  if ! grep -Eq '"Cross-Origin-Opener-Policy"[^}]*"value"[[:space:]]*:[[:space:]]*"same-origin-allow-popups"' "${oauth_config}"; then
+    fail "${oauth_config} must allow Google Sign-In popup communication."
+  fi
+done
+
 printf 'Web API proxy smoke passed for %s\n' "${web_dir}"
