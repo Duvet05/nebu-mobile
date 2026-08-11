@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_colors.dart';
+import 'adaptive_icon.dart';
 
 class SetupBackButton extends StatelessWidget {
   const SetupBackButton({this.previousRoute, super.key});
@@ -32,8 +33,8 @@ class SetupBackButton extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: context.radius.tile,
           ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
+          child: AdaptiveIcon(
+            AdaptiveIconSymbol.back,
             size: 18,
             color: colorScheme.onSurfaceVariant,
           ),

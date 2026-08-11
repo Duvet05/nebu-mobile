@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -8,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/analytics_service.dart';
 import '../../../data/models/toy.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
@@ -128,6 +130,12 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       prefs.remove(StorageKeys.setupFavorites),
       prefs.setBool(StorageKeys.setupCompleted, true),
     ]);
+
+    unawaited(
+      AnalyticsService.instance.logToySetupCompleted(
+        deviceRegistered: deviceRegistered,
+      ),
+    );
 
     if (context.mounted) {
       context.go(AppRoutes.home.path);

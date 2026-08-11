@@ -281,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  cupertino_icons:
+    dependency: "direct main"
+    description:
+      name: cupertino_icons
+      sha256: "41e005c33bd814be4d3096aff55b1908d419fde52ca656c8c47719ec745873cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.9"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -425,6 +433,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+5"
+  firebase_analytics:
+    dependency: "direct main"
+    description:
+      name: firebase_analytics
+      sha256: a139dd0ada1c6e0ffd77bfdb877ac9061ffdec7c415e3e06113bdf8844db771f
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.4.6"
+  firebase_analytics_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_analytics_platform_interface
+      sha256: "448c319ea895da002e43892c7d3f15dccbc3c4c3b81d3e307e37da885ea52bdf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.6"
+  firebase_analytics_web:
+    dependency: transitive
+    description:
+      name: firebase_analytics_web
+      sha256: "67f287a0df75f27eafdd4a66a41e44f232c3aba713ea4794a1159893665a8bf5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.6.1+12"
   firebase_core:
     dependency: "direct main"
     description:
@@ -1252,6 +1284,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
+  phosphoricons_flutter:
+    dependency: "direct main"
+    description:
+      name: phosphoricons_flutter
+      sha256: "34e4a00cc1a4be87c60edfcfcd5de23c005dc69945a5d77e08d33e6d23c0e793"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   platform:
     dependency: transitive
     description:

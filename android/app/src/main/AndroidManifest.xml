@@ -31,6 +31,13 @@
         android:label="Nebu Mobile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Keep collection off until Flutter restores the user's preference. -->
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="google_analytics_adid_collection_enabled"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

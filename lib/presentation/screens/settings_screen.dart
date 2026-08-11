@@ -17,6 +17,7 @@ import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
+import '../widgets/adaptive_icon.dart';
 import '../widgets/custom_button.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -57,7 +58,7 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.dark_mode_outlined,
+                      icon: AdaptiveIconSymbol.darkMode,
                       iconColor: context.colors.secondary,
                       title: 'profile.dark_mode'.tr(),
                       trailing: Switch(
@@ -79,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.language_outlined,
+                      icon: AdaptiveIconSymbol.language,
                       iconColor: context.colors.primary,
                       title: 'profile.language'.tr(),
                       trailing: DropdownButton<String>(
@@ -148,11 +149,11 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.help_outline,
+                      icon: AdaptiveIconSymbol.help,
                       iconColor: context.colors.success,
                       title: 'profile.help_support'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
+                      trailing: AdaptiveIcon(
+                        AdaptiveIconSymbol.forward,
                         color: context.colors.grey400,
                       ),
                       onTap: () => context.push(AppRoutes.helpSupport.path),
@@ -160,11 +161,11 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.policy_outlined,
+                      icon: AdaptiveIconSymbol.privacy,
                       iconColor: context.colors.primary,
                       title: 'privacy.privacy_policy'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
+                      trailing: AdaptiveIcon(
+                        AdaptiveIconSymbol.forward,
                         color: context.colors.grey400,
                       ),
                       onTap: () => context.push(AppRoutes.privacyPolicy.path),
@@ -172,11 +173,11 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.description_outlined,
+                      icon: AdaptiveIconSymbol.document,
                       iconColor: context.colors.secondary,
                       title: 'privacy.terms_of_service'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
+                      trailing: AdaptiveIcon(
+                        AdaptiveIconSymbol.forward,
                         color: context.colors.grey400,
                       ),
                       onTap: () => context.push(AppRoutes.termsOfService.path),
@@ -185,11 +186,11 @@ class SettingsScreen extends ConsumerWidget {
                     if (Config.isFeatureEnabled(ReleaseFeature.healthCheck))
                       _SettingsTile(
                         theme: theme,
-                        icon: Icons.monitor_heart_outlined,
+                        icon: AdaptiveIconSymbol.success,
                         iconColor: context.colors.info,
                         title: 'health_check.title'.tr(),
-                        trailing: Icon(
-                          Icons.chevron_right,
+                        trailing: AdaptiveIcon(
+                          AdaptiveIconSymbol.forward,
                           color: context.colors.grey400,
                         ),
                         onTap: () => context.push(AppRoutes.healthCheck.path),
@@ -198,11 +199,11 @@ class SettingsScreen extends ConsumerWidget {
                     if (Config.isFeatureEnabled(ReleaseFeature.usageLimits))
                       _SettingsTile(
                         theme: theme,
-                        icon: Icons.timer_outlined,
+                        icon: AdaptiveIconSymbol.time,
                         iconColor: context.colors.primary,
                         title: 'limits.title'.tr(),
-                        trailing: Icon(
-                          Icons.chevron_right,
+                        trailing: AdaptiveIcon(
+                          AdaptiveIconSymbol.forward,
                           color: context.colors.grey400,
                         ),
                         onTap: () => context.push(AppRoutes.usageLimits.path),
@@ -210,7 +211,7 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.info_outline,
+                      icon: AdaptiveIconSymbol.info,
                       iconColor: context.colors.warning,
                       title: 'profile.about'.tr(),
                       trailing: Text(
@@ -230,11 +231,11 @@ class SettingsScreen extends ConsumerWidget {
 
                     _SettingsTile(
                       theme: theme,
-                      icon: Icons.delete_sweep_outlined,
+                      icon: AdaptiveIconSymbol.delete,
                       iconColor: context.colors.error,
                       title: 'settings.clear_local_data'.tr(),
-                      trailing: Icon(
-                        Icons.chevron_right,
+                      trailing: AdaptiveIcon(
+                        AdaptiveIconSymbol.forward,
                         color: context.colors.grey400,
                       ),
                       onTap: () => _handleClearLocalData(context, ref),
@@ -265,7 +266,7 @@ class SettingsScreen extends ConsumerWidget {
                 child: CustomButton(
                   text: 'auth.sign_in'.tr(),
                   onPressed: () => context.go(AppRoutes.login.path),
-                  icon: Icons.login,
+                  icon: AdaptiveIconSymbol.login.iconData,
                   isFullWidth: true,
                 ),
               ),
@@ -290,8 +291,8 @@ void _showAboutAppDialog(BuildContext context, String appVersion) {
         ),
         borderRadius: context.radius.panel,
       ),
-      child: Icon(
-        Icons.smart_toy,
+      child: AdaptiveIcon(
+        AdaptiveIconSymbol.robot,
         color: context.colors.textOnFilled,
         size: 32,
       ),
@@ -381,7 +382,7 @@ class _SettingsTile extends StatelessWidget {
   });
 
   final ThemeData theme;
-  final IconData icon;
+  final AdaptiveIconSymbol icon;
   final String title;
   final Color? iconColor;
   final Widget? trailing;
@@ -403,7 +404,7 @@ class _SettingsTile extends StatelessWidget {
           color: color.withValues(alpha: 0.1),
           borderRadius: context.radius.tile,
         ),
-        child: Icon(icon, color: color, size: 22),
+        child: AdaptiveIcon(icon, color: color, size: 22),
       ),
       title: Text(
         title,

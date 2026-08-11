@@ -8,6 +8,7 @@ import '../../core/constants/validation_rules.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/models/user.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/adaptive_icon.dart';
 import '../widgets/auth_widgets.dart';
 import '../widgets/google_auth_button.dart';
 
@@ -133,7 +134,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               ),
                               controller: _firstNameController,
                               label: 'auth.first_name'.tr(),
-                              prefixIcon: Icons.person_outline_rounded,
+                              prefixIcon: AdaptiveIconSymbol.person,
                               textCapitalization: TextCapitalization.words,
                               autofillHints: const [AutofillHints.givenName],
                               textInputAction: TextInputAction.next,
@@ -155,7 +156,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                               ),
                               controller: _lastNameController,
                               label: 'auth.last_name'.tr(),
-                              prefixIcon: Icons.person_outline_rounded,
+                              prefixIcon: AdaptiveIconSymbol.person,
                               textCapitalization: TextCapitalization.words,
                               autofillHints: const [AutofillHints.familyName],
                               textInputAction: TextInputAction.next,
@@ -180,7 +181,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         controller: _emailController,
                         label: 'auth.email'.tr(),
                         keyboardType: TextInputType.emailAddress,
-                        prefixIcon: Icons.mail_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.mail,
                         autofillHints: const [
                           AutofillHints.email,
                           AutofillHints.username,
@@ -210,7 +211,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         label: 'auth.password'.tr(),
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscurePassword,
-                        prefixIcon: Icons.lock_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.lock,
                         autofillHints: const [AutofillHints.newPassword],
                         textInputAction: TextInputAction.next,
                         autocorrect: false,
@@ -218,8 +219,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         helperText: 'auth.password_requirements'.tr(),
                         suffixIcon: _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AdaptiveIconSymbol.visible
+                            : AdaptiveIconSymbol.hidden,
                         onSuffixTap: () {
                           setState(() => _obscurePassword = !_obscurePassword);
                         },
@@ -240,7 +241,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         label: 'auth.confirm_password'.tr(),
                         keyboardType: TextInputType.visiblePassword,
                         obscureText: _obscureConfirmPassword,
-                        prefixIcon: Icons.lock_outline_rounded,
+                        prefixIcon: AdaptiveIconSymbol.lock,
                         autofillHints: const [AutofillHints.newPassword],
                         textInputAction: TextInputAction.done,
                         autocorrect: false,
@@ -252,8 +253,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           }
                         },
                         suffixIcon: _obscureConfirmPassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
+                            ? AdaptiveIconSymbol.visible
+                            : AdaptiveIconSymbol.hidden,
                         onSuffixTap: () {
                           setState(
                             () => _obscureConfirmPassword =
