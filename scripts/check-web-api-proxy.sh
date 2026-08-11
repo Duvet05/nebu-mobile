@@ -39,6 +39,9 @@ for oauth_config in vercel.json "${vercel_config}"; do
   if ! grep -Eq '"Cross-Origin-Opener-Policy"[^}]*"value"[[:space:]]*:[[:space:]]*"same-origin-allow-popups"' "${oauth_config}"; then
     fail "${oauth_config} must allow Google Sign-In popup communication."
   fi
+  if grep -Fq 'Cross-Origin-Embedder-Policy' "${oauth_config}"; then
+    fail "${oauth_config} must not set COEP because it blocks the Google Identity Services iframe."
+  fi
 done
 
 printf 'Web API proxy smoke passed for %s\n' "${web_dir}"
