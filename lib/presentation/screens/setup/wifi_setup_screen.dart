@@ -452,6 +452,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
     final messenger = ScaffoldMessenger.of(context);
     final colors = context.colors;
+    final credentials = WiFiCredentials.fromUserInput(
+      ssid: _ssidController.text,
+      password: _passwordController.text,
+    );
 
     unawaited(
       AnalyticsService.instance.logWifiProvisionStarted(_analyticsTransport),
@@ -464,8 +468,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
         await session
             .sendWifiCredentials(
-              ssid: _ssidController.text.trim(),
-              password: _passwordController.text,
+              ssid: credentials.ssid,
+              password: credentials.password,
             )
             .timeout(_kCredentialSendTimeout);
       } else {
@@ -473,8 +477,8 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
 
         final result = await service
             .sendWifiCredentials(
-              ssid: _ssidController.text.trim(),
-              password: _passwordController.text,
+              ssid: credentials.ssid,
+              password: credentials.password,
             )
             .timeout(_kCredentialSendTimeout);
 
@@ -860,10 +864,10 @@ class _WifiSetupScreenState extends ConsumerState<WifiSetupScreen> {
     controller: _ssidController,
     hint: 'setup.wifi.ssid_hint'.tr(),
     validator: (value) {
-      if (value == null || value.trim().isEmpty) {
+      if (value == null || value.isEmpty) {
         return 'setup.wifi.validation_ssid_empty'.tr();
       }
-      if (utf8.encode(value.trim()).length > ValidationRules.wifiSsidMaxBytes) {
+      if (utf8.encode(value).length > ValidationRules.wifiSsidMaxBytes) {
         return 'setup.wifi.validation_ssid_too_long'.tr();
       }
       if (value.contains('\n') || value.contains('\r')) {

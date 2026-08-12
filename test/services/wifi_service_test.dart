@@ -4,6 +4,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nebu_mobile_flutter/data/services/wifi_service.dart';
 
 void main() {
+  group('WiFiCredentials.fromUserInput', () {
+    test('preserva todos los espacios del SSID y la contrasena', () {
+      const credentials = WiFiCredentials.fromUserInput(
+        ssid: '  WIN 2.4G  ',
+        password: ' clave con espacios ',
+      );
+
+      expect(credentials.ssid, '  WIN 2.4G  ');
+      expect(credentials.password, ' clave con espacios ');
+      expect(credentials.toJson(), const {
+        'ssid': '  WIN 2.4G  ',
+        'password': ' clave con espacios ',
+      });
+    });
+  });
+
   group('WiFiService.isScanSupported', () {
     tearDown(() {
       debugDefaultTargetPlatformOverride = null;
