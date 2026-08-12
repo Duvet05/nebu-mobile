@@ -43,6 +43,49 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     });
   }
 
+  /// Fetch backend toys, merge locally-stored setup toys, and publish the
+  /// result. Shows the loading state only when nothing is on screen yet, so
+  /// periodic/foreground refreshes never blink the list, and a refresh
+  /// failure keeps the last known list instead of replacing it with an error.
+  Future<void> syncMyToys() async {
+    final user = ref.read(auth_provider.authProvider).value;
+    final previous = state.value;
+    final hasData = previous != null && previous.isNotEmpty;
+    final localToys = await loadLocalToys();
+
+    if (user == null) {
+      state = AsyncValue.data(localToys);
+      return;
+    }
+
+    if (!hasData) {
+      state = const AsyncValue.loading();
+    }
+    try {
+      final toys = await _toyService.getMyToys();
+      final backendIds = toys.map((t) => t.id).toSet();
+      // A local toy is a placeholder saved when setup skipped device
+      // registration. Once a backend toy with the same name exists, the
+      // placeholder is stale — hide it so the user doesn't see a duplicate
+      // stuck on "pending".
+      final backendNames = toys.map((t) => t.name.trim().toLowerCase()).toSet();
+      final pendingLocal = localToys.where(
+        (t) =>
+            !backendIds.contains(t.id) &&
+            !backendNames.contains(t.name.trim().toLowerCase()),
+      );
+      state = AsyncValue.data([...toys, ...pendingLocal]);
+      // Catch-all on purpose: even an Error (e.g. an unknown enum value from
+      // the backend) must not kill a background refresh.
+    } on Object catch (e, st) {
+      if (hasData) {
+        ref.read(loggerProvider).w('Toy refresh failed, keeping last list: $e');
+      } else {
+        state = AsyncValue.error(e, st);
+      }
+    }
+  }
+
   /// Create/register a new toy
   /// Backend auto-injects user from JWT. Identify device by [deviceId] (preferred) or [macAddress].
   Future<Toy> createToy({

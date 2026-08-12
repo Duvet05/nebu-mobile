@@ -29,3 +29,21 @@ extension ToyStatusUI on ToyStatus {
   /// Whether the toy is online and usable
   bool get isOnline => this == ToyStatus.active || this == ToyStatus.connected;
 }
+
+extension ToyPresenceUI on Toy {
+  /// Status to display for this toy. `status` tracks the account lifecycle
+  /// (pending/blocked/…) while `iotDeviceStatus` is the live online/offline
+  /// presence the device reports over Wi-Fi; when the backend sends it, it
+  /// decides connected/disconnected so the badge follows the physical toy.
+  ToyStatus get displayStatus => switch (status) {
+    ToyStatus.pending ||
+    ToyStatus.blocked ||
+    ToyStatus.error ||
+    ToyStatus.maintenance => status,
+    _ => switch (iotDeviceStatus) {
+      'online' => ToyStatus.connected,
+      'offline' => ToyStatus.disconnected,
+      _ => status,
+    },
+  };
+}
