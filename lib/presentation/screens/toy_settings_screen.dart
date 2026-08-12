@@ -16,7 +16,6 @@ import '../providers/personality_provider.dart';
 import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_input.dart';
-import '../widgets/esp32_audio_controls.dart';
 import '../widgets/nebu_voice_options.dart';
 import 'setup/setup_route_args.dart';
 
@@ -608,15 +607,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
               SizedBox(height: context.spacing.panelPadding),
 
-              // Audio Controls (Volume & Mute)
-              Text(
-                'toy_settings.audio_controls'.tr(),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: context.spacing.titleBottomMarginSm),
-              const ESP32AudioControls(),
+              _buildInDevelopmentSection(theme, colorScheme),
 
               // Advanced Settings (feature flags)
               if (!_currentToy.id.startsWith('local_')) ...[
@@ -656,72 +647,12 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                             : (v) =>
                                   _toggleSettingsFlag('enableVarietyEngine', v),
                       ),
-                      const Divider(height: 1),
-                      SwitchListTile(
-                        title: Text(
-                          'toy_settings.walkie_talkie_mode'.tr(),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        subtitle: Text(
-                          'toy_settings.walkie_talkie_mode_desc'.tr(),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        secondary: Icon(
-                          Icons.family_restroom_rounded,
-                          color: context.colors.primary,
-                        ),
-                        value:
-                            _currentToy.settings?['enableWalkieTalkie'] == true,
-                        onChanged: _anyLoading
-                            ? null
-                            : (v) =>
-                                  _toggleSettingsFlag('enableWalkieTalkie', v),
-                      ),
                     ],
                   ),
                 ),
               ],
 
               SizedBox(height: context.spacing.panelPadding),
-
-              // Walkie Talkie
-              Text(
-                'walkie_talkie.title'.tr(),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: context.spacing.titleBottomMarginSm),
-              CustomButton(
-                text: 'walkie_talkie.open_button'.tr(),
-                icon: Icons.record_voice_over,
-                isFullWidth: true,
-                height: 48,
-                onPressed: _currentToy.iotDeviceId != null && !_anyLoading
-                    ? () => context.push(
-                        AppRoutes.walkieTalkie.path,
-                        extra: _currentToy,
-                      )
-                    : null,
-              ),
-              if (_currentToy.iotDeviceId == null)
-                Padding(
-                  padding: EdgeInsets.only(
-                    top: context.spacing.labelBottomMargin,
-                  ),
-                  child: Text(
-                    'walkie_talkie.no_iot_device'.tr(),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: context.colors.textDisabled,
-                    ),
-                  ),
-                ),
-
-              SizedBox(height: context.spacing.paragraphBottomMargin),
 
               CustomButton(
                 text: 'toy_settings.save_changes'.tr(),
@@ -764,6 +695,112 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       ),
     );
   }
+
+  Widget _buildInDevelopmentSection(ThemeData theme, ColorScheme colorScheme) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'toy_settings.development_title'.tr(),
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: context.spacing.titleBottomMarginSm),
+          Semantics(
+            enabled: false,
+            child: Card(
+              margin: EdgeInsets.zero,
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(context.spacing.alertPadding),
+                    color: context.colors.warning.withValues(alpha: 0.12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.construction_rounded,
+                          color: context.colors.warning,
+                        ),
+                        SizedBox(width: context.spacing.gapMd),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'toy_settings.development_badge'.tr(),
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  color: context.colors.warning,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              SizedBox(height: context.spacing.gapXs),
+                              Text(
+                                'toy_settings.development_desc'.tr(),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildDisabledFeatureTile(
+                    theme: theme,
+                    colorScheme: colorScheme,
+                    icon: Icons.volume_up_rounded,
+                    title: 'toy_settings.audio_controls'.tr(),
+                    subtitle: 'toy_settings.audio_controls_desc'.tr(),
+                  ),
+                  const Divider(height: 1),
+                  _buildDisabledFeatureTile(
+                    theme: theme,
+                    colorScheme: colorScheme,
+                    icon: Icons.family_restroom_rounded,
+                    title: 'toy_settings.walkie_talkie_mode'.tr(),
+                    subtitle: 'toy_settings.walkie_talkie_mode_desc'.tr(),
+                  ),
+                  const Divider(height: 1),
+                  _buildDisabledFeatureTile(
+                    theme: theme,
+                    colorScheme: colorScheme,
+                    icon: Icons.record_voice_over_rounded,
+                    title: 'walkie_talkie.title'.tr(),
+                    subtitle: 'toy_settings.walkie_talkie_desc'.tr(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _buildDisabledFeatureTile({
+    required ThemeData theme,
+    required ColorScheme colorScheme,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) => ListTile(
+    enabled: false,
+    leading: Icon(icon),
+    title: Text(
+      title,
+      style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+    ),
+    subtitle: Text(
+      subtitle,
+      style: theme.textTheme.bodySmall?.copyWith(
+        color: colorScheme.onSurfaceVariant,
+      ),
+    ),
+    trailing: const Icon(Icons.lock_outline_rounded),
+  );
 
   Widget _buildPersonalityCard(ThemeData theme, ColorScheme colorScheme) {
     final profileId = _currentToy.personalityProfile;

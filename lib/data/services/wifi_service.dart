@@ -41,6 +41,16 @@ class WiFiNetwork {
 class WiFiCredentials {
   const WiFiCredentials({required this.ssid, required this.password});
 
+  /// Builds the BLE payload without normalizing either credential.
+  ///
+  /// Leading, internal, and trailing whitespace can be part of a valid Wi-Fi
+  /// SSID or password, so the values entered by the user must be preserved
+  /// byte-for-byte.
+  const WiFiCredentials.fromUserInput({
+    required String ssid,
+    required String password,
+  }) : this(ssid: ssid, password: password);
+
   factory WiFiCredentials.fromJson(Map<String, dynamic> json) =>
       WiFiCredentials(
         ssid: json['ssid'] as String,

@@ -365,6 +365,7 @@
     "unknown_model": "Modelo Desconhecido",
     "unknown": "Desconhecido",
     "audio_controls": "Controles de Áudio",
+    "audio_controls_desc": "Volume e silêncio pelo aplicativo",
     "change_wifi": "Alterar WiFi",
     "save_changes": "Salvar Alterações",
     "personality": "Personalidade",
@@ -389,6 +390,10 @@
     "variety_engine_desc": "O brinquedo varia como fala e não repete frases",
     "walkie_talkie_mode": "Modo Pais",
     "walkie_talkie_mode_desc": "Pausa o brinquedo quando um adulto entra na sala",
+    "walkie_talkie_desc": "Fale com o brinquedo em tempo real",
+    "development_title": "Próximas Funções",
+    "development_badge": "Em desenvolvimento",
+    "development_desc": "Estas opções ainda não estão disponíveis e permanecerão bloqueadas até o lançamento.",
     "settings_saved": "Configuração atualizada",
     "settings_error": "Não foi possível atualizar a configuração. Por favor, tente novamente."
   },

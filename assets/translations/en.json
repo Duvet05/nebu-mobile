@@ -365,6 +365,7 @@
     "unknown_model": "Unknown Model",
     "unknown": "Unknown",
     "audio_controls": "Audio Controls",
+    "audio_controls_desc": "Volume and mute controls from the app",
     "change_wifi": "Change WiFi",
     "save_changes": "Save Changes",
     "personality": "Personality",
@@ -389,6 +390,10 @@
     "variety_engine_desc": "The toy varies how it talks and doesn't repeat phrases",
     "walkie_talkie_mode": "Parent Mode",
     "walkie_talkie_mode_desc": "Pauses the toy when an adult joins the room",
+    "walkie_talkie_desc": "Talk to the toy in real time",
+    "development_title": "Upcoming Features",
+    "development_badge": "In development",
+    "development_desc": "These options are not available yet and will remain locked until release.",
     "settings_saved": "Setting updated",
     "settings_error": "Could not update setting. Please try again."
   },
