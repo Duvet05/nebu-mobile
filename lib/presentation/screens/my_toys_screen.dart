@@ -8,8 +8,8 @@ import '../../core/theme/app_colors.dart';
 import '../../core/utils/toy_status_helper.dart';
 import '../../core/utils/ui_helpers.dart';
 import '../../data/models/toy.dart';
-import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/toy_list_auto_refresh.dart';
 import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 
@@ -20,48 +20,22 @@ class MyToysScreen extends ConsumerStatefulWidget {
   ConsumerState<MyToysScreen> createState() => _MyToysScreenState();
 }
 
-class _MyToysScreenState extends ConsumerState<MyToysScreen> {
+class _MyToysScreenState extends ConsumerState<MyToysScreen>
+    with ToyListAutoRefresh {
   bool _isDeletingToy = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Skip reload if toys are already loaded (prevents error on back-navigation)
-      final existing = ref.read(toyProvider);
-      if (!existing.hasValue || existing.value!.isEmpty) {
-        _loadToys();
-      }
+      // Sync on every visit: the status badge must follow the physical toy,
+      // and syncMyToys refreshes silently when a list is already showing.
+      _loadToys();
+      startToyAutoRefresh();
     });
   }
 
-  Future<void> _loadToys() async {
-    final user = ref.read(authProvider).value;
-    final notifier = ref.read(toyProvider.notifier);
-
-    // Always load local toys first so we never flash a false empty state
-    final localToys = await notifier.loadLocalToys();
-
-    if (user != null) {
-      // Authenticated: load from backend, then merge local toys
-      await notifier.loadMyToys();
-      if (localToys.isNotEmpty) {
-        final current = ref.read(toyProvider).value;
-        if (current != null) {
-          // Avoid duplicates (local toy already synced to backend)
-          final localIds = localToys.map((t) => t.id).toSet();
-          final merged = [
-            ...current.where((t) => !localIds.contains(t.id)),
-            ...localToys,
-          ];
-          notifier.setToys(merged);
-        }
-      }
-    } else {
-      // Unauthenticated: only local toys
-      notifier.setToys(localToys);
-    }
-  }
+  Future<void> _loadToys() => ref.read(toyProvider.notifier).syncMyToys();
 
   Future<void> _deleteToy(Toy toy) async {
     final confirmed = await showConfirmDialog(
@@ -99,9 +73,10 @@ class _MyToysScreenState extends ConsumerState<MyToysScreen> {
   }
 
   void _showToyDetails(Toy toy, ThemeData theme, bool isDark) {
-    final isPending = toy.status == ToyStatus.pending;
-    final statusColor = toy.status.color(context);
-    final statusText = toy.status.label();
+    final displayStatus = toy.displayStatus;
+    final isPending = displayStatus == ToyStatus.pending;
+    final statusColor = displayStatus.color(context);
+    final statusText = displayStatus.label();
 
     showModalBottomSheet<void>(
       context: context,
@@ -565,10 +540,11 @@ class _ToyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isOnline = toy.status.isOnline;
-    final isPending = toy.status == ToyStatus.pending;
-    final accentColor = toy.status.color(context);
-    final badgeText = toy.status.label();
+    final displayStatus = toy.displayStatus;
+    final isOnline = displayStatus.isOnline;
+    final isPending = displayStatus == ToyStatus.pending;
+    final accentColor = displayStatus.color(context);
+    final badgeText = displayStatus.label();
 
     return Container(
       margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),

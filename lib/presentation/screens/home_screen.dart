@@ -1,6 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -9,9 +8,11 @@ import '../../core/config/config.dart';
 import '../../core/config/release_feature_policy.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/toy_status_helper.dart';
+import '../../data/models/toy.dart';
 import '../providers/auth_provider.dart';
-import '../providers/bluetooth_provider.dart';
-import '../providers/device_provider.dart';
+import '../providers/toy_list_auto_refresh.dart';
+import '../providers/toy_provider.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/nebu_dots_loader.dart';
 
@@ -21,18 +22,34 @@ const _plusIconAsset = 'assets/icons/lucide/plus.svg';
 const _micIconAsset = 'assets/icons/lucide/mic.svg';
 const _bookOpenIconAsset = 'assets/icons/lucide/book-open.svg';
 const _sparklesIconAsset = 'assets/icons/lucide/sparkles.svg';
-const _bluetoothIconAsset = 'assets/icons/lucide/bluetooth-connected.svg';
 const _batteryFullIconAsset = 'assets/icons/lucide/battery-full.svg';
 const _batteryMediumIconAsset = 'assets/icons/lucide/battery-medium.svg';
 const _batteryLowIconAsset = 'assets/icons/lucide/battery-low.svg';
 const _batteryWarningIconAsset = 'assets/icons/lucide/battery-warning.svg';
 const _alertIconAsset = 'assets/icons/lucide/circle-alert.svg';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with ToyListAutoRefresh {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Home shows the same toy list as My Toys — sync it here too so the
+      // first screen after launch already has fresh presence data.
+      ref.read(toyProvider.notifier).syncMyToys();
+      startToyAutoRefresh();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = context.theme;
     final user = ref.watch(authProvider).value;
     final greeting = user?.name != null
@@ -112,7 +129,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.spacing.sectionTitleBottomMargin),
 
               // Active Toys List
-              _buildActiveToysList(context, ref),
+              _buildActiveToysList(context),
 
               if (Config.isFeatureEnabled(ReleaseFeature.homeQuickActions)) ...[
                 SizedBox(height: context.spacing.panelPadding),
@@ -169,20 +186,18 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActiveToysList(BuildContext context, WidgetRef ref) {
+  Widget _buildActiveToysList(BuildContext context) {
     final theme = context.theme;
-    final connectedDevices = ref.watch(connectedDevicesProvider);
+    final toysAsync = ref.watch(toyProvider);
 
-    return connectedDevices.when(
-      data: (devices) {
-        if (devices.isEmpty) {
+    return toysAsync.when(
+      data: (toys) {
+        if (toys.isEmpty) {
           return _buildNoToysPlaceholder(context, theme);
         }
 
         return Column(
-          children: devices
-              .map((device) => _DeviceBatteryCard(device: device))
-              .toList(),
+          children: toys.map((toy) => _ToySummaryCard(toy: toy)).toList(),
         );
       },
       loading: () => const Center(
@@ -293,10 +308,10 @@ class HomeScreen extends ConsumerWidget {
       );
 }
 
-class _DeviceBatteryCard extends ConsumerWidget {
-  const _DeviceBatteryCard({required this.device});
+class _ToySummaryCard extends StatelessWidget {
+  const _ToySummaryCard({required this.toy});
 
-  final fbp.BluetoothDevice device;
+  final Toy toy;
 
   String _batteryIconAsset(int level) {
     if (level > 80) {
@@ -312,13 +327,14 @@ class _DeviceBatteryCard extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = context.theme;
-    final batteryLevel = ref.watch(batteryLevelProvider(device));
+    final displayStatus = toy.displayStatus;
+    final accentColor = displayStatus.color(context);
+    final batteryLevel = int.tryParse(toy.batteryLevel ?? '');
 
     return Container(
       margin: EdgeInsets.only(bottom: context.spacing.paragraphBottomMarginSm),
-      padding: EdgeInsets.all(context.spacing.alertPadding),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: context.radius.panel,
@@ -331,94 +347,84 @@ class _DeviceBatteryCard extends ConsumerWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Icon container
-          Container(
-            padding: EdgeInsets.all(context.spacing.paragraphBottomMarginSm),
-            decoration: BoxDecoration(
-              color: context.colors.primary.withValues(alpha: 0.1),
-              borderRadius: context.radius.tile,
-            ),
-            child: _HomeSvgIcon(
-              key: const ValueKey('home-device-bluetooth-icon'),
-              asset: _bluetoothIconAsset,
-              color: context.colors.primary,
-            ),
-          ),
-          SizedBox(width: context.spacing.paragraphBottomMarginSm),
-          // Name + status
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => context.go(AppRoutes.myToys.path),
+          borderRadius: context.radius.panel,
+          child: Padding(
+            padding: EdgeInsets.all(context.spacing.alertPadding),
+            child: Row(
               children: [
-                Text(
-                  device.platformName.isNotEmpty
-                      ? device.platformName
-                      : 'home.unknown_device'.tr(),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                // Icon container
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.smart_toy, size: 24, color: accentColor),
+                ),
+                SizedBox(width: context.spacing.paragraphBottomMarginSm),
+                // Name + status
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        toy.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: context.spacing.gapXs),
+                      Row(
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: accentColor,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: context.spacing.gapSm),
+                          Text(
+                            displayStatus.label(),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: accentColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: context.spacing.gapXs),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: context.colors.success,
-                        shape: BoxShape.circle,
-                      ),
+                // Battery (reported by the toy over Wi-Fi, when available)
+                if (batteryLevel != null) ...[
+                  _HomeSvgIcon(
+                    key: const ValueKey('home-device-battery-icon'),
+                    asset: _batteryIconAsset(batteryLevel),
+                    size: 20,
+                    color: batteryLevel > 20
+                        ? context.colors.success
+                        : context.colors.error,
+                  ),
+                  SizedBox(width: context.spacing.gapXs),
+                  Text(
+                    '$batteryLevel%',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
-                    SizedBox(width: context.spacing.gapSm),
-                    Text(
-                      'home.connected'.tr(),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: context.colors.success,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ],
             ),
           ),
-          // Battery
-          batteryLevel.when(
-            data: (level) => Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _HomeSvgIcon(
-                  key: const ValueKey('home-device-battery-icon'),
-                  asset: _batteryIconAsset(level),
-                  size: 20,
-                  color: level > 20
-                      ? context.colors.success
-                      : context.colors.error,
-                ),
-                SizedBox(width: context.spacing.gapXs),
-                Text(
-                  '$level%',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            loading: () => NebuDotsLoader(
-              key: const ValueKey('home-device-battery-loader'),
-              color: context.colors.primary,
-              dotSize: 4,
-              gap: 3,
-            ),
-            error: (error, stack) => _HomeSvgIcon(
-              key: const ValueKey('home-device-battery-error-icon'),
-              asset: _alertIconAsset,
-              color: context.colors.error,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
