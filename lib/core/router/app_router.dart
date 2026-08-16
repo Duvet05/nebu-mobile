@@ -46,6 +46,7 @@ import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_memory_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
 import '../../presentation/screens/usage_limits_screen.dart';
+import '../../presentation/screens/voice_clone_screen.dart';
 import '../../presentation/screens/voice_sessions_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
@@ -381,6 +382,12 @@ class AppRouter {
       path: AppRoutes.walkieTalkie.path,
       builder: (c, s) => s.extra is Toy
           ? WalkieTalkieScreen(toy: s.extra! as Toy)
+          : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
+    ),
+    GoRoute(
+      path: AppRoutes.voiceClone.path,
+      builder: (c, s) => s.extra is Toy
+          ? VoiceCloneScreen(toy: s.extra! as Toy)
           : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
     ),
     GoRoute(

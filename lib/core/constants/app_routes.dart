@@ -28,6 +28,7 @@ enum AppRoutes {
   persons('/persons'),
   walkieTalkie('/walkie-talkie'),
   toyMemory('/toy-memory'),
+  voiceClone('/voice-clone'),
   personalities('/personalities'),
   playground('/playground'),
   verifyEmail('/verify-email'),
