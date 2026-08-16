@@ -561,9 +561,11 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                     children: [
                       _buildStatusRow(
                         'toy_settings.status'.tr(),
-                        _currentToy.status.label(),
+                        // displayStatus: la conectividad real la decide el
+                        // dispositivo, igual que en My Toys y Home (PR #76).
+                        _currentToy.displayStatus.label(),
                         theme,
-                        statusColor: _currentToy.status.color(context),
+                        statusColor: _currentToy.displayStatus.color(context),
                       ),
                       const Divider(),
                       if (_currentToy.iotDeviceStatus != null) ...[
