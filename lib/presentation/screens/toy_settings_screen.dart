@@ -82,6 +82,24 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     return value is String && value.isNotEmpty ? value : null;
   }
 
+  /// Voz clonada del juguete (settings.clonedVoice), si existe
+  Map<String, dynamic>? get _clonedVoice {
+    final value = _currentToy.settings?['clonedVoice'];
+    return value is Map<String, dynamic> ? value : null;
+  }
+
+  String? get _clonedVoiceId {
+    final value = _clonedVoice?['id'];
+    return value is String && value.isNotEmpty ? value : null;
+  }
+
+  String get _clonedVoiceName {
+    final value = _clonedVoice?['name'];
+    return value is String && value.isNotEmpty
+        ? value
+        : 'toy_settings.voice_cloned'.tr();
+  }
+
   Future<void> _updateToySettings() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -357,6 +375,66 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
                   onTap: () => Navigator.pop(ctx, voice.id),
                 ),
               ),
+              if (_clonedVoiceId != null)
+                ListTile(
+                  leading: Icon(
+                    Icons.graphic_eq_rounded,
+                    color: _clonedVoiceId == currentVoiceId
+                        ? ctx.colors.primary
+                        : sheetColors.onSurfaceVariant,
+                  ),
+                  title: Text(
+                    _clonedVoiceName,
+                    style: sheetTheme.textTheme.titleMedium?.copyWith(
+                      fontWeight: _clonedVoiceId == currentVoiceId
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                      color: _clonedVoiceId == currentVoiceId
+                          ? ctx.colors.primary
+                          : null,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'toy_settings.voice_cloned_desc'.tr(),
+                    style: sheetTheme.textTheme.bodySmall?.copyWith(
+                      color: sheetColors.onSurfaceVariant,
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (_clonedVoiceId == currentVoiceId)
+                        Icon(Icons.check_circle, color: ctx.colors.primary),
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete_outline_rounded,
+                          color: ctx.colors.error,
+                        ),
+                        tooltip: 'toy_settings.voice_clone_remove_title'.tr(),
+                        onPressed: () =>
+                            Navigator.pop(ctx, _removeCloneSentinel),
+                      ),
+                    ],
+                  ),
+                  onTap: () => Navigator.pop(ctx, _clonedVoiceId),
+                ),
+              ListTile(
+                leading: Icon(Icons.mic_rounded, color: ctx.colors.primary),
+                title: Text(
+                  'toy_settings.voice_clone_new'.tr(),
+                  style: sheetTheme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: ctx.colors.primary,
+                  ),
+                ),
+                subtitle: Text(
+                  'toy_settings.voice_clone_new_desc'.tr(),
+                  style: sheetTheme.textTheme.bodySmall?.copyWith(
+                    color: sheetColors.onSurfaceVariant,
+                  ),
+                ),
+                onTap: () => Navigator.pop(ctx, _cloneNewSentinel),
+              ),
               SizedBox(height: ctx.spacing.panelPadding),
             ],
           ),
@@ -364,11 +442,78 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
       },
     );
 
-    if (selected == null || !mounted || selected == currentVoiceId) {
+    if (selected == null || !mounted) {
+      return;
+    }
+    if (selected == _cloneNewSentinel) {
+      await _openVoiceCloneScreen();
+      return;
+    }
+    if (selected == _removeCloneSentinel) {
+      await _confirmRemoveClonedVoice();
+      return;
+    }
+    if (selected == currentVoiceId) {
       return;
     }
 
     await _updateVoicePreference(selected);
+  }
+
+  static const String _cloneNewSentinel = '__clone_new_voice__';
+  static const String _removeCloneSentinel = '__remove_cloned_voice__';
+
+  Future<void> _openVoiceCloneScreen() async {
+    final updatedToy = await context.push<Toy>(
+      AppRoutes.voiceClone.path,
+      extra: _currentToy,
+    );
+    if (updatedToy != null && mounted) {
+      setState(() {
+        _currentToy = updatedToy;
+      });
+    }
+  }
+
+  Future<void> _confirmRemoveClonedVoice() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'toy_settings.voice_clone_remove_title'.tr(),
+      content: 'toy_settings.voice_clone_remove_confirm'.tr(
+        args: [_clonedVoiceName],
+      ),
+      destructive: true,
+    );
+    if (!confirmed || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _savingSettings = true;
+    });
+
+    try {
+      final updated = await ref
+          .read(toyProvider.notifier)
+          .removeClonedVoice(_currentToy.id);
+
+      if (mounted) {
+        setState(() {
+          _currentToy = updated;
+        });
+        context.showSuccessSnackBar('toy_settings.voice_clone_removed'.tr());
+      }
+    } on Exception {
+      if (mounted) {
+        context.showErrorSnackBar('toy_settings.voice_clone_remove_error'.tr());
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _savingSettings = false;
+        });
+      }
+    }
   }
 
   Future<void> _updateVoicePreference(String voiceId) async {
@@ -961,6 +1106,10 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
   String _voiceDisplayName(String? voiceId) {
     if (voiceId == null || voiceId.isEmpty) {
       return 'toy_settings.voice_none'.tr();
+    }
+
+    if (voiceId == _clonedVoiceId) {
+      return _clonedVoiceName;
     }
 
     final option = findNebuVoiceOption(voiceId);
