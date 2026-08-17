@@ -123,9 +123,7 @@ class _ShellState extends State<_Shell> {
     routes: [
       ShellRoute(
         builder: (context, state, child) => MainScreen(child: child),
-        routes: [
-          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-        ],
+        routes: [GoRoute(path: '/home', builder: (_, _) => const HomeScreen())],
       ),
       GoRoute(
         path: '/shot',
@@ -215,8 +213,8 @@ void main() {
               TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                   .setMockMessageHandler(
                     'com.llfbandit.record/events/$recorderId',
-                    (message) async => const StandardMethodCodec()
-                        .encodeSuccessEnvelope(null),
+                    (message) async =>
+                        const StandardMethodCodec().encodeSuccessEnvelope(null),
                   );
               return null;
             case 'hasPermission':
