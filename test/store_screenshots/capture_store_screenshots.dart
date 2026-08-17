@@ -194,7 +194,7 @@ Future<void> _loadFonts() async {
 }
 
 void main() {
-  final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -294,7 +294,7 @@ void main() {
         final boundary =
             boundaryKey.currentContext!.findRenderObject()!
                 as RenderRepaintBoundary;
-        final image = await boundary.toImage(pixelRatio: 3.0);
+        final image = await boundary.toImage(pixelRatio: 3);
         final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
         final file = File('${outRoot.path}/$locale/$name.png');
         await file.parent.create(recursive: true);
