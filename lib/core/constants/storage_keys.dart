@@ -40,6 +40,8 @@ class StorageKeys {
   static const String setupChildAge = 'setup_child_age';
   static const String setupVoicePreference = 'setup_voice_preference';
   static const String setupFavorites = 'setup_favorites';
+  static const String setupParentalConsentUserId =
+      'setup_parental_consent_user_id';
 
   // Guest Mode
   static const String setupSkipped = 'setup_skipped';
