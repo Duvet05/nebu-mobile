@@ -134,7 +134,19 @@
       "nebu_pixel": "Nebu Pixel",
       "nebu_pixel_desc": "Joven, juguetona y curiosa",
       "nebu_orion": "Nebu Orion",
-      "nebu_orion_desc": "Aventurera, valiente y misteriosa"
+      "nebu_orion_desc": "Aventurera, valiente y misteriosa",
+      "consent_title": "Consentimiento parental para la voz",
+      "consent_message": "El adulto titular de la cuenta debe confirmar cada declaración antes de habilitar conversaciones con IA.",
+      "consent_verify_failed": "No pudimos verificar un consentimiento previo. Confirma estas declaraciones para continuar de forma segura.",
+      "consent_guardian": "Declaro que soy padre, madre o tutor legal del menor.",
+      "consent_child_data": "Autorizo el tratamiento del perfil y los datos de conversación del menor para brindar Nebu.",
+      "consent_sensitive_data": "Autorizo el tratamiento de voz/audio y otros datos sensibles necesarios para la experiencia de voz.",
+      "review_privacy": "Revisar Política de Privacidad",
+      "review_terms": "Revisar Términos",
+      "consent_current_title": "Consentimiento vigente registrado",
+      "consent_current_message": "Esta cuenta adulta ya tiene un consentimiento parental vigente. No necesitas aceptarlo nuevamente.",
+      "consent_guest_title": "La voz requiere una cuenta adulta",
+      "consent_guest_message": "Puedes terminar la configuración local. Para usar conversaciones con IA, un adulto debe iniciar sesión y otorgar su consentimiento."
     },
     "favorites": {
       "title": "Cosas Favoritas",
@@ -157,7 +169,8 @@
       "profile_configured": "Perfil configurado",
       "preferences_saved": "Preferencias guardadas",
       "start_using": "Comenzar a Usar Nebu",
-      "default_child_name": "Mi niño"
+      "default_child_name": "Mi niño",
+      "save_error": "No pudimos guardar la configuración protegida por consentimiento. En este paso no se enviaron datos del perfil del menor. Intenta de nuevo."
     }
   },
   "splash": {
