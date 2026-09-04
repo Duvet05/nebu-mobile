@@ -819,6 +819,8 @@
     "messages": "{} messages",
     "conversation": "Conversation",
     "no_messages": "No messages in this session",
+    "details_not_retained": "For privacy, the details of this conversation are no longer retained. The summary and metrics remain available.",
+    "session_data_expired": "This session passed its retention period. The details and summary are no longer retained; only general metrics remain.",
     "error_conversations": "Could not load messages",
     "engagement": "Engagement",
     "turns": "{} turns",

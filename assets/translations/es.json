@@ -818,6 +818,8 @@
     "messages": "{} mensajes",
     "conversation": "Conversación",
     "no_messages": "Sin mensajes en esta sesión",
+    "details_not_retained": "Por privacidad, el detalle de esta conversación ya no se conserva. El resumen y las métricas siguen disponibles.",
+    "session_data_expired": "Esta sesión superó el plazo de conservación. El detalle y el resumen ya no se conservan; solo quedan métricas generales.",
     "error_conversations": "No se pudieron cargar los mensajes",
     "engagement": "Interacción",
     "turns": "{} turnos",
