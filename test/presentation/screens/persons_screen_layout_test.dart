@@ -13,6 +13,8 @@ import 'package:nebu_mobile_flutter/presentation/screens/persons_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/widgets/custom_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 const _compactViewport = Size(320, 568);
 const _portuguese = Locale('pt');
 const _supportedLocales = <Locale>[Locale('en'), Locale('es'), _portuguese];
@@ -45,6 +47,7 @@ void main() {
         EasyLocalization(
           supportedLocales: _supportedLocales,
           path: 'assets/translations',
+          assetLoader: const TestJsonAssetLoader(),
           fallbackLocale: const Locale('en'),
           startLocale: _portuguese,
           saveLocale: false,

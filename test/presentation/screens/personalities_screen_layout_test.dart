@@ -9,6 +9,8 @@ import 'package:nebu_mobile_flutter/presentation/providers/personality_provider.
 import 'package:nebu_mobile_flutter/presentation/screens/personalities_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 const _voice = 'Voz brasileira extraordinariamente longa para acessibilidade';
 const _language = 'Português brasileiro internacional com descrição extensa';
 const _style = 'Conversacional, educativo, imaginativo e muito detalhado';
@@ -39,6 +41,7 @@ void main() {
         child: EasyLocalization(
           supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
           path: 'assets/translations',
+          assetLoader: const TestJsonAssetLoader(),
           fallbackLocale: const Locale('pt'),
           startLocale: const Locale('pt'),
           saveLocale: false,

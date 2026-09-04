@@ -9,6 +9,8 @@ import 'package:nebu_mobile_flutter/presentation/providers/auth_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/signup_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 void main() {
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -31,6 +33,7 @@ void main() {
           child: EasyLocalization(
             supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
             path: 'assets/translations',
+            assetLoader: const TestJsonAssetLoader(),
             fallbackLocale: const Locale('en'),
             startLocale: const Locale('es'),
             saveLocale: false,

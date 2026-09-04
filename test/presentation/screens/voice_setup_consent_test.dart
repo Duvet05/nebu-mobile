@@ -16,6 +16,7 @@ import 'package:nebu_mobile_flutter/presentation/widgets/nebu_voice_options.dart
 import 'package:nebu_mobile_flutter/presentation/widgets/setup_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
 import '../../services/mocks.dart';
 
 const _adult = User(id: 'user-1', email: 'adult@example.test');
@@ -62,6 +63,7 @@ void main() {
       EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
         path: 'assets/translations',
+        assetLoader: const TestJsonAssetLoader(),
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('es'),
         saveLocale: false,

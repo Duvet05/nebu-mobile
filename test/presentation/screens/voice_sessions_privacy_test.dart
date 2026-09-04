@@ -9,6 +9,8 @@ import 'package:nebu_mobile_flutter/presentation/providers/voice_session_provide
 import 'package:nebu_mobile_flutter/presentation/screens/voice_sessions_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -96,6 +98,7 @@ Future<void> _pumpScreen(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
       path: 'assets/translations',
+      assetLoader: const TestJsonAssetLoader(),
       fallbackLocale: const Locale('es'),
       startLocale: const Locale('es'),
       saveLocale: false,
