@@ -83,6 +83,13 @@ that limited data is shared with service providers for core app functionality.
 - iOS declares APNs entitlement and background modes for remote notifications.
 - iOS release CI validates that the App Store provisioning profile contains
   `aps-environment`.
+- The voice setup checks the authenticated account's versioned parental-consent
+  record in the backend. Accounts with a current record continue without a new
+  prompt or a setup overwrite; new accounts must affirm the guardian, child-data,
+  and sensitive-data declarations before the app submits voice setup.
+- Guest setup remains local and does not constitute parental consent. Backend
+  token/session issuance must remain the authoritative enforcement point; verify
+  that unclaimed devices cannot obtain an AI session before releasing this flow.
 
 ## Manual verification before release
 
@@ -99,3 +106,7 @@ that limited data is shared with service providers for core app functionality.
    collection remains disabled.
 7. Review Play Console Data safety and Target audience answers against this
    file and the production privacy policy.
+8. Exercise the setup flow with a current-consent account and confirm it is not
+   prompted again and its preferences are not overwritten.
+9. Exercise a new account and confirm all three declarations, policy links,
+   account-bound consent evidence, and conservative behavior on API failure.
