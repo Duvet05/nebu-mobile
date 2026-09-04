@@ -9,6 +9,8 @@ import 'package:nebu_mobile_flutter/presentation/screens/setup/world_info_setup_
 import 'package:nebu_mobile_flutter/presentation/widgets/setup_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 const _locales = <Locale>[Locale('en'), Locale('es'), Locale('pt')];
 
 const _viewports = [
@@ -75,6 +77,7 @@ void main() {
             key: ValueKey('world-info-${locale.languageCode}'),
             supportedLocales: _locales,
             path: 'assets/translations',
+            assetLoader: const TestJsonAssetLoader(),
             fallbackLocale: const Locale('en'),
             startLocale: locale,
             saveLocale: false,

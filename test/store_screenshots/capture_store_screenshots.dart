@@ -36,6 +36,8 @@ import 'package:nebu_mobile_flutter/presentation/screens/voice_clone_screen.dart
 import 'package:nebu_mobile_flutter/presentation/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/localization_test_helper.dart';
+
 const _recordChannel = MethodChannel('com.llfbandit.record/messages');
 const _pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
 
@@ -252,6 +254,7 @@ void main() {
       EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
         path: 'assets/translations',
+        assetLoader: const TestJsonAssetLoader(),
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('es'),
         saveLocale: false,

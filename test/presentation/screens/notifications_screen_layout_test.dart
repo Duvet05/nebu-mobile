@@ -14,6 +14,8 @@ import 'package:nebu_mobile_flutter/presentation/providers/api_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/notifications_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -38,6 +40,7 @@ void main() {
         EasyLocalization(
           supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
           path: 'assets/translations',
+          assetLoader: const TestJsonAssetLoader(),
           fallbackLocale: const Locale('en'),
           startLocale: const Locale('pt'),
           saveLocale: false,
