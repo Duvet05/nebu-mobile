@@ -50,58 +50,120 @@ void main() {
         },
       },
     );
-    final setupService = UserSetupService(
-      apiService: apiService,
-      logger: MockLogger(),
-    );
-    final router = GoRouter(
-      initialLocation: AppRoutes.worldInfoSetup.path,
-      routes: [
-        GoRoute(
-          path: AppRoutes.worldInfoSetup.path,
-          builder: (_, _) => const WorldInfoSetupScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.home.path,
-          builder: (_, _) => const Scaffold(
-            body: Text('safe-home', key: ValueKey('safe-home')),
-          ),
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
-
-    await tester.pumpWidget(
-      EasyLocalization(
-        supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
-        path: 'assets/translations',
-        assetLoader: const TestJsonAssetLoader(),
-        fallbackLocale: const Locale('en'),
-        startLocale: const Locale('es'),
-        saveLocale: false,
-        child: ProviderScope(
-          overrides: [
-            authProvider.overrideWith(_SignedInAuthNotifier.new),
-            userSetupServiceProvider.overrideWithValue(setupService),
-            loggerProvider.overrideWithValue(MockLogger()),
-          ],
-          child: _WorldInfoTestApp(router: router),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    final finishButton = find.byType(SetupPrimaryButton);
-    await tester.ensureVisible(finishButton);
-    await tester.tap(finishButton);
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(const ValueKey('safe-home')), findsOneWidget);
+    await _finishSetup(tester, apiService);
     verify(
       apiService.get<Map<String, dynamic>>('/users/user-1/setup'),
     ).called(1);
     verifyNoMoreInteractions(apiService);
   });
+
+  for (final analyticsChoice in <bool?>[null, false, true]) {
+    testWidgets(
+      'submitted consent sends analytics ${analyticsChoice ?? false} '
+      'with ${analyticsChoice == null ? 'no saved choice' : 'explicit $analyticsChoice'}',
+      (tester) async {
+        SharedPreferences.setMockInitialValues(<String, Object>{
+          // Synthetic local consent only; every API call is mocked below.
+          StorageKeys.setupParentalConsentUserId: _adult.id,
+          StorageKeys.setupVoicePreference: nebuVoiceOptions.first.id,
+          StorageKeys.privacyAnalyticsEnabled: ?analyticsChoice,
+        });
+        final apiService = MockApiService();
+        when(
+          apiService.post<Map<String, dynamic>>(
+            '/users/user-1/setup',
+            data: anyNamed('data') as Object?,
+          ),
+        ).thenAnswer(
+          (_) async => <String, dynamic>{
+            'success': true,
+            'message': 'ok',
+            'setupCompleted': true,
+          },
+        );
+
+        await _finishSetup(tester, apiService);
+
+        final post = verify(
+          apiService.post<Map<String, dynamic>>(
+            '/users/user-1/setup',
+            data: captureAnyNamed('data') as Object?,
+          ),
+        )..called(1);
+        final payload = post.captured.single as Map<String, dynamic>;
+        final preferences = payload['preferences'] as Map<String, dynamic>;
+        expect(preferences['analytics'], analyticsChoice ?? false);
+        expect(payload['parentalConsent'], isA<Map<String, dynamic>>());
+        verifyNoMoreInteractions(apiService);
+
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getBool(StorageKeys.setupCompleted), isTrue);
+        // Finishing setup must not manufacture or change an explicit choice.
+        expect(
+          prefs.getBool(StorageKeys.privacyAnalyticsEnabled),
+          analyticsChoice,
+        );
+        expect(
+          prefs.containsKey(StorageKeys.privacyAnalyticsEnabled),
+          analyticsChoice != null,
+        );
+      },
+    );
+  }
+}
+
+Future<void> _finishSetup(
+  WidgetTester tester,
+  MockApiService apiService,
+) async {
+  final setupService = UserSetupService(
+    apiService: apiService,
+    logger: MockLogger(),
+  );
+  final router = GoRouter(
+    initialLocation: AppRoutes.worldInfoSetup.path,
+    routes: [
+      GoRoute(
+        path: AppRoutes.worldInfoSetup.path,
+        builder: (_, _) => const WorldInfoSetupScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.home.path,
+        builder: (_, _) =>
+            const Scaffold(body: Text('safe-home', key: ValueKey('safe-home'))),
+      ),
+    ],
+  );
+  addTearDown(router.dispose);
+
+  await tester.pumpWidget(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
+      path: 'assets/translations',
+      assetLoader: const TestJsonAssetLoader(),
+      fallbackLocale: const Locale('en'),
+      startLocale: const Locale('es'),
+      saveLocale: false,
+      child: ProviderScope(
+        overrides: [
+          authProvider.overrideWith(_SignedInAuthNotifier.new),
+          apiServiceProvider.overrideWithValue(apiService),
+          userSetupServiceProvider.overrideWithValue(setupService),
+          loggerProvider.overrideWithValue(MockLogger()),
+        ],
+        child: _WorldInfoTestApp(router: router),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+
+  final finishButton = find.byType(SetupPrimaryButton);
+  await tester.ensureVisible(finishButton);
+  await tester.tap(finishButton);
+  await tester.pumpAndSettle();
+
+  expect(find.byKey(const ValueKey('safe-home')), findsOneWidget);
+  expect(tester.takeException(), isNull);
 }
 
 class _SignedInAuthNotifier extends AuthNotifier {
