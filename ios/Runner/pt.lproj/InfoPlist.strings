@@ -2,7 +2,7 @@
 "NSBluetoothPeripheralUsageDescription" = "Nebu precisa de acesso ao Bluetooth para se conectar ao seu brinquedo inteligente e configurar o WiFi.";
 "NSCameraUsageDescription" = "Precisamos de acesso à câmera para escanear os códigos QR dos seus dispositivos Nebu.";
 "NSLocalNetworkUsageDescription" = "Precisamos de acesso à rede local para nos comunicar com o dispositivo durante a configuração inicial.";
-"NSLocationWhenInUseUsageDescription" = "Precisamos da sua localização para procurar dispositivos Bluetooth próximos durante o processo de conexão.";
+"NSLocationWhenInUseUsageDescription" = "O Nebu pode usar o acesso à localização durante a configuração para obter o nome da sua rede Wi-Fi atual. É opcional; você pode digitar o nome da rede manualmente.";
 "NSMicrophoneUsageDescription" = "O acesso ao microfone é necessário para a interação de voz em tempo real com o seu brinquedo Nebu.";
 "NSPhotoLibraryUsageDescription" = "O acesso à galeria de fotos é usado se você quiser enviar uma foto de perfil personalizada.";
 "NSSpeechRecognitionUsageDescription" = "O reconhecimento de voz é usado para processar seus comandos de voz e interagir com o assistente de IA.";

@@ -31,6 +31,7 @@ jobs:
         with:
           node-version: "22"
       - run: node --test scripts/promote-android.test.mjs
+      - run: node --test scripts/ios-location-usage.test.mjs
 
   analyze:
     name: Analyze
