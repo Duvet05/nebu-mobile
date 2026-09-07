@@ -82,6 +82,9 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
+      - name: Test before building the release
+        run: flutter test
+
       - name: Resolve Android build metadata
         env:
           INPUT_BUILD_NAME: ${{ github.event.inputs.build_name || '' }}

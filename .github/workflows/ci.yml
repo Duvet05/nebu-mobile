@@ -22,6 +22,16 @@ env:
   ANDROID_NDK_VERSION: "28.2.13676358"
 
 jobs:
+  release-safeguards:
+    name: Release safeguards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test scripts/promote-android.test.mjs
+
   analyze:
     name: Analyze
     runs-on: ubuntu-latest

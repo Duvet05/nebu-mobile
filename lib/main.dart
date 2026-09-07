@@ -10,11 +10,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/config/config.dart';
-import 'core/constants/storage_keys.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/utils/analytics_service.dart';
 import 'core/utils/error_reporting_service.dart';
+import 'core/utils/privacy_preferences.dart';
 import 'firebase_options.dart';
 import 'presentation/providers/theme_provider.dart';
 
@@ -61,8 +61,7 @@ void main() async {
 
   if (!Config.isMinimalIosReleaseConfigured) {
     final prefs = await SharedPreferences.getInstance();
-    final telemetryAllowed =
-        prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true;
+    final telemetryAllowed = prefs.analyticsEnabled;
     await Future.wait([
       ErrorReportingService.initialize(collectionEnabled: telemetryAllowed),
       AnalyticsService.instance.initialize(collectionEnabled: telemetryAllowed),

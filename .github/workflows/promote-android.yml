@@ -1,0 +1,53 @@
+name: Promote Android to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: "Exact version code already uploaded to Play (no rebuild)"
+        required: true
+      from_track:
+        description: "Track containing the tested build or production draft"
+        type: choice
+        default: internal
+        options: [internal, alpha, beta, production]
+      release_status:
+        description: "draft saves a draft; completed requests the production release"
+        type: choice
+        default: draft
+        options: [draft, completed]
+
+concurrency:
+  group: play-production-promotion
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Test promotion safeguards
+        run: node --test scripts/promote-android.test.mjs
+      - name: Verify public app and store links
+        run: node scripts/check-public-links.mjs
+      - name: Authenticate with Google Play
+        id: play_auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+          create_credentials_file: false
+      - name: Promote selected artifact
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.play_auth.outputs.access_token }}
+          VERSION_CODE: ${{ inputs.version_code }}
+          FROM_TRACK: ${{ inputs.from_track }}
+          RELEASE_STATUS: ${{ inputs.release_status }}
+        run: node scripts/promote-android.mjs
