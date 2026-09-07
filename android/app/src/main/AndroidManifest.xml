@@ -48,6 +48,12 @@
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
+        <!-- Impeller compone mal el fondo con patrón (webp repetido + opacidad) en
+             GPUs Mali/PowerVR de gama media: el tema oscuro queda lavado/ilegible.
+             Volvemos al renderer clásico hasta validar Impeller en esos equipos. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
