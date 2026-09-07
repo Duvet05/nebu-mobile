@@ -216,6 +216,12 @@ void main() {
   });
 
   testWidgets('genera capturas del listing de Play', (tester) async {
+    // Widget tests normally replace soft shadows with solid black shapes.
+    // Render production shadows for faithful store screenshots.
+    final previousDisableShadows = debugDisableShadows;
+    debugDisableShadows = false;
+    addTearDown(() => debugDisableShadows = previousDisableShadows);
+
     // 1080x1920 físico = 9:16 exacto, el ratio más seguro para Play.
     tester.view
       ..physicalSize = const Size(1080, 1920)
@@ -333,5 +339,7 @@ void main() {
     // Desmonta para cancelar timers.
     await show(const SizedBox.shrink());
     await tester.pumpAndSettle();
+    // Flutter checks debug painting invariants before addTearDown callbacks.
+    debugDisableShadows = previousDisableShadows;
   });
 }
