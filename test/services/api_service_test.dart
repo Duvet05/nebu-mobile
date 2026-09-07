@@ -125,12 +125,14 @@ void main() {
   test(
     '401 con refresh disponible reintenta request y finalmente retorna respuesta',
     () async {
+      var storedAccessToken = 'old-token';
       adapter.handle = (options) {
         if (options.path == '/auth/refresh') {
           return _jsonResponse({'accessToken': 'new-token'}, 200);
         }
         if (options.path == '/secure') {
           if (options.extra['retried'] == true) {
+            expect(options.headers['Authorization'], 'Bearer new-token');
             return _jsonResponse({'payload': 'after-refresh'}, 200);
           }
           return _jsonResponse({'message': 'expired'}, 401);
@@ -140,13 +142,15 @@ void main() {
 
       when(
         secureStorage.read(key: StorageKeys.accessToken),
-      ).thenAnswer((_) async => 'old-token' as String?);
+      ).thenAnswer((_) async => storedAccessToken);
       when(
         secureStorage.read(key: StorageKeys.refreshToken),
       ).thenAnswer((_) async => 'refresh-token' as String?);
       when(
         secureStorage.write(key: StorageKeys.accessToken, value: 'new-token'),
-      ).thenAnswer((_) async {});
+      ).thenAnswer((_) async {
+        storedAccessToken = 'new-token';
+      });
 
       final apiService = ApiService(
         dio: dio,

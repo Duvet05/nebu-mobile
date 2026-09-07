@@ -23,13 +23,17 @@ class ApiService {
   final FlutterSecureStorage _secureStorage;
   final Logger _logger;
 
-  /// Called when token refresh fails — signals that the session is dead.
+  /// Called once when the server rejects the current refresh credentials.
   final void Function()? onSessionExpired;
 
   /// Completer used to serialize concurrent token refresh attempts.
   /// When non-null, a refresh is already in progress — other 401 handlers
   /// await the same future instead of firing a second refresh.
   Completer<String?>? _refreshCompleter;
+  String? _refreshAccessToken;
+  static const _skipSessionAuth = 'nebuSkipSessionAuth';
+  ({String? previousAccessToken, String accessToken, String? refreshToken})?
+  _lastRefresh;
 
   void _setupDio() {
     _dio.options.baseUrl = Config.apiBaseUrl;
@@ -40,12 +44,30 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          if (!Config.isMinimalIosReleaseConfigured) {
+          if (!Config.isMinimalIosReleaseConfigured &&
+              options.extra[_skipSessionAuth] != true) {
             final token = await _secureStorage.read(
               key: StorageKeys.accessToken,
             );
 
-            if (token != null && token.isNotEmpty) {
+            if (options.extra['retried'] == true) {
+              // Keep the retry bound to its original session. A later login
+              // must not lend its credentials to an older account's request.
+              if (token == null ||
+                  token.isEmpty ||
+                  options.headers['Authorization'] != 'Bearer $token') {
+                return handler.reject(
+                  DioException(
+                    requestOptions: options,
+                    type: DioExceptionType.cancel,
+                    error: const AuthException(
+                      'Session changed before retry',
+                      statusCode: 401,
+                    ),
+                  ),
+                );
+              }
+            } else if (token != null && token.isNotEmpty) {
               options.headers['Authorization'] = 'Bearer $token';
             }
           }
@@ -72,49 +94,51 @@ class ApiService {
 
           // Only attempt refresh on 401 if we haven't already retried
           if (!Config.isMinimalIosReleaseConfigured &&
+              error.requestOptions.extra[_skipSessionAuth] != true &&
               error.response?.statusCode == 401 &&
               error.requestOptions.extra['retried'] != true) {
+            String? newToken;
             try {
-              final newToken = await _refreshToken();
-              if (newToken != null) {
-                // Retry the original request with the new token
-                error.requestOptions.headers['Authorization'] =
-                    'Bearer $newToken';
-                error.requestOptions.extra['retried'] = true;
+              final authorization =
+                  error.requestOptions.headers['Authorization'];
+              newToken = await _refreshToken(
+                authorization is String && authorization.startsWith('Bearer ')
+                    ? authorization.substring(7)
+                    : null,
+              );
+            } on Object catch (refreshError) {
+              // Preserve the refresh failure's real category (network/5xx/auth).
+              // Invalidation belongs to the shared refresh, not every waiter.
+              return handler.reject(
+                _typedDioError(
+                  refreshError is DioException
+                      ? refreshError
+                      : DioException(
+                          requestOptions: error.requestOptions,
+                          error: refreshError,
+                          message: 'Could not refresh session',
+                        ),
+                ),
+              );
+            }
+
+            if (newToken != null) {
+              error.requestOptions.headers['Authorization'] =
+                  'Bearer $newToken';
+              error.requestOptions.extra['retried'] = true;
+              try {
                 final retryResponse = await _dio.fetch<dynamic>(
                   error.requestOptions,
                 );
                 return handler.resolve(retryResponse);
+              } on DioException catch (retryError) {
+                // A failed application request is not a rejected refresh token.
+                return handler.reject(_typedDioError(retryError));
               }
-            } on Exception catch (e, st) {
-              _logger.e('Token refresh failed, clearing session: $e');
-              unawaited(
-                ErrorReportingService.recordError(
-                  e,
-                  st,
-                  reason: 'Token refresh failed while handling 401',
-                  context: {
-                    'handler': 'api_service_401_retry',
-                    'path': path,
-                    'status_code': status.toString(),
-                  },
-                ),
-              );
-              await _clearTokens();
-              onSessionExpired?.call();
             }
           }
 
-          final appException = _mapDioError(error);
-          return handler.reject(
-            DioException(
-              requestOptions: error.requestOptions,
-              response: error.response,
-              type: error.type,
-              error: appException,
-              message: appException.message,
-            ),
-          );
+          return handler.reject(_typedDioError(error));
         },
       ),
     );
@@ -135,66 +159,134 @@ class ApiService {
 
   /// Refreshes the access token, serializing concurrent attempts.
   /// Returns the new access token, or null if refresh is not possible.
-  Future<String?> _refreshToken() async {
-    // If a refresh is already in flight, piggyback on it
-    if (_refreshCompleter != null) {
-      return _refreshCompleter!.future;
+  Future<String?> _refreshToken(String? failedAccessToken) {
+    final running = _refreshCompleter;
+    if (running != null) {
+      // An old account's late 401 cannot join a newer account's renewal.
+      return failedAccessToken == _refreshAccessToken
+          ? running.future
+          : Future<String?>.value();
     }
 
-    final refreshToken = await _secureStorage.read(
-      key: StorageKeys.refreshToken,
-    );
-    if (refreshToken == null || refreshToken.isEmpty) {
-      return null;
-    }
+    // Publish the flight before the first storage await. Every caller receives
+    // this exact future, including the initiating caller on an error path.
+    final flight = Completer<String?>();
+    _refreshAccessToken = failedAccessToken;
+    _refreshCompleter = flight;
+    unawaited(_completeRefresh(flight, failedAccessToken));
+    return flight.future;
+  }
 
-    _refreshCompleter = Completer<String?>();
+  Future<void> _completeRefresh(
+    Completer<String?> flight,
+    String? failedAccessToken,
+  ) async {
     try {
-      final response = await _dio.post<Map<String, dynamic>>(
-        '/auth/refresh',
-        data: {'refreshToken': refreshToken},
-        options: Options(headers: {'Authorization': null}),
-      );
-
-      final newAccessToken = response.data?['accessToken'] as String?;
-      if (newAccessToken == null) {
-        throw const AuthException(
-          'No access token in refresh response',
-          statusCode: 401,
-        );
-      }
-
-      await _secureStorage.write(
-        key: StorageKeys.accessToken,
-        value: newAccessToken,
-      );
-
-      // Update refresh token if backend rotated it
-      final newRefreshToken = response.data?['refreshToken'] as String?;
-      if (newRefreshToken != null) {
-        await _secureStorage.write(
-          key: StorageKeys.refreshToken,
-          value: newRefreshToken,
-        );
-      }
-
-      _refreshCompleter!.complete(newAccessToken);
-      return newAccessToken;
-    } on Exception catch (e, st) {
+      flight.complete(await _performRefresh(failedAccessToken));
+    } on Object catch (error, stackTrace) {
       unawaited(
         ErrorReportingService.recordError(
-          e,
-          st,
+          error,
+          stackTrace,
           reason: 'Token refresh request failed',
           context: {'handler': 'api_service_refresh'},
         ),
       );
-      _refreshCompleter!.completeError(e);
-      rethrow;
+      flight.completeError(error, stackTrace);
     } finally {
-      _refreshCompleter = null;
+      if (identical(_refreshCompleter, flight)) {
+        _refreshCompleter = null;
+        _refreshAccessToken = null;
+      }
     }
   }
+
+  Future<String?> _performRefresh(String? failedAccessToken) async {
+    final credentials = await _readCredentials();
+    final refreshToken = credentials.refreshToken;
+    if (refreshToken == null || refreshToken.isEmpty) {
+      return null;
+    }
+
+    if (credentials.accessToken != failedAccessToken) {
+      // A late 401 may belong to the token this service has just renewed. Only
+      // reuse that known rotation, never retry under an unrelated new login.
+      final previous = _lastRefresh;
+      if (previous != null &&
+          previous.previousAccessToken == failedAccessToken &&
+          previous.accessToken == credentials.accessToken &&
+          previous.refreshToken == credentials.refreshToken) {
+        return previous.accessToken;
+      }
+      return null;
+    }
+
+    final Response<Map<String, dynamic>> response;
+    try {
+      response = await _dio.post<Map<String, dynamic>>(
+        '/auth/refresh',
+        data: {'refreshToken': refreshToken},
+        options: Options(
+          headers: {'Authorization': null},
+          extra: {_skipSessionAuth: true},
+        ),
+      );
+    } on DioException catch (error) {
+      final status = error.response?.statusCode;
+      if ((status == 401 || status == 403) &&
+          await _credentialsStillMatch(credentials)) {
+        await _clearTokens();
+        _lastRefresh = null;
+        onSessionExpired?.call();
+      }
+      rethrow;
+    }
+
+    final newAccessToken = response.data?['accessToken'];
+    final newRefreshToken = response.data?['refreshToken'];
+    if (newAccessToken is! String ||
+        newAccessToken.isEmpty ||
+        (newRefreshToken != null &&
+            (newRefreshToken is! String || newRefreshToken.isEmpty))) {
+      throw const ServerException(
+        'Invalid token refresh response',
+        statusCode: 502,
+      );
+    }
+
+    // A newer login/logout must not be overwritten by this older response.
+    if (!await _credentialsStillMatch(credentials)) {
+      return null;
+    }
+    await _secureStorage.write(
+      key: StorageKeys.accessToken,
+      value: newAccessToken,
+    );
+    if (newRefreshToken is String) {
+      await _secureStorage.write(
+        key: StorageKeys.refreshToken,
+        value: newRefreshToken,
+      );
+    }
+    _lastRefresh = (
+      previousAccessToken: credentials.accessToken,
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken as String? ?? refreshToken,
+    );
+    return newAccessToken;
+  }
+
+  Future<({String? accessToken, String? refreshToken})>
+  _readCredentials() async => (
+    accessToken: await _secureStorage.read(key: StorageKeys.accessToken),
+    refreshToken: await _secureStorage.read(key: StorageKeys.refreshToken),
+  );
+
+  // Secure storage is not transactional. This guards observed replacements;
+  // an atomic boundary across AuthService writes would need shared locking.
+  Future<bool> _credentialsStillMatch(
+    ({String? accessToken, String? refreshToken}) expected,
+  ) async => await _readCredentials() == expected;
 
   Future<void> _clearTokens() async {
     await _secureStorage.delete(key: StorageKeys.accessToken);
@@ -404,5 +496,19 @@ class ApiService {
     }
 
     return true;
+  }
+
+  static DioException _typedDioError(DioException error) {
+    final underlying = error.error;
+    final appException = underlying is AppException
+        ? underlying
+        : _mapDioError(error);
+    return DioException(
+      requestOptions: error.requestOptions,
+      response: error.response,
+      type: error.type,
+      error: appException,
+      message: appException.message,
+    );
   }
 }
