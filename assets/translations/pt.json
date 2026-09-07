@@ -688,6 +688,7 @@
     "enter_password": "Digite sua senha",
     "password_required": "A senha é obrigatória",
     "delete_hint": "DELETE",
+    "account_changed": "Sua sessão mudou. Entre novamente antes de excluir sua conta.",
     "account_deleted_success": "Sua conta foi excluída com sucesso",
     "device_android": "Dispositivo Android",
     "device_web": "Navegador Web",

@@ -62,14 +62,19 @@ class UserService {
   /// Eliminar cuenta propia (hard delete)
   /// Elimina permanentemente la cuenta y todos los datos asociados
   Future<String> deleteOwnAccount({
-    required String password,
+    required String expectedUserId,
+    String? password,
     String? reason,
   }) async {
     _logger.d('Deleting own account');
 
     final response = await _apiService.delete<Map<String, dynamic>>(
       '/users/me',
-      data: {'password': password, 'reason': ?reason},
+      data: {
+        'expectedUserId': expectedUserId,
+        'password': ?password,
+        'reason': ?reason,
+      },
     );
 
     _logger.d('Account deleted successfully');

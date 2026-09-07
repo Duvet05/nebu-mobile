@@ -16,6 +16,8 @@ _User _$UserFromJson(Map<String, dynamic> json) => _User(
   role: json['role'] as String?,
   status: json['status'] as String?,
   emailVerified: json['emailVerified'] as bool?,
+  requiresPasswordForDeletion:
+      json['requiresPasswordForDeletion'] as bool? ?? true,
   preferredLanguage: json['preferredLanguage'] as String?,
   createdAt: json['createdAt'] == null
       ? null
@@ -33,6 +35,7 @@ Map<String, dynamic> _$UserToJson(_User instance) => <String, dynamic>{
   'role': instance.role,
   'status': instance.status,
   'emailVerified': instance.emailVerified,
+  'requiresPasswordForDeletion': instance.requiresPasswordForDeletion,
   'preferredLanguage': instance.preferredLanguage,
   'createdAt': instance.createdAt?.toIso8601String(),
   'fullName': instance.fullName,

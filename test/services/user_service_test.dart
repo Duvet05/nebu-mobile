@@ -56,9 +56,74 @@ void main() {
         ),
       ).thenAnswer((_) async => <String, dynamic>{'ok': true});
 
-      final message = await userService.deleteOwnAccount(password: 'pass');
+      final message = await userService.deleteOwnAccount(
+        expectedUserId: 'confirmed-user',
+        password: 'pass',
+      );
 
       expect(message, 'Account deleted');
+    },
+  );
+
+  test(
+    'OAuth deletion omits password instead of sending a placeholder',
+    () async {
+      when(
+        apiService.delete<Map<String, dynamic>>(
+          '/users/me',
+          data: anyNamed('data') as Object?,
+        ),
+      ).thenAnswer((_) async => {'message': 'Account deleted'});
+
+      await userService.deleteOwnAccount(expectedUserId: 'confirmed-user');
+
+      verify(
+        apiService.delete<Map<String, dynamic>>(
+          '/users/me',
+          data: {'expectedUserId': 'confirmed-user'},
+        ),
+      );
+    },
+  );
+
+  test('local deletion sends the password without changing it', () async {
+    when(
+      apiService.delete<Map<String, dynamic>>(
+        '/users/me',
+        data: anyNamed('data') as Object?,
+      ),
+    ).thenAnswer((_) async => {'message': 'Account deleted'});
+
+    await userService.deleteOwnAccount(
+      expectedUserId: 'confirmed-user',
+      password: ' LocalPassword1 ',
+    );
+
+    verify(
+      apiService.delete<Map<String, dynamic>>(
+        '/users/me',
+        data: {
+          'expectedUserId': 'confirmed-user',
+          'password': ' LocalPassword1 ',
+        },
+      ),
+    );
+  });
+
+  test(
+    'deletion propagates server failure instead of reporting success',
+    () async {
+      when(
+        apiService.delete<Map<String, dynamic>>(
+          '/users/me',
+          data: anyNamed('data') as Object?,
+        ),
+      ).thenThrow(Exception('Deletion denied'));
+
+      await expectLater(
+        userService.deleteOwnAccount(expectedUserId: 'confirmed-user'),
+        throwsException,
+      );
     },
   );
 }

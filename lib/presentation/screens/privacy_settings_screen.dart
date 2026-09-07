@@ -16,6 +16,7 @@ import '../../core/utils/analytics_service.dart';
 import '../../core/utils/error_reporting_service.dart';
 import '../../core/utils/privacy_preferences.dart';
 import '../../core/utils/ui_helpers.dart';
+import '../../data/models/user.dart';
 import '../providers/api_provider.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_button.dart';
@@ -32,6 +33,7 @@ class PrivacySettingsScreen extends ConsumerStatefulWidget {
 class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
   bool _shareActivityData = false;
   bool _analyticsEnabled = false;
+  bool _deletionInProgress = false;
 
   Map<Permission, bool> _permissions = {};
 
@@ -267,7 +269,7 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
                   Icons.chevron_right,
                   color: context.colors.error,
                 ),
-                onTap: _showDeleteAccountDialog,
+                onTap: _deletionInProgress ? null : _showDeleteAccountDialog,
               ),
             ],
           ),
@@ -305,7 +307,11 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             ),
           ],
         ),
-        child: Column(children: children),
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: context.radius.panel,
+          child: Column(children: children),
+        ),
       );
 
   Widget _buildPermissionTile(
@@ -374,12 +380,31 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
     );
   }
 
-  void _showDeleteAccountDialog() {
-    unawaited(
-      showDialog<void>(
+  Future<void> _showDeleteAccountDialog() async {
+    if (_deletionInProgress) {
+      return;
+    }
+    setState(() => _deletionInProgress = true);
+    try {
+      final signedInUser = ref.read(authProvider).value;
+      if (signedInUser == null) {
+        throw Exception('privacy.account_changed'.tr());
+      }
+      // Fetch server-owned requirements instead of trusting a cached login type.
+      final userService = ref.read(userServiceProvider);
+      final user = await userService.getCurrentUserProfile();
+      if (!mounted) {
+        return;
+      }
+      if (user.id != signedInUser.id ||
+          ref.read(authProvider).value?.id != user.id) {
+        throw Exception('privacy.account_changed'.tr());
+      }
+      final continueDeletion = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           key: const ValueKey<String>('privacy.deleteAccountWarningDialog'),
+          scrollable: true,
           title: Text(
             'privacy.delete_account'.tr(),
             style: context.textTheme.titleLarge?.copyWith(
@@ -390,6 +415,8 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(user.email),
+              SizedBox(height: context.spacing.sectionTitleBottomMargin),
               Text('privacy.delete_account_warning'.tr()),
               SizedBox(height: context.spacing.sectionTitleBottomMargin),
               Text(
@@ -416,24 +443,35 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
               ),
               text: 'privacy.delete_permanently'.tr(),
               variant: ButtonVariant.danger,
-              onPressed: () async {
-                Navigator.pop(context);
-                final password = await _confirmDeleteAccount();
-                if (password != null && mounted) {
-                  await _performAccountDeletion(password);
-                }
-              },
+              onPressed: () => Navigator.pop(context, true),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Future<void> _performAccountDeletion(String password) async {
-    try {
-      final userService = ref.read(userServiceProvider);
-      await userService.deleteOwnAccount(password: password);
+      );
+      if (continueDeletion != true || !mounted) {
+        return;
+      }
+      final confirmation = await showDialog<({String? password})>(
+        context: context,
+        builder: (context) => _DeleteAccountConfirmationDialog(user: user),
+      );
+      if (confirmation == null || !mounted) {
+        return;
+      }
+      // The endpoint deletes the current session: never submit after a switch.
+      if (ref.read(authProvider).value?.id != user.id) {
+        throw Exception('privacy.account_changed'.tr());
+      }
+      await userService.deleteOwnAccount(
+        expectedUserId: user.id,
+        password: confirmation.password,
+      );
+      if (!mounted) {
+        return;
+      }
+      if (ref.read(authProvider).value?.id != user.id) {
+        throw Exception('privacy.account_changed'.tr());
+      }
       await ref.read(authProvider.notifier).logout();
       if (!mounted) {
         return;
@@ -446,17 +484,18 @@ class _PrivacySettingsScreenState extends ConsumerState<PrivacySettingsScreen> {
         return;
       }
       context.showErrorSnackBar(e.toString().replaceFirst('Exception: ', ''));
+    } finally {
+      if (mounted) {
+        setState(() => _deletionInProgress = false);
+      }
     }
   }
-
-  Future<String?> _confirmDeleteAccount() => showDialog<String?>(
-    context: context,
-    builder: (context) => const _DeleteAccountConfirmationDialog(),
-  );
 }
 
 class _DeleteAccountConfirmationDialog extends StatefulWidget {
-  const _DeleteAccountConfirmationDialog();
+  const _DeleteAccountConfirmationDialog({required this.user});
+
+  final User user;
 
   @override
   State<_DeleteAccountConfirmationDialog> createState() =>
@@ -483,6 +522,8 @@ class _DeleteAccountConfirmationDialogState
     content: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        Text(widget.user.email),
+        SizedBox(height: context.spacing.sectionTitleBottomMargin),
         Text('privacy.type_delete_to_confirm'.tr()),
         SizedBox(height: context.spacing.sectionTitleBottomMargin),
         CustomInput(
@@ -490,13 +531,15 @@ class _DeleteAccountConfirmationDialogState
           controller: _confirmController,
           hint: 'privacy.delete_hint'.tr(),
         ),
-        SizedBox(height: context.spacing.sectionTitleBottomMargin),
-        CustomInput(
-          key: const ValueKey<String>('privacy.deletePasswordField'),
-          controller: _passwordController,
-          hint: 'privacy.enter_password'.tr(),
-          obscureText: true,
-        ),
+        if (widget.user.requiresPasswordForDeletion) ...[
+          SizedBox(height: context.spacing.sectionTitleBottomMargin),
+          CustomInput(
+            key: const ValueKey<String>('privacy.deletePasswordField'),
+            controller: _passwordController,
+            hint: 'privacy.enter_password'.tr(),
+            obscureText: true,
+          ),
+        ],
       ],
     ),
     actions: [
@@ -518,7 +561,8 @@ class _DeleteAccountConfirmationDialogState
             );
             return;
           }
-          if (_passwordController.text.isEmpty) {
+          if (widget.user.requiresPasswordForDeletion &&
+              _passwordController.text.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('privacy.password_required'.tr()),
@@ -527,7 +571,11 @@ class _DeleteAccountConfirmationDialogState
             );
             return;
           }
-          Navigator.pop(context, _passwordController.text);
+          Navigator.pop(context, (
+            password: widget.user.requiresPasswordForDeletion
+                ? _passwordController.text
+                : null,
+          ));
         },
       ),
     ],

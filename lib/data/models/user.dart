@@ -15,6 +15,7 @@ abstract class User with _$User {
     String? role,
     String? status,
     bool? emailVerified,
+    @Default(true) bool requiresPasswordForDeletion,
     String? preferredLanguage,
     DateTime? createdAt,
     String? fullName,
