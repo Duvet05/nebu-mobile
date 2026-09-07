@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/config/config.dart';
-import '../../core/config/release_feature_policy.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/toy_status_helper.dart';
@@ -19,8 +18,6 @@ import '../widgets/nebu_dots_loader.dart';
 const _homeDinoAsset = 'assets/icons/dino.svg';
 const _settingsIconAsset = 'assets/icons/lucide/settings.svg';
 const _plusIconAsset = 'assets/icons/lucide/plus.svg';
-const _micIconAsset = 'assets/icons/lucide/mic.svg';
-const _bookOpenIconAsset = 'assets/icons/lucide/book-open.svg';
 const _sparklesIconAsset = 'assets/icons/lucide/sparkles.svg';
 const _batteryFullIconAsset = 'assets/icons/lucide/battery-full.svg';
 const _batteryMediumIconAsset = 'assets/icons/lucide/battery-medium.svg';
@@ -131,50 +128,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               // Active Toys List
               _buildActiveToysList(context),
 
-              if (Config.isFeatureEnabled(ReleaseFeature.homeQuickActions)) ...[
+              if (Config.isRouteEnabled(AppRoutes.personalities.path)) ...[
                 SizedBox(height: context.spacing.panelPadding),
-
-                // Quick Actions
-                Text(
-                  'home.quick_actions'.tr(),
-                  style: theme.textTheme.titleLarge,
-                ),
-
-                SizedBox(height: context.spacing.sectionTitleBottomMargin),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _QuickActionCard(
-                        iconAsset: _micIconAsset,
-                        iconKey: 'home-quick-action-voice-icon',
-                        label: 'home.voice_history'.tr(),
-                        color: context.colors.success,
-                        onTap: () => context.push(AppRoutes.voiceHistory.path),
-                      ),
-                    ),
-                    SizedBox(width: context.spacing.labelBottomMargin),
-                    Expanded(
-                      child: _QuickActionCard(
-                        iconAsset: _bookOpenIconAsset,
-                        iconKey: 'home-quick-action-knowledge-icon',
-                        label: 'home.knowledge'.tr(),
-                        color: context.colors.warning,
-                        onTap: () =>
-                            context.push(AppRoutes.knowledgeSearch.path),
-                      ),
-                    ),
-                    SizedBox(width: context.spacing.labelBottomMargin),
-                    Expanded(
-                      child: _QuickActionCard(
-                        iconAsset: _sparklesIconAsset,
-                        iconKey: 'home-quick-action-personalities-icon',
-                        label: 'home.personalities'.tr(),
-                        color: context.colors.secondary,
-                        onTap: () => context.push(AppRoutes.personalities.path),
-                      ),
-                    ),
-                  ],
+                // Personalities remain part of toy customization, independently
+                // of the retired Explore section.
+                CustomButton(
+                  key: const ValueKey('home-personalities-button'),
+                  text: 'home.personalities'.tr(),
+                  onPressed: () => context.push(AppRoutes.personalities.path),
+                  leading: _HomeSvgIcon(
+                    key: const ValueKey('home-personalities-icon'),
+                    asset: _sparklesIconAsset,
+                    color: theme.colorScheme.primary,
+                    size: 20,
+                  ),
+                  variant: ButtonVariant.outline,
+                  isFullWidth: true,
                 ),
 
                 SizedBox(height: context.spacing.panelPadding),
@@ -423,66 +392,6 @@ class _ToySummaryCard extends StatelessWidget {
                 ],
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickActionCard extends StatelessWidget {
-  const _QuickActionCard({
-    required this.iconAsset,
-    required this.iconKey,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String iconAsset;
-  final String iconKey;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.theme;
-
-    return Semantics(
-      button: true,
-      label: label,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: context.radius.tile,
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            vertical: context.spacing.paragraphBottomMarginSm,
-            horizontal: context.spacing.labelBottomMargin,
-          ),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
-            borderRadius: context.radius.tile,
-            border: Border.all(color: color.withValues(alpha: 0.2)),
-          ),
-          child: Column(
-            children: [
-              _HomeSvgIcon(
-                key: ValueKey(iconKey),
-                asset: iconAsset,
-                color: color,
-              ),
-              SizedBox(height: context.spacing.labelBottomMargin),
-              Text(
-                label,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
           ),
         ),
       ),

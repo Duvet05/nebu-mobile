@@ -28,12 +28,14 @@ enum AppRoutes {
   persons('/persons'),
   walkieTalkie('/walkie-talkie'),
   toyMemory('/toy-memory'),
+  // Legacy URL retained only to redirect safely; new voice cloning is retired.
   voiceClone('/voice-clone'),
   personalities('/personalities'),
   playground('/playground'),
   verifyEmail('/verify-email'),
   resetPassword('/reset-password'),
   healthCheck('/health-check'),
+  // Legacy Explore URLs retained only for safe redirects to Home.
   knowledgeSearch('/knowledge-search'),
   voiceHistory('/voice-history'),
   settings('/settings');

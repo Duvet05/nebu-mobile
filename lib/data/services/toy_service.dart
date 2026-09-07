@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 import '../../core/errors/app_exception.dart';
@@ -184,36 +183,6 @@ class ToyService {
       },
     );
     _logger.d('Toy updated successfully');
-    return Toy.fromJson(response);
-  }
-
-  /// Clonar la voz del juguete con Inworld a partir de una muestra de audio
-  /// (WAV/MP3/WebM, 5-15 segundos, máx. 4MB)
-  Future<Toy> cloneToyVoice({
-    required String id,
-    required String audioFilePath,
-    String? displayName,
-    String? langCode,
-  }) async {
-    _logger.d('Cloning voice for toy: $id');
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        audioFilePath,
-        filename: 'voice-sample.wav',
-      ),
-      'displayName': ?_nonBlank(displayName),
-      'langCode': ?_nonBlank(langCode),
-    });
-    final response = await _apiService.post<Map<String, dynamic>>(
-      '/toys/$id/voice-clone',
-      data: formData,
-      // La clonación en Inworld puede exceder el timeout global de 30s
-      options: Options(
-        sendTimeout: const Duration(seconds: 90),
-        receiveTimeout: const Duration(seconds: 90),
-      ),
-    );
-    _logger.d('Voice cloned successfully');
     return Toy.fromJson(response);
   }
 

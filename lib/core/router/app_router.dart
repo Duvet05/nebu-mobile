@@ -17,7 +17,6 @@ import '../../presentation/screens/email_verification_screen.dart';
 import '../../presentation/screens/health_check_screen.dart';
 import '../../presentation/screens/help_support_screen.dart';
 import '../../presentation/screens/home_screen.dart';
-import '../../presentation/screens/knowledge_search_screen.dart';
 import '../../presentation/screens/login_screen.dart';
 import '../../presentation/screens/main_screen.dart';
 import '../../presentation/screens/my_toys_screen.dart';
@@ -46,8 +45,6 @@ import '../../presentation/screens/terms_of_service_screen.dart';
 import '../../presentation/screens/toy_memory_screen.dart';
 import '../../presentation/screens/toy_settings_screen.dart';
 import '../../presentation/screens/usage_limits_screen.dart';
-import '../../presentation/screens/voice_clone_screen.dart';
-import '../../presentation/screens/voice_sessions_screen.dart';
 import '../../presentation/screens/walkie_talkie_screen.dart';
 import '../../presentation/screens/welcome_screen.dart';
 import '../config/config.dart';
@@ -92,8 +89,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final hasToys = toysAsync.value ?? false;
       final skippedSetup = setupAsync.value ?? false;
 
-      // The minimum iPhone release removes optional features from both the UI
-      // and navigation. Keep this local to the compiled build, never remote.
+      // Retired features are unavailable to every user, including old deep
+      // links. The additional minimum-iPhone policy stays local to the build.
       if (!Config.isRouteEnabled(path)) {
         return AppRoutes.home.path;
       }
@@ -356,14 +353,8 @@ class AppRouter {
       path: AppRoutes.healthCheck.path,
       builder: (_, _) => const HealthCheckScreen(),
     ),
-    GoRoute(
-      path: AppRoutes.knowledgeSearch.path,
-      builder: (_, _) => const KnowledgeSearchScreen(),
-    ),
-    GoRoute(
-      path: AppRoutes.voiceHistory.path,
-      builder: (_, _) => const VoiceSessionsScreen(),
-    ),
+    _redirectRoute(AppRoutes.knowledgeSearch.path, AppRoutes.home.path),
+    _redirectRoute(AppRoutes.voiceHistory.path, AppRoutes.home.path),
 
     // Dynamic Routes
     GoRoute(
@@ -384,12 +375,7 @@ class AppRouter {
           ? WalkieTalkieScreen(toy: s.extra! as Toy)
           : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
     ),
-    GoRoute(
-      path: AppRoutes.voiceClone.path,
-      builder: (c, s) => s.extra is Toy
-          ? VoiceCloneScreen(toy: s.extra! as Toy)
-          : Scaffold(body: Center(child: Text('errors.invalid_toy'.tr()))),
-    ),
+    _redirectRoute(AppRoutes.voiceClone.path, AppRoutes.home.path),
     GoRoute(
       path: AppRoutes.playground.path,
       builder: (c, s) =>

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' as fbp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nebu_mobile_flutter/core/constants/app_routes.dart';
 import 'package:nebu_mobile_flutter/core/theme/app_theme.dart';
 import 'package:nebu_mobile_flutter/data/models/user.dart';
 import 'package:nebu_mobile_flutter/presentation/providers/auth_provider.dart';
@@ -33,6 +35,67 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
     SharedPreferences.setMockInitialValues(<String, Object>{});
     await EasyLocalization.ensureInitialized();
+  });
+
+  testWidgets('Home keeps the personalities catalog directly reachable', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: AppRoutes.home.path,
+      routes: [
+        GoRoute(
+          path: AppRoutes.home.path,
+          builder: (_, _) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.personalities.path,
+          builder: (_, _) => const Scaffold(
+            key: ValueKey('personalities-catalog-destination'),
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          authProvider.overrideWith(_LayoutAuthNotifier.new),
+          connectedDevicesProvider.overrideWith(
+            (ref) async => <fbp.BluetoothDevice>[],
+          ),
+        ],
+        child: EasyLocalization(
+          supportedLocales: _locales,
+          path: 'assets/translations',
+          assetLoader: const TestJsonAssetLoader(),
+          fallbackLocale: const Locale('en'),
+          startLocale: const Locale('en'),
+          saveLocale: false,
+          child: Builder(
+            builder: (context) => MaterialApp.router(
+              theme: AppTheme.lightTheme,
+              locale: context.locale,
+              supportedLocales: context.supportedLocales,
+              localizationsDelegates: context.localizationDelegates,
+              routerConfig: router,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final catalogButton = find.byKey(
+      const ValueKey('home-personalities-button'),
+    );
+    await tester.ensureVisible(catalogButton);
+    await tester.tap(catalogButton);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('personalities-catalog-destination')),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   for (final locale in _locales) {
@@ -115,14 +178,27 @@ void main() {
             for (final iconKey in const [
               'home-settings-icon',
               'home-add-toy-icon',
-              'home-quick-action-voice-icon',
-              'home-quick-action-knowledge-icon',
-              'home-quick-action-personalities-icon',
+              'home-personalities-icon',
             ]) {
               expect(
                 find.byKey(ValueKey(iconKey)),
                 findsOneWidget,
                 reason: '$scenario should use the frontend icon set',
+              );
+            }
+            expect(
+              find.text('home.quick_actions'.tr()),
+              findsNothing,
+              reason: '$scenario should not expose the retired Explore section',
+            );
+            for (final retiredLabel in [
+              'home.voice_history',
+              'home.knowledge',
+            ]) {
+              expect(
+                find.text(retiredLabel.tr()),
+                findsNothing,
+                reason: scenario,
               );
             }
 
@@ -192,15 +268,15 @@ void main() {
               reason: scenario,
             );
 
-            await tester.ensureVisible(find.text(_quickAction(locale)));
+            await tester.ensureVisible(find.text(_personalitiesLabel(locale)));
             await tester.pump();
-            final lastQuickAction = find.ancestor(
-              of: find.text(_quickAction(locale)),
-              matching: find.byType(InkWell),
+            final personalitiesButton = find.ancestor(
+              of: find.text(_personalitiesLabel(locale)),
+              matching: find.byType(OutlinedButton),
             );
-            expect(lastQuickAction, findsOneWidget, reason: scenario);
+            expect(personalitiesButton, findsOneWidget, reason: scenario);
             expect(
-              lastQuickAction.hitTestable(),
+              personalitiesButton.hitTestable(),
               findsOneWidget,
               reason: scenario,
             );
@@ -212,7 +288,7 @@ void main() {
   }
 }
 
-String _quickAction(Locale locale) => switch (locale.languageCode) {
+String _personalitiesLabel(Locale locale) => switch (locale.languageCode) {
   'es' => 'Personalidades',
   'pt' => 'Personalidades',
   _ => 'Personalities',
