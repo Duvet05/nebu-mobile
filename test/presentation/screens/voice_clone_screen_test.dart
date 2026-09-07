@@ -11,6 +11,8 @@ import 'package:nebu_mobile_flutter/data/models/toy.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/voice_clone_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 /// Mock del method channel del plugin `record` para ejercitar el flujo
 /// grabar → detener → confirmar sin micrófono real.
 ///
@@ -72,6 +74,7 @@ void main() {
       EasyLocalization(
         supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
         path: 'assets/translations',
+        assetLoader: const TestJsonAssetLoader(),
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('es'),
         saveLocale: false,

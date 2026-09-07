@@ -10,7 +10,9 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/analytics_service.dart';
+import '../../../data/models/parental_consent.dart';
 import '../../../data/models/toy.dart';
+import '../../../data/models/user_setup.dart';
 import '../../providers/api_provider.dart';
 import '../../providers/auth_provider.dart' as auth_provider;
 import '../../providers/person_provider.dart';
@@ -21,6 +23,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
   const WorldInfoSetupScreen({super.key});
 
   Future<void> _finishSetup(BuildContext context, WidgetRef ref) async {
+    final locale = context.locale.languageCode;
     final prefs = await ref.read(
       auth_provider.sharedPreferencesProvider.future,
     );
@@ -46,6 +49,65 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       'voicePreference': ?voicePreference,
       if (favorites.isNotEmpty) 'interests': favorites,
     };
+    final user = await ref.read(auth_provider.authProvider.future);
+
+    // Verify or persist versioned consent before sending child profile data.
+    if (user != null) {
+      final submittedConsent =
+          prefs.getString(StorageKeys.setupParentalConsentUserId) == user.id;
+      try {
+        final setupService = ref.read(userSetupServiceProvider);
+        if (submittedConsent) {
+          await setupService.saveSetup(
+            userId: user.id,
+            profile: UserProfile(
+              name: user.name ?? user.email.split('@').first,
+              email: user.email,
+              avatarUrl: user.avatar,
+            ),
+            preferences: UserPreferences(
+              language: locale,
+              theme: prefs.getString(StorageKeys.setupTheme) ?? 'system',
+              hapticFeedback:
+                  prefs.getBool(StorageKeys.setupHapticFeedback) ?? true,
+              autoSave: prefs.getBool(StorageKeys.setupAutoSave) ?? true,
+              analytics:
+                  prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true,
+            ),
+            notifications: NotificationSettings(
+              push: prefs.getBool(StorageKeys.setupNotifications) ?? true,
+            ),
+            voice: VoiceSettings(
+              enabled:
+                  voicePreference != null && voicePreference.trim().isNotEmpty,
+              voiceModel: voicePreference,
+            ),
+            parentalConsent: ParentalConsent(locale: locale),
+          );
+        } else {
+          final hasCurrentConsent = await setupService
+              .hasCurrentParentalConsent(user.id);
+          if (!hasCurrentConsent) {
+            throw StateError('Current parental consent is required');
+          }
+        }
+      } on Exception catch (error, stackTrace) {
+        logger.e(
+          'Failed to save consent-protected setup',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('setup.world_info.save_error'.tr()),
+              backgroundColor: context.colors.error,
+            ),
+          );
+        }
+        return;
+      }
+    }
 
     if (deviceRegistered) {
       // Toy was registered at step 3 — PATCH it with personality + settings
@@ -62,8 +124,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
           // receives proper context (name, age, interests).
           // Estimate birthDate from the age-range selection.
           String? ownerId;
-          final authState = ref.read(auth_provider.authProvider);
-          if (authState.value != null) {
+          if (user != null) {
             try {
               final birthDate = _estimateBirthDate(childAge);
               final child = await ref
@@ -128,6 +189,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
       prefs.remove(StorageKeys.setupChildAge),
       prefs.remove(StorageKeys.setupVoicePreference),
       prefs.remove(StorageKeys.setupFavorites),
+      prefs.remove(StorageKeys.setupParentalConsentUserId),
       prefs.setBool(StorageKeys.setupCompleted, true),
     ]);
 

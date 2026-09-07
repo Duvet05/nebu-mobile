@@ -134,7 +134,19 @@
       "nebu_pixel": "Nebu Pixel",
       "nebu_pixel_desc": "Young, playful, and curious",
       "nebu_orion": "Nebu Orion",
-      "nebu_orion_desc": "Adventurous, brave, and mysterious"
+      "nebu_orion_desc": "Adventurous, brave, and mysterious",
+      "consent_title": "Parental consent for voice",
+      "consent_message": "The adult account holder must confirm each declaration before AI conversations are enabled.",
+      "consent_verify_failed": "We could not verify an existing consent record. Confirm these declarations to continue safely.",
+      "consent_guardian": "I declare that I am the child's parent or legal guardian.",
+      "consent_child_data": "I authorize the processing of the child's profile and conversation data to provide Nebu.",
+      "consent_sensitive_data": "I authorize the processing of voice/audio and other sensitive data needed for the voice experience.",
+      "review_privacy": "Review Privacy Policy",
+      "review_terms": "Review Terms",
+      "consent_current_title": "Current consent registered",
+      "consent_current_message": "This adult account already has a current parental consent record. You do not need to accept it again.",
+      "consent_guest_title": "Adult account required for voice",
+      "consent_guest_message": "You may finish local setup. To use AI conversations, an adult must sign in and provide consent."
     },
     "favorites": {
       "title": "Favorite Things",
@@ -157,7 +169,8 @@
       "profile_configured": "Profile configured",
       "preferences_saved": "Preferences saved",
       "start_using": "Start Using Nebu",
-      "default_child_name": "My child"
+      "default_child_name": "My child",
+      "save_error": "We could not save the consent-protected setup. No child profile data was sent in this step. Please try again."
     }
   },
   "splash": {
@@ -819,6 +832,8 @@
     "messages": "{} messages",
     "conversation": "Conversation",
     "no_messages": "No messages in this session",
+    "details_not_retained": "For privacy, the details of this conversation are no longer retained. The summary and metrics remain available.",
+    "session_data_expired": "This session passed its retention period. The details and summary are no longer retained; only general metrics remain.",
     "error_conversations": "Could not load messages",
     "engagement": "Engagement",
     "turns": "{} turns",

@@ -8,6 +8,8 @@ import 'package:nebu_mobile_flutter/presentation/screens/welcome_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/widgets/brand_backdrop.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'helpers/localization_test_helper.dart';
+
 void main() {
   setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -101,6 +103,7 @@ Future<void> _pumpWelcome(
       key: ValueKey<String>(startLocale.languageCode),
       supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
       path: 'assets/translations',
+      assetLoader: const TestJsonAssetLoader(),
       fallbackLocale: const Locale('es'),
       startLocale: startLocale,
       child: _TestApp(treeKey: startLocale.languageCode),

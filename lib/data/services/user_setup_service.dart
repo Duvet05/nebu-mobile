@@ -1,5 +1,6 @@
 import 'package:logger/logger.dart';
 
+import '../models/parental_consent.dart';
 import '../models/user_setup.dart';
 import 'api_service.dart';
 
@@ -16,6 +17,7 @@ class UserSetupService {
     required UserPreferences preferences,
     required NotificationSettings notifications,
     required VoiceSettings voice,
+    ParentalConsent? parentalConsent,
   }) async {
     _logger.d('Saving setup for user: $userId');
 
@@ -26,6 +28,8 @@ class UserSetupService {
         'preferences': preferences.toJson(),
         'notifications': notifications.toJson(),
         'voice': voice.toJson(),
+        if (parentalConsent != null)
+          'parentalConsent': parentalConsent.toJson(),
       },
     );
 
@@ -43,6 +47,20 @@ class UserSetupService {
 
     _logger.d('Setup fetched successfully');
     return UserSetup.fromJson(response);
+  }
+
+  /// Checks the backend record rather than trusting a local flag.
+  Future<bool> hasCurrentParentalConsent(String userId) async {
+    _logger.d('Checking current parental consent for user: $userId');
+
+    final response = await _apiService.get<Map<String, dynamic>>(
+      '/users/$userId/setup',
+    );
+
+    return ParentalConsent.isCurrentRecord(
+      response['parentalConsent'],
+      userId: userId,
+    );
   }
 
   /// Update user preferences

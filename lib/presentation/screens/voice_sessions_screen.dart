@@ -467,6 +467,34 @@ class _SessionDetail extends ConsumerWidget {
           conversationsAsync.when(
             data: (conversations) {
               if (conversations.isEmpty) {
+                final retentionExpired =
+                    session.metadata?['retentionCleanedAt'] != null;
+                final detailsWerePurged =
+                    session.metadata?['rawConversationPurgedAt'] != null;
+                if (retentionExpired || detailsWerePurged) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.privacy_tip_outlined,
+                        size: 18,
+                        color: context.colors.primary,
+                      ),
+                      SizedBox(width: context.spacing.gapSm),
+                      Expanded(
+                        child: Text(
+                          (retentionExpired
+                                  ? 'voice_history.session_data_expired'
+                                  : 'voice_history.details_not_retained')
+                              .tr(),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
                 return Text(
                   'voice_history.no_messages'.tr(),
                   style: theme.textTheme.bodySmall?.copyWith(

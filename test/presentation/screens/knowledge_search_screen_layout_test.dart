@@ -9,6 +9,8 @@ import 'package:nebu_mobile_flutter/presentation/providers/memory_provider.dart'
 import 'package:nebu_mobile_flutter/presentation/screens/knowledge_search_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../helpers/localization_test_helper.dart';
+
 const _category = 'Ciência natural interdisciplinar avançada';
 const _source = 'Enciclopédia Internacional de Conhecimento Infantil Revisada';
 
@@ -38,6 +40,7 @@ void main() {
           child: EasyLocalization(
             supportedLocales: const [Locale('en'), Locale('es'), Locale('pt')],
             path: 'assets/translations',
+            assetLoader: const TestJsonAssetLoader(),
             fallbackLocale: const Locale('pt'),
             startLocale: const Locale('pt'),
             saveLocale: false,
