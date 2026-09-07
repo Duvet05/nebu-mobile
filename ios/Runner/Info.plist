@@ -40,6 +40,8 @@
 	<!-- Keep collection off until Flutter restores the user's preference. -->
 	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>
 	<false/>
+	<key>FirebaseCrashlyticsCollectionEnabled</key>
+	<false/>
 	<key>GOOGLE_ANALYTICS_IDFV_COLLECTION_ENABLED</key>
 	<false/>
 	<key>ITSAppUsesNonExemptEncryption</key>

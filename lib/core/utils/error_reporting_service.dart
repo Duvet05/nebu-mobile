@@ -15,7 +15,7 @@ class ErrorReportingService {
 
   static bool get isEnabled => _isCollectionEnabled;
 
-  static Future<void> initialize({bool collectionEnabled = true}) async {
+  static Future<void> initialize({bool collectionEnabled = false}) async {
     if (_initialized) {
       return;
     }
