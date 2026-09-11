@@ -21,42 +21,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mockito/mockito.dart';
 import 'package:nebu_mobile_flutter/core/theme/app_theme.dart';
+import 'package:nebu_mobile_flutter/data/models/person.dart';
 import 'package:nebu_mobile_flutter/data/models/personality.dart';
 import 'package:nebu_mobile_flutter/data/models/toy.dart';
 import 'package:nebu_mobile_flutter/data/models/user.dart';
+import 'package:nebu_mobile_flutter/presentation/providers/api_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/providers/auth_provider.dart';
+import 'package:nebu_mobile_flutter/presentation/providers/person_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/providers/personality_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/providers/toy_provider.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/home_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/main_screen.dart';
+import 'package:nebu_mobile_flutter/presentation/screens/persons_screen.dart';
+import 'package:nebu_mobile_flutter/presentation/screens/setup/personality_setup_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/setup/voice_setup_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/toy_settings_screen.dart';
-import 'package:nebu_mobile_flutter/presentation/screens/voice_clone_screen.dart';
 import 'package:nebu_mobile_flutter/presentation/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/localization_test_helper.dart';
-
-const _recordChannel = MethodChannel('com.llfbandit.record/messages');
-const _pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
-
-const _demoClonedVoice = {
-  'id': 'demo-cloned-voice',
-  'name': 'Voz de mamá',
-  'createdAt': '2026-08-16T00:00:00Z',
-};
+import '../services/mocks.dart';
 
 const _demoToy = Toy(
   id: 'demo-toy-1',
-  name: 'Nebu de Lucas',
+  name: 'Nebu',
   status: ToyStatus.connected,
+  ownerId: 'demo-person-1',
   batteryLevel: '85%',
   model: 'NB-100',
   personalityProfile: 'peruvian',
   settings: {
-    'voicePreference': 'demo-cloned-voice',
-    'clonedVoice': _demoClonedVoice,
+    'voicePreference': 'default-oklrorszoxbwzfdj8zjhng__nebu',
     'childAge': '6-8',
     'enableWalkieTalkie': true,
     'enableVarietyEngine': true,
@@ -65,8 +62,9 @@ const _demoToy = Toy(
 
 const _demoToy2 = Toy(
   id: 'demo-toy-2',
-  name: 'Nebu de Emma',
+  name: 'Dino',
   status: ToyStatus.disconnected,
+  ownerId: 'demo-person-2',
   batteryLevel: '52%',
   model: 'NB-100',
 );
@@ -95,12 +93,27 @@ class _FakeAuthNotifier extends AuthNotifier {
 class _FakePersonalitiesNotifier extends PersonalitiesNotifier {
   @override
   Future<List<Personality>> build() async => const [
-    Personality(
-      id: 'peruvian',
-      name: 'Nebu Peruano',
-      description: 'Cuentacuentos con sabor local',
+    Personality(id: 'peruvian', name: 'Nebu', description: 'Nebu'),
+  ];
+}
+
+class _FakePersonNotifier extends PersonNotifier {
+  @override
+  Future<List<Person>> build() async => [
+    Person(
+      id: 'demo-person-1',
+      givenName: 'Lucas',
+      birthDate: DateTime(2018, 5, 10),
+    ),
+    Person(
+      id: 'demo-person-2',
+      givenName: 'Emma',
+      birthDate: DateTime(2020, 6, 15),
     ),
   ];
+
+  @override
+  Future<void> loadMyPersons() async {}
 }
 
 /// Shell único: EasyLocalization/MaterialApp se montan una sola vez y las
@@ -202,43 +215,13 @@ void main() {
     await EasyLocalization.ensureInitialized();
   });
 
-  setUp(() {
-    String? lastStartPath;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(_recordChannel, (call) async {
-          switch (call.method) {
-            case 'create':
-              // El plugin abre un EventChannel dinamico por recorder; sin un
-              // mock, el listen lanza MissingPluginException async.
-              final recorderId =
-                  (call.arguments as Map<dynamic, dynamic>)['recorderId'];
-              TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-                  .setMockMessageHandler(
-                    'com.llfbandit.record/events/$recorderId',
-                    (message) async =>
-                        const StandardMethodCodec().encodeSuccessEnvelope(null),
-                  );
-              return null;
-            case 'hasPermission':
-              return true;
-            case 'start':
-              lastStartPath =
-                  (call.arguments as Map<dynamic, dynamic>)['path'] as String?;
-              return null;
-            case 'stop':
-              return lastStartPath;
-            default:
-              return null;
-          }
-        });
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-          _pathProviderChannel,
-          (call) async => Directory.systemTemp.path,
-        );
-  });
-
   testWidgets('genera capturas del listing de Play', (tester) async {
+    // Widget tests normally replace soft shadows with solid black shapes.
+    // Render production shadows for faithful store screenshots.
+    final previousDisableShadows = debugDisableShadows;
+    debugDisableShadows = false;
+    addTearDown(() => debugDisableShadows = previousDisableShadows);
+
     // 1080x1920 físico = 9:16 exacto, el ratio más seguro para Play.
     tester.view
       ..physicalSize = const Size(1080, 1920)
@@ -248,6 +231,12 @@ void main() {
     final outRoot = Directory('build/store_screenshots');
 
     await tester.runAsync(_loadFonts);
+
+    // The screenshot harness never contacts a backend or creates consent.
+    final demoApi = MockApiService();
+    when(
+      demoApi.get<Map<String, dynamic>>('/users/demo-user/setup'),
+    ).thenAnswer((_) async => <String, dynamic>{'parentalConsent': null});
 
     final boundaryKey = GlobalKey();
     await tester.pumpWidget(
@@ -260,9 +249,11 @@ void main() {
         saveLocale: false,
         child: ProviderScope(
           overrides: [
+            apiServiceProvider.overrideWithValue(demoApi),
             toyProvider.overrideWith(_FakeToyNotifier.new),
             authProvider.overrideWith(_FakeAuthNotifier.new),
             personalitiesProvider.overrideWith(_FakePersonalitiesNotifier.new),
+            personProvider.overrideWith(_FakePersonNotifier.new),
           ],
           child: RepaintBoundary(
             key: boundaryKey,
@@ -325,30 +316,15 @@ void main() {
       await show(const VoiceSetupScreen());
       await shoot(locale, '03_voces');
 
-      // 04 — Clonación de voz (nuevo en 1.3.0)
-      await show(VoiceCloneScreen(key: UniqueKey(), toy: _demoToy));
-      await shoot(locale, '04_clonar_voz');
+      // 04 — Personalidad, conservada en el release simplificado.
+      await show(const PersonalitySetupScreen());
+      await shoot(locale, '04_personalidad');
 
-      // 05 — Clonación: muestra grabada + consentimiento
-      await tester.ensureVisible(find.byType(ElevatedButton).first);
-      await tester.pumpAndSettle();
-      tester
-          .widget<ElevatedButton>(find.byType(ElevatedButton).first)
-          .onPressed!();
-      await tester.pump();
-      await tester.pump();
-      for (var i = 0; i < 9; i++) {
-        await tester.pump(const Duration(seconds: 1));
-      }
-      final stopButton = find.byType(ElevatedButton).first;
-      tester.widget<ElevatedButton>(stopButton).onPressed!();
-      await tester.pumpAndSettle();
-      // Muestra el estado grabado completo: check, nombre y consentimiento
-      await tester.ensureVisible(find.byType(CheckboxListTile));
-      await tester.pumpAndSettle();
-      await shoot(locale, '05_clonar_voz_grabada');
+      // 05 — Perfiles infantiles con datos ficticios, sin llamadas a la API.
+      await show(const PersonsScreen());
+      await shoot(locale, '05_perfiles');
 
-      // 06 — Configuración del juguete (voz clonada activa)
+      // 06 — Configuración del juguete, con voz de catálogo.
       await show(ToySettingsScreen(key: UniqueKey(), toy: _demoToy));
       await shoot(locale, '06_configuracion');
     }
@@ -360,8 +336,10 @@ void main() {
     await tester.pumpAndSettle();
     await captureSet('en');
 
-    // Desmonta para cancelar timers y liberar el recorder.
+    // Desmonta para cancelar timers.
     await show(const SizedBox.shrink());
     await tester.pumpAndSettle();
+    // Flutter checks debug painting invariants before addTearDown callbacks.
+    debugDisableShadows = previousDisableShadows;
   });
 }

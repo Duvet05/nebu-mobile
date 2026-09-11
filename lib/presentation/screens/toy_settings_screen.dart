@@ -229,59 +229,48 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
 
     final selected = await showModalBottomSheet<String>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (ctx) {
         final sheetTheme = ctx.theme;
         final sheetColors = sheetTheme.colorScheme;
 
-        return SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(ctx.spacing.alertPadding),
-                child: Text(
-                  'toy_settings.personality_change'.tr(),
-                  style: sheetTheme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+        return _ToySettingsPickerSheet(
+          scrollKey: const ValueKey('toySettings.personalityPickerScroll'),
+          title: 'toy_settings.personality_change'.tr(),
+          children: [
+            ...personalities.map(
+              (p) => ListTile(
+                leading: Icon(
+                  _iconForPersonality(p.id),
+                  color: p.id == _currentToy.personalityProfile
+                      ? ctx.colors.primary
+                      : sheetColors.onSurfaceVariant,
                 ),
-              ),
-              ...personalities.map(
-                (p) => ListTile(
-                  leading: Icon(
-                    _iconForPersonality(p.id),
+                title: Text(
+                  _personalizedText(p.name),
+                  style: sheetTheme.textTheme.titleMedium?.copyWith(
+                    fontWeight: p.id == _currentToy.personalityProfile
+                        ? FontWeight.w700
+                        : FontWeight.w500,
                     color: p.id == _currentToy.personalityProfile
                         ? ctx.colors.primary
-                        : sheetColors.onSurfaceVariant,
+                        : null,
                   ),
-                  title: Text(
-                    p.name,
-                    style: sheetTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: p.id == _currentToy.personalityProfile
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                      color: p.id == _currentToy.personalityProfile
-                          ? ctx.colors.primary
-                          : null,
-                    ),
-                  ),
-                  subtitle: Text(
-                    p.description,
-                    style: sheetTheme.textTheme.bodySmall?.copyWith(
-                      color: sheetColors.onSurfaceVariant,
-                    ),
-                  ),
-                  trailing: p.id == _currentToy.personalityProfile
-                      ? Icon(Icons.check_circle, color: ctx.colors.primary)
-                      : null,
-                  onTap: () => Navigator.pop(ctx, p.id),
                 ),
+                subtitle: Text(
+                  _personalizedText(p.description),
+                  style: sheetTheme.textTheme.bodySmall?.copyWith(
+                    color: sheetColors.onSurfaceVariant,
+                  ),
+                ),
+                trailing: p.id == _currentToy.personalityProfile
+                    ? Icon(Icons.check_circle, color: ctx.colors.primary)
+                    : null,
+                onTap: () => Navigator.pop(ctx, p.id),
               ),
-              SizedBox(height: ctx.spacing.panelPadding),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -325,128 +314,95 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     final currentVoiceId = _currentVoiceId;
     final selected = await showModalBottomSheet<String>(
       context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
       builder: (ctx) {
         final sheetTheme = ctx.theme;
         final sheetColors = sheetTheme.colorScheme;
 
-        return SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(ctx.spacing.alertPadding),
-                child: Text(
-                  'toy_settings.voice_change'.tr(),
-                  style: sheetTheme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+        return _ToySettingsPickerSheet(
+          scrollKey: const ValueKey('toySettings.voicePickerScroll'),
+          title: 'toy_settings.voice_change'.tr(),
+          children: [
+            ...nebuVoiceOptions.map(
+              (voice) => ListTile(
+                leading: Icon(
+                  voice.icon,
+                  color: voice.id == currentVoiceId
+                      ? ctx.colors.primary
+                      : sheetColors.onSurfaceVariant,
                 ),
-              ),
-              ...nebuVoiceOptions.map(
-                (voice) => ListTile(
-                  leading: Icon(
-                    voice.icon,
+                title: Text(
+                  voice.labelKey.tr(),
+                  style: sheetTheme.textTheme.titleMedium?.copyWith(
+                    fontWeight: voice.id == currentVoiceId
+                        ? FontWeight.w700
+                        : FontWeight.w500,
                     color: voice.id == currentVoiceId
                         ? ctx.colors.primary
-                        : sheetColors.onSurfaceVariant,
-                  ),
-                  title: Text(
-                    voice.labelKey.tr(),
-                    style: sheetTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: voice.id == currentVoiceId
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                      color: voice.id == currentVoiceId
-                          ? ctx.colors.primary
-                          : null,
-                    ),
-                  ),
-                  subtitle: Text(
-                    voice.descriptionKey.tr(),
-                    style: sheetTheme.textTheme.bodySmall?.copyWith(
-                      color: sheetColors.onSurfaceVariant,
-                    ),
-                  ),
-                  trailing: voice.id == currentVoiceId
-                      ? Icon(Icons.check_circle, color: ctx.colors.primary)
-                      : null,
-                  onTap: () => Navigator.pop(ctx, voice.id),
-                ),
-              ),
-              if (_clonedVoiceId != null)
-                ListTile(
-                  leading: Icon(
-                    Icons.graphic_eq_rounded,
-                    color: _clonedVoiceId == currentVoiceId
-                        ? ctx.colors.primary
-                        : sheetColors.onSurfaceVariant,
-                  ),
-                  title: Text(
-                    _clonedVoiceName,
-                    style: sheetTheme.textTheme.titleMedium?.copyWith(
-                      fontWeight: _clonedVoiceId == currentVoiceId
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                      color: _clonedVoiceId == currentVoiceId
-                          ? ctx.colors.primary
-                          : null,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'toy_settings.voice_cloned_desc'.tr(),
-                    style: sheetTheme.textTheme.bodySmall?.copyWith(
-                      color: sheetColors.onSurfaceVariant,
-                    ),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (_clonedVoiceId == currentVoiceId)
-                        Icon(Icons.check_circle, color: ctx.colors.primary),
-                      IconButton(
-                        icon: Icon(
-                          Icons.delete_outline_rounded,
-                          color: ctx.colors.error,
-                        ),
-                        tooltip: 'toy_settings.voice_clone_remove_title'.tr(),
-                        onPressed: () =>
-                            Navigator.pop(ctx, _removeCloneSentinel),
-                      ),
-                    ],
-                  ),
-                  onTap: () => Navigator.pop(ctx, _clonedVoiceId),
-                ),
-              ListTile(
-                leading: Icon(Icons.mic_rounded, color: ctx.colors.primary),
-                title: Text(
-                  'toy_settings.voice_clone_new'.tr(),
-                  style: sheetTheme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: ctx.colors.primary,
+                        : null,
                   ),
                 ),
                 subtitle: Text(
-                  'toy_settings.voice_clone_new_desc'.tr(),
+                  voice.descriptionKey.tr(),
                   style: sheetTheme.textTheme.bodySmall?.copyWith(
                     color: sheetColors.onSurfaceVariant,
                   ),
                 ),
-                onTap: () => Navigator.pop(ctx, _cloneNewSentinel),
+                trailing: voice.id == currentVoiceId
+                    ? Icon(Icons.check_circle, color: ctx.colors.primary)
+                    : null,
+                onTap: () => Navigator.pop(ctx, voice.id),
               ),
-              SizedBox(height: ctx.spacing.panelPadding),
-            ],
-          ),
+            ),
+            if (_clonedVoiceId != null)
+              ListTile(
+                leading: Icon(
+                  Icons.graphic_eq_rounded,
+                  color: _clonedVoiceId == currentVoiceId
+                      ? ctx.colors.primary
+                      : sheetColors.onSurfaceVariant,
+                ),
+                title: Text(
+                  _clonedVoiceName,
+                  style: sheetTheme.textTheme.titleMedium?.copyWith(
+                    fontWeight: _clonedVoiceId == currentVoiceId
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+                    color: _clonedVoiceId == currentVoiceId
+                        ? ctx.colors.primary
+                        : null,
+                  ),
+                ),
+                subtitle: Text(
+                  'toy_settings.voice_cloned_desc'.tr(),
+                  style: sheetTheme.textTheme.bodySmall?.copyWith(
+                    color: sheetColors.onSurfaceVariant,
+                  ),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_clonedVoiceId == currentVoiceId)
+                      Icon(Icons.check_circle, color: ctx.colors.primary),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: ctx.colors.error,
+                      ),
+                      tooltip: 'toy_settings.voice_clone_remove_title'.tr(),
+                      onPressed: () => Navigator.pop(ctx, _removeCloneSentinel),
+                    ),
+                  ],
+                ),
+                onTap: () => Navigator.pop(ctx, _clonedVoiceId),
+              ),
+          ],
         );
       },
     );
 
     if (selected == null || !mounted) {
-      return;
-    }
-    if (selected == _cloneNewSentinel) {
-      await _openVoiceCloneScreen();
       return;
     }
     if (selected == _removeCloneSentinel) {
@@ -460,20 +416,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     await _updateVoicePreference(selected);
   }
 
-  static const String _cloneNewSentinel = '__clone_new_voice__';
   static const String _removeCloneSentinel = '__remove_cloned_voice__';
-
-  Future<void> _openVoiceCloneScreen() async {
-    final updatedToy = await context.push<Toy>(
-      AppRoutes.voiceClone.path,
-      extra: _currentToy,
-    );
-    if (updatedToy != null && mounted) {
-      setState(() {
-        _currentToy = updatedToy;
-      });
-    }
-  }
 
   Future<void> _confirmRemoveClonedVoice() async {
     final confirmed = await showConfirmDialog(
@@ -1094,7 +1037,7 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     if (personalities != null) {
       for (final p in personalities) {
         if (p.id == profileId) {
-          return p.name;
+          return _personalizedText(p.name);
         }
       }
     }
@@ -1115,6 +1058,9 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
     final option = findNebuVoiceOption(voiceId);
     return option?.labelKey.tr() ?? voiceId;
   }
+
+  String _personalizedText(String text) =>
+      text.replaceAll('{name}', _currentToy.name).trim();
 
   Widget _buildStatusRow(
     String label,
@@ -1159,5 +1105,53 @@ class _ToySettingsScreenState extends ConsumerState<ToySettingsScreen> {
         ],
       ),
     ],
+  );
+}
+
+/// Keeps every choice reachable with system navigation and enlarged text.
+/// A bounded, scrollable body also accommodates existing cloned voices and
+/// personality catalogs that are longer than the initial presets.
+class _ToySettingsPickerSheet extends StatelessWidget {
+  const _ToySettingsPickerSheet({
+    required this.scrollKey,
+    required this.title,
+    required this.children,
+  });
+
+  final Key scrollKey;
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+    top: false,
+    child: ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(context.spacing.alertPadding),
+            child: Text(
+              title,
+              style: context.theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          Flexible(
+            child: ListView(
+              key: scrollKey,
+              shrinkWrap: true,
+              padding: EdgeInsets.only(bottom: context.spacing.panelPadding),
+              children: children,
+            ),
+          ),
+        ],
+      ),
+    ),
   );
 }

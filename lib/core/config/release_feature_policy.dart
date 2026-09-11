@@ -16,6 +16,11 @@ final class ReleaseFeaturePolicy {
   final bool minimalRelease;
 
   bool isFeatureEnabled(ReleaseFeature feature) {
+    // Explore has been retired from the product, not hidden for reviewers.
+    if (feature == ReleaseFeature.homeQuickActions) {
+      return false;
+    }
+
     if (!minimalRelease) {
       return true;
     }
@@ -30,7 +35,14 @@ final class ReleaseFeaturePolicy {
   }
 
   bool isRouteEnabled(String routePath) =>
-      !minimalRelease || !_minimalReleaseDisabledRoutes.contains(routePath);
+      !_retiredRoutes.contains(routePath) &&
+      (!minimalRelease || !_minimalReleaseDisabledRoutes.contains(routePath));
+
+  static final Set<String> _retiredRoutes = {
+    AppRoutes.voiceClone.path,
+    AppRoutes.voiceHistory.path,
+    AppRoutes.knowledgeSearch.path,
+  };
 
   static final Set<String> _minimalReleaseDisabledRoutes = {
     AppRoutes.login.path,
@@ -41,8 +53,6 @@ final class ReleaseFeaturePolicy {
     AppRoutes.editProfile.path,
     AppRoutes.privacySettings.path,
     AppRoutes.persons.path,
-    AppRoutes.voiceHistory.path,
-    AppRoutes.knowledgeSearch.path,
     AppRoutes.personalities.path,
     AppRoutes.playground.path,
     AppRoutes.healthCheck.path,

@@ -10,6 +10,7 @@ import '../../../core/constants/app_routes.dart';
 import '../../../core/constants/storage_keys.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/analytics_service.dart';
+import '../../../core/utils/privacy_preferences.dart';
 import '../../../data/models/parental_consent.dart';
 import '../../../data/models/toy.dart';
 import '../../../data/models/user_setup.dart';
@@ -71,8 +72,7 @@ class WorldInfoSetupScreen extends ConsumerWidget {
               hapticFeedback:
                   prefs.getBool(StorageKeys.setupHapticFeedback) ?? true,
               autoSave: prefs.getBool(StorageKeys.setupAutoSave) ?? true,
-              analytics:
-                  prefs.getBool(StorageKeys.privacyAnalyticsEnabled) ?? true,
+              analytics: prefs.analyticsEnabled,
             ),
             notifications: NotificationSettings(
               push: prefs.getBool(StorageKeys.setupNotifications) ?? true,

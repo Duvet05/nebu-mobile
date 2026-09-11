@@ -262,29 +262,6 @@ class ToyNotifier extends AsyncNotifier<List<Toy>> {
     }
   }
 
-  /// Clone a voice from an audio sample and set it as the toy's voice
-  Future<Toy> cloneToyVoice({
-    required String id,
-    required String audioFilePath,
-    String? displayName,
-    String? langCode,
-  }) async {
-    try {
-      final updatedToy = await _toyService.cloneToyVoice(
-        id: id,
-        audioFilePath: audioFilePath,
-        displayName: displayName,
-        langCode: langCode,
-      );
-      ref.read(loggerProvider).d('Voice cloned for toy: ${updatedToy.name}');
-      await _replaceToyInState(updatedToy);
-      return updatedToy;
-    } catch (e) {
-      ref.read(loggerProvider).e('Error cloning voice: $e');
-      rethrow;
-    }
-  }
-
   /// Remove the toy's cloned voice and revert to the default voice
   Future<Toy> removeClonedVoice(String id) async {
     try {

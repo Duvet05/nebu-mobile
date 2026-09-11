@@ -189,4 +189,58 @@ void main() {
     expect(payload['settings'], containsPair('voicePreference', voiceId));
     expect(payload['settings'], containsPair('enableVarietyEngine', true));
   });
+
+  test(
+    'existing cloned voices and child profiles survive toy loading',
+    () async {
+      const settings = <String, dynamic>{
+        'voicePreference': 'existing-custom-voice',
+        'clonedVoice': <String, dynamic>{
+          'id': 'existing-custom-voice',
+          'name': 'Family voice',
+        },
+      };
+      when(apiService.get<Map<String, dynamic>>('/toys/toy-legacy')).thenAnswer(
+        (_) async => <String, dynamic>{
+          'id': 'toy-legacy',
+          'name': 'Nebu',
+          'status': 'disconnected',
+          'ownerId': 'child-1',
+          'personalityProfile': 'musical',
+          'settings': settings,
+        },
+      );
+
+      final toy = await toyService.getToyById('toy-legacy');
+
+      expect(toy.settings, settings);
+      expect(toy.personalityProfile, 'musical');
+      expect(toy.ownerId, 'child-1');
+      verify(
+        apiService.get<Map<String, dynamic>>('/toys/toy-legacy'),
+      ).called(1);
+      verifyNoMoreInteractions(apiService);
+    },
+  );
+
+  test('an existing cloned voice can still be removed by its owner', () async {
+    when(
+      apiService.delete<Map<String, dynamic>>('/toys/toy-legacy/voice-clone'),
+    ).thenAnswer(
+      (_) async => <String, dynamic>{
+        'id': 'toy-legacy',
+        'name': 'Nebu',
+        'status': 'disconnected',
+        'settings': <String, dynamic>{'voicePreference': 'nebu'},
+      },
+    );
+
+    final toy = await toyService.removeClonedVoice('toy-legacy');
+
+    expect(toy.settings?['voicePreference'], 'nebu');
+    verify(
+      apiService.delete<Map<String, dynamic>>('/toys/toy-legacy/voice-clone'),
+    ).called(1);
+    verifyNoMoreInteractions(apiService);
+  });
 }
