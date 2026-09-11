@@ -72,6 +72,31 @@ base64 -i android/service-account.json | tr -d '\n'
   - `CodeQL` security scan
   - `Dependency Review` on pull requests
 
+## Android display and resource optimization
+
+Android explicitly enables Flutter's `SystemUiMode.edgeToEdge` at startup so
+supported older Android versions use the same layout as Android 15 and later.
+Keep interactive content inside system insets; an `AppBar` handles the top inset,
+but a screen without bottom navigation still needs to handle the bottom inset.
+The walkie-talkie layout tests cover gesture navigation, three-button navigation,
+landscape cutouts and large text.
+
+Release builds use R8 minification, resource shrinking and the optimized ProGuard
+defaults. AGP 8.12.2 also enables integrated resource optimization with
+`android.r8.optimizedResourceShrinking=true`. This supports the existing Gradle
+8.14.3 and Kotlin plugin setup. AGP 9 makes this optimization the default, but
+upgrading to that major version is a separate migration.
+
+Before publishing a new bundle, build the release variant and check Android 15
+and 16 with gesture and three-button navigation. Check sign-in, toy setup,
+voice/personality pickers, child-profile forms and walkie-talkie with the keyboard
+and large text. Widget tests simulate insets; they do not replace device checks.
+Build-only workflow runs must set `publish_to_play=false`.
+
+References: [Flutter edge-to-edge migration](https://docs.flutter.dev/release/breaking-changes/default-systemuimode-edge-to-edge),
+[Android resource optimization](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization#optimize-resource-shrinking),
+[Flutter AGP/Kotlin migration](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin).
+
 ## Xcode Cloud
 
 The repository includes `ios/ci_scripts/ci_post_clone.sh` so Xcode Cloud can
